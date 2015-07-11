@@ -1,0 +1,287 @@
+1                                         The SAS System          17:11 Tuesday, November 25, 2014
+
+NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
+      Licensed to THE URBAN INSTITUTE, Site 70097024.
+NOTE: This session is executing on the X64_VSPRO  platform.
+
+
+
+NOTE: SAS initialization used:
+      real time           1.36 seconds
+      cpu time            0.28 seconds
+      
+
+NOTE: AUTOEXEC processing beginning; file is D:\Users\ptatian\Documents\My SAS 
+      Files\9.2\Autoexnt.sas.
+
+
+NOTE: AUTOEXEC processing completed.
+
+1          /**************************************************************************
+2           Program:  Strategy_at_risk.sas
+3           Library:  PresCat
+4           Project:  NeighborhoodInfo DC
+5           Author:   P. Tatian
+6           Created:  11/25/14
+7           Version:  SAS 9.2
+8           Environment:  Local Windows session (desktop)
+9          
+10          Description:  Count units in at risk section and units expiring by
+11         2020. Also counts of section 8 and public housing.
+12         
+13          Modifications:
+14         **************************************************************************/
+15         
+16         %include "L:\SAS\Inc\StdLocal.sas";
+NOTE: Libref _METADAT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\Metadata\Data
+59        +
+60        +options ls=124 ps=48;    ** Landscape **;
+61        +
+62        +** Output title **;
+63        +
+64        +title "&_library/&_program:  NeighborhoodInfo DC";
+65        +
+66        +** Define General library for local session only **;
+67        +
+2 The SAS System                                                                            17:11 Tuesday, November 25, 2014
+
+68        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref GENERA_L was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\General\Data
+NOTE: Libref GENERA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\General\Data
+NOTE: Libref GENERAL was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V9 
+      Physical Name(1): D:\DCData\Libraries\General\Data
+      Engine(2):        V9 
+      Physical Name(2): L:\Libraries\General\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+3 The SAS System                                                                            17:11 Tuesday, November 25, 2014
+
+69        +
+70        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+NOTE: %INCLUDE (level 1) ending.
+71         
+72         ** Define libraries **;
+73         %DCData_lib( PresCat )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref PRESCA_L was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\PresCat\Data
+NOTE: Libref PRESCA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\PresCat\Data
+NOTE: Libref PRESCAT was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V9 
+      Physical Name(1): D:\DCData\Libraries\PresCat\Data
+      Engine(2):        V9 
+      Physical Name(2): L:\Libraries\PresCat\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_L GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+
+=====================================================================
+4 The SAS System                                                                            17:11 Tuesday, November 25, 2014
+
+Current Sasautos Option value:
+
+     PRESCA_L  PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+74         
+75         data Subsidy;
+76         
+77         /*
+78           merge
+79             PresCat.Subsidy
+80             PresCat.Project (keep=nlihc_id category);
+81           by nlihc_id;
+82         */
+83         
+84           set PresCat.Subsidy;
+85         
+86           if portfolio ~= "Project Rental Assistance Contract (PRAC)";
+87         
+88           if Subsidy_active and 2014 <= year( POA_end ) <= 2020 then Units_expire_2020 = Units_Assist;
+89           else Units_expire_2020 = 0;
+90         
+91           if Subsidy_active and portfolio = 'Project-based Section 8' then Units_sec8 = Units_Assist;
+92           else Units_sec8 = 0;
+93         
+94           if Subsidy_active and portfolio = 'Public Housing' then Units_pubhsng = Units_Assist;
+95           else Units_pubhsng = 0;
+96         
+97         run;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      247 at 88:33   
+NOTE: There were 708 observations read from the data set PRESCAT.SUBSIDY.
+NOTE: The data set WORK.SUBSIDY has 694 observations and 18 variables.
+NOTE: Compressing data set WORK.SUBSIDY decreased size by 74.19 percent. 
+      Compressed is 8 pages; un-compressed would require 31 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.01 seconds
+      
+
+98         
+99         
+100        proc summary data=Subsidy;
+5 The SAS System                                                                            17:11 Tuesday, November 25, 2014
+
+101          by nlihc_id;
+102          var Units_expire_2020 Units_sec8 Units_pubhsng;
+103          output out=Subsidy_sum sum=;
+104        run;
+
+NOTE: There were 694 observations read from the data set WORK.SUBSIDY.
+NOTE: The data set WORK.SUBSIDY_SUM has 349 observations and 6 variables.
+NOTE: Compressing data set WORK.SUBSIDY_SUM decreased size by 20.00 percent. 
+      Compressed is 4 pages; un-compressed would require 5 pages.
+NOTE: PROCEDURE SUMMARY used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+105        
+106        data Project_subsidy;
+107        
+108          merge
+109            PresCat.Project
+110              (where=(status = 'A' and Subsidized)
+111               in=in1)
+112            Subsidy_sum (drop=_freq_ _type_);
+113          by nlihc_id;
+114        
+115          if in1;
+116        
+117          Units_expire_2020 = min( Proj_Units_Assist_Max, Units_expire_2020 );
+118        
+119          Units_sec8 = min( Proj_Units_Assist_Max, Units_sec8 );
+120        
+121          Units_pubhsng = min( Proj_Units_Assist_Max, Units_pubhsng );
+122        
+123        run;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      1 at 121:19   
+NOTE: There were 329 observations read from the data set PRESCAT.PROJECT.
+      WHERE (status='A') and Subsidized;
+NOTE: There were 349 observations read from the data set WORK.SUBSIDY_SUM.
+NOTE: The data set WORK.PROJECT_SUBSIDY has 329 observations and 53 variables.
+NOTE: Compressing data set WORK.PROJECT_SUBSIDY decreased size by 62.16 percent. 
+      Compressed is 14 pages; un-compressed would require 37 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.03 seconds
+6 The SAS System                                                                            17:11 Tuesday, November 25, 2014
+
+      
+
+124        
+125        proc format;
+126          value $catsum
+127            '1' = 'At risk'
+128            other = 'Other';
+NOTE: Format $CATSUM has been output.
+129        run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.00 seconds
+      
+
+130        
+131        proc tabulate data=Project_subsidy format=comma10.0 noseps missing;
+132          class category_code;
+133          var Proj_units_assist_max Units_expire_2020 Units_sec8 Units_pubhsng;
+134          table
+135            /** Rows **/
+136            all='Total' category_code,
+137            /** Columns **/
+138            sum='Assisted units' * (
+139              Proj_units_assist_max='Total'
+140              Units_expire_2020='Expiring by 2020'
+141              Units_sec8 = 'Section 8'
+142              Units_pubhsng = 'Public housing' )
+143          ;
+144          format category_code $catsum.;
+145        run;
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 329 observations read from the data set WORK.PROJECT_SUBSIDY.
+NOTE: The PROCEDURE TABULATE printed page 1.
+NOTE: PROCEDURE TABULATE used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.04 seconds
+      
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           1.74 seconds
+      cpu time            0.38 seconds
+      

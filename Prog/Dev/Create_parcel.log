@@ -1,0 +1,695 @@
+1                                         The SAS System          17:25 Tuesday, December 23, 2014
+
+NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
+      Licensed to THE URBAN INSTITUTE, Site 70097024.
+NOTE: This session is executing on the X64_VSPRO  platform.
+
+
+
+NOTE: SAS initialization used:
+      real time           0.90 seconds
+      cpu time            0.18 seconds
+      
+
+NOTE: AUTOEXEC processing beginning; file is D:\Users\ptatian\Documents\My SAS 
+      Files\9.2\Autoexnt.sas.
+
+
+NOTE: AUTOEXEC processing completed.
+
+1          /**************************************************************************
+2           Program:  Create_parcel.sas
+3           Library:  PresCat
+4           Project:  NeighborhoodInfo DC
+5           Author:   P. Tatian
+6           Created:  08/20/13
+7           Version:  SAS 9.1
+8           Environment:  Local Windows session (desktop)
+9          
+10          Description:  Create Parcel table for DC Preservation Catalog
+11         
+12          Modifications:
+13           09/27/14 PAT Updated for SAS1.
+14                        Replaced mar.mardba_ssl_xref_mar_new with
+15                        Mar.Address_ssl_xref.
+16           10/16/14 PAT Added updated parcels for Brookland Manor (NL000046).
+17           12/19/14 PAT Added variable labels.
+18                        Truncated parcel IDs with '-' character.
+19           12/24/14 PAT Added Parcel_Info_Source_Date field.
+20         **************************************************************************/
+21         
+22         %include "L:\SAS\Inc\StdLocal.sas";
+NOTE: Libref _METADAT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\Metadata\Data
+65        +
+66        +options ls=124 ps=48;    ** Landscape **;
+67        +
+2 The SAS System                                                                            17:25 Tuesday, December 23, 2014
+
+68        +** Output title **;
+69        +
+70        +title "&_library/&_program:  NeighborhoodInfo DC";
+71        +
+72        +** Define General library for local session only **;
+73        +
+74        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref GENERA_L was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\General\Data
+NOTE: Libref GENERA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\General\Data
+NOTE: Libref GENERAL was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V9 
+      Physical Name(1): D:\DCData\Libraries\General\Data
+      Engine(2):        V9 
+      Physical Name(2): L:\Libraries\General\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+
+=====================================================================
+3 The SAS System                                                                            17:25 Tuesday, December 23, 2014
+
+Current Sasautos Option value:
+
+     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+75        +
+76        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+NOTE: %INCLUDE (level 1) ending.
+77         
+78         ** Define libraries **;
+79         %DCData_lib( PresCat, local=n )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref PRESCA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\PresCat\Data
+NOTE: Libref PRESCAT was successfully assigned as follows: 
+      Levels:           1
+      Engine(1):        V9 
+      Physical Name(1): L:\Libraries\PresCat\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+80         %DCData_lib( MAR, local=n )
+4 The SAS System                                                                            17:25 Tuesday, December 23, 2014
+
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref MAR_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\MAR\Data
+NOTE: Libref MAR was successfully assigned as follows: 
+      Levels:           1
+      Engine(1):        V9 
+      Physical Name(1): L:\Libraries\MAR\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT MAR
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+NOTE:    MAR.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_R  MAR_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+81         %DCData_lib( RealProp, local=n )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref REALPR_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\RealProp\Data
+NOTE: Libref REALPROP was successfully assigned as follows: 
+      Levels:           1
+      Engine(1):        V9 
+      Physical Name(1): L:\Libraries\RealProp\Data
+
+=====================================================================
+Current FmtSearch Option value:
+5 The SAS System                                                                            17:25 Tuesday, December 23, 2014
+
+
+     WORK* LIBRARY* GENERAL PRESCAT MAR REALPROP
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+NOTE:    MAR.FORMATS EXISTS
+NOTE:    REALPROP.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_R MAR_R  REALPR_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+82         
+83         /*%file_info( data=mar.mardba_ssl_xref_mar_new )*/
+84         
+85         data Parcels_NL000046;
+86         
+87           infile datalines missover dsd dlm='09'x;
+88         
+89           length Nlihc_id $ 8 ssl $ 17;
+90         
+91           retain Nlihc_id "NL000046";
+92         
+93           input ssl;
+94         
+95           datalines;
+
+NOTE: The data set WORK.PARCELS_NL000046 has 19 observations and 2 variables.
+NOTE: Compressing data set WORK.PARCELS_NL000046 increased size by 100.00 percent. 
+      Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+6 The SAS System                                                                            17:25 Tuesday, December 23, 2014
+
+
+115        ;
+116        
+117        run;
+118        
+119        /*
+120        proc print data=Parcels_NL000046;
+121        run;
+122        */
+123        
+124        proc sql noprint;
+125          create table Parcels_address_NL000046 as
+126          select
+127            coalesce( Par.ssl, Xref.ssl ) as ssl,
+128            Par.Nlihc_id,
+129            Xref.address_id
+130          from Parcels_NL000046 as Par
+131            left join Mar.Address_ssl_xref as xref
+132          on Par.ssl = Xref.ssl;
+NOTE: SAS threaded sort was used.
+NOTE: Compressing data set WORK.PARCELS_ADDRESS_NL000046 increased size by 50.00 percent. 
+      Compressed is 3 pages; un-compressed would require 2 pages.
+NOTE: Table WORK.PARCELS_ADDRESS_NL000046 created, with 105 rows and 3 columns.
+
+133        
+134          create table Address_NL000046 as
+135          select Nlihc_id, address_id as Bldg_address_id, count(ssl) as Parcel_count
+136          from Parcels_address_NL000046
+137          group by Nlihc_id, Bldg_address_id;
+NOTE: Compressing data set WORK.ADDRESS_NL000046 increased size by 200.00 percent. 
+      Compressed is 3 pages; un-compressed would require 1 pages.
+NOTE: Table WORK.ADDRESS_NL000046 created, with 105 rows and 3 columns.
+
+138        quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.57 seconds
+      cpu time            0.28 seconds
+      
+
+139        
+140        /*
+141        proc print;
+142        run;
+143        */
+144        
+145        data Building_geocode;
+7 The SAS System                                                                            17:25 Tuesday, December 23, 2014
+
+146        
+147          set
+148            PresCat.Building_geocode
+149            /*
+150            Address_NL000046
+151              (where=(Bldg_address_id not in ( 149306, 149307, 150405 ))) */;
+152          by Nlihc_id;
+153        
+154        run;
+
+NOTE: There were 604 observations read from the data set PRESCAT.BUILDING_GEOCODE.
+NOTE: The data set WORK.BUILDING_GEOCODE has 604 observations and 18 variables.
+NOTE: Compressing data set WORK.BUILDING_GEOCODE decreased size by 58.06 percent. 
+      Compressed is 13 pages; un-compressed would require 31 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+155        
+156        %Dup_check(
+157          data=Building_geocode (where=(not(missing(Bldg_address_id)))),
+158          by=Bldg_address_id,
+159          id=nlihc_id proj_name Bldg_addre,
+160          out=_dup_check,
+161          listdups=Y,
+162          count=dup_check_count,
+163          quiet=N,
+164          debug=N
+165        )
+MPRINT(DUP_CHECK):   options nomprint;
+NOTE: SAS threaded sort was used.
+NOTE: Compressing data set WORK._DUP_CHECK increased size by 100.00 percent. 
+      Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: Table WORK._DUP_CHECK created, with 21 rows and 5 columns.
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+8 The SAS System                                                                            17:25 Tuesday, December 23, 2014
+
+NOTE: [Dup_check] 21 duplicate observations found in data set BUILDING_GEOCODE (WHERE=(NOT(MISSING(BLDG_ADDRESS_ID))))
+NOTE: [Dup_check] for BY variables BLDG_ADDRESS_ID.
+
+NOTE: There were 21 observations read from the data set WORK._DUP_CHECK.
+NOTE: The PROCEDURE PRINT printed pages 1-2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: Deleting WORK._DUP_CHECK (memtype=DATA).
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+166        
+167        proc sql noprint;
+168          create table Parcel_a as
+169          select
+170            coalesce( Bldg.Bldg_address_id, Xref.address_id ) as address_id,
+171            Bldg.nlihc_id, /*Bldg.ssl as Bldg_ssl,*/
+172            Xref.ssl
+173            from Building_geocode (where=(not(missing(Bldg_address_id)))) as Bldg
+174              left join Mar.Address_ssl_xref as xref
+175          on Bldg.Bldg_address_id = Xref.address_id
+176          order by Bldg.nlihc_id, Xref.ssl;
+NOTE: SAS threaded sort was used.
+NOTE: Compressing data set WORK.PARCEL_A decreased size by 0.00 percent. 
+      Compressed is 13 pages; un-compressed would require 13 pages.
+NOTE: Table WORK.PARCEL_A created, with 1264 rows and 3 columns.
+
+177        
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.11 seconds
+      cpu time            0.10 seconds
+      
+
+178        data Parcel_a2;
+179        
+180          set
+181            Parcel_a
+182            Building_geocode
+183              (keep=nlihc_id ssl Bldg_address_id
+184               rename=(Bldg_address_id=Address_id));
+9 The SAS System                                                                            17:25 Tuesday, December 23, 2014
+
+185          by nlihc_id;
+186        
+187          if missing( ssl ) then delete;
+188        
+189          length ssl_clean $ 17;
+190        
+191          ssl_clean = left( scan( ssl, 1, '-' ) );
+192        
+193          label
+194            ssl_clean = "Property identification number (square/suffix/lot)"
+195            ssl = "Original property identification number";
+196        
+197          rename ssl_clean=Ssl ssl=Ssl_orig;
+198        
+199        run;
+
+NOTE: There were 1264 observations read from the data set WORK.PARCEL_A.
+NOTE: There were 604 observations read from the data set WORK.BUILDING_GEOCODE.
+NOTE: The data set WORK.PARCEL_A2 has 1858 observations and 4 variables.
+NOTE: Compressing data set WORK.PARCEL_A2 decreased size by 11.11 percent. 
+      Compressed is 24 pages; un-compressed would require 27 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+200        
+201        proc sort data=Parcel_a2 nodupkey;
+202          by nlihc_id ssl;
+203        
+204        /**%File_info( data=Parcel_a2, printobs=100 )**/
+205        
+
+NOTE: There were 1858 observations read from the data set WORK.PARCEL_A2.
+NOTE: SAS sort was used.
+NOTE: 880 observations with duplicate key values were deleted.
+NOTE: The data set WORK.PARCEL_A2 has 978 observations and 4 variables.
+NOTE: Compressing data set WORK.PARCEL_A2 decreased size by 0.00 percent. 
+      Compressed is 14 pages; un-compressed would require 14 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+206        proc sort data=Parcel_a2;
+207          by ssl;
+10 The SAS System                                                                           17:25 Tuesday, December 23, 2014
+
+208        
+
+NOTE: There were 978 observations read from the data set WORK.PARCEL_A2.
+NOTE: SAS sort was used.
+NOTE: The data set WORK.PARCEL_A2 has 978 observations and 4 variables.
+NOTE: Compressing data set WORK.PARCEL_A2 decreased size by 0.00 percent. 
+      Compressed is 14 pages; un-compressed would require 14 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+209        data PresCat.Parcel (label="Preservation Catalog, real property parcels");
+210        
+211          length Nlihc_id $ 8 Ssl $ 17;
+212        
+213          merge
+214            Parcel_a2
+215              (in=in_Parcel)
+216            RealProp.Parcel_base
+217              (keep=ssl ui_proptype saledate in_last_ownerpt ownerpt_extractdat_last
+218               in=in_Parcel_base)
+219            RealProp.Parcel_geo
+220              (keep=ssl x_coord y_coord)
+221            RealProp.Parcel_base_who_owns
+222              (keep=ssl Ownername_full Ownercat);
+223          by ssl;
+224        
+225          if in_Parcel;
+226        
+227          if not in_Parcel_base then do;
+228            %warn_put( msg="SSL not found in Parcel_base; will not be saved. " nlihc_id= ssl= ssl_orig= )
+MPRINT(WARN_PUT):   put "WARN" "ING:" " " "SSL not found in Parcel_base; will not be saved. " nlihc_id= ssl= ssl_orig=;
+229            delete;
+230          end;
+231        
+232          label
+233            address_id = "Parcel MAR address ID"
+234            NLIHC_ID = "Preservation Catalog project ID";
+235        
+236          rename
+237            ui_proptype=Parcel_type ownername_full=Parcel_owner_name saledate=Parcel_owner_date
+238            ownerpt_extractdat_last=Parcel_Info_Source_Date
+239            address_id=Parcel_address_id
+240            x_coord=Parcel_x y_coord=Parcel_y Ownercat=Parcel_owner_type;
+241        
+11 The SAS System                                                                           17:25 Tuesday, December 23, 2014
+
+242        run;
+
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000068 Ssl=0192    0104 Ssl_orig=0192    0104
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000173 Ssl=0211    0004 Ssl_orig=0211    0004
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000397 Ssl=0240    0052 Ssl_orig=0240    0052
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000162 Ssl=0282    0010 Ssl_orig=0282    0010
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000093 Ssl=0397    0012 Ssl_orig=0397    0012
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000195 Ssl=0419    0033 Ssl_orig=0419    0033
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000337 Ssl=0557    0110 Ssl_orig=0557    0110
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000057 Ssl=0560    0025 Ssl_orig=0560    0025
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000146 Ssl=0597    0101 Ssl_orig=0597    0101
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000364 Ssl=0615    0175 Ssl_orig=0615    0175
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000387 Ssl=0825    0050 Ssl_orig=0825    0050
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000058 Ssl=0825S   0034 Ssl_orig=0825S   0034
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000990 Ssl=0825S   0034 Ssl_orig=0825S   0034
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL001019 Ssl=0825S   0034 Ssl_orig=0825S   0034
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000376 Ssl=0878    0192 Ssl_orig=0878    0192
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000016 Ssl=0983    0011 Ssl_orig=0983    0011
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000380 Ssl=1046    0007 Ssl_orig=1046    0007
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000183 Ssl=1493    0002 Ssl_orig=1493    0002
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000295 Ssl=2551    0012 Ssl_orig=2551    0012
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000393 Ssl=2555    0020 Ssl_orig=2555    0020
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000352 Ssl=2560    0107 Ssl_orig=2560    0107
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000411 Ssl=2562    0096 Ssl_orig=2562    0096
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000352 Ssl=2563    0021 Ssl_orig=2563    0021
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000219 Ssl=2563    0031 Ssl_orig=2563    0031
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000398 Ssl=2565    0016 Ssl_orig=2565    0016
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000004 Ssl=2609    0227 Ssl_orig=2609    0227
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000224 Ssl=2667    0065 Ssl_orig=2667    0065
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000358 Ssl=2668    ORIGINAL Ssl_orig=2668    ORIGINAL
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000077 Ssl=2670    0090 Ssl_orig=2670    0090-2
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000334 Ssl=2672    0632 Ssl_orig=2672    0632
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000078 Ssl=2672    0669 Ssl_orig=2672    0669
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000369 Ssl=2846    0016 Ssl_orig=2846    0016
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000185 Ssl=2848    0015 Ssl_orig=2848    0015
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000309 Ssl=2849    0013 Ssl_orig=2849    0013
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000339 Ssl=2850    0008 Ssl_orig=2850    0008-of1
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000399 Ssl=2857    0011 Ssl_orig=2857    0011
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000413 Ssl=2864    0331 Ssl_orig=2864    0331
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000099 Ssl=2866    0011 Ssl_orig=2866    0011
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000098 Ssl=2866    0063 Ssl_orig=2866    0063
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000354 Ssl=2910    0041 Ssl_orig=2910    0041
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000235 Ssl=2918    0054 Ssl_orig=2918    0054
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000014 Ssl=2999    0015 Ssl_orig=2999    0015
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000408 Ssl=3151    0022 Ssl_orig=3151    0022
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000404 Ssl=3403    0006 Ssl_orig=3403    0006
+12 The SAS System                                                                           17:25 Tuesday, December 23, 2014
+
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000402 Ssl=3564    0001 Ssl_orig=3564    0001
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000266 Ssl=3567    0041 Ssl_orig=3567    0041
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000382 Ssl=3605    0004 Ssl_orig=3605    0004
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000091 Ssl=3630    0006 Ssl_orig=3630    0006
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000092 Ssl=3630    0006 Ssl_orig=3630    0006
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000251 Ssl=3936    0011 Ssl_orig=3936    0011
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000200 Ssl=3937    0029 Ssl_orig=3937    0029
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000152 Ssl=4307    0023 Ssl_orig=4307    0023
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000123 Ssl=4327    0001 Ssl_orig=4327    0001
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000041 Ssl=5087    0034 Ssl_orig=5087    0034
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000039 Ssl=5394    0053 Ssl_orig=5394    0053
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL001008 Ssl=5581    0003 Ssl_orig=5581    0003
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL001008 Ssl=5583    0002 Ssl_orig=5583    0002
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL001008 Ssl=5585    0007 Ssl_orig=5585    0007
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL001008 Ssl=5585    0010 Ssl_orig=5585    0010
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000267 Ssl=5724    0008 Ssl_orig=5724    0008
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000357 Ssl=5765    0685 Ssl_orig=5765    0685
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000206 Ssl=5803    0145 Ssl_orig=5803    0145
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000317 Ssl=5865    0284 Ssl_orig=5865    0284
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000228 Ssl=5867    0224 Ssl_orig=5867    0224
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000265 Ssl=5869    0009 Ssl_orig=5869    0009
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000163 Ssl=5869    0011 Ssl_orig=5869    0011
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000280 Ssl=5873    0053 Ssl_orig=5873    0053
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000081 Ssl=5916    0008 Ssl_orig=5916    0008
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000305 Ssl=5917    0026 Ssl_orig=5917    0026
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000044 Ssl=6001    0047 Ssl_orig=6001    0047
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000270 Ssl=6160    0007 Ssl_orig=6160    0007
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000020 Ssl=6168    0005 Ssl_orig=6168    0005-2
+WARNING: SSL not found in Parcel_base; will not be saved. Nlihc_id=NL000119 Ssl=6242    0008 Ssl_orig=6242    0008
+NOTE: There were 978 observations read from the data set WORK.PARCEL_A2.
+NOTE: There were 211406 observations read from the data set REALPROP.PARCEL_BASE.
+NOTE: There were 210750 observations read from the data set REALPROP.PARCEL_GEO.
+NOTE: There were 211406 observations read from the data set REALPROP.PARCEL_BASE_WHO_OWNS.
+NOTE: The data set PRESCAT.PARCEL has 905 observations and 12 variables.
+NOTE: Compressing data set PRESCAT.PARCEL decreased size by 44.44 percent. 
+      Compressed is 10 pages; un-compressed would require 18 pages.
+NOTE: DATA statement used (Total process time):
+      real time           5.15 seconds
+      cpu time            1.38 seconds
+      
+
+243        
+244        proc sort data=PresCat.Parcel;
+245          by nlihc_id ssl;
+246        run;
+
+13 The SAS System                                                                           17:25 Tuesday, December 23, 2014
+
+NOTE: There were 905 observations read from the data set PRESCAT.PARCEL.
+NOTE: SAS sort was used.
+NOTE: The data set PRESCAT.PARCEL has 905 observations and 12 variables.
+NOTE: Compressing data set PRESCAT.PARCEL decreased size by 44.44 percent. 
+      Compressed is 10 pages; un-compressed would require 18 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+247        
+248        %File_info( data=PresCat.Parcel, freqvars=Parcel_owner_type Parcel_type )
+MPRINT(FILE_INFO):   title2 "File = PresCat.Parcel";
+MPRINT(FILE_INFO):   proc contents data=PresCat.Parcel;
+MPRINT(FILE_INFO):   run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+NOTE: The PROCEDURE CONTENTS printed pages 3-4.
+
+MPRINT(FILE_INFO):   proc print data=PresCat.Parcel (obs=10);
+MPRINT(FILE_INFO):   title3 "Printing first 10 obs.";
+MPRINT(FILE_INFO):   run;
+
+NOTE: There were 10 observations read from the data set PRESCAT.PARCEL.
+NOTE: The PROCEDURE PRINT printed page 5.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(FILE_INFO):   title3;
+MPRINT(FILE_INFO):   options nolabel;
+MPRINT(FILE_INFO):   proc means data=PresCat.Parcel n sum mean stddev min max;
+MPRINT(FILE_INFO):   run;
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 905 observations read from the data set PRESCAT.PARCEL.
+NOTE: The PROCEDURE MEANS printed page 6.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.03 seconds
+      
+
+14 The SAS System                                                                           17:25 Tuesday, December 23, 2014
+
+MPRINT(FILE_INFO):   options label;
+MPRINT(FILE_INFO):   proc freq data=PresCat.Parcel;
+MPRINT(FILE_INFO):   tables Parcel_owner_type Parcel_type / missing;
+MPRINT(FILE_INFO):   run;
+
+NOTE: There were 905 observations read from the data set PRESCAT.PARCEL.
+NOTE: The PROCEDURE FREQ printed page 7.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+MPRINT(FILE_INFO):   title2;
+249        
+250        **** CHECKS ****;
+251        
+252        proc print data=PresCat.Parcel n;
+253          where Nlihc_id = "NL000046";
+254          by Nlihc_id;
+255          id Parcel_address_id;
+256        run;
+
+NOTE: There were 19 observations read from the data set PRESCAT.PARCEL.
+      WHERE Nlihc_id='NL000046';
+NOTE: The PROCEDURE PRINT printed pages 8-9.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+257        
+258        title2 '---Comparison with previous parcel data set---';
+259        
+260        proc sort data=PresCat.Parcel_09_28_14 out=Parcel_09_28_14;
+261          by nlihc_id ssl;
+262        
+
+NOTE: Input data set is already sorted; it has been copied to the output data set.
+NOTE: There were 886 observations read from the data set PRESCAT.PARCEL_09_28_14.
+NOTE: The data set WORK.PARCEL_09_28_14 has 886 observations and 10 variables.
+NOTE: Compressing data set WORK.PARCEL_09_28_14 decreased size by 52.94 percent. 
+      Compressed is 8 pages; un-compressed would require 17 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+15 The SAS System                                                                           17:25 Tuesday, December 23, 2014
+
+
+263        proc compare base=Parcel_09_28_14 compare=PresCat.Parcel maxprint=(40,32000);
+264          id nlihc_id ssl;
+265        run;
+
+NOTE: There were 886 observations read from the data set WORK.PARCEL_09_28_14.
+NOTE: There were 905 observations read from the data set PRESCAT.PARCEL.
+NOTE: The PROCEDURE COMPARE printed pages 10-14.
+NOTE: PROCEDURE COMPARE used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.03 seconds
+      
+
+266        
+267        title2;
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           7.39 seconds
+      cpu time            2.23 seconds
+      

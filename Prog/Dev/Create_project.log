@@ -1,0 +1,804 @@
+1                                          The SAS System               16:48 Saturday, July 4, 2015
+
+NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
+      Licensed to THE URBAN INSTITUTE, Site 70097024.
+NOTE: This session is executing on the X64_VSPRO  platform.
+
+
+
+NOTE: SAS initialization used:
+      real time           0.20 seconds
+      cpu time            0.13 seconds
+      
+
+NOTE: AUTOEXEC processing beginning; file is D:\Users\ptatian\Documents\My SAS 
+      Files\9.2\Autoexnt.sas.
+
+
+NOTE: AUTOEXEC processing completed.
+
+1          /**************************************************************************
+2           Program:  Create_project.sas
+3           Library:  PresCat
+4           Project:  NeighborhoodInfo DC
+5           Author:   P. Tatian
+6           Created:  07/25/13
+7           Version:  SAS 9.1
+8           Environment:  Local Windows session (desktop)
+9          
+10          Description:  Create first Projects data set from Access DB DC_Info table.
+11         
+12          Modifications:
+13           10/27/13 PAT Added Subsidy_Start_First and Subsidy_Start_Last.
+14                        Merge with new geocoding file (PresCat.Project_geocode).
+15           10/28/13 PAT Added Subsidized var. Changed Cat_* vars to numeric.
+16                        Dropped Subsidy_PH, Subsidy_LIHTC.
+17           09/27/14 PAT Updated for SAS1.
+18           10/19/14 PAT Updated DC_info file.
+19                        Corrected min/max assisted units calculation so that
+20                        units are first summed by program.
+21           12/18/14 PAT Created Own_Type and Mgr_Type vars.
+22                        Labeled all variables. Dropped unnecessary variables.
+23           01/29/15 PAT Assigning NLIHC_IDs to 1919 Calvert Street NW (NL001031),
+24                        Congress Heights PUD (NL001032).
+25           06/18/15 PAT Change category for Wah Luck to 2 (expiring).
+26         **************************************************************************/
+27         
+28         %include "L:\SAS\Inc\StdLocal.sas";
+NOTE: Libref _METADAT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\Metadata\Data
+71        +
+2 The SAS System                                                                                16:48 Saturday, July 4, 2015
+
+72        +options ls=124 ps=48;    ** Landscape **;
+73        +
+74        +** Output title **;
+75        +
+76        +title "&_library/&_program:  NeighborhoodInfo DC";
+77        +
+78        +** Define General library for local session only **;
+79        +
+80        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref GENERA_L was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\General\Data
+NOTE: Libref GENERA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\General\Data
+NOTE: Libref GENERAL was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V9 
+      Physical Name(1): D:\DCData\Libraries\General\Data
+      Engine(2):        V9 
+      Physical Name(2): L:\Libraries\General\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+3 The SAS System                                                                                16:48 Saturday, July 4, 2015
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+81        +
+82        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+NOTE: %INCLUDE (level 1) ending.
+83         
+84         ** Define libraries **;
+85         %DCData_lib( PresCat, local=n )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref PRESCA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\PresCat\Data
+NOTE: Libref PRESCAT was successfully assigned as follows: 
+      Levels:           1
+      Engine(1):        V9 
+      Physical Name(1): L:\Libraries\PresCat\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+4 The SAS System                                                                                16:48 Saturday, July 4, 2015
+
+
+86         
+87         ** Get min/max assisted units **;
+88         
+89         proc summary data=PresCat.Subsidy nway;
+90           class Nlihc_id Program;
+91           var units_assist poa_start poa_end Subsidy_active;
+92           output out=Subsidy_a
+93             sum(units_assist)=
+94             min(poa_start poa_end)=Subsidy_Start_First Subsidy_End_First
+95             max(poa_start poa_end)=Subsidy_Start_Last Subsidy_End_Last
+96             max(Subsidy_active)=Subsidized;
+97         run;
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 707 observations read from the data set PRESCAT.SUBSIDY.
+NOTE: The data set WORK.SUBSIDY_A has 702 observations and 10 variables.
+NOTE: Compressing data set WORK.SUBSIDY_A decreased size by 20.00 percent. 
+      Compressed is 8 pages; un-compressed would require 10 pages.
+NOTE: PROCEDURE SUMMARY used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+      
+
+98         
+99         proc summary data=Subsidy_a;
+100          by Nlihc_id;
+101          var units_assist Subsidy_Start_First Subsidy_End_First Subsidy_Start_Last Subsidy_End_Last Subsidized;
+102          output out=Subsidy
+103            min(units_assist Subsidy_Start_First Subsidy_End_First)=Proj_Units_Assist_Min Subsidy_Start_First
+103      ! Subsidy_End_First
+104            max(units_assist Subsidy_Start_Last Subsidy_End_Last)=Proj_Units_Assist_Max Subsidy_Start_Last
+104      ! Subsidy_End_Last
+105            max(Subsidized)=;
+106        run;
+
+NOTE: There were 702 observations read from the data set WORK.SUBSIDY_A.
+NOTE: The data set WORK.SUBSIDY has 349 observations and 10 variables.
+NOTE: Compressing data set WORK.SUBSIDY decreased size by 0.00 percent. 
+      Compressed is 4 pages; un-compressed would require 4 pages.
+NOTE: PROCEDURE SUMMARY used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+107        
+5 The SAS System                                                                                16:48 Saturday, July 4, 2015
+
+108        data DC_Info;
+109        
+110          set PresCat.DC_Info_10_19_14;
+111        
+112          ** Apply standard corrections **;
+113        
+114          %DCInfo_corrections()
+MPRINT(DCINFO_CORRECTIONS):   ** Assign new NLIHC_ID to St. Dennis (duplicate ID with CEMI - Bethune House) **;
+MPRINT(DCINFO_CORRECTIONS):   if NLIHC_ID = "NL001007" and upcase( Proj_Name ) = "ST. DENNIS" then NLIHC_ID = "NL001030";
+MPRINT(DCINFO_CORRECTIONS):   if NLIHC_ID = "NL000046" then do;
+MPRINT(DCINFO_CORRECTIONS):   units = 535;
+MPRINT(DCINFO_CORRECTIONS):   Category = "1";
+MPRINT(DCINFO_CORRECTIONS):   end;
+115        
+116          ** Missing project IDs **;
+117        
+118          select ( Proj_name );
+119            when ( '1919 Calvert Street NW' )
+120              Nlihc_id = 'NL001031';
+121            when ( 'CONGRESS HEIGHTS PUD' )
+122              Nlihc_id = 'NL001032';
+123            otherwise
+124              /** Do nothing **/;
+125          end;
+126        
+127        run;
+
+NOTE: There were 361 observations read from the data set PRESCAT.DC_INFO_10_19_14.
+NOTE: The data set WORK.DC_INFO has 361 observations and 102 variables.
+NOTE: Compressing data set WORK.DC_INFO decreased size by 87.85 percent. 
+      Compressed is 22 pages; un-compressed would require 181 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+      
+
+128        
+129        proc sort data=DC_Info;
+130          by Nlihc_id;
+131        
+132        title2 'File = DC_Info';
+133        
+134        %Dup_check(
+135          data=DC_Info,
+136          by=Nlihc_id,
+137          id=proj_name proj_addre category,
+6 The SAS System                                                                                16:48 Saturday, July 4, 2015
+
+138          out=_dup_check,
+139          listdups=Y,
+140          count=dup_check_count,
+141          quiet=N,
+142          debug=N
+143        )
+MPRINT(DUP_CHECK):   options nomprint;
+
+NOTE: There were 361 observations read from the data set WORK.DC_INFO.
+NOTE: SAS sort was used.
+NOTE: The data set WORK.DC_INFO has 361 observations and 102 variables.
+NOTE: Compressing data set WORK.DC_INFO decreased size by 87.85 percent. 
+      Compressed is 22 pages; un-compressed would require 181 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: SAS threaded sort was used.
+NOTE: Table WORK._DUP_CHECK created, with 0 rows and 5 columns.
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: [Dup_check] 0 duplicate observations found in data set DC_INFO
+NOTE: [Dup_check] for BY variables NLIHC_ID.
+
+NOTE: No observations in data set WORK._DUP_CHECK.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: Deleting WORK._DUP_CHECK (memtype=DATA).
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+7 The SAS System                                                                                16:48 Saturday, July 4, 2015
+
+
+144        
+145        title2;
+146        
+147        data PresCat.Project (label="Preservation Catalog, projects");
+148        
+149          length
+150            Nlihc_id $ 8
+151            Status $ 1
+152            Subsidized 3
+153            Category_Code $ 1
+154            Cat_At_Risk 3
+155            Cat_Expiring 3
+156            Cat_Failing_Insp 3
+157            Cat_More_Info 3
+158            Cat_Lost 3
+159            Cat_Replaced 3
+160            Proj_Name $ 80
+161            Proj_Addre $ 160
+162            Proj_City $ 80
+163            Proj_ST $ 2
+164            Proj_Zip $ 5
+165            Proj_Units_Tot 8
+166            Proj_Units_Assist_Min 8
+167            Proj_Units_Assist_Max 8
+168            Hud_Own_Effect_dt 8
+169            Hud_Own_Name $ 80
+170            Hud_Own_Type $ 2
+171            Hud_Mgr_Name $ 80
+172            Hud_Mgr_Type $ 2
+173            Subsidy_Start_First 8
+174            Subsidy_Start_Last 8
+175            Subsidy_End_First 8
+176            Subsidy_End_Last 8
+177            Ward2012 $ 1
+178            ;
+179        
+180          merge
+181            DC_Info
+182              (keep=NLIHC_ID Category Proj_Name Proj_Addre Proj_City Proj_ST
+183                    Units Own_Effect Own_Compan Own_Comp_1 Own_Indivi Mgr_Compan
+184                    Mgr_Comp_1 Mgr_Indivi
+185               rename=(Proj_Name=Proj_Name_old Proj_Addre=Proj_Addre_old)
+186               in=in1)
+187            PresCat.Project_geocode (drop=Proj_name)
+188            Subsidy (keep=Nlihc_id Proj_Units_Assist_: Subsidy_Start_: Subsidy_End_: Subsidized)
+8 The SAS System                                                                                16:48 Saturday, July 4, 2015
+
+189                    ;
+190          by Nlihc_id;
+191        
+192          ***if in1;
+193        
+194          %Project_name_clean( Proj_name_old, Proj_name )
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = propcase( left( compbl( Proj_name_old ) ) );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Iii', 'III' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Ii', 'II' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Iv', 'IV' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'IVy', 'Ivy' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Ne', 'NE' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'NEw', 'New' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'NEighborhood', 'Neighborhood' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'NEighbors', 'Neighbors' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Nw', 'NW' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Se', 'SE' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'SEnior', 'Senior' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'SEcond', 'Second' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'SErvices', 'Services' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'SEnate', 'Senate' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Sw', 'SW' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'At', 'at' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'atlantic', 'Atlantic' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Pud', 'PUD' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Chhi', 'CHHI' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Ncba', 'NCBA' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Cemi', 'CEMI' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Idi', 'IDI' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Wdc', 'WDC' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Mlk', 'MLK' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Ufas', 'UFAS' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Dmh', 'DMH' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Tcb', 'TCB' );
+195        
+196          ** DROP DUPLICATES OF NL001007 **;
+197        
+198          if nlihc_id = "NL001007" and proj_addre = "401 Chaplin St, SE" then delete;
+199        
+200          ** 54th Street Housing **;
+201        
+202          ** New Catalog projects **;
+203        
+204          select ( Nlihc_id );
+205        
+206            when ( "NL001030" ) do;
+9 The SAS System                                                                                16:48 Saturday, July 4, 2015
+
+207              Subsidized = 1;
+208            end;
+209        
+210            when ( "NL001031" ) do;
+211              Subsidized = 1;
+212            end;
+213        
+214            when ( "NL001033" ) do;
+215              Category = '5';
+216              Subsidized = 1;
+217              Proj_name = '54th Street Housing';
+218              Proj_city = 'Washington';
+219              Proj_st = 'DC';
+220            end;
+221        
+222            otherwise
+223              /** Do nothing **/;
+224        
+225          end;
+226        
+227          Category_Code = Category;
+228        
+229          if Category_Code ~= '6' then Status = 'A';
+230          else Status = 'I';
+231        
+232          array cat{*} Cat_: ;
+233        
+234          do i = 1 to dim( cat );
+235            cat{i} = 0;
+236          end;
+237        
+238          select ( Category_code );
+239            when ( '1' )
+240              Cat_At_Risk = 1;
+241            when ( '2' )
+242              Cat_Expiring = 1;
+243            when ( '3' )
+244              Cat_Failing_Insp = 1;
+245            when ( '4' )
+246              Cat_More_Info = 1;
+247            when ( '5' )
+248              /** Skip category 5 **/;
+249            when ( '6' )
+250              Cat_Lost = 1;
+251            when ( '7' )
+252              Cat_Replaced = 1;
+10 The SAS System                                                                               16:48 Saturday, July 4, 2015
+
+253            otherwise
+254              do;
+255                %warn_put( msg="Invalid Category value. " _n_= NLIHC_ID= Category= Category_code= )
+MPRINT(WARN_PUT):   put "WARN" "ING:" " " "Invalid Category value. " _n_= NLIHC_ID= Category= Category_code=;
+256              end;
+257          end;
+258        
+259          ** Mark projects with subsidy less than one year away as expiring **;
+260        
+261          if -100 < intck( 'year', Subsidy_End_First, date() ) < 1 then Cat_Expiring = 1;
+262        
+263          Proj_units_tot = Units;
+264        
+265          Hud_Own_Effect_dt = Own_Effect;
+266        
+267          array a{*} Proj_Addre Proj_City Own_Compan Own_Indivi Mgr_Compan
+268                  Mgr_Indivi;
+269        
+270          do i = 1 to dim( a );
+271            if a{i} = upcase( a{i} ) then a{i} = propcase( a{i} );
+272          end;
+273        
+274          if Proj_City = "Wash" then Proj_City = "Washington";
+275        
+276          if Own_Compan ~= "" then do;
+277        
+278            Hud_Own_Name = left( Own_Compan );
+279        
+280            if Own_Indivi ~= "" then Hud_Own_Name = trim( Hud_Own_Name ) || ' / ' || left( Own_Indivi );
+281        
+282            select ( Own_comp_1 );
+283              when ( 'Limited Dividend' ) Hud_Own_type = 'LD';
+284              when ( 'Non-Profit' ) Hud_Own_type = 'NP';
+285              when ( 'Non-Profit Controlled' ) Hud_Own_type = 'NC';
+286              when ( 'Other' ) Hud_Own_type = 'OT';
+287              when ( 'PHA' ) Hud_Own_type = 'HA';
+288              when ( 'Profit Motivated' ) Hud_Own_type = 'PM';
+289              when ( '' ) Hud_Own_type = '  ';
+290              otherwise do;
+291                %warn_put( msg='Unknown company type: ' _n_= nlihc_id= Hud_Own_name= Own_comp_1= )
+MPRINT(WARN_PUT):   put "WARN" "ING:" " " 'Unknown company type: ' _n_= nlihc_id= Hud_Own_name= Own_comp_1=;
+292              end;
+293            end;
+294        
+295          end;
+296          else do;
+11 The SAS System                                                                               16:48 Saturday, July 4, 2015
+
+297        
+298            Hud_Own_Name = left( Own_Indivi );
+299            Hud_Own_type = 'IN';
+300        
+301          end;
+302        
+303          if Mgr_Compan ~= "" then do;
+304        
+305            Hud_Mgr_Name = left( Mgr_Compan );
+306        
+307            if Mgr_Indivi ~= "" then Hud_Mgr_Name = trim( Hud_Mgr_Name ) || ' / ' || left( Mgr_Indivi );
+308        
+309            select ( Mgr_comp_1 );
+310              when ( 'Limited Dividend' ) Hud_Mgr_type = 'LD';
+311              when ( 'Non-Profit' ) Hud_Mgr_type = 'NP';
+312              when ( 'Non-Profit Controlled' ) Hud_Mgr_type = 'NC';
+313              when ( 'Other' ) Hud_Mgr_type = 'OT';
+314              when ( 'PHA' ) Hud_Mgr_type = 'HA';
+315              when ( 'Profit Motivated', 'Proft Motivated' ) Hud_Mgr_type = 'PM';
+316              when ( '' ) Hud_Mgr_type = '  ';
+317              otherwise do;
+318                %warn_put( msg='Unknown company type: ' _n_= nlihc_id= Hud_Mgr_name= Mgr_comp_1= )
+MPRINT(WARN_PUT):   put "WARN" "ING:" " " 'Unknown company type: ' _n_= nlihc_id= Hud_Mgr_name= Mgr_comp_1=;
+319              end;
+320            end;
+321        
+322          end;
+323          else do;
+324        
+325            Hud_Mgr_Name = left( Mgr_Indivi );
+326            Hud_Mgr_type = 'IN';
+327        
+328          end;
+329        
+330          Update_Dtm = datetime();
+331        
+332          ** Subsidy status **;
+333        
+334          if missing( Subsidized ) then Subsidized = 0;
+335        
+336          **** CORRECTIONS ****;
+337        
+338          if nlihc_id = 'NL000208' then do;
+339            ** Museum Square One **;
+340            Cat_Expiring = 1;
+341          end;
+12 The SAS System                                                                               16:48 Saturday, July 4, 2015
+
+342        
+343          if nlihc_id = 'NL000319' then do;
+344            ** Wah Luck House **;
+345            Category_code = '2';
+346          end;
+347        
+348          label
+349            NLIHC_ID = "Preservation Catalog project ID"
+350            Status = "Project is active"
+351            Subsidized = "Project is subsidized"
+352            Category_code = "Preservation Catalog project category"
+353            Cat_At_Risk = "Project at risk"
+354            Cat_Expiring = "Project has upcoming expiring subsidy"
+355            Cat_Failing_Insp = "Project has failed recent REAC inspection"
+356            Cat_More_Info = "Project flagged for gathering more information"
+357            Cat_Lost = "Lost affordable housing"
+358            Cat_Replaced = "Replaced affordable housing"
+359            Proj_Name = "Project name"
+360            Proj_Addre = "Project main address"
+361            Proj_City = "Project city"
+362            Proj_ST = "Project state"
+363            Proj_Zip = "Project ZIP code"
+364            Proj_Units_Tot = "Total housing units in project"
+365            Proj_Units_Assist_Min = "Total assisted housing units in project (minimum)"
+366            Proj_Units_Assist_Max = "Total assisted housing units in project (maximum)"
+367            Hud_Own_Effect_dt = "Date current owner acquired property (from HUD)"
+368            Hud_Own_Name = "Current property owner name (from HUD)"
+369            Hud_Own_Type = "Current property owner type (from HUD)"
+370            Hud_Mgr_Name = "Current property manager name (from HUD)"
+371            Hud_Mgr_Type = "Current property manager type (from HUD)"
+372            Subsidy_Start_First = "First subsidy start date"
+373            Subsidy_Start_Last = "Last subsidy start date"
+374            Subsidy_End_First = "First subsidy end date"
+375            Subsidy_End_Last = "Last subsidy end date"
+376            Proj_Name_old = "Old project name from Access DB"
+377            Proj_Addre_old = "Old project address from Access DB"
+378            Ward2012 = 'Ward (2012)'
+379            Anc2012 = 'Advisory Neighborhood Commission (2012)'
+380            Psa2012 = 'Police Service Area (2012)'
+381            Geo2010 = 'Full census tract ID (2010): ssccctttttt'
+382            Cluster_tr2000 = 'Neighborhood cluster (tract-based, 2000)'
+383            Cluster_tr2000_name = 'Neighborhood cluster names (tract-based, 2000)'
+384            Zip = 'ZIP code (5 digit)'
+385            Proj_image_url = 'OCTO property image URL'
+386            Proj_streetview_url = 'Google Street View URL'
+387            Proj_address_id = 'Project MAR address ID'
+13 The SAS System                                                                               16:48 Saturday, July 4, 2015
+
+388            Proj_x = 'Project longitude (MD State Plane Coord., NAD 1983 meters)'
+389            Proj_y = 'Project latitude (MD State Plane Coord., NAD 1983 meters)'
+390            Proj_lat = 'Project latitude'
+391            Proj_lon = 'Project longitude'
+392            Bldg_count = 'Number of buildings for project'
+393            Update_Dtm = "Datetime of last project update"
+394          ;
+395        
+396          format Status $Status. Category_code $Categry. Hud_Own_Effect_dt mmddyy10.
+397            Hud_Own_type Hud_Mgr_type $ownmgrtype.
+398            Subsidized Cat_At_Risk Cat_Expiring Cat_Failing_Insp Cat_More_Info Cat_Lost Cat_Replaced dyesno.
+399            Update_Dtm datetime16.
+400          ;
+401        
+402          drop i units category Own_Effect Own_Compan Own_Comp_1 Own_Indivi Mgr_Compan Mgr_Comp_1 Mgr_Indivi;
+403        
+404        run;
+
+WARNING: Multiple lengths were specified for the variable Subsidized by input data set(s). This may cause truncation of 
+         data.
+WARNING: Unknown company type: _N_=46 Nlihc_id=NL000066
+Hud_Own_Name=Development Corporation Of Columbia Heights / James Speight Own_Comp_1=3419 14TH ST NW
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      116 at 261:13   
+NOTE: There were 361 observations read from the data set WORK.DC_INFO.
+NOTE: There were 362 observations read from the data set PRESCAT.PROJECT_GEOCODE.
+NOTE: There were 349 observations read from the data set WORK.SUBSIDY.
+NOTE: The data set PRESCAT.PROJECT has 362 observations and 45 variables.
+NOTE: Compressing data set PRESCAT.PROJECT decreased size by 61.76 percent. 
+      Compressed is 13 pages; un-compressed would require 34 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.06 seconds
+      
+
+405        
+406        proc sort data=PresCat.Project;
+407          by nlihc_id;
+408        run;
+
+NOTE: There were 362 observations read from the data set PRESCAT.PROJECT.
+NOTE: SAS sort was used.
+NOTE: The data set PRESCAT.PROJECT has 362 observations and 45 variables.
+NOTE: Compressing data set PRESCAT.PROJECT decreased size by 61.76 percent. 
+      Compressed is 13 pages; un-compressed would require 34 pages.
+14 The SAS System                                                                               16:48 Saturday, July 4, 2015
+
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+409        
+410        %File_info( data=PresCat.Project, printobs=5,
+411                    freqvars=Status Category_code Proj_City Proj_ST Ward2012 Proj_Zip Hud_Own_type Hud_Mgr_type )
+MPRINT(FILE_INFO):   title2 "File = PresCat.Project";
+MPRINT(FILE_INFO):   proc contents data=PresCat.Project;
+MPRINT(FILE_INFO):   run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+NOTE: The PROCEDURE CONTENTS printed pages 1-2.
+
+MPRINT(FILE_INFO):   proc print data=PresCat.Project (obs=5);
+MPRINT(FILE_INFO):   title3 "Printing first 5 obs.";
+MPRINT(FILE_INFO):   run;
+
+NOTE: There were 5 observations read from the data set PRESCAT.PROJECT.
+NOTE: The PROCEDURE PRINT printed pages 3-5.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(FILE_INFO):   title3;
+MPRINT(FILE_INFO):   options nolabel;
+MPRINT(FILE_INFO):   proc means data=PresCat.Project n sum mean stddev min max;
+MPRINT(FILE_INFO):   run;
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 362 observations read from the data set PRESCAT.PROJECT.
+NOTE: The PROCEDURE MEANS printed page 6.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(FILE_INFO):   options label;
+MPRINT(FILE_INFO):   proc freq data=PresCat.Project;
+MPRINT(FILE_INFO):   tables Status Category_code Proj_City Proj_ST Ward2012 Proj_Zip Hud_Own_type Hud_Mgr_type / missing;
+MPRINT(FILE_INFO):   run;
+15 The SAS System                                                                               16:48 Saturday, July 4, 2015
+
+
+NOTE: There were 362 observations read from the data set PRESCAT.PROJECT.
+NOTE: The PROCEDURE FREQ printed pages 7-9.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+MPRINT(FILE_INFO):   title2;
+412        
+413        title2 'File = PresCat.Project';
+414        
+415        %Dup_check(
+416          data=PresCat.Project,
+417          by=nlihc_id,
+418          id=Proj_name Proj_addre
+419        )
+MPRINT(DUP_CHECK):   options nomprint;
+NOTE: SAS threaded sort was used.
+NOTE: Table WORK._DUP_CHECK created, with 0 rows and 4 columns.
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: [Dup_check] 0 duplicate observations found in data set PRESCAT.PROJECT
+NOTE: [Dup_check] for BY variables NLIHC_ID.
+
+NOTE: No observations in data set WORK._DUP_CHECK.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: Deleting WORK._DUP_CHECK (memtype=DATA).
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+16 The SAS System                                                                               16:48 Saturday, July 4, 2015
+
+
+420        title2;
+421        
+422        proc print data=PresCat.Project;
+423          where missing( Nlihc_id );
+424          var status Proj_name Proj_addre Proj_zip Ward2012;
+425          title2 '---MISSING NLIHC_ID---';
+426        run;
+
+NOTE: No observations were selected from data set PRESCAT.PROJECT.
+NOTE: There were 0 observations read from the data set PRESCAT.PROJECT.
+      WHERE MISSING(Nlihc_id);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+427        title2;
+428        
+429        proc print data=PresCat.Project;
+430          where missing( Ward2012 );
+431          id nlihc_id;
+432          var status Proj_name Proj_addre Proj_zip Ward2012;
+433          title2 '---MISSING WARD---';
+434        run;
+
+NOTE: No observations were selected from data set PRESCAT.PROJECT.
+NOTE: There were 0 observations read from the data set PRESCAT.PROJECT.
+      WHERE MISSING(Ward2012);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+435        title2;
+436        
+437        proc freq data=PresCat.Project;
+438          tables Hud_Own_Effect_dt;
+439          tables Category_code * Cat_At_Risk * Cat_Expiring * Cat_Failing_Insp * Cat_More_Info * Cat_Lost
+440                 * Cat_Replaced
+441            / list missing nocum nopercent;
+442          format Hud_Own_Effect_dt year.;
+443        run;
+
+NOTE: There were 362 observations read from the data set PRESCAT.PROJECT.
+NOTE: The PROCEDURE FREQ printed pages 10-11.
+17 The SAS System                                                                               16:48 Saturday, July 4, 2015
+
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+444        
+445        **** Compare with earlier version ****;
+446        
+447        libname comp 'D:\DCData\Libraries\PresCat\Data\Old';
+NOTE: Libref COMP was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\PresCat\Data\Old
+448        
+449        proc compare base=Comp.Project compare=PresCat.Project listall maxprint=(40,32000);
+450          id nlihc_id;
+451        run;
+
+NOTE: There were 362 observations read from the data set COMP.PROJECT.
+NOTE: There were 362 observations read from the data set PRESCAT.PROJECT.
+NOTE: The PROCEDURE COMPARE printed pages 12-14.
+NOTE: PROCEDURE COMPARE used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           0.79 seconds
+      cpu time            0.42 seconds
+      

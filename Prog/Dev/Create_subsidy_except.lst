@@ -1,0 +1,43 @@
+PRESCAT/Create_subsidy_except.sas:  NeighborhoodInfo DC                                    11:25 Friday, January 9, 2015   1
+File = PresCat.Subsidy_except
+
+The CONTENTS Procedure
+
+Data Set Name        PRESCAT.SUBSIDY_EXCEPT                                    Observations           0   
+Member Type          DATA                                                      Variables              12  
+Engine               V9                                                        Indexes                0   
+Created              Friday, January 09, 2015 11:25:39 AM                      Observation Length     222 
+Last Modified        Friday, January 09, 2015 11:25:39 AM                      Deleted Observations   0   
+Protection                                                                     Compressed             CHAR
+Data Set Type                                                                  Reuse Space            NO  
+Label                Preservation Catalog, project subsidies exception file    Point to Observations  YES 
+Data Representation  WINDOWS_64                                                Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                                           
+
+
+                      Engine/Host Dependent Information
+
+Data Set Page Size          12288                                            
+Number of Data Set Pages    2                                                
+Number of Data Set Repairs  0                                                
+Filename                    L:\Libraries\PresCat\Data\subsidy_except.sas7bdat
+Release Created             9.0202M3                                         
+Host Created                X64_VSPRO                                        
+
+
+                             Alphabetic List of Variables and Attributes
+ 
+ #    Variable                   Type    Len    Format        Label
+
+10    Agency                     Char     80                  Agency responsible for managing subsidy
+11    Except_date                Num       8    MMDDYY10.     Date exception added                   
+12    Except_init                Char      8                  Initials of person entering exception  
+ 1    Nlihc_id                   Char      8                  Preservation Catalog project ID        
+ 5    POA_end                    Num       8    MMDDYY10.     Period of affordability, end date      
+ 4    POA_start                  Num       8    MMDDYY10.     Period of affordability, start date    
+ 9    Program                    Char     32    $PROGFULL.    Subsidy program                        
+ 8    Subsidy_Active             Num       3    DYESNO.       Subsidy is active                      
+ 2    Subsidy_id                 Num       8                  Preservation Catalog subsidy ID        
+ 3    Units_Assist               Num       8                  Subsidy assisted units                 
+ 6    contract_number            Char     11                  TRACS-assigned contract number         
+ 7    rent_to_fmr_description    Char     40                  Rent to FMR ratio for assisted units   

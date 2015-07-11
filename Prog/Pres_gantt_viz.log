@@ -1,0 +1,690 @@
+1                                         The SAS System            14:21 Sunday, January 18, 2015
+
+NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
+      Licensed to THE URBAN INSTITUTE, Site 70097024.
+NOTE: This session is executing on the X64_VSPRO  platform.
+
+
+
+NOTE: SAS initialization used:
+      real time           0.63 seconds
+      cpu time            0.15 seconds
+      
+
+NOTE: AUTOEXEC processing beginning; file is D:\Users\ptatian\Documents\My SAS 
+      Files\9.2\Autoexnt.sas.
+
+
+NOTE: AUTOEXEC processing completed.
+
+1          /**************************************************************************
+2           Program:  Pres_gantt_viz.sas
+3           Library:  PresCat
+4           Project:  NeighborhoodInfo DC
+5           Author:   P. Tatian
+6           Created:  01/18/15
+7           Version:  SAS 9.2
+8           Environment:  Local Windows session (desktop)
+9          
+10          Description:  Create export file for Gantt visualization of
+11          Preservation Catalog data.
+12         
+13          Modifications:
+14         **************************************************************************/
+15         
+16         %include "L:\SAS\Inc\StdLocal.sas";
+NOTE: Libref _METADAT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\Metadata\Data
+59        +
+60        +options ls=124 ps=48;    ** Landscape **;
+61        +
+62        +** Output title **;
+63        +
+64        +title "&_library/&_program:  NeighborhoodInfo DC";
+65        +
+66        +** Define General library for local session only **;
+67        +
+2 The SAS System                                                                              14:21 Sunday, January 18, 2015
+
+68        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref GENERA_L was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\General\Data
+NOTE: Libref GENERA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\General\Data
+NOTE: Libref GENERAL was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V9 
+      Physical Name(1): D:\DCData\Libraries\General\Data
+      Engine(2):        V9 
+      Physical Name(2): L:\Libraries\General\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+3 The SAS System                                                                              14:21 Sunday, January 18, 2015
+
+69        +
+70        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+NOTE: %INCLUDE (level 1) ending.
+71         
+72         ** Define libraries **;
+73         %DCData_lib( PresCat, local=n )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref PRESCA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\PresCat\Data
+NOTE: Libref PRESCAT was successfully assigned as follows: 
+      Levels:           1
+      Engine(1):        V9 
+      Physical Name(1): L:\Libraries\PresCat\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+74         
+75         /*
+76         data Subsidy;
+77         
+78           set PresCat.Subsidy;
+79         
+80           where subsidy_active = 1;
+4 The SAS System                                                                              14:21 Sunday, January 18, 2015
+
+81         
+82           format portfolio ;
+83         
+84         run;
+85         */
+86         
+87         proc format;
+88           value $portf_sum
+89             "202/811" = "Fin"
+90             "221-3-4" = "Fin"
+91             "221-BMIR" = "Fin"
+92             "223" = "Fin"
+93             "232" = "Fin"
+94             "236" = "Fin"
+95             "542" = "Fin"
+96             "CDBG" = "Oth"
+97             "DC HPTF" = "Hpt"
+98             "HOME" = "Oth"
+99             "LIHTC" = "Ltc"
+100            "MCKINNEY" = "Oth"
+101            "OTHER" = "Oth"
+102            "PB8" = "Pb8"
+103            "PRAC" = "Oth"
+104            "PUBHSNG" = "Pha"
+105            "TEBOND" = "Oth";
+NOTE: Format $PORTF_SUM has been output.
+106          value $portf_grp
+107            "Pb8" = "1"
+108            "Ltc" = "2"
+109            other = "3";
+NOTE: Format $PORTF_GRP has been output.
+110          value $portf_sort
+111            "Pb8" = "1"
+112            "Ltc" = "2"
+113            "Fin" = "3"
+114            "Hpt" = "4"
+115            "Oth" = "5";
+NOTE: Format $PORTF_SORT has been output.
+116        run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+      
+
+117        
+5 The SAS System                                                                              14:21 Sunday, January 18, 2015
+
+118        proc summary data=PresCat.Subsidy nway;
+119          where subsidy_active = 1 and poa_end >= '01jan2014'd;
+120          class nlihc_id portfolio;
+121          var subsidy_active poa_start compl_end poa_end units_assist;
+122          output out=Subsidy_det (drop=_type_)
+123            max( subsidy_active )=
+124            min( poa_start )=
+125            max( compl_end poa_end ) =
+126            sum( units_assist )=;
+127          format portfolio ;
+128        run;
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 427 observations read from the data set PRESCAT.SUBSIDY.
+      WHERE (subsidy_active=1) and (poa_end>='01JAN2014'D);
+NOTE: The data set WORK.SUBSIDY_DET has 407 observations and 8 variables.
+NOTE: Compressing data set WORK.SUBSIDY_DET decreased size by 0.00 percent. 
+      Compressed is 8 pages; un-compressed would require 8 pages.
+NOTE: PROCEDURE SUMMARY used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+129        
+130        
+131        proc summary data=Subsidy_det nway;
+132          class nlihc_id portfolio;
+133          var subsidy_active poa_start poa_end units_assist;
+134          output out=Subsidy_sum (drop=_type_)
+135            max( subsidy_active )=
+136            min( poa_start )=
+137            max( compl_end poa_end ) =
+138            max( units_assist )=;
+139          format portfolio $portf_sum.;
+140        run;
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 407 observations read from the data set WORK.SUBSIDY_DET.
+NOTE: The data set WORK.SUBSIDY_SUM has 388 observations and 8 variables.
+NOTE: Compressing data set WORK.SUBSIDY_SUM decreased size by 12.50 percent. 
+      Compressed is 7 pages; un-compressed would require 8 pages.
+NOTE: PROCEDURE SUMMARY used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+6 The SAS System                                                                              14:21 Sunday, January 18, 2015
+
+141        
+142        data Subsidy_sum_b;
+143        
+144          set Subsidy_sum;
+145        
+146          length portfolio_grp $1;
+147        
+148          portfolio_grp = put( put( portfolio, $portf_sum. ), $portf_grp. );
+149        
+150        run;
+
+NOTE: There were 388 observations read from the data set WORK.SUBSIDY_SUM.
+NOTE: The data set WORK.SUBSIDY_SUM_B has 388 observations and 9 variables.
+NOTE: Compressing data set WORK.SUBSIDY_SUM_B decreased size by 11.11 percent. 
+      Compressed is 8 pages; un-compressed would require 9 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+151        
+152        proc sort data=Subsidy_sum_b;
+153          by nlihc_id portfolio_grp descending units_assist descending poa_end;
+154          format portfolio $portf_grp.;
+155        run;
+
+NOTE: There were 388 observations read from the data set WORK.SUBSIDY_SUM_B.
+NOTE: SAS sort was used.
+NOTE: The data set WORK.SUBSIDY_SUM_B has 388 observations and 9 variables.
+NOTE: Compressing data set WORK.SUBSIDY_SUM_B decreased size by 11.11 percent. 
+      Compressed is 8 pages; un-compressed would require 9 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+156        
+157        %file_info( data=subsidy_sum_b, freqvars=portfolio, printobs=0 )
+MPRINT(FILE_INFO):   title2 "File = subsidy_sum_b";
+MPRINT(FILE_INFO):   proc contents data=subsidy_sum_b;
+MPRINT(FILE_INFO):   run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+7 The SAS System                                                                              14:21 Sunday, January 18, 2015
+
+NOTE: The PROCEDURE CONTENTS printed page 1.
+
+MPRINT(FILE_INFO):   options nolabel;
+MPRINT(FILE_INFO):   proc means data=subsidy_sum_b n sum mean stddev min max;
+MPRINT(FILE_INFO):   run;
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 388 observations read from the data set WORK.SUBSIDY_SUM_B.
+NOTE: The PROCEDURE MEANS printed page 2.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(FILE_INFO):   options label;
+MPRINT(FILE_INFO):   proc freq data=subsidy_sum_b;
+MPRINT(FILE_INFO):   tables portfolio / missing;
+MPRINT(FILE_INFO):   run;
+
+NOTE: There were 388 observations read from the data set WORK.SUBSIDY_SUM_B.
+NOTE: The PROCEDURE FREQ printed page 3.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(FILE_INFO):   title2;
+158        
+159        proc print data=Subsidy_sum_b (obs=40);
+160          id nlihc_id portfolio;
+161          by nlihc_id;
+162          format portfolio /*$portf_sum.*/;
+163        run;
+
+NOTE: There were 40 observations read from the data set WORK.SUBSIDY_SUM_B.
+NOTE: The PROCEDURE PRINT printed pages 4-5.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+164        
+165        /*
+166        data Subsidy_sum_a;
+167        
+168          merge
+8 The SAS System                                                                              14:21 Sunday, January 18, 2015
+
+169            Subsidy_sum (in=in1)
+170            PresCat.Project (keep=nlihc_id Proj_name Proj_units_tot);
+171          by nlihc_id;
+172        
+173          if in1;
+174        
+175          units_assist = min( units_assist, Proj_units_tot );
+176        
+177          *if first.nlihc_id then output;
+178        
+179        run;
+180        */
+181        
+182        proc tabulate data=Subsidy_sum_b format=mmddyy10. noseps missing;
+183          var poa_start poa_end;
+184          table
+185            /** Rows **/
+186            poa_start poa_end,
+187            /** Columns **/
+188            n*f=comma8.0 min max
+189            / rts=50
+190          ;
+191        run;
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 388 observations read from the data set WORK.SUBSIDY_SUM_B.
+NOTE: The PROCEDURE TABULATE printed page 6.
+NOTE: PROCEDURE TABULATE used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+192        
+193        /****
+194        %Super_transpose(
+195          data=Subsidy_sum_b,
+196          out=Subsidy_tr,
+197          var=subsidy_active,
+198          id=portfolio,
+199          by=nlihc_id,
+200          mprint=N
+201        )
+202        
+203        proc print data=Subsidy_tr (obs=10);
+204          id nlihc_id;
+205          format portfolio ;
+9 The SAS System                                                                              14:21 Sunday, January 18, 2015
+
+206        run;
+207        
+208        proc freq data=Subsidy_tr;
+209          tables subsidy_active_pb8 * subsidy_active_ltc * subsidy_active_fin * subsidy_active_hpt * subsidy_active_oth
+210            / missing list nopercent;
+211        run;
+212        *******/
+213        
+214        proc summary data=Subsidy_sum_b;
+215          by nlihc_id;
+216          output out=Subsidy_count (drop=_type_ rename=(_freq_=Subsidy_count));
+217        run;
+
+NOTE: There were 388 observations read from the data set WORK.SUBSIDY_SUM_B.
+NOTE: The data set WORK.SUBSIDY_COUNT has 230 observations and 2 variables.
+NOTE: Compressing data set WORK.SUBSIDY_COUNT increased size by 50.00 percent. 
+      Compressed is 3 pages; un-compressed would require 2 pages.
+NOTE: PROCEDURE SUMMARY used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+218        
+219        %let RPT_START_DT = '01jan1970'd;
+220        %let RPT_END_DT = '31dec2060'd;
+221        
+222        
+223        data Export;
+224        
+225          merge
+226            Subsidy_sum_b (in=in1)
+227            Subsidy_count
+228            PresCat.Project (keep=nlihc_id Proj_name Proj_units_tot);
+229          by nlihc_id;
+230        
+231          if in1;
+232        
+233          length
+234            Mult_subsidy $ 1
+235            Portfolio_sort $ 1
+236            Proj_label $ 80
+237            Chart_start_dt 8
+238            Chart_poa_start 8
+239            Pb8_end Ltc_c_end Ltc_a_end Fin_end Hpt_end Oth_end Label_end_dt 8
+240          ;
+241        
+10 The SAS System                                                                             14:21 Sunday, January 18, 2015
+
+242          retain Chart_start_dt &RPT_START_DT;
+243        
+244          if first.nlihc_id then do;
+245        
+246            units_assist = min( units_assist, Proj_units_tot );
+247        
+248            if Subsidy_count > 1 then Mult_subsidy = "*";
+249            else Mult_subsidy = "";
+250        
+251            Proj_label = trim( Proj_name ) ||  trim( Mult_subsidy );
+252        
+253            if units_assist > 0 then Proj_label = trim( Proj_label ) || " [" ||
+254              trim( left( put( units_assist, comma8.0 ) ) ) || "]";
+255        
+256            Chart_poa_start = Poa_start - Chart_start_dt;
+257        
+258            select ( put( portfolio, $portf_sum. ) );
+259              when ( "Pb8" ) Pb8_end = Poa_end - Poa_start;
+260              when ( "Ltc" ) do;
+261                Ltc_c_end = Compl_end - Poa_start;
+262                Ltc_a_end = Poa_end - Compl_end;
+263              end;
+264              when ( "Fin" ) Fin_end = Poa_end - Poa_start;
+265              when ( "Hpt" ) Hpt_end = Poa_end - Poa_start;
+266              when ( "Oth" ) Oth_end = Poa_end - Poa_start;
+267              otherwise do;
+268                %err_put( msg="Unknown subsidy portfolio: " nlihc_id= portfolio= )
+MPRINT(ERR_PUT):   put "ER" "ROR:" " " "Unknown subsidy portfolio: " nlihc_id= portfolio=;
+269              end;
+270            end;
+271        
+272            Label_end_dt = Poa_end;
+273        
+274            Portfolio_sort = put( put( Portfolio, $portf_sum. ), $portf_sort. );
+275        
+276            output;
+277        
+278          end;
+279        
+280          format Portfolio $portf_sum. chart_start_dt label_end_dt mmddyy10.;
+281        
+282          keep nlihc_id portfolio_sort portfolio proj_label chart_start_dt chart_poa_start
+283               Pb8_end Ltc_c_end Ltc_a_end Fin_end Hpt_end Oth_end Label_end_dt;
+284        
+285        run;
+
+11 The SAS System                                                                             14:21 Sunday, January 18, 2015
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      1 at 246:20   
+NOTE: There were 388 observations read from the data set WORK.SUBSIDY_SUM_B.
+NOTE: There were 230 observations read from the data set WORK.SUBSIDY_COUNT.
+NOTE: There were 361 observations read from the data set PRESCAT.PROJECT.
+NOTE: The data set WORK.EXPORT has 230 observations and 13 variables.
+NOTE: Compressing data set WORK.EXPORT decreased size by 16.67 percent. 
+      Compressed is 5 pages; un-compressed would require 6 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+286        
+287        proc sort data=Export;
+288          by Portfolio_sort label_end_dt proj_label;
+289        run;
+
+NOTE: There were 230 observations read from the data set WORK.EXPORT.
+NOTE: SAS sort was used.
+NOTE: The data set WORK.EXPORT has 230 observations and 13 variables.
+NOTE: Compressing data set WORK.EXPORT decreased size by 16.67 percent. 
+      Compressed is 5 pages; un-compressed would require 6 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+290        
+291        data Export_b;
+292        
+293          set Export end=last_obs;
+294          by Portfolio_sort;
+295        
+296          array n{*} chart_start_dt chart_poa_start
+297               Pb8_end Ltc_c_end Ltc_a_end Fin_end Hpt_end Oth_end Label_end_dt;
+298          array c{*} nlihc_id portfolio_sort portfolio proj_label;
+299        
+300          output;
+301        
+302          if last.Portfolio_sort and not( last_obs ) then do;
+303        
+304            do i = 1 to dim( n );
+305              n{i} = .;
+306            end;
+12 The SAS System                                                                             14:21 Sunday, January 18, 2015
+
+307        
+308            do i = 1 to dim( c );
+309              c{i} = "";
+310            end;
+311        
+312            output;
+313        
+314          end;
+315        
+316          drop i;
+317        
+318        run;
+
+NOTE: There were 230 observations read from the data set WORK.EXPORT.
+NOTE: The data set WORK.EXPORT_B has 234 observations and 13 variables.
+NOTE: Compressing data set WORK.EXPORT_B decreased size by 16.67 percent. 
+      Compressed is 5 pages; un-compressed would require 6 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+319        
+320        proc print data=Export_b (obs=100);
+321          id nlihc_id;
+322        run;
+
+NOTE: There were 100 observations read from the data set WORK.EXPORT_B.
+NOTE: The PROCEDURE PRINT printed pages 7-12.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+323        
+324        filename fexport "L:\Libraries\PresCat\Prog\Pres_gantt_viz.csv" lrecl=2000;
+325        
+326        proc export data=Export_b
+327            outfile=fexport
+328            dbms=csv replace;
+329        
+330        run;
+
+331         /**********************************************************************
+332         *   PRODUCT:   SAS
+333         *   VERSION:   9.2
+13 The SAS System                                                                             14:21 Sunday, January 18, 2015
+
+334         *   CREATOR:   External File Interface
+335         *   DATE:      18JAN15
+336         *   DESC:      Generated SAS Datastep Code
+337         *   TEMPLATE SOURCE:  (None Specified.)
+338         ***********************************************************************/
+339            data _null_;
+340            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+341            %let _EFIREC_ = 0;     /* clear export record count macro variable */
+342            file FEXPORT delimiter=',' DSD DROPOVER lrecl=32767;
+343            if _n_ = 1 then        /* write column names or labels */
+344             do;
+345               put
+346                  "Nlihc_id"
+347               ','
+348                  "Portfolio"
+349               ','
+350                  "Portfolio_sort"
+351               ','
+352                  "Proj_label"
+353               ','
+354                  "Chart_start_dt"
+355               ','
+356                  "Chart_poa_start"
+357               ','
+358                  "Pb8_end"
+359               ','
+360                  "Ltc_c_end"
+361               ','
+362                  "Ltc_a_end"
+363               ','
+364                  "Fin_end"
+365               ','
+366                  "Hpt_end"
+367               ','
+368                  "Oth_end"
+369               ','
+370                  "Label_end_dt"
+371               ;
+372             end;
+373           set  EXPORT_B   end=EFIEOD;
+374               format Nlihc_id $8. ;
+375               format Portfolio $portf_sum3. ;
+376               format Portfolio_sort $1. ;
+377               format Proj_label $80. ;
+378               format Chart_start_dt mmddyy10. ;
+379               format Chart_poa_start best12. ;
+14 The SAS System                                                                             14:21 Sunday, January 18, 2015
+
+380               format Pb8_end best12. ;
+381               format Ltc_c_end best12. ;
+382               format Ltc_a_end best12. ;
+383               format Fin_end best12. ;
+384               format Hpt_end best12. ;
+385               format Oth_end best12. ;
+386               format Label_end_dt mmddyy10. ;
+387             do;
+388               EFIOUT + 1;
+389               put Nlihc_id $ @;
+390               put Portfolio $ @;
+391               put Portfolio_sort $ @;
+392               put Proj_label $ @;
+393               put Chart_start_dt @;
+394               put Chart_poa_start @;
+395               put Pb8_end @;
+396               put Ltc_c_end @;
+397               put Ltc_a_end @;
+398               put Fin_end @;
+399               put Hpt_end @;
+400               put Oth_end @;
+401               put Label_end_dt ;
+402               ;
+403             end;
+404            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+405            if EFIEOD then call symputx('_EFIREC_',EFIOUT);
+406            run;
+
+NOTE: The file FEXPORT is:
+      Filename=L:\Libraries\PresCat\Prog\Pres_gantt_viz.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=18Jan2015:14:21:09,
+      Create Time=18Jan2015:14:08:54
+
+NOTE: 235 records were written to the file FEXPORT.
+      The minimum record length was 12.
+      The maximum record length was 140.
+NOTE: There were 234 observations read from the data set WORK.EXPORT_B.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+234 records created in FEXPORT from EXPORT_B.
+  
+  
+15 The SAS System                                                                             14:21 Sunday, January 18, 2015
+
+NOTE: "FEXPORT" file was successfully created.
+NOTE: PROCEDURE EXPORT used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.09 seconds
+      
+
+407        
+408        filename fexport clear;
+NOTE: Fileref FEXPORT has been deassigned.
+409        
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           1.18 seconds
+      cpu time            0.38 seconds
+      

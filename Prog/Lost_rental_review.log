@@ -1,0 +1,171 @@
+1                                         The SAS System          11:23 Tuesday, November 25, 2014
+
+NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
+      Licensed to THE URBAN INSTITUTE, Site 70097024.
+NOTE: This session is executing on the X64_VSPRO  platform.
+
+
+
+NOTE: SAS initialization used:
+      real time           0.95 seconds
+      cpu time            0.23 seconds
+      
+
+NOTE: AUTOEXEC processing beginning; file is D:\Users\ptatian\Documents\My SAS 
+      Files\9.2\Autoexnt.sas.
+
+
+NOTE: AUTOEXEC processing completed.
+
+1          /**************************************************************************
+2           Program:  Lost_rental_review.sas
+3           Library:  PresCat
+4           Project:  NeighborhoodInfo DC
+5           Author:   P. Tatian
+6           Created:  11/25/14
+7           Version:  SAS 9.2
+8           Environment:  Local Windows session (desktop)
+9          
+10          Description:  Data for review of lost rental properties.
+11         
+12          Modifications:
+13         **************************************************************************/
+14         
+15         %include "L:\SAS\Inc\StdLocal.sas";
+NOTE: Libref _METADAT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\Metadata\Data
+58        +
+59        +options ls=124 ps=48;    ** Landscape **;
+60        +
+61        +** Output title **;
+62        +
+63        +title "&_library/&_program:  NeighborhoodInfo DC";
+64        +
+65        +** Define General library for local session only **;
+66        +
+67        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+2 The SAS System                                                                            11:23 Tuesday, November 25, 2014
+
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref GENERA_L was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\General\Data
+NOTE: Libref GENERA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\General\Data
+NOTE: Libref GENERAL was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V9 
+      Physical Name(1): D:\DCData\Libraries\General\Data
+      Engine(2):        V9 
+      Physical Name(2): L:\Libraries\General\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+68        +
+3 The SAS System                                                                            11:23 Tuesday, November 25, 2014
+
+69        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+NOTE: %INCLUDE (level 1) ending.
+70         
+71         ** Define libraries **;
+72         %DCData_lib( PresCat )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref PRESCA_L was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\PresCat\Data
+NOTE: Libref PRESCA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\PresCat\Data
+NOTE: Libref PRESCAT was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V9 
+      Physical Name(1): D:\DCData\Libraries\PresCat\Data
+      Engine(2):        V9 
+      Physical Name(2): L:\Libraries\PresCat\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_L GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+4 The SAS System                                                                            11:23 Tuesday, November 25, 2014
+
+
+     PRESCA_L  PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+73         
+74         proc print data=PresCat.Subsidy;
+75           where nlihc_id in ( 'NL000055', 'NL000096', 'NL000307', 'NL000416', 'NL000196', 'NL000094' );
+76           id nlihc_id ;
+77           var contract_number Program;
+78         run;
+
+NOTE: There were 11 observations read from the data set PRESCAT.SUBSIDY.
+      WHERE nlihc_id in ('NL000055', 'NL000094', 'NL000096', 'NL000196', 'NL000307', 'NL000416');
+NOTE: The PROCEDURE PRINT printed page 1.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           1.11 seconds
+      cpu time            0.31 seconds
+      

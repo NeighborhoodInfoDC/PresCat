@@ -1,0 +1,283 @@
+PRESCAT/Parcel_subsidy.sas:  NeighborhoodInfo DC                                        15:51 Tuesday, November 11, 2014   1
+File = PresCat.Parcel_subsidy
+
+The CONTENTS Procedure
+
+Data Set Name        PRESCAT.PARCEL_SUBSIDY                                 Observations           320 
+Member Type          DATA                                                   Variables              21  
+Engine               V9                                                     Indexes                0   
+Created              Tuesday, November 11, 2014 03:51:37 PM                 Observation Length     177 
+Last Modified        Tuesday, November 11, 2014 03:51:37 PM                 Deleted Observations   0   
+Protection                                                                  Compressed             CHAR
+Data Set Type                                                               Reuse Space            NO  
+Label                Assisted projects and units by real property parcel    Point to Observations  YES 
+Data Representation  WINDOWS_64                                             Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                                        
+
+
+                      Engine/Host Dependent Information
+
+Data Set Page Size          8192                                             
+Number of Data Set Pages    4                                                
+Number of Data Set Repairs  0                                                
+Filename                    L:\Libraries\PresCat\Data\parcel_subsidy.sas7bdat
+Release Created             9.0202M3                                         
+Host Created                X64_VSPRO                                        
+
+
+                           Alphabetic List of Variables and Attributes
+ 
+ #    Variable                  Type    Len    Label
+
+ 1    SSL                       Char     17    Property Identification Number (Square/Suffix/Lot)
+ 3    Sub_CDBG_proj             Num       8    CDBG project                                      
+13    Sub_CDBG_units            Num       8    CDBG assisted units                               
+ 4    Sub_HOME_proj             Num       8    HOME project                                      
+14    Sub_HOME_units            Num       8    HOME assisted units                               
+ 5    Sub_HPTF_proj             Num       8    DC Housing Production Trust Fund project          
+15    Sub_HPTF_units            Num       8    DC Housing Production Trust Fund assisted units   
+ 6    Sub_LIHTC_proj            Num       8    Low-Income Housing Tax Credit project             
+16    Sub_LIHTC_units           Num       8    Low-Income Housing Tax Credit assisted units      
+ 7    Sub_McKinney_proj         Num       8    McKinney Vento loan project                       
+17    Sub_McKinney_units        Num       8    McKinney Vento loan assisted units                
+ 8    Sub_Other_proj            Num       8    Other subsidy project                             
+18    Sub_Other_units           Num       8    Other subsidy assisted units                      
+ 9    Sub_ProjectBased_proj     Num       8    Federal project-based assistance project          
+19    Sub_ProjectBased_units    Num       8    Federal project-based assistance assisted units   
+10    Sub_PublicHsng_proj       Num       8    Public housing project                            
+20    Sub_PublicHsng_units      Num       8    Public housing assisted units                     
+PRESCAT/Parcel_subsidy.sas:  NeighborhoodInfo DC                                        15:51 Tuesday, November 11, 2014   2
+File = PresCat.Parcel_subsidy
+
+The CONTENTS Procedure
+
+                           Alphabetic List of Variables and Attributes
+ 
+ #    Variable                  Type    Len    Label
+
+11    Sub_TEBond_proj           Num       8    Tax-exempt bond project                           
+21    Sub_TEBond_units          Num       8    Tax-exempt bond units                             
+ 2    Sub_all_proj              Num       8    Any assisted project                              
+12    Sub_all_units             Num       8    All assisted units                                
+PRESCAT/Parcel_subsidy.sas:  NeighborhoodInfo DC                                        15:51 Tuesday, November 11, 2014   3
+File = PresCat.Parcel_subsidy
+Printing first 10 obs.
+
+                                                                                                     S
+                                                 S                                                   u
+                                                 u                                                   b     S
+                                                 b   S                                               _     u
+                                                 _   u                                   S           P     b
+                                         S       P   b                                   u           r     _
+                                         u       r   _                                   b           o     P     S
+                                         b       o   P   S                           S   _     S     j     u     u
+                                     S   _   S   j   u   u           S   S     S     u   M     u     e     b     b
+                         S   S   S   u   M   u   e   b   b    S      u   u     u     b   c     b     c     l     _
+                     S   u   u   u   b   c   b   c   l   _    u      b   b     b     _   K     _     t     i     T
+                     u   b   b   b   _   K   _   t   i   T    b      _   _     _     L   i     O     B     c     E
+                     b   _   _   _   L   i   O   B   c   E    _      C   H     H     I   n     t     a     H     B
+                     _   C   H   H   I   n   t   a   H   B    a      D   O     P     H   n     h     s     s     o
+                     a   D   O   P   H   n   h   s   s   o    l      B   M     T     T   e     e     e     n     n
+                     l   B   M   T   T   e   e   e   n   n    l      G   E     F     C   y     r     d     g     d
+                     l   G   E   F   C   y   r   d   g   d    _      _   _     _     _   _     _     _     _     _
+                     _   _   _   _   _   _   _   _   _   _    u      u   u     u     u   u     u     u     u     u
+                     p   p   p   p   p   p   p   p   p   p    n      n   n     n     n   n     n     n     n     n
+ O         S         r   r   r   r   r   r   r   r   r   r    i      i   i     i     i   i     i     i     i     i
+ b         S         o   o   o   o   o   o   o   o   o   o    t      t   t     t     t   t     t     t     t     t
+ s         L         j   j   j   j   j   j   j   j   j   j    s      s   s     s     s   s     s     s     s     s
+
+  1   0042    0051   1   0   0   0   0   0   1   1   0   0   140     0   0     0     0   0   140   140     0     0
+  2   0193    0145   1   0   0   0   0   0   0   1   0   0    10     0   0     0     0   0     0    10     0     0
+  3   0203    0080   1   1   0   0   0   0   0   1   0   0   102   102   0     0     0   0     0    19     0     0
+  4   0204    0208   1   0   0   0   0   0   0   1   0   0    48     0   0     0     0   0     0    48     0     0
+  5   0204    0846   1   0   0   0   0   0   0   1   0   0   171     0   0     0     0   0     0   171     0     0
+  6   0206    0828   1   0   0   0   0   0   0   1   0   0    13     0   0     0     0   0     0    13     0     0
+  7   0208    0127   1   0   0   0   0   0   0   1   0   0    42     0   0     0     0   0     0    42     0     0
+  8   0208    0128   1   0   0   1   1   0   0   0   0   1   124     0   0   124   124   0     0     0     0   124
+  9   0211    0856   1   0   0   0   0   0   0   0   1   0   141     0   0     0     0   0     0     0   141     0
+ 10   0216    0027   1   0   0   0   0   0   0   1   0   0    64     0   0     0     0   0     0    64     0     0
+PRESCAT/Parcel_subsidy.sas:  NeighborhoodInfo DC                                        15:51 Tuesday, November 11, 2014   4
+File = PresCat.Parcel_subsidy
+
+The MEANS Procedure
+
+Variable                    N             Sum            Mean         Std Dev         Minimum         Maximum
+-------------------------------------------------------------------------------------------------------------
+Sub_all_proj              320     329.0000000       1.0281250       0.1835464       1.0000000       3.0000000
+Sub_CDBG_proj             320      50.0000000       0.1562500       0.3721812               0       2.0000000
+Sub_HOME_proj             320      25.0000000       0.0781250       0.2687885               0       1.0000000
+Sub_HPTF_proj             320      63.0000000       0.1968750       0.4060548               0       2.0000000
+Sub_LIHTC_proj            320     121.0000000       0.3781250       0.5289336               0       3.0000000
+Sub_McKinney_proj         320      13.0000000       0.0406250       0.1977291               0       1.0000000
+Sub_Other_proj            320      16.0000000       0.0500000       0.2182863               0       1.0000000
+Sub_ProjectBased_proj     320     148.0000000       0.4625000       0.5117736               0       2.0000000
+Sub_PublicHsng_proj       320     100.0000000       0.3125000       0.4840723               0       2.0000000
+Sub_TEBond_proj           320      70.0000000       0.2187500       0.4289212               0       2.0000000
+Sub_all_units             320        38393.00     119.9781250     118.0843815               0     717.0000000
+Sub_CDBG_units            320         4270.00      13.3437500      45.4121560               0     348.0000000
+Sub_HOME_units            320         1716.00       5.3625000      30.6310817               0     409.0000000
+Sub_HPTF_units            320         6354.00      19.8562500      66.5739127               0     717.0000000
+Sub_LIHTC_units           320        16894.00      52.7937500      95.9498692               0     569.0000000
+Sub_McKinney_units        320      30.0000000       0.0937500       1.6770510               0      30.0000000
+Sub_Other_units           320         3123.00       9.7593750      56.7744940               0     648.0000000
+Sub_ProjectBased_units    320        19929.00      62.2781250     104.8075449               0     717.0000000
+Sub_PublicHsng_units      320         9401.00      29.3781250      72.6003197               0     440.0000000
+Sub_TEBond_units          320        10903.00      34.0718750      88.2532575               0     717.0000000
+-------------------------------------------------------------------------------------------------------------
+PRESCAT/Parcel_subsidy.sas:  NeighborhoodInfo DC                                        15:51 Tuesday, November 11, 2014   5
+File = PresCat.Parcel_subsidy
+
+The FREQ Procedure
+
+                       Any assisted project
+ 
+                                         Cumulative    Cumulative
+Sub_all_proj    Frequency     Percent     Frequency      Percent
+-----------------------------------------------------------------
+           1         312       97.50           312        97.50  
+           2           7        2.19           319        99.69  
+           3           1        0.31           320       100.00  
+PRESCAT/Parcel_subsidy.sas:  NeighborhoodInfo DC                                        15:51 Tuesday, November 11, 2014   6
+---Projects without any parcel assigned---
+
+Obs    NLIHC_ID
+
+241    NL000338
+315    NL001007
+PRESCAT/Parcel_subsidy.sas:  NeighborhoodInfo DC                                        15:51 Tuesday, November 11, 2014   7
+---Multiple projects in same SSL---
+
+    ssl         NLIHC_ID                 ui_proptype
+
+0825S   0844    NL000990    Residential: Rental apartment building
+                NL001019    Residential: Rental apartment building
+
+Number of duplicates = 2
+
+
+1020    0085    NL000244    Residential: Rental apartment building
+                NL000245    Residential: Rental apartment building
+
+Number of duplicates = 2
+
+
+1041    0129    NL000184    Residential: Rental apartment building
+                NL000418    Residential: Rental apartment building
+
+Number of duplicates = 2
+
+
+5058    0008    NL000180    Residential: Rental apartment building
+                NL000353    Residential: Rental apartment building
+                NL001006    Residential: Rental apartment building
+
+Number of duplicates = 3
+
+
+5422    0017    NL000121    Residential: Rental apartment building
+                NL000282    Residential: Rental apartment building
+
+Number of duplicates = 2
+
+
+5741    0136    NL000128    Residential: Rental apartment building
+                NL000237    Residential: Rental apartment building
+
+Number of duplicates = 2
+
+
+5882W   0012    NL000153    Residential: Single-family home       
+                NL000154    Residential: Single-family home       
+
+Number of duplicates = 2
+PRESCAT/Parcel_subsidy.sas:  NeighborhoodInfo DC                                        15:51 Tuesday, November 11, 2014   8
+---Multiple projects in same SSL---
+
+    ssl         NLIHC_ID                 ui_proptype
+
+5898    0019    NL000273    Residential: Rental apartment building
+                NL000274    Residential: Rental apartment building
+
+Number of duplicates = 2
+PRESCAT/Parcel_subsidy.sas:  NeighborhoodInfo DC                                        15:51 Tuesday, November 11, 2014   9
+---Projects assigned to nonresidential parcels---
+
+                                                                                                           S
+                                                                                                           u
+                                                                                                           b      S
+                                                                                                           _      u
+                                                                                              S            P      b
+                                                                                              u            r      _
+                                                                                              b            o      P     S
+                           i                                                              S   _     S      j      u     u
+                           n                                            S     S     S     u   M     u      e      b     b
+                           _                                        S   u     u     u     b   c     b      c      l     _
+                           l                                        u   b     b     b     _   K     _      t      i     T
+                           a    u                                   b   _     _     _     L   i     O      B      c     E
+                           s    i                                   _   C     H     H     I   n     t      a      H     B
+                           t    _                                   a   D     O     P     H   n     h      s      s     o
+   N                       _    p                                   l   B     M     T     T   e     e      e      n     n
+   L                       o    r                                   l   G     E     F     C   y     r      d      g     d
+   I                       w    o                                   _   _     _     _     _   _     _      _      _     _
+   H                       n    p                                   u   u     u     u     u   u     u      u      u     u
+   C                       e    t                                   n   n     n     n     n   n     n      n      n     n
+   _            S          r    y                                   i   i     i     i     i   i     i      i      i     i
+   I            S          p    p                                   t   t     t     t     t   t     t      t      t     t
+   D            L          t    e                                   s   s     s     s     s   s     s      s      s     s
+
+NL000001   0423    0018   Yes   Commercial: Retail                136   0     0   119   136   0     0    136      0   119
+NL000034   5862    0136   Yes   Commercial: Other                 432   0     0     0     0   0     0      0    432     0
+NL000055   0755    0003   Yes   Commercial: Office                 93   0     0     0     0   0     0     93      0     0
+NL000061   4469    0095   Yes   Commercial: Other                 312   0     0   312   312   0     0    312      0   312
+NL000064   0302    0074   Yes   Commercial: Parking garage/lot     40   0     0     0     0   0     0     40      0     0
+NL000079   3689    0010   Yes   Commercial: Other                  35   0     0     0     0   0     0      0     35     0
+NL000142   0193    0145   Yes   Commercial: Other                  10   0     0     0     0   0     0     10      0     0
+NL000181   5113    0009   Yes   Commercial: Office                290   0     0     0     0   0     0      0    290     0
+NL000193   5185    0021   Yes   Commercial: Other                 440   0     0     0     0   0     0      0    440     0
+NL000211   2595    0681   Yes   Commercial: Other                   6   0     0     6     0   0     0      0      0     0
+NL000238   0315    0026   Yes   Vacant: Unimproved land           160   0     0     0   160   0     0      0      0     0
+NL000242   0364    0151   Yes   Commercial: Other                 117   0   117   115     0   0     0      0      0     0
+NL000291   0621    0246   Yes   Commercial: Parking garage/lot    212   0     0     0     0   0   212    212      0     0
+NL000338                    .                                      10   0    10     0     0   0     0      0      0     0
+NL000375   5279    0831   Yes   Vacant: Unimproved land            51   0     0     0     0   0     0      0     51     0
+NL000381   4074    0095   Yes   Commercial: Retail                 15   0     0    15     0   0     0      0      0     0
+NL000384   3854    0002   Yes   Vacant: Unimproved land           178   0     0   178   178   0     0      0      0   178
+NL000388   5890    0167   Yes   Vacant: Unimproved land            92   0     0    22    22   0     0      0     92    22
+NL000397   0240    0818   Yes   Group quarters                     50   0     0     0     0   0     0      0     50     0
+NL000399   2857    0804   Yes   Commercial: Office                 37   0     0     0     0   0     0      0     37     0
+NL000401   1110    0086   Yes   Commercial: Other                  52   0     0     0     0   0     0      0     52     0
+NL001007                    .                                      20   0     0     0     0   0     0      0     20     0
+PRESCAT/Parcel_subsidy.sas:  NeighborhoodInfo DC                                        15:51 Tuesday, November 11, 2014  10
+---Projects assigned to nonresidential parcels---
+
+                                                                                                           S
+                                                                                                           u
+                                                                                                           b      S
+                                                                                                           _      u
+                                                                                              S            P      b
+                                                                                              u            r      _
+                                                                                              b            o      P     S
+                           i                                                              S   _     S      j      u     u
+                           n                                            S     S     S     u   M     u      e      b     b
+                           _                                        S   u     u     u     b   c     b      c      l     _
+                           l                                        u   b     b     b     _   K     _      t      i     T
+                           a    u                                   b   _     _     _     L   i     O      B      c     E
+                           s    i                                   _   C     H     H     I   n     t      a      H     B
+                           t    _                                   a   D     O     P     H   n     h      s      s     o
+   N                       _    p                                   l   B     M     T     T   e     e      e      n     n
+   L                       o    r                                   l   G     E     F     C   y     r      d      g     d
+   I                       w    o                                   _   _     _     _     _   _     _      _      _     _
+   H                       n    p                                   u   u     u     u     u   u     u      u      u     u
+   C                       e    t                                   n   n     n     n     n   n     n      n      n     n
+   _            S          r    y                                   i   i     i     i     i   i     i      i      i     i
+   I            S          p    p                                   t   t     t     t     t   t     t      t      t     t
+   D            L          t    e                                   s   s     s     s     s   s     s      s      s     s
+
+NL001011   0216    0027   Yes   Commercial: Office                 64   0     0     0     0   0     0     64      0     0
+NL001012   0673    0845   No    Vacant: Unimproved land           469   0     0     0     0   0   469      0      0     0
+NL001015   5179    0090   Yes   Commercial: Other                 144   0     0     0     0   0     0    144      0     0
+NL001017   5740    0296   Yes   Commercial: Other                 300   0     0     0     0   0     0    300      0     0
+NL001018   2615    0098   Yes   Commercial: Other                 164   0     0     0     0   0     0    164      0     0
+NL001021   0672    0258   Yes   Commercial: Parking garage/lot    315   0     0     0     0   0     0    315      0     0
+                                                                 ====   =   ===   ===   ===   =   ===   ====   ====   ===
+                                                                 4244   0   127   767   808   0   681   1790   1499   631

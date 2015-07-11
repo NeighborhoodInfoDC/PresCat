@@ -1,0 +1,183 @@
+PRESCAT/Brookland_manor.sas:  NeighborhoodInfo DC                                        10:51 Thursday, October 2, 2014   1
+PresCat.Project
+
+--------------------
+
+NLIHC_ID=NL000046
+Status=Active
+Subsidized=Yes
+Category_Code=Other Subsidized Property
+Cat_At_Risk=No
+Cat_Expiring=No
+Cat_Failing_Insp=No
+Cat_More_Info=No
+Cat_Other=Yes
+Cat_Lost=No
+Proj_Name=Brookland Manor (Brentwood Village Apts)
+Proj_Addre=2413 14th Street NE; 2415 14th Street NE; 2411 14th Street NE
+Proj_City=Washington
+Proj_ST=DC
+Proj_Zip=20018
+Proj_Units_Tot=553
+Proj_Units_Assist_Min=373
+Proj_Units_Assist_Max=535
+Own_Effect_dt=11/23/1971
+Own_Name=Brentwood Associates
+Mgr_Name=Edgewood Management Corporation
+Subsidy_Start_First=09/01/1977
+Subsidy_Start_Last=09/01/1977
+Subsidy_End_First=09/30/2015
+Subsidy_End_Last=08/01/2017
+CATEGORY=5 - Other Subsidized Property
+Proj_Name_old=BROOKLAND MANOR (Brentwood Village Apts)
+Proj_Addre_old=2400 14th Street, NE
+Units=553
+Own_Effect=11/23/1971
+Own_Compan=Brentwood Associates
+Own_Comp_1=Limited Dividend
+Own_Indivi=
+Mgr_Compan=Edgewood Management Corporation
+Mgr_Comp_1=Profit Motivated
+Mgr_Indivi=
+Ward2012=Ward 5
+Anc2012=ANC 5C
+Psa2012=PSA 505
+Geo2010=Tract 91.02
+Cluster_tr2000=Cluster 22
+Cluster_tr2000_name=Brookland, Brentwood, Langdon
+Zip=ZIP 20018
+PRESCAT/Brookland_manor.sas:  NeighborhoodInfo DC                                        10:51 Thursday, October 2, 2014   2
+PresCat.Project
+Proj_image_url=http://citizenatlas.dc.gov/mobilevideo/20040815/QF092514.jpg
+Proj_streetview_url=http://maps.google.com/maps?z=16&layer=c&cbll=38.92186835,-76.98490255&cbp=11,52.4831079263561,,0,2.09
+Proj_address_id=149306
+Proj_x=401322.96667
+Proj_y=139344.20333
+Proj_lat=38.921969793
+Proj_lon=-76.98474389
+Bldg_count=3
+PRESCAT/Brookland_manor.sas:  NeighborhoodInfo DC                                        10:51 Thursday, October 2, 2014   3
+PresCat.Subsidy
+
+--------------------
+
+NLIHC_ID=NL000046
+POA_start=.
+POA_end=09/30/2015
+Units_Assist=373
+contract_number=DC39L000069
+Subsidy_Active=Yes
+Subsidy_Info_Source=HUD - Multifamily Assistance and Section 8 Contracts
+Update_Date=09/27/2014
+Program=Sec 8 loan management
+Subsidy_Info_Source_ID=
+Subsidy_Info_Source_Var=
+Subsidy_Info_Source_Date=.
+Agency=US Dept of Housing and Urban Development
+Portfolio=Project-based Section 8
+
+--------------------
+
+NLIHC_ID=NL000046
+POA_start=.
+POA_end=09/30/2015
+Units_Assist=373
+contract_number=DC39M000051
+Subsidy_Active=Yes
+Subsidy_Info_Source=HUD - Multifamily Assistance and Section 8 Contracts
+Update_Date=09/27/2014
+Program=Sec 8 loan management
+Subsidy_Info_Source_ID=
+Subsidy_Info_Source_Var=
+Subsidy_Info_Source_Date=.
+Agency=US Dept of Housing and Urban Development
+Portfolio=Project-based Section 8
+
+--------------------
+
+NLIHC_ID=NL000046
+POA_start=09/01/1977
+POA_end=08/01/2017
+Units_Assist=535
+contract_number=
+Subsidy_Active=Yes
+Subsidy_Info_Source=HUD - Insured Multifamily Mortgages
+Update_Date=09/27/2014
+Program=236(j)(1)/Lower Income Families
+PRESCAT/Brookland_manor.sas:  NeighborhoodInfo DC                                        10:51 Thursday, October 2, 2014   4
+PresCat.Subsidy
+Subsidy_Info_Source_ID=
+Subsidy_Info_Source_Var=
+Subsidy_Info_Source_Date=06/30/2009
+Agency=US Dept of Housing and Urban Development
+Portfolio=Section 236
+PRESCAT/Brookland_manor.sas:  NeighborhoodInfo DC                                        10:51 Thursday, October 2, 2014   5
+PresCat.Parcel
+
+                            in_last_     Parcel_
+NLIHC_ID        Ssl         ownerpt     owner_date     Parcel_owner_name                   Parcel_type
+
+NL000046    4025    0001      Yes                N    BRENTWOOD ASSOCIATES    Residential: Rental apartment building
+PRESCAT/Brookland_manor.sas:  NeighborhoodInfo DC                                        10:51 Thursday, October 2, 2014   6
+PresCat.Building_geocode
+
+              Bldg_
+            address_
+NLIHC_ID       id           Bldg_addre             Ssl
+
+NL000046     149306     2413 14th Street NE    4025    0001
+NL000046     149307     2415 14th Street NE    4025    0001
+NL000046     150405     2411 14th Street NE    4025    0001
+PRESCAT/Brookland_manor.sas:  NeighborhoodInfo DC                                        10:51 Thursday, October 2, 2014   7
+RealProp.Parcel_base
+
+                                                                           in_last_
+    SSL       PREMISEADD                        OWNERNAME        OWNNAME2  ownerpt                ui_proptype
+
+3953    0001  1301 - 1307 SARATOGA AV NE   BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+3953    0002  1335 - 1345 SARATOGA AV NE   BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+3953    0003  2420 - 2428 14TH ST NE       BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+3954    0001  2500 - 2506 14TH ST NE       BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+3954    0002  1300 - 1318 SARATOGA AV NE   BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+3954    0003  1275 - 1277 BRENTWOOD RD NE  BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+3954    0004  1279 - 1295 BRENTWOOD RD NE  BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+3954    0005  2530 - 2534 14TH ST NE       BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+4024    0001  2501 - 2505 14TH ST NE       BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+4024    0002  2525 - 2531 14TH ST NE       BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+4024    0003  1414 - 1422 SARATOGA AV NE   BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+4024    0004  2511 - 2515 14TH ST NE       BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+4025    0001  2411 - 2415 14TH ST NE       BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+4025    0002  2423 - 2425 14TH ST NE       BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+4025    0003  2435 14TH ST NE              BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+4025    0004  1425 - 1429 MONTANA AV NE    BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+4025    0005  1431 - 1437 MONTANA AV NE    BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+4025    0006  1406 - 1420 DOWNING ST NE    BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+4025    0007  1400 - 1404 DOWNING ST NE    BRENTWOOD ASSOCIATES              Yes     Residential: Rental apartment building
+PRESCAT/Brookland_manor.sas:  NeighborhoodInfo DC                                        10:51 Thursday, October 2, 2014   8
+RealProp.Parcel_units
+
+                                                         Units_     Units_
+                Units_     Units_    Units_    Units_    condo_    rental_
+    Ssl         active    retired     condo    rental    active     active
+
+3953    0001       18        0          0         18        0         18  
+3953    0002       27        0          0         27        0         27  
+3953    0003       18        0          0         18        0         18  
+3954    0001       20        0          0         20        0         20  
+3954    0002       47        0          0         47        0         47  
+3954    0003       20        0          0         20        0         20  
+3954    0004       43        0          0         43        0         43  
+3954    0005       12        0          0         12        0         12  
+4024    0001       15        0          0         15        0         15  
+4024    0002       78        0          0         78        0         78  
+4024    0003       30        0          0         30        0         30  
+4024    0004       19        0          0         19        0         19  
+4025    0001        9        0          0          9        0          9  
+4025    0002        6        0          0          6        0          6  
+4025    0003        3        0          0          3        0          3  
+4025    0004       78        0          0         78        0         78  
+4025    0005       20        0          0         20        0         20  
+4025    0006       44        0          0         44        0         44  
+4025    0007       24        0          0         24        0         24  
+                ======    =======    ======    ======    ======    =======
+                  531        0          0        531        0        531  

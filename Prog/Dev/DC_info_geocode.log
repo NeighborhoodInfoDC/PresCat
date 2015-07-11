@@ -1,0 +1,2352 @@
+1                                         The SAS System         18:54 Saturday, February 14, 2015
+
+NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
+      Licensed to THE URBAN INSTITUTE, Site 70097024.
+NOTE: This session is executing on the X64_VSPRO  platform.
+
+
+
+NOTE: SAS initialization used:
+      real time           0.64 seconds
+      cpu time            0.17 seconds
+      
+
+NOTE: AUTOEXEC processing beginning; file is D:\Users\ptatian\Documents\My SAS 
+      Files\9.2\Autoexnt.sas.
+
+
+NOTE: AUTOEXEC processing completed.
+
+1          /**************************************************************************
+2           Program:  DC_info_geocode.sas
+3           Library:  PresCat
+4           Project:  NeighborhoodInfo DC
+5           Author:   P. Tatian
+6           Created:  08/10/13
+7           Version:  SAS 9.1
+8           Environment:  Local Windows session (desktop)
+9          
+10          Description:  Import geocoded DC_Info database and create data sets
+11          PresCat.Project_geocode and PresCat.Building_geocode.
+12         
+13          Modifications:
+14           10/26/13 PAT Added Address_id, Image_url and Streetview_url variables
+15                        to Project_geocode and Building_geocode data sets.
+16           09/27/14 PAT Updated for SAS1.
+17                        Added SSL to Building_geocode.
+18           11/11/14 PAT Added additional addresses for Brookland Manor (NL000046).
+19           12/18/14 PAT Fill in missing geos for TAP PROGRAM - RIDGE RD (NL000338).
+20           01/31/15 PAT Added new project 54th Street Housing (NL001033).
+21           02/09/15 PAT Added variable labels.
+22           02/14/15 PAT Added new addresses.
+23         **************************************************************************/
+24         
+25         %include "L:\SAS\Inc\StdLocal.sas";
+NOTE: Libref _METADAT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\Metadata\Data
+68        +
+69        +options ls=124 ps=48;    ** Landscape **;
+2 The SAS System                                                                           18:54 Saturday, February 14, 2015
+
+70        +
+71        +** Output title **;
+72        +
+73        +title "&_library/&_program:  NeighborhoodInfo DC";
+74        +
+75        +** Define General library for local session only **;
+76        +
+77        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref GENERA_L was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\General\Data
+NOTE: Libref GENERA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\General\Data
+NOTE: Libref GENERAL was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V9 
+      Physical Name(1): D:\DCData\Libraries\General\Data
+      Engine(2):        V9 
+      Physical Name(2): L:\Libraries\General\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+
+3 The SAS System                                                                           18:54 Saturday, February 14, 2015
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+78        +
+79        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+NOTE: %INCLUDE (level 1) ending.
+80         
+81         ** Define libraries **;
+82         %DCData_lib( PresCat, local=n )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref PRESCA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\PresCat\Data
+NOTE: Libref PRESCAT was successfully assigned as follows: 
+      Levels:           1
+      Engine(1):        V9 
+      Physical Name(1): L:\Libraries\PresCat\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+4 The SAS System                                                                           18:54 Saturday, February 14, 2015
+
+83         
+84         %let MAX_PROJ_ADDRE = 3;   /** Maximum number of addresses to include in Proj_addre field **/
+85         
+86         /* %File_info( data=PresCat.DC_info_geocode, freqvars=, printobs=0 ) */
+87         
+88         ** Import geocoded building addresses from MAR Geocoder **;
+89         
+90         ** Main sheet info **;
+91         
+92         filename fimport "&_dcdata_r_path\PresCat\Raw\DC_Info_02_08_13_buildings_for_geocoding (2013-10-13) main.csv"
+92       ! lrecl=2000;
+93         
+94         proc import out=DC_info_geocode_a
+95             datafile=fimport
+96             dbms=csv replace;
+97           datarow=2;
+98           getnames=yes;
+99           guessingrows=500;
+100        
+101        run;
+
+102         /**********************************************************************
+103         *   PRODUCT:   SAS
+104         *   VERSION:   9.2
+105         *   CREATOR:   External File Interface
+106         *   DATE:      14FEB15
+107         *   DESC:      Generated SAS Datastep Code
+108         *   TEMPLATE SOURCE:  (None Specified.)
+109         ***********************************************************************/
+110            data WORK.DC_INFO_GEOCODE_A                       ;
+111            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+112            infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+113               informat Proj_Name $257. ;
+114               informat NLIHC_ID $8. ;
+115               informat Bldg_SSL $14. ;
+116               informat Bldg_City $10. ;
+117               informat Bldg_ST $2. ;
+118               informat Bldg_Zip best32. ;
+119               informat Bldg_Addre_new $47. ;
+120               informat MAR_MATCHADDRESS $44. ;
+121               informat MAR_XCOORD best32. ;
+122               informat MAR_YCOORD best32. ;
+123               informat MAR_LATITUDE best32. ;
+124               informat MAR_LONGITUDE best32. ;
+125               informat MAR_WARD $6. ;
+126               informat MAR_CENSUS_TRACT best32. ;
+5 The SAS System                                                                           18:54 Saturday, February 14, 2015
+
+127               informat MAR_ZIPCODE best32. ;
+128               informat MARID best32. ;
+129               informat MAR_ERROR $1. ;
+130               informat MAR_SCORE best32. ;
+131               informat MAR_SOURCEOPERATION $17. ;
+132               informat MAR_IGNORE $1. ;
+133               format Proj_Name $257. ;
+134               format NLIHC_ID $8. ;
+135               format Bldg_SSL $14. ;
+136               format Bldg_City $10. ;
+137               format Bldg_ST $2. ;
+138               format Bldg_Zip best12. ;
+139               format Bldg_Addre_new $47. ;
+140               format MAR_MATCHADDRESS $44. ;
+141               format MAR_XCOORD best12. ;
+142               format MAR_YCOORD best12. ;
+143               format MAR_LATITUDE best12. ;
+144               format MAR_LONGITUDE best12. ;
+145               format MAR_WARD $6. ;
+146               format MAR_CENSUS_TRACT best12. ;
+147               format MAR_ZIPCODE best12. ;
+148               format MARID best12. ;
+149               format MAR_ERROR $1. ;
+150               format MAR_SCORE best12. ;
+151               format MAR_SOURCEOPERATION $17. ;
+152               format MAR_IGNORE $1. ;
+153            input
+154                        Proj_Name $
+155                        NLIHC_ID $
+156                        Bldg_SSL $
+157                        Bldg_City $
+158                        Bldg_ST $
+159                        Bldg_Zip
+160                        Bldg_Addre_new $
+161                        MAR_MATCHADDRESS $
+162                        MAR_XCOORD
+163                        MAR_YCOORD
+164                        MAR_LATITUDE
+165                        MAR_LONGITUDE
+166                        MAR_WARD $
+167                        MAR_CENSUS_TRACT
+168                        MAR_ZIPCODE
+169                        MARID
+170                        MAR_ERROR $
+171                        MAR_SCORE
+172                        MAR_SOURCEOPERATION $
+6 The SAS System                                                                           18:54 Saturday, February 14, 2015
+
+173                        MAR_IGNORE $
+174            ;
+175            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+176            run;
+
+NOTE: The infile FIMPORT is:
+      Filename=L:\Libraries\PresCat\Raw\DC_Info_02_08_13_buildings_for_geocoding (2013-10-13) main.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=109296,
+      Last Modified=13Oct2013:12:41:12,
+      Create Time=27Sep2014:16:35:17
+
+NOTE: 525 records were read from the infile FIMPORT.
+      The minimum record length was 175.
+      The maximum record length was 268.
+NOTE: The data set WORK.DC_INFO_GEOCODE_A has 525 observations and 20 variables.
+NOTE: Compressing data set WORK.DC_INFO_GEOCODE_A decreased size by 50.00 percent. 
+      Compressed is 8 pages; un-compressed would require 16 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+525 rows created in WORK.DC_INFO_GEOCODE_A                    from FIMPORT.
+  
+  
+  
+NOTE: WORK.DC_INFO_GEOCODE_A data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.51 seconds
+      cpu time            0.46 seconds
+      
+
+177        
+178        filename fimport clear;
+NOTE: Fileref FIMPORT has been deassigned.
+179        
+180        filename fimport "&_dcdata_r_path\PresCat\Raw\DC_Info_02_08_13_buildings_for_geocoding (2014-11-11) main.csv"
+180      ! lrecl=2000;
+181        
+182        proc import out=DC_info_geocode_b
+183            datafile=fimport
+184            dbms=csv replace;
+185          datarow=2;
+186          getnames=yes;
+187          guessingrows=500;
+188        
+7 The SAS System                                                                           18:54 Saturday, February 14, 2015
+
+189        run;
+
+190         /**********************************************************************
+191         *   PRODUCT:   SAS
+192         *   VERSION:   9.2
+193         *   CREATOR:   External File Interface
+194         *   DATE:      14FEB15
+195         *   DESC:      Generated SAS Datastep Code
+196         *   TEMPLATE SOURCE:  (None Specified.)
+197         ***********************************************************************/
+198            data WORK.DC_INFO_GEOCODE_B                       ;
+199            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+200            infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+201               informat Proj_Name $40. ;
+202               informat NLIHC_ID $8. ;
+203               informat Bldg_SSL $14. ;
+204               informat Bldg_City $10. ;
+205               informat Bldg_ST $2. ;
+206               informat Bldg_Zip best32. ;
+207               informat Bldg_Addre_new $22. ;
+208               informat MAR_MATCHADDRESS $23. ;
+209               informat MAR_XCOORD best32. ;
+210               informat MAR_YCOORD best32. ;
+211               informat MAR_LATITUDE best32. ;
+212               informat MAR_LONGITUDE best32. ;
+213               informat MAR_WARD $6. ;
+214               informat MAR_CENSUS_TRACT best32. ;
+215               informat MAR_ZIPCODE best32. ;
+216               informat MARID best32. ;
+217               informat MAR_ERROR $1. ;
+218               informat MAR_SCORE best32. ;
+219               informat MAR_SOURCEOPERATION $10. ;
+220               informat MAR_IGNORE $1. ;
+221               format Proj_Name $40. ;
+222               format NLIHC_ID $8. ;
+223               format Bldg_SSL $14. ;
+224               format Bldg_City $10. ;
+225               format Bldg_ST $2. ;
+226               format Bldg_Zip best12. ;
+227               format Bldg_Addre_new $22. ;
+228               format MAR_MATCHADDRESS $23. ;
+229               format MAR_XCOORD best12. ;
+230               format MAR_YCOORD best12. ;
+231               format MAR_LATITUDE best12. ;
+232               format MAR_LONGITUDE best12. ;
+233               format MAR_WARD $6. ;
+8 The SAS System                                                                           18:54 Saturday, February 14, 2015
+
+234               format MAR_CENSUS_TRACT best12. ;
+235               format MAR_ZIPCODE best12. ;
+236               format MARID best12. ;
+237               format MAR_ERROR $1. ;
+238               format MAR_SCORE best12. ;
+239               format MAR_SOURCEOPERATION $10. ;
+240               format MAR_IGNORE $1. ;
+241            input
+242                        Proj_Name $
+243                        NLIHC_ID $
+244                        Bldg_SSL $
+245                        Bldg_City $
+246                        Bldg_ST $
+247                        Bldg_Zip
+248                        Bldg_Addre_new $
+249                        MAR_MATCHADDRESS $
+250                        MAR_XCOORD
+251                        MAR_YCOORD
+252                        MAR_LATITUDE
+253                        MAR_LONGITUDE
+254                        MAR_WARD $
+255                        MAR_CENSUS_TRACT
+256                        MAR_ZIPCODE
+257                        MARID
+258                        MAR_ERROR $
+259                        MAR_SCORE
+260                        MAR_SOURCEOPERATION $
+261                        MAR_IGNORE $
+262            ;
+263            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+264            run;
+
+NOTE: The infile FIMPORT is:
+      Filename=L:\Libraries\PresCat\Raw\DC_Info_02_08_13_buildings_for_geocoding (2014-11-11) main.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=17100,
+      Last Modified=11Nov2014:15:27:39,
+      Create Time=11Nov2014:15:20:01
+
+NOTE: 79 records were read from the infile FIMPORT.
+      The minimum record length was 205.
+      The maximum record length was 216.
+NOTE: The data set WORK.DC_INFO_GEOCODE_B has 79 observations and 20 variables.
+NOTE: Compressing data set WORK.DC_INFO_GEOCODE_B increased size by 50.00 percent. 
+      Compressed is 3 pages; un-compressed would require 2 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+9 The SAS System                                                                           18:54 Saturday, February 14, 2015
+
+      cpu time            0.01 seconds
+      
+
+79 rows created in WORK.DC_INFO_GEOCODE_B                    from FIMPORT.
+  
+  
+  
+NOTE: WORK.DC_INFO_GEOCODE_B data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.07 seconds
+      
+
+265        
+266        filename fimport clear;
+NOTE: Fileref FIMPORT has been deassigned.
+267        
+268        filename fimport "&_dcdata_r_path\PresCat\Raw\Buildings for geocoding (2015-01-31) main.csv" lrecl=2000;
+269        
+270        proc import out=DC_info_geocode_c
+271            datafile=fimport
+272            dbms=csv replace;
+273          datarow=2;
+274          getnames=yes;
+275          guessingrows=500;
+276        
+277        run;
+
+278         /**********************************************************************
+279         *   PRODUCT:   SAS
+280         *   VERSION:   9.2
+281         *   CREATOR:   External File Interface
+282         *   DATE:      14FEB15
+283         *   DESC:      Generated SAS Datastep Code
+284         *   TEMPLATE SOURCE:  (None Specified.)
+285         ***********************************************************************/
+286            data WORK.DC_INFO_GEOCODE_C                       ;
+287            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+288            infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+289               informat Proj_Name $22. ;
+290               informat NLIHC_ID $8. ;
+291               informat Bldg_SSL $16. ;
+292               informat Bldg_City $10. ;
+293               informat Bldg_ST $2. ;
+294               informat Bldg_Zip best32. ;
+295               informat Bldg_Addre_new $22. ;
+10 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+296               informat MAR_MATCHADDRESS $22. ;
+297               informat MAR_XCOORD best32. ;
+298               informat MAR_YCOORD best32. ;
+299               informat MAR_LATITUDE best32. ;
+300               informat MAR_LONGITUDE best32. ;
+301               informat MAR_WARD $6. ;
+302               informat MAR_CENSUS_TRACT best32. ;
+303               informat MAR_ZIPCODE best32. ;
+304               informat MARID best32. ;
+305               informat MAR_ERROR $330. ;
+306               informat MAR_SCORE best32. ;
+307               informat MAR_SOURCEOPERATION $10. ;
+308               informat MAR_IGNORE $1. ;
+309               format Proj_Name $22. ;
+310               format NLIHC_ID $8. ;
+311               format Bldg_SSL $16. ;
+312               format Bldg_City $10. ;
+313               format Bldg_ST $2. ;
+314               format Bldg_Zip best12. ;
+315               format Bldg_Addre_new $22. ;
+316               format MAR_MATCHADDRESS $22. ;
+317               format MAR_XCOORD best12. ;
+318               format MAR_YCOORD best12. ;
+319               format MAR_LATITUDE best12. ;
+320               format MAR_LONGITUDE best12. ;
+321               format MAR_WARD $6. ;
+322               format MAR_CENSUS_TRACT best12. ;
+323               format MAR_ZIPCODE best12. ;
+324               format MARID best12. ;
+325               format MAR_ERROR $330. ;
+326               format MAR_SCORE best12. ;
+327               format MAR_SOURCEOPERATION $10. ;
+328               format MAR_IGNORE $1. ;
+329            input
+330                        Proj_Name $
+331                        NLIHC_ID $
+332                        Bldg_SSL $
+333                        Bldg_City $
+334                        Bldg_ST $
+335                        Bldg_Zip
+336                        Bldg_Addre_new $
+337                        MAR_MATCHADDRESS $
+338                        MAR_XCOORD
+339                        MAR_YCOORD
+340                        MAR_LATITUDE
+341                        MAR_LONGITUDE
+11 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+342                        MAR_WARD $
+343                        MAR_CENSUS_TRACT
+344                        MAR_ZIPCODE
+345                        MARID
+346                        MAR_ERROR $
+347                        MAR_SCORE
+348                        MAR_SOURCEOPERATION $
+349                        MAR_IGNORE $
+350            ;
+351            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+352            run;
+
+NOTE: The infile FIMPORT is:
+      Filename=L:\Libraries\PresCat\Raw\Buildings for geocoding (2015-01-31) main.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=1088,
+      Last Modified=31Jan2015:11:20:54,
+      Create Time=31Jan2015:11:24:54
+
+NOTE: 3 records were read from the infile FIMPORT.
+      The minimum record length was 197.
+      The maximum record length was 445.
+NOTE: The data set WORK.DC_INFO_GEOCODE_C has 3 observations and 20 variables.
+NOTE: Compressing data set WORK.DC_INFO_GEOCODE_C increased size by 100.00 percent. 
+      Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+3 rows created in WORK.DC_INFO_GEOCODE_C                    from FIMPORT.
+  
+  
+  
+NOTE: WORK.DC_INFO_GEOCODE_C data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+      
+
+353        
+354        filename fimport clear;
+NOTE: Fileref FIMPORT has been deassigned.
+355        
+356        filename fimport "&_dcdata_r_path\PresCat\Raw\Buildings for geocoding (2015-02-14) main.csv" lrecl=2000;
+357        
+358        proc import out=DC_info_geocode_d
+12 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+359            datafile=fimport
+360            dbms=csv replace;
+361          datarow=2;
+362          getnames=yes;
+363          guessingrows=500;
+364        
+365        run;
+
+366         /**********************************************************************
+367         *   PRODUCT:   SAS
+368         *   VERSION:   9.2
+369         *   CREATOR:   External File Interface
+370         *   DATE:      14FEB15
+371         *   DESC:      Generated SAS Datastep Code
+372         *   TEMPLATE SOURCE:  (None Specified.)
+373         ***********************************************************************/
+374            data WORK.DC_INFO_GEOCODE_D                       ;
+375            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+376            infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+377               informat Proj_Name $20. ;
+378               informat NLIHC_ID $8. ;
+379               informat Bldg_SSL $1. ;
+380               informat Bldg_City $10. ;
+381               informat Bldg_ST $2. ;
+382               informat Bldg_Zip best32. ;
+383               informat Bldg_Addre_new $17. ;
+384               informat MAR_MATCHADDRESS $21. ;
+385               informat MAR_XCOORD best32. ;
+386               informat MAR_YCOORD best32. ;
+387               informat MAR_LATITUDE best32. ;
+388               informat MAR_LONGITUDE best32. ;
+389               informat MAR_WARD $6. ;
+390               informat MAR_CENSUS_TRACT best32. ;
+391               informat MAR_ZIPCODE best32. ;
+392               informat MARID best32. ;
+393               informat MAR_ERROR $1. ;
+394               informat MAR_SCORE best32. ;
+395               informat MAR_SOURCEOPERATION $10. ;
+396               informat MAR_IGNORE $1. ;
+397               format Proj_Name $20. ;
+398               format NLIHC_ID $8. ;
+399               format Bldg_SSL $1. ;
+400               format Bldg_City $10. ;
+401               format Bldg_ST $2. ;
+402               format Bldg_Zip best12. ;
+403               format Bldg_Addre_new $17. ;
+13 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+404               format MAR_MATCHADDRESS $21. ;
+405               format MAR_XCOORD best12. ;
+406               format MAR_YCOORD best12. ;
+407               format MAR_LATITUDE best12. ;
+408               format MAR_LONGITUDE best12. ;
+409               format MAR_WARD $6. ;
+410               format MAR_CENSUS_TRACT best12. ;
+411               format MAR_ZIPCODE best12. ;
+412               format MARID best12. ;
+413               format MAR_ERROR $1. ;
+414               format MAR_SCORE best12. ;
+415               format MAR_SOURCEOPERATION $10. ;
+416               format MAR_IGNORE $1. ;
+417            input
+418                        Proj_Name $
+419                        NLIHC_ID $
+420                        Bldg_SSL $
+421                        Bldg_City $
+422                        Bldg_ST $
+423                        Bldg_Zip
+424                        Bldg_Addre_new $
+425                        MAR_MATCHADDRESS $
+426                        MAR_XCOORD
+427                        MAR_YCOORD
+428                        MAR_LATITUDE
+429                        MAR_LONGITUDE
+430                        MAR_WARD $
+431                        MAR_CENSUS_TRACT
+432                        MAR_ZIPCODE
+433                        MARID
+434                        MAR_ERROR $
+435                        MAR_SCORE
+436                        MAR_SOURCEOPERATION $
+437                        MAR_IGNORE $
+438            ;
+439            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+440            run;
+
+NOTE: The infile FIMPORT is:
+      Filename=L:\Libraries\PresCat\Raw\Buildings for geocoding (2015-02-14) main.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=433,
+      Last Modified=14Feb2015:18:38:31,
+      Create Time=14Feb2015:18:38:30
+
+NOTE: 1 record was read from the infile FIMPORT.
+      The minimum record length was 199.
+14 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+      The maximum record length was 199.
+NOTE: The data set WORK.DC_INFO_GEOCODE_D has 1 observations and 20 variables.
+NOTE: Compressing data set WORK.DC_INFO_GEOCODE_D increased size by 100.00 percent. 
+      Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1 rows created in WORK.DC_INFO_GEOCODE_D                    from FIMPORT.
+  
+  
+  
+NOTE: WORK.DC_INFO_GEOCODE_D data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+      
+
+441        
+442        filename fimport clear;
+NOTE: Fileref FIMPORT has been deassigned.
+443        
+444        data DC_info_geocode;
+445          set DC_info_geocode_a DC_info_geocode_b DC_info_geocode_c DC_info_geocode_d;
+446        run;
+
+WARNING: Multiple lengths were specified for the variable Bldg_SSL by input data set(s). This may cause truncation of data.
+WARNING: Multiple lengths were specified for the variable MAR_ERROR by input data set(s). This may cause truncation of data.
+NOTE: There were 525 observations read from the data set WORK.DC_INFO_GEOCODE_A.
+NOTE: There were 79 observations read from the data set WORK.DC_INFO_GEOCODE_B.
+NOTE: There were 3 observations read from the data set WORK.DC_INFO_GEOCODE_C.
+NOTE: There were 1 observations read from the data set WORK.DC_INFO_GEOCODE_D.
+NOTE: The data set WORK.DC_INFO_GEOCODE has 608 observations and 20 variables.
+NOTE: Compressing data set WORK.DC_INFO_GEOCODE decreased size by 52.63 percent. 
+      Compressed is 9 pages; un-compressed would require 19 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+447        
+448        title2 "File = DC_info_geocode";
+449        
+450        %Dup_check(
+451          data=DC_info_geocode,
+15 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+452          by=marid,
+453          id=nlihc_id Bldg_Addre_new,
+454          out=_dup_check,
+455          listdups=Y,
+456          count=dup_check_count,
+457          quiet=N,
+458          debug=N
+459        )
+MPRINT(DUP_CHECK):   options nomprint;
+NOTE: SAS threaded sort was used.
+NOTE: Compressing data set WORK._DUP_CHECK increased size by 100.00 percent. 
+      Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: Table WORK._DUP_CHECK created, with 21 rows and 4 columns.
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: [Dup_check] 21 duplicate observations found in data set DC_INFO_GEOCODE
+NOTE: [Dup_check] for BY variables MARID.
+
+NOTE: There were 21 observations read from the data set WORK._DUP_CHECK.
+NOTE: The PROCEDURE PRINT printed pages 1-2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: Deleting WORK._DUP_CHECK (memtype=DATA).
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+460        
+461        title2;
+462        
+463        ** MAR address info sheet **;
+464        
+16 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+465        filename fimport "&_dcdata_r_path\PresCat\Raw\DC_Info_02_08_13_buildings_for_geocoding (2013-10-13)
+465      ! mar_address.csv" lrecl=2000;
+466        
+467        proc import out=Mar_address_a
+468            datafile=fimport
+469            dbms=csv replace;
+470          datarow=2;
+471          getnames=yes;
+472          guessingrows=500;
+473        
+474        run;
+
+475         /**********************************************************************
+476         *   PRODUCT:   SAS
+477         *   VERSION:   9.2
+478         *   CREATOR:   External File Interface
+479         *   DATE:      14FEB15
+480         *   DESC:      Generated SAS Datastep Code
+481         *   TEMPLATE SOURCE:  (None Specified.)
+482         ***********************************************************************/
+483            data WORK.MAR_ADDRESS_A                           ;
+484            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+485            infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+486               informat ADDRESS_ID best32. ;
+487               informat STATUS $6. ;
+488               informat FULLADDRESS $44. ;
+489               informat ADDRNUM best32. ;
+490               informat ADDRNUMSUFFIX $4. ;
+491               informat STNAME $30. ;
+492               informat STREET_TYPE $8. ;
+493               informat QUADRANT $2. ;
+494               informat CITY $10. ;
+495               informat STATE $2. ;
+496               informat XCOORD best32. ;
+497               informat YCOORD best32. ;
+498               informat SSL $14. ;
+499               informat ANC $6. ;
+500               informat PSA $23. ;
+501               informat WARD $6. ;
+502               informat NBHD_ACTION $1. ;
+503               informat CLUSTER_ $11. ;
+504               informat POLDIST $35. ;
+505               informat ROC $1. ;
+506               informat CENSUS_TRACT best32. ;
+507               informat VOTE_PRCNCT $13. ;
+508               informat SMD $8. ;
+17 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+509               informat ZIPCODE best32. ;
+510               informat NATIONALGRID $18. ;
+511               informat ROADWAYSEGID best32. ;
+512               informat FOCUS_IMPROVEMENT_AREA $61. ;
+513               informat HAS_ALIAS $1. ;
+514               informat HAS_CONDO_UNIT $1. ;
+515               informat HAS_RES_UNIT $1. ;
+516               informat HAS_SSL $1. ;
+517               informat LATITUDE best32. ;
+518               informat LONGITUDE best32. ;
+519               informat STREETVIEWURL $141. ;
+520               informat RES_TYPE $17. ;
+521               informat WARD_2002 $6. ;
+522               informat WARD_2012 $6. ;
+523               informat ANC_2002 $6. ;
+524               informat ANC_2012 $6. ;
+525               informat SMD_2002 $8. ;
+526               informat SMD_2012 $8. ;
+527               informat IMAGEURL $38. ;
+528               informat IMAGEDIR $8. ;
+529               informat IMAGENAME $25. ;
+530               informat CONFIDENCELEVEL $1. ;
+531               format ADDRESS_ID best12. ;
+532               format STATUS $6. ;
+533               format FULLADDRESS $44. ;
+534               format ADDRNUM best12. ;
+535               format ADDRNUMSUFFIX $4. ;
+536               format STNAME $30. ;
+537               format STREET_TYPE $8. ;
+538               format QUADRANT $2. ;
+539               format CITY $10. ;
+540               format STATE $2. ;
+541               format XCOORD best12. ;
+542               format YCOORD best12. ;
+543               format SSL $14. ;
+544               format ANC $6. ;
+545               format PSA $23. ;
+546               format WARD $6. ;
+547               format NBHD_ACTION $1. ;
+548               format CLUSTER_ $11. ;
+549               format POLDIST $35. ;
+550               format ROC $1. ;
+551               format CENSUS_TRACT best12. ;
+552               format VOTE_PRCNCT $13. ;
+553               format SMD $8. ;
+554               format ZIPCODE best12. ;
+18 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+555               format NATIONALGRID $18. ;
+556               format ROADWAYSEGID best12. ;
+557               format FOCUS_IMPROVEMENT_AREA $61. ;
+558               format HAS_ALIAS $1. ;
+559               format HAS_CONDO_UNIT $1. ;
+560               format HAS_RES_UNIT $1. ;
+561               format HAS_SSL $1. ;
+562               format LATITUDE best12. ;
+563               format LONGITUDE best12. ;
+564               format STREETVIEWURL $141. ;
+565               format RES_TYPE $17. ;
+566               format WARD_2002 $6. ;
+567               format WARD_2012 $6. ;
+568               format ANC_2002 $6. ;
+569               format ANC_2012 $6. ;
+570               format SMD_2002 $8. ;
+571               format SMD_2012 $8. ;
+572               format IMAGEURL $38. ;
+573               format IMAGEDIR $8. ;
+574               format IMAGENAME $25. ;
+575               format CONFIDENCELEVEL $1. ;
+576            input
+577                        ADDRESS_ID
+578                        STATUS $
+579                        FULLADDRESS $
+580                        ADDRNUM
+581                        ADDRNUMSUFFIX $
+582                        STNAME $
+583                        STREET_TYPE $
+584                        QUADRANT $
+585                        CITY $
+586                        STATE $
+587                        XCOORD
+588                        YCOORD
+589                        SSL $
+590                        ANC $
+591                        PSA $
+592                        WARD $
+593                        NBHD_ACTION $
+594                        CLUSTER_ $
+595                        POLDIST $
+596                        ROC $
+597                        CENSUS_TRACT
+598                        VOTE_PRCNCT $
+599                        SMD $
+600                        ZIPCODE
+19 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+601                        NATIONALGRID $
+602                        ROADWAYSEGID
+603                        FOCUS_IMPROVEMENT_AREA $
+604                        HAS_ALIAS $
+605                        HAS_CONDO_UNIT $
+606                        HAS_RES_UNIT $
+607                        HAS_SSL $
+608                        LATITUDE
+609                        LONGITUDE
+610                        STREETVIEWURL $
+611                        RES_TYPE $
+612                        WARD_2002 $
+613                        WARD_2012 $
+614                        ANC_2002 $
+615                        ANC_2012 $
+616                        SMD_2002 $
+617                        SMD_2012 $
+618                        IMAGEURL $
+619                        IMAGEDIR $
+620                        IMAGENAME $
+621                        CONFIDENCELEVEL $
+622            ;
+623            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+624            run;
+
+NOTE: The infile FIMPORT is:
+      Filename=L:\Libraries\PresCat\Raw\DC_Info_02_08_13_buildings_for_geocoding (2013-10-13) mar_address.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=252421,
+      Last Modified=13Oct2013:12:41:50,
+      Create Time=27Sep2014:16:35:17
+
+NOTE: 513 records were read from the infile FIMPORT.
+      The minimum record length was 392.
+      The maximum record length was 549.
+NOTE: The data set WORK.MAR_ADDRESS_A has 513 observations and 45 variables.
+NOTE: Compressing data set WORK.MAR_ADDRESS_A decreased size by 22.73 percent. 
+      Compressed is 17 pages; un-compressed would require 22 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+513 rows created in WORK.MAR_ADDRESS_A                        from FIMPORT.
+  
+  
+  
+20 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+NOTE: WORK.MAR_ADDRESS_A data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.68 seconds
+      cpu time            0.67 seconds
+      
+
+625        
+626        filename fimport clear;
+NOTE: Fileref FIMPORT has been deassigned.
+627        
+628        filename fimport "&_dcdata_r_path\PresCat\Raw\DC_Info_02_08_13_buildings_for_geocoding (2014-11-11)
+628      ! mar_address.csv" lrecl=2000;
+629        
+630        proc import out=Mar_address_b
+631            datafile=fimport
+632            dbms=csv replace;
+633          datarow=2;
+634          getnames=yes;
+635          guessingrows=500;
+636        
+637        run;
+
+638         /**********************************************************************
+639         *   PRODUCT:   SAS
+640         *   VERSION:   9.2
+641         *   CREATOR:   External File Interface
+642         *   DATE:      14FEB15
+643         *   DESC:      Generated SAS Datastep Code
+644         *   TEMPLATE SOURCE:  (None Specified.)
+645         ***********************************************************************/
+646            data WORK.MAR_ADDRESS_B                           ;
+647            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+648            infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+649               informat ADDRESS_ID best32. ;
+650               informat STATUS $6. ;
+651               informat FULLADDRESS $23. ;
+652               informat ADDRNUM best32. ;
+653               informat ADDRNUMSUFFIX $1. ;
+654               informat STNAME $11. ;
+655               informat STREET_TYPE $6. ;
+656               informat QUADRANT $2. ;
+657               informat CITY $10. ;
+658               informat STATE $2. ;
+659               informat XCOORD best32. ;
+660               informat YCOORD best32. ;
+661               informat SSL $14. ;
+21 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+662               informat ANC $6. ;
+663               informat PSA $23. ;
+664               informat WARD $6. ;
+665               informat NBHD_ACTION $1. ;
+666               informat CLUSTER_ $10. ;
+667               informat POLDIST $32. ;
+668               informat ROC $2. ;
+669               informat CENSUS_TRACT best32. ;
+670               informat VOTE_PRCNCT $11. ;
+671               informat SMD $8. ;
+672               informat ZIPCODE best32. ;
+673               informat NATIONALGRID $18. ;
+674               informat ROADWAYSEGID best32. ;
+675               informat FOCUS_IMPROVEMENT_AREA $2. ;
+676               informat HAS_ALIAS $1. ;
+677               informat HAS_CONDO_UNIT $1. ;
+678               informat HAS_RES_UNIT $1. ;
+679               informat HAS_SSL $1. ;
+680               informat LATITUDE best32. ;
+681               informat LONGITUDE best32. ;
+682               informat STREETVIEWURL $104. ;
+683               informat RES_TYPE $11. ;
+684               informat WARD_2002 $6. ;
+685               informat WARD_2012 $6. ;
+686               informat ANC_2002 $6. ;
+687               informat ANC_2012 $6. ;
+688               informat SMD_2002 $8. ;
+689               informat SMD_2012 $8. ;
+690               informat IMAGEURL $38. ;
+691               informat IMAGEDIR $8. ;
+692               informat IMAGENAME $25. ;
+693               informat CONFIDENCELEVEL $1. ;
+694               format ADDRESS_ID best12. ;
+695               format STATUS $6. ;
+696               format FULLADDRESS $23. ;
+697               format ADDRNUM best12. ;
+698               format ADDRNUMSUFFIX $1. ;
+699               format STNAME $11. ;
+700               format STREET_TYPE $6. ;
+701               format QUADRANT $2. ;
+702               format CITY $10. ;
+703               format STATE $2. ;
+704               format XCOORD best12. ;
+705               format YCOORD best12. ;
+706               format SSL $14. ;
+707               format ANC $6. ;
+22 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+708               format PSA $23. ;
+709               format WARD $6. ;
+710               format NBHD_ACTION $1. ;
+711               format CLUSTER_ $10. ;
+712               format POLDIST $32. ;
+713               format ROC $2. ;
+714               format CENSUS_TRACT best12. ;
+715               format VOTE_PRCNCT $11. ;
+716               format SMD $8. ;
+717               format ZIPCODE best12. ;
+718               format NATIONALGRID $18. ;
+719               format ROADWAYSEGID best12. ;
+720               format FOCUS_IMPROVEMENT_AREA $2. ;
+721               format HAS_ALIAS $1. ;
+722               format HAS_CONDO_UNIT $1. ;
+723               format HAS_RES_UNIT $1. ;
+724               format HAS_SSL $1. ;
+725               format LATITUDE best12. ;
+726               format LONGITUDE best12. ;
+727               format STREETVIEWURL $104. ;
+728               format RES_TYPE $11. ;
+729               format WARD_2002 $6. ;
+730               format WARD_2012 $6. ;
+731               format ANC_2002 $6. ;
+732               format ANC_2012 $6. ;
+733               format SMD_2002 $8. ;
+734               format SMD_2012 $8. ;
+735               format IMAGEURL $38. ;
+736               format IMAGEDIR $8. ;
+737               format IMAGENAME $25. ;
+738               format CONFIDENCELEVEL $1. ;
+739            input
+740                        ADDRESS_ID
+741                        STATUS $
+742                        FULLADDRESS $
+743                        ADDRNUM
+744                        ADDRNUMSUFFIX $
+745                        STNAME $
+746                        STREET_TYPE $
+747                        QUADRANT $
+748                        CITY $
+749                        STATE $
+750                        XCOORD
+751                        YCOORD
+752                        SSL $
+753                        ANC $
+23 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+754                        PSA $
+755                        WARD $
+756                        NBHD_ACTION $
+757                        CLUSTER_ $
+758                        POLDIST $
+759                        ROC $
+760                        CENSUS_TRACT
+761                        VOTE_PRCNCT $
+762                        SMD $
+763                        ZIPCODE
+764                        NATIONALGRID $
+765                        ROADWAYSEGID
+766                        FOCUS_IMPROVEMENT_AREA $
+767                        HAS_ALIAS $
+768                        HAS_CONDO_UNIT $
+769                        HAS_RES_UNIT $
+770                        HAS_SSL $
+771                        LATITUDE
+772                        LONGITUDE
+773                        STREETVIEWURL $
+774                        RES_TYPE $
+775                        WARD_2002 $
+776                        WARD_2012 $
+777                        ANC_2002 $
+778                        ANC_2012 $
+779                        SMD_2002 $
+780                        SMD_2012 $
+781                        IMAGEURL $
+782                        IMAGEDIR $
+783                        IMAGENAME $
+784                        CONFIDENCELEVEL $
+785            ;
+786            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+787            run;
+
+NOTE: The infile FIMPORT is:
+      Filename=L:\Libraries\PresCat\Raw\DC_Info_02_08_13_buildings_for_geocoding (2014-11-11) mar_address.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=40563,
+      Last Modified=11Nov2014:15:28:58,
+      Create Time=11Nov2014:15:20:37
+
+NOTE: 79 records were read from the infile FIMPORT.
+      The minimum record length was 414.
+      The maximum record length was 523.
+NOTE: The data set WORK.MAR_ADDRESS_B has 79 observations and 45 variables.
+NOTE: Compressing data set WORK.MAR_ADDRESS_B increased size by 33.33 percent. 
+24 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+      Compressed is 4 pages; un-compressed would require 3 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+79 rows created in WORK.MAR_ADDRESS_B                        from FIMPORT.
+  
+  
+  
+NOTE: WORK.MAR_ADDRESS_B data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.12 seconds
+      
+
+788        
+789        filename fimport clear;
+NOTE: Fileref FIMPORT has been deassigned.
+790        
+791        filename fimport "&_dcdata_r_path\PresCat\Raw\Buildings for geocoding (2015-01-31) mar_address.csv" lrecl=2000;
+792        
+793        proc import out=Mar_address_c
+794            datafile=fimport
+795            dbms=csv replace;
+796          datarow=2;
+797          getnames=yes;
+798          guessingrows=500;
+799        
+800        run;
+
+801         /**********************************************************************
+802         *   PRODUCT:   SAS
+803         *   VERSION:   9.2
+804         *   CREATOR:   External File Interface
+805         *   DATE:      14FEB15
+806         *   DESC:      Generated SAS Datastep Code
+807         *   TEMPLATE SOURCE:  (None Specified.)
+808         ***********************************************************************/
+809            data WORK.MAR_ADDRESS_C                           ;
+810            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+811            infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+812               informat ADDRESS_ID best32. ;
+813               informat STATUS $6. ;
+814               informat FULLADDRESS $22. ;
+815               informat ADDRNUM best32. ;
+25 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+816               informat ADDRNUMSUFFIX $1. ;
+817               informat STNAME $7. ;
+818               informat STREET_TYPE $6. ;
+819               informat QUADRANT $2. ;
+820               informat CITY $10. ;
+821               informat STATE $2. ;
+822               informat XCOORD best32. ;
+823               informat YCOORD best32. ;
+824               informat SSL $12. ;
+825               informat ANC $6. ;
+826               informat PSA $23. ;
+827               informat WARD $6. ;
+828               informat NBHD_ACTION $1. ;
+829               informat CLUSTER_ $11. ;
+830               informat POLDIST $35. ;
+831               informat ROC $2. ;
+832               informat CENSUS_TRACT best32. ;
+833               informat VOTE_PRCNCT $13. ;
+834               informat SMD $8. ;
+835               informat ZIPCODE best32. ;
+836               informat NATIONALGRID $18. ;
+837               informat ROADWAYSEGID best32. ;
+838               informat FOCUS_IMPROVEMENT_AREA $2. ;
+839               informat HAS_ALIAS $1. ;
+840               informat HAS_CONDO_UNIT $1. ;
+841               informat HAS_RES_UNIT $1. ;
+842               informat HAS_SSL $1. ;
+843               informat LATITUDE best32. ;
+844               informat LONGITUDE best32. ;
+845               informat STREETVIEWURL $105. ;
+846               informat RES_TYPE $11. ;
+847               informat WARD_2002 $6. ;
+848               informat WARD_2012 $6. ;
+849               informat ANC_2002 $6. ;
+850               informat ANC_2012 $6. ;
+851               informat SMD_2002 $8. ;
+852               informat SMD_2012 $8. ;
+853               informat IMAGEURL $38. ;
+854               informat IMAGEDIR $8. ;
+855               informat IMAGENAME $25. ;
+856               informat CONFIDENCELEVEL $1. ;
+857               format ADDRESS_ID best12. ;
+858               format STATUS $6. ;
+859               format FULLADDRESS $22. ;
+860               format ADDRNUM best12. ;
+861               format ADDRNUMSUFFIX $1. ;
+26 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+862               format STNAME $7. ;
+863               format STREET_TYPE $6. ;
+864               format QUADRANT $2. ;
+865               format CITY $10. ;
+866               format STATE $2. ;
+867               format XCOORD best12. ;
+868               format YCOORD best12. ;
+869               format SSL $12. ;
+870               format ANC $6. ;
+871               format PSA $23. ;
+872               format WARD $6. ;
+873               format NBHD_ACTION $1. ;
+874               format CLUSTER_ $11. ;
+875               format POLDIST $35. ;
+876               format ROC $2. ;
+877               format CENSUS_TRACT best12. ;
+878               format VOTE_PRCNCT $13. ;
+879               format SMD $8. ;
+880               format ZIPCODE best12. ;
+881               format NATIONALGRID $18. ;
+882               format ROADWAYSEGID best12. ;
+883               format FOCUS_IMPROVEMENT_AREA $2. ;
+884               format HAS_ALIAS $1. ;
+885               format HAS_CONDO_UNIT $1. ;
+886               format HAS_RES_UNIT $1. ;
+887               format HAS_SSL $1. ;
+888               format LATITUDE best12. ;
+889               format LONGITUDE best12. ;
+890               format STREETVIEWURL $105. ;
+891               format RES_TYPE $11. ;
+892               format WARD_2002 $6. ;
+893               format WARD_2012 $6. ;
+894               format ANC_2002 $6. ;
+895               format ANC_2012 $6. ;
+896               format SMD_2002 $8. ;
+897               format SMD_2012 $8. ;
+898               format IMAGEURL $38. ;
+899               format IMAGEDIR $8. ;
+900               format IMAGENAME $25. ;
+901               format CONFIDENCELEVEL $1. ;
+902            input
+903                        ADDRESS_ID
+904                        STATUS $
+905                        FULLADDRESS $
+906                        ADDRNUM
+907                        ADDRNUMSUFFIX $
+27 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+908                        STNAME $
+909                        STREET_TYPE $
+910                        QUADRANT $
+911                        CITY $
+912                        STATE $
+913                        XCOORD
+914                        YCOORD
+915                        SSL $
+916                        ANC $
+917                        PSA $
+918                        WARD $
+919                        NBHD_ACTION $
+920                        CLUSTER_ $
+921                        POLDIST $
+922                        ROC $
+923                        CENSUS_TRACT
+924                        VOTE_PRCNCT $
+925                        SMD $
+926                        ZIPCODE
+927                        NATIONALGRID $
+928                        ROADWAYSEGID
+929                        FOCUS_IMPROVEMENT_AREA $
+930                        HAS_ALIAS $
+931                        HAS_CONDO_UNIT $
+932                        HAS_RES_UNIT $
+933                        HAS_SSL $
+934                        LATITUDE
+935                        LONGITUDE
+936                        STREETVIEWURL $
+937                        RES_TYPE $
+938                        WARD_2002 $
+939                        WARD_2012 $
+940                        ANC_2002 $
+941                        ANC_2012 $
+942                        SMD_2002 $
+943                        SMD_2012 $
+944                        IMAGEURL $
+945                        IMAGEDIR $
+946                        IMAGENAME $
+947                        CONFIDENCELEVEL $
+948            ;
+949            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+950            run;
+
+NOTE: The infile FIMPORT is:
+      Filename=L:\Libraries\PresCat\Raw\Buildings for geocoding (2015-01-31) mar_address.csv,
+28 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+      RECFM=V,LRECL=32767,File Size (bytes)=1978,
+      Last Modified=31Jan2015:11:21:18,
+      Create Time=31Jan2015:11:24:54
+
+NOTE: 3 records were read from the infile FIMPORT.
+      The minimum record length was 507.
+      The maximum record length was 523.
+NOTE: The data set WORK.MAR_ADDRESS_C has 3 observations and 45 variables.
+NOTE: Compressing data set WORK.MAR_ADDRESS_C increased size by 100.00 percent. 
+      Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+3 rows created in WORK.MAR_ADDRESS_C                        from FIMPORT.
+  
+  
+  
+NOTE: WORK.MAR_ADDRESS_C data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.04 seconds
+      
+
+951        
+952        filename fimport clear;
+NOTE: Fileref FIMPORT has been deassigned.
+953        
+954        filename fimport "&_dcdata_r_path\PresCat\Raw\Buildings for geocoding (2015-02-14) mar_address.csv" lrecl=2000;
+955        
+956        proc import out=Mar_address_d
+957            datafile=fimport
+958            dbms=csv replace;
+959          datarow=2;
+960          getnames=yes;
+961          guessingrows=500;
+962        
+963        run;
+
+964         /**********************************************************************
+965         *   PRODUCT:   SAS
+966         *   VERSION:   9.2
+967         *   CREATOR:   External File Interface
+968         *   DATE:      14FEB15
+969         *   DESC:      Generated SAS Datastep Code
+29 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+970         *   TEMPLATE SOURCE:  (None Specified.)
+971         ***********************************************************************/
+972            data WORK.MAR_ADDRESS_D                           ;
+973            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+974            infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+975               informat ADDRESS_ID best32. ;
+976               informat STATUS $6. ;
+977               informat FULLADDRESS $21. ;
+978               informat ADDRNUM best32. ;
+979               informat ADDRNUMSUFFIX $1. ;
+980               informat STNAME $7. ;
+981               informat STREET_TYPE $6. ;
+982               informat QUADRANT $2. ;
+983               informat CITY $10. ;
+984               informat STATE $2. ;
+985               informat XCOORD best32. ;
+986               informat YCOORD best32. ;
+987               informat SSL $12. ;
+988               informat ANC $6. ;
+989               informat PSA $23. ;
+990               informat WARD $6. ;
+991               informat NBHD_ACTION $1. ;
+992               informat CLUSTER_ $10. ;
+993               informat POLDIST $32. ;
+994               informat ROC $2. ;
+995               informat CENSUS_TRACT best32. ;
+996               informat VOTE_PRCNCT $12. ;
+997               informat SMD $8. ;
+998               informat ZIPCODE best32. ;
+999               informat NATIONALGRID $18. ;
+1000              informat ROADWAYSEGID best32. ;
+1001              informat FOCUS_IMPROVEMENT_AREA $2. ;
+1002              informat HAS_ALIAS $1. ;
+1003              informat HAS_CONDO_UNIT $1. ;
+1004              informat HAS_RES_UNIT $1. ;
+1005              informat HAS_SSL $1. ;
+1006              informat LATITUDE best32. ;
+1007              informat LONGITUDE best32. ;
+1008              informat STREETVIEWURL $104. ;
+1009              informat RES_TYPE $11. ;
+1010              informat WARD_2002 $6. ;
+1011              informat WARD_2012 $6. ;
+1012              informat ANC_2002 $6. ;
+1013              informat ANC_2012 $6. ;
+1014              informat SMD_2002 $8. ;
+1015              informat SMD_2012 $8. ;
+30 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+1016              informat IMAGEURL $38. ;
+1017              informat IMAGEDIR $10. ;
+1018              informat IMAGENAME $12. ;
+1019              informat CONFIDENCELEVEL $1. ;
+1020              format ADDRESS_ID best12. ;
+1021              format STATUS $6. ;
+1022              format FULLADDRESS $21. ;
+1023              format ADDRNUM best12. ;
+1024              format ADDRNUMSUFFIX $1. ;
+1025              format STNAME $7. ;
+1026              format STREET_TYPE $6. ;
+1027              format QUADRANT $2. ;
+1028              format CITY $10. ;
+1029              format STATE $2. ;
+1030              format XCOORD best12. ;
+1031              format YCOORD best12. ;
+1032              format SSL $12. ;
+1033              format ANC $6. ;
+1034              format PSA $23. ;
+1035              format WARD $6. ;
+1036              format NBHD_ACTION $1. ;
+1037              format CLUSTER_ $10. ;
+1038              format POLDIST $32. ;
+1039              format ROC $2. ;
+1040              format CENSUS_TRACT best12. ;
+1041              format VOTE_PRCNCT $12. ;
+1042              format SMD $8. ;
+1043              format ZIPCODE best12. ;
+1044              format NATIONALGRID $18. ;
+1045              format ROADWAYSEGID best12. ;
+1046              format FOCUS_IMPROVEMENT_AREA $2. ;
+1047              format HAS_ALIAS $1. ;
+1048              format HAS_CONDO_UNIT $1. ;
+1049              format HAS_RES_UNIT $1. ;
+1050              format HAS_SSL $1. ;
+1051              format LATITUDE best12. ;
+1052              format LONGITUDE best12. ;
+1053              format STREETVIEWURL $104. ;
+1054              format RES_TYPE $11. ;
+1055              format WARD_2002 $6. ;
+1056              format WARD_2012 $6. ;
+1057              format ANC_2002 $6. ;
+1058              format ANC_2012 $6. ;
+1059              format SMD_2002 $8. ;
+1060              format SMD_2012 $8. ;
+1061              format IMAGEURL $38. ;
+31 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+1062              format IMAGEDIR $10. ;
+1063              format IMAGENAME $12. ;
+1064              format CONFIDENCELEVEL $1. ;
+1065           input
+1066                       ADDRESS_ID
+1067                       STATUS $
+1068                       FULLADDRESS $
+1069                       ADDRNUM
+1070                       ADDRNUMSUFFIX $
+1071                       STNAME $
+1072                       STREET_TYPE $
+1073                       QUADRANT $
+1074                       CITY $
+1075                       STATE $
+1076                       XCOORD
+1077                       YCOORD
+1078                       SSL $
+1079                       ANC $
+1080                       PSA $
+1081                       WARD $
+1082                       NBHD_ACTION $
+1083                       CLUSTER_ $
+1084                       POLDIST $
+1085                       ROC $
+1086                       CENSUS_TRACT
+1087                       VOTE_PRCNCT $
+1088                       SMD $
+1089                       ZIPCODE
+1090                       NATIONALGRID $
+1091                       ROADWAYSEGID
+1092                       FOCUS_IMPROVEMENT_AREA $
+1093                       HAS_ALIAS $
+1094                       HAS_CONDO_UNIT $
+1095                       HAS_RES_UNIT $
+1096                       HAS_SSL $
+1097                       LATITUDE
+1098                       LONGITUDE
+1099                       STREETVIEWURL $
+1100                       RES_TYPE $
+1101                       WARD_2002 $
+1102                       WARD_2012 $
+1103                       ANC_2002 $
+1104                       ANC_2012 $
+1105                       SMD_2002 $
+1106                       SMD_2012 $
+1107                       IMAGEURL $
+32 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+1108                       IMAGEDIR $
+1109                       IMAGENAME $
+1110                       CONFIDENCELEVEL $
+1111           ;
+1112           if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+1113           run;
+
+NOTE: The infile FIMPORT is:
+      Filename=L:\Libraries\PresCat\Raw\Buildings for geocoding (2015-02-14) mar_address.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=943,
+      Last Modified=14Feb2015:18:54:20,
+      Create Time=14Feb2015:18:38:50
+
+NOTE: 1 record was read from the infile FIMPORT.
+      The minimum record length was 511.
+      The maximum record length was 511.
+NOTE: The data set WORK.MAR_ADDRESS_D has 1 observations and 45 variables.
+NOTE: Compressing data set WORK.MAR_ADDRESS_D increased size by 100.00 percent. 
+      Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1 rows created in WORK.MAR_ADDRESS_D                        from FIMPORT.
+  
+  
+  
+NOTE: WORK.MAR_ADDRESS_D data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.03 seconds
+      
+
+1114       
+1115       filename fimport clear;
+NOTE: Fileref FIMPORT has been deassigned.
+1116       
+1117       
+1118       
+1119       data Mar_address;
+1120         length ROC $ 2;
+1121         set Mar_address_a Mar_address_b Mar_address_c Mar_address_d;
+1122       run;
+
+WARNING: Multiple lengths were specified for the variable IMAGEDIR by input data set(s). This may cause truncation of data.
+33 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+NOTE: There were 513 observations read from the data set WORK.MAR_ADDRESS_A.
+NOTE: There were 79 observations read from the data set WORK.MAR_ADDRESS_B.
+NOTE: There were 3 observations read from the data set WORK.MAR_ADDRESS_C.
+NOTE: There were 1 observations read from the data set WORK.MAR_ADDRESS_D.
+NOTE: The data set WORK.MAR_ADDRESS has 596 observations and 45 variables.
+NOTE: Compressing data set WORK.MAR_ADDRESS decreased size by 26.92 percent. 
+      Compressed is 19 pages; un-compressed would require 26 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1123       
+1124       title2 "File = Mar_address";
+1125       
+1126       %Dup_check(
+1127         data=Mar_address,
+1128         by=address_id,
+1129         id=fulladdress status,
+1130         out=_dup_check,
+1131         listdups=Y,
+1132         count=dup_check_count,
+1133         quiet=N,
+1134         debug=N
+1135       )
+MPRINT(DUP_CHECK):   options nomprint;
+NOTE: SAS threaded sort was used.
+NOTE: Table WORK._DUP_CHECK created, with 0 rows and 4 columns.
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: [Dup_check] 0 duplicate observations found in data set MAR_ADDRESS
+NOTE: [Dup_check] for BY variables ADDRESS_ID.
+
+NOTE: No observations in data set WORK._DUP_CHECK.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+34 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+      
+
+
+NOTE: Deleting WORK._DUP_CHECK (memtype=DATA).
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1136       
+1137       title2;
+1138       
+1139       ** MAR intersection info sheet **;
+1140       
+1141       filename fimport "&_dcdata_r_path\PresCat\Raw\DC_Info_02_08_13_buildings_for_geocoding (2013-10-13)
+1141     ! mar_intersection.csv" lrecl=2000;
+1142       
+1143       proc import out=Mar_intersection
+1144           datafile=fimport
+1145           dbms=csv replace;
+1146         datarow=2;
+1147         getnames=yes;
+1148         guessingrows=500;
+1149       
+1150       run;
+
+1151        /**********************************************************************
+1152        *   PRODUCT:   SAS
+1153        *   VERSION:   9.2
+1154        *   CREATOR:   External File Interface
+1155        *   DATE:      14FEB15
+1156        *   DESC:      Generated SAS Datastep Code
+1157        *   TEMPLATE SOURCE:  (None Specified.)
+1158        ***********************************************************************/
+1159           data WORK.MAR_INTERSECTION                        ;
+1160           %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+1161           infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+1162              informat MARID best32. ;
+1163              informat INTERSECTIONID best32. ;
+1164              informat STREET1ID best32. ;
+1165              informat STREET2ID best32. ;
+1166              informat ST1NAME $5. ;
+1167              informat ST1TYPE $4. ;
+1168              informat ST1QUAD $2. ;
+1169              informat FULLSTREET1DISPLAY $13. ;
+1170              informat ST2NAME $4. ;
+35 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+1171              informat ST2TYPE $6. ;
+1172              informat ST2QUAD $2. ;
+1173              informat FULLSTREET2DISPLAY $14. ;
+1174              informat FULLINTERSECTION $32. ;
+1175              informat REFX best32. ;
+1176              informat REFY best32. ;
+1177              informat NATIONALGRID $18. ;
+1178              informat LATITUDE best32. ;
+1179              informat LONGITUDE best32. ;
+1180              informat CONFIDENCELEVEL $1. ;
+1181              format MARID best12. ;
+1182              format INTERSECTIONID best12. ;
+1183              format STREET1ID best12. ;
+1184              format STREET2ID best12. ;
+1185              format ST1NAME $5. ;
+1186              format ST1TYPE $4. ;
+1187              format ST1QUAD $2. ;
+1188              format FULLSTREET1DISPLAY $13. ;
+1189              format ST2NAME $4. ;
+1190              format ST2TYPE $6. ;
+1191              format ST2QUAD $2. ;
+1192              format FULLSTREET2DISPLAY $14. ;
+1193              format FULLINTERSECTION $32. ;
+1194              format REFX best12. ;
+1195              format REFY best12. ;
+1196              format NATIONALGRID $18. ;
+1197              format LATITUDE best12. ;
+1198              format LONGITUDE best12. ;
+1199              format CONFIDENCELEVEL $1. ;
+1200           input
+1201                       MARID
+1202                       INTERSECTIONID
+1203                       STREET1ID
+1204                       STREET2ID
+1205                       ST1NAME $
+1206                       ST1TYPE $
+1207                       ST1QUAD $
+1208                       FULLSTREET1DISPLAY $
+1209                       ST2NAME $
+1210                       ST2TYPE $
+1211                       ST2QUAD $
+1212                       FULLSTREET2DISPLAY $
+1213                       FULLINTERSECTION $
+1214                       REFX
+1215                       REFY
+1216                       NATIONALGRID $
+36 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+1217                       LATITUDE
+1218                       LONGITUDE
+1219                       CONFIDENCELEVEL $
+1220           ;
+1221           if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+1222           run;
+
+NOTE: The infile FIMPORT is:
+      Filename=L:\Libraries\PresCat\Raw\DC_Info_02_08_13_buildings_for_geocoding (2013-10-13) mar_intersection.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=410,
+      Last Modified=13Oct2013:12:35:32,
+      Create Time=27Sep2014:16:35:17
+
+NOTE: 1 record was read from the infile FIMPORT.
+      The minimum record length was 205.
+      The maximum record length was 205.
+NOTE: The data set WORK.MAR_INTERSECTION has 1 observations and 19 variables.
+NOTE: Compressing data set WORK.MAR_INTERSECTION increased size by 100.00 percent. 
+      Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1 rows created in WORK.MAR_INTERSECTION                     from FIMPORT.
+  
+  
+  
+NOTE: WORK.MAR_INTERSECTION data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+1223       
+1224       filename fimport clear;
+NOTE: Fileref FIMPORT has been deassigned.
+1225       
+1226       ** Combine building address information **;
+1227       
+1228       proc sort data=DC_info_geocode;
+1229         by marid;
+1230       
+
+NOTE: There were 608 observations read from the data set WORK.DC_INFO_GEOCODE.
+NOTE: SAS sort was used.
+37 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+NOTE: The data set WORK.DC_INFO_GEOCODE has 608 observations and 20 variables.
+NOTE: Compressing data set WORK.DC_INFO_GEOCODE decreased size by 52.63 percent. 
+      Compressed is 9 pages; un-compressed would require 19 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1231       proc sort data=Mar_address;
+1232         by address_id;
+1233       
+
+NOTE: There were 596 observations read from the data set WORK.MAR_ADDRESS.
+NOTE: SAS sort was used.
+NOTE: The data set WORK.MAR_ADDRESS has 596 observations and 45 variables.
+NOTE: Compressing data set WORK.MAR_ADDRESS decreased size by 23.08 percent. 
+      Compressed is 20 pages; un-compressed would require 26 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+1234       proc sort data=Mar_intersection;
+1235         by marid;
+1236       
+
+NOTE: There were 1 observations read from the data set WORK.MAR_INTERSECTION.
+NOTE: SAS sort was used.
+NOTE: The data set WORK.MAR_INTERSECTION has 1 observations and 19 variables.
+NOTE: Compressing data set WORK.MAR_INTERSECTION increased size by 100.00 percent. 
+      Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1237       data DC_info_geocode_mar;
+1238       
+1239         merge DC_info_geocode (rename=(marid=address_id) in=in1) Mar_address Mar_intersection
+1239     ! (rename=(marid=address_id));
+1240         by address_id;
+1241       
+1242         if in1;
+1243       
+1244         format _all_ ;
+1245         informat _all_ ;
+38 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+1246       
+1247         ** Apply standard corrections **;
+1248       
+1249         %DCInfo_corrections()
+MPRINT(DCINFO_CORRECTIONS):   ** Assign new NLIHC_ID to St. Dennis (duplicate ID with CEMI - Bethune House) **;
+MPRINT(DCINFO_CORRECTIONS):   if NLIHC_ID = "NL001007" and upcase( Proj_Name ) = "ST. DENNIS" then NLIHC_ID = "NL001030";
+MPRINT(DCINFO_CORRECTIONS):   if NLIHC_ID = "NL000046" then do;
+MPRINT(DCINFO_CORRECTIONS):   units = 535;
+MPRINT(DCINFO_CORRECTIONS):   Category = "1";
+MPRINT(DCINFO_CORRECTIONS):   end;
+1250       
+1251         ** Standard geos **
+1252       
+1253         length Ward2012 $ 1;
+1254       
+1255         Ward2012 = substr( Ward_2012, 6, 1 );
+1256       
+1257         format Ward2012 $ward12a.;
+1258       
+1259         length Anc2012 $ 2;
+1260       
+1261         Anc2012 = substr( Anc_2012, 5, 2 );
+1262       
+1263         format Anc2012 $anc12a.;
+1264       
+1265         length Psa2012 $ 3;
+1266       
+1267         Psa2012 = substr( Psa, 21, 3 );
+1268       
+1269         format Psa2012 $psa12a.;
+1270       
+1271         length Geo2010 $ 11;
+1272       
+1273         if Census_tract ~= . then Geo2010 = "11001" || put( Census_tract, z6. );
+1274       
+1275         format Geo2010 $geo10a.;
+1276       
+1277         length Cluster_tr2000 $ 2 Cluster_tr2000_name $ 80;
+1278       
+1279         if Cluster_ ~= "" then Cluster_tr2000 = put( 1 * substr( Cluster_, 9, 2 ), z2. );
+1280       
+1281         format Cluster_tr2000 $clus00a.;
+1282       
+1283         length Zip $ 5;
+1284       
+1285         if not( missing( MAR_ZIPCODE ) ) then Zip = put( MAR_ZIPCODE, z5.0 );
+39 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+1286         else Zip = put( Bldg_zip, z5.0 );
+1287       
+1288         format Zip $zipa.;
+1289       
+1290         ** Fill in missing geos **;
+1291       
+1292         if nlihc_id = 'NL000338' then do;
+1293       
+1294           ** TAP PROGRAM - RIDGE RD **;
+1295           Ward2012 = '7';
+1296           Zip = '20019';
+1297           cluster_tr2000 = '32';
+1298           Psa2012 = '603';
+1299           Anc2012 = '7F';
+1300           Geo2010 = '11001007703';
+1301       
+1302         end;
+1303       
+1304         ** Cluster names **;
+1305       
+1306         Cluster_tr2000_name = put( Cluster_tr2000, $clus00b. );
+1307       
+1308         ** Image url **
+1309       
+1310         length Image_url $ 255;
+1311       
+1312         if imagename ~= "" and imagename ~=: "No_Image_Available" then
+1313           Image_url = trim( imageurl ) || "/" || trim( imagedir ) || "/" || imagename;
+1314       
+1315         rename Streetviewurl=Streetview_url;
+1316       
+1317         ** Reformat addresses **;
+1318       
+1319         %address_clean( MAR_MATCHADDRESS, MAR_MATCHADDRESS );
+MPRINT(ADDRESS_CLEAN):   MAR_MATCHADDRESS = propcase( left( compbl( MAR_MATCHADDRESS ) ) );
+MPRINT(ADDRESS_CLEAN):   MAR_MATCHADDRESS = tranwrd( MAR_MATCHADDRESS, 'Ne', 'NE' );
+MPRINT(ADDRESS_CLEAN):   MAR_MATCHADDRESS = tranwrd( MAR_MATCHADDRESS, 'Se', 'SE' );
+MPRINT(ADDRESS_CLEAN):   MAR_MATCHADDRESS = tranwrd( MAR_MATCHADDRESS, 'Nw', 'NW' );
+MPRINT(ADDRESS_CLEAN):   MAR_MATCHADDRESS = tranwrd( MAR_MATCHADDRESS, 'Sw', 'SW' );
+MPRINT(ADDRESS_CLEAN):   MAR_MATCHADDRESS = tranwrd( MAR_MATCHADDRESS, 'NEw', 'New' );
+1320       
+1321         ** Corrections: Congress Heights PUD **;
+1322       
+1323         if nlihc_id = 'NL001032' then do;
+1324           ssl = 'PAR 02290160';
+1325           address_id = .u;
+40 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+1326           Image_url = "";
+1327           Streetviewurl = "";
+1328           MAR_MATCHADDRESS = "Alabama Avenue SE";
+1329         end;
+1330       
+1331       run;
+
+NOTE: Character values have been converted to numeric values at the places given by: (Line):(Column).
+      1279:52   
+INFO: The variable NATIONALGRID on data set WORK.MAR_ADDRESS will be overwritten by data set WORK.MAR_INTERSECTION.
+INFO: The variable LATITUDE on data set WORK.MAR_ADDRESS will be overwritten by data set WORK.MAR_INTERSECTION.
+INFO: The variable LONGITUDE on data set WORK.MAR_ADDRESS will be overwritten by data set WORK.MAR_INTERSECTION.
+INFO: The variable CONFIDENCELEVEL on data set WORK.MAR_ADDRESS will be overwritten by data set WORK.MAR_INTERSECTION.
+NOTE: There were 608 observations read from the data set WORK.DC_INFO_GEOCODE.
+NOTE: There were 596 observations read from the data set WORK.MAR_ADDRESS.
+NOTE: There were 1 observations read from the data set WORK.MAR_INTERSECTION.
+NOTE: The data set WORK.DC_INFO_GEOCODE_MAR has 608 observations and 88 variables.
+NOTE: Compressing data set WORK.DC_INFO_GEOCODE_MAR decreased size by 42.86 percent. 
+      Compressed is 32 pages; un-compressed would require 56 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+1332       
+1333       proc sort data=DC_info_geocode_mar;
+1334       /*  by nlihc_id Proj_Name bldg_ssl;*/
+1335         by nlihc_id bldg_ssl MAR_MATCHADDRESS;
+1336       
+1337       %File_info( data=DC_info_geocode_mar, freqvars=Ward2012 )
+MPRINT(FILE_INFO):   title2 "File = DC_info_geocode_mar";
+
+NOTE: There were 608 observations read from the data set WORK.DC_INFO_GEOCODE_MAR.
+NOTE: SAS sort was used.
+NOTE: The data set WORK.DC_INFO_GEOCODE_MAR has 608 observations and 88 variables.
+NOTE: Compressing data set WORK.DC_INFO_GEOCODE_MAR decreased size by 42.86 percent. 
+      Compressed is 32 pages; un-compressed would require 56 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+MPRINT(FILE_INFO):   proc contents data=DC_info_geocode_mar;
+MPRINT(FILE_INFO):   run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+41 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+NOTE: The PROCEDURE CONTENTS printed pages 3-5.
+
+MPRINT(FILE_INFO):   proc print data=DC_info_geocode_mar (obs=10);
+MPRINT(FILE_INFO):   title3 "Printing first 10 obs.";
+MPRINT(FILE_INFO):   run;
+
+NOTE: There were 10 observations read from the data set WORK.DC_INFO_GEOCODE_MAR.
+NOTE: The PROCEDURE PRINT printed pages 6-11.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+MPRINT(FILE_INFO):   title3;
+MPRINT(FILE_INFO):   options nolabel;
+MPRINT(FILE_INFO):   proc means data=DC_info_geocode_mar n sum mean stddev min max;
+MPRINT(FILE_INFO):   run;
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 608 observations read from the data set WORK.DC_INFO_GEOCODE_MAR.
+NOTE: The PROCEDURE MEANS printed page 12.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+MPRINT(FILE_INFO):   options label;
+MPRINT(FILE_INFO):   proc freq data=DC_info_geocode_mar;
+MPRINT(FILE_INFO):   tables Ward2012 / missing;
+MPRINT(FILE_INFO):   run;
+
+NOTE: There were 608 observations read from the data set WORK.DC_INFO_GEOCODE_MAR.
+NOTE: The PROCEDURE FREQ printed page 13.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+MPRINT(FILE_INFO):   title2;
+1338       
+1339       ** Create project and building geocode data sets **;
+1340       
+1341       %let geo_vars = Ward2012 Anc2012 Psa2012 Geo2010 Cluster_tr2000 Cluster_tr2000_name Zip;
+42 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+1342       
+1343       data
+1344         PresCat.Project_geocode
+1345           (keep=nlihc_id Proj_Name &geo_vars Proj_address_id Proj_x Proj_y Proj_lat Proj_lon
+1346                 Proj_addre Proj_zip Proj_image_url Proj_Streetview_url Bldg_count)
+1347         PresCat.Building_geocode
+1348           (keep=nlihc_id Proj_Name &geo_vars address_id Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre Zip
+1349                 image_url Streetview_url ssl_std
+1350            rename=(address_id=Bldg_address_id Zip=Bldg_zip image_url=Bldg_image_url Streetview_url=Bldg_streetview_url
+1351                    ssl_std=Ssl));
+1352       
+1353         set DC_info_geocode_mar;
+1354         by nlihc_id;
+1355       
+1356         length Ward2012x $ 1;
+1357       
+1358         Ward2012x = left( Ward2012 );
+1359       
+1360         length
+1361           Proj_addre Bldg_addre $ 160
+1362           Proj_zip $ 5
+1363           Proj_image_url Proj_streetview_url $ 255
+1364           Ssl_std $ 17;
+1365       
+1366         retain Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Proj_addre Proj_zip Proj_image_url Bldg_count;
+1367       
+1368         Ssl_std = left( Ssl );
+1369       
+1370         if first.nlihc_id then do;
+1371           Bldg_count = 0;
+1372           Proj_address_id = .;
+1373           Proj_x = .;
+1374           Proj_y = .;
+1375           Proj_lat = .;
+1376           Proj_lon = .;
+1377           Proj_addre = "";
+1378           Proj_zip = "";
+1379           Proj_image_url = "";
+1380           Proj_streetview_url = "";
+1381         end;
+1382       
+1383         Bldg_count + 1;
+1384       
+1385         Bldg_x = MAR_XCOORD;
+1386         Bldg_y = MAR_YCOORD;
+1387         Bldg_lon = MAR_LONGITUDE;
+43 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+1388         Bldg_lat = MAR_LATITUDE;
+1389         Bldg_addre = MAR_MATCHADDRESS;
+1390       
+1391         output PresCat.Building_geocode;
+1392       
+1393         if address_id > 0 and missing( Proj_address_id ) then Proj_address_id = address_id;
+1394         if Proj_zip = "" then Proj_zip = Zip;
+1395       
+1396         Proj_x = sum( Proj_x, MAR_XCOORD );
+1397         Proj_y = sum( Proj_y, MAR_YCOORD );
+1398         Proj_lat = sum( Proj_lat, MAR_LATITUDE );
+1399         Proj_lon = sum( Proj_lon, MAR_LONGITUDE );
+1400       
+1401         if image_url ~= "" and Proj_image_url = "" then Proj_image_url = image_url;
+1402       
+1403         if Streetview_url ~= "" and Proj_streetview_url = "" then Proj_streetview_url = Streetview_url;
+1404       
+1405         if Bldg_count = 1 then Proj_addre = MAR_MATCHADDRESS;
+1406         else if Bldg_count <= &MAX_PROJ_ADDRE then Proj_addre = trim( Proj_addre ) || "; " || MAR_MATCHADDRESS;
+1407         else if Bldg_count = %eval( &MAX_PROJ_ADDRE + 1 ) then Proj_addre = trim( Proj_addre ) || "; others";
+1408       
+1409         if last.nlihc_id then do;
+1410       
+1411           Proj_x = Proj_x / Bldg_count;
+1412           Proj_y = Proj_y / Bldg_count;
+1413           Proj_lat = Proj_lat / Bldg_count;
+1414           Proj_lon = Proj_lon / Bldg_count;
+1415       
+1416           output PresCat.Project_geocode;
+1417       
+1418         end;
+1419       
+1420         label
+1421           Ward2012x = "Ward (2012)"
+1422           Ssl_std = "Property identification number (square/suffix/lot)"
+1423           Proj_Name = "Project name"
+1424           NLIHC_ID = "Preservation Catalog project ID"
+1425           address_id = "MAR address ID"
+1426           streetview_url = "Google Street View URL"
+1427           Anc2012 = "Advisory Neighborhood Commission (2012)"
+1428           Psa2012 = "Police Service Area (2012)"
+1429           Geo2010 = "Full census tract ID (2010): ssccctttttt"
+1430           Cluster_tr2000 = "Neighborhood cluster (tract-based, 2000)"
+1431           Cluster_tr2000_name = "Neighborhood cluster names (tract-based, 2000)"
+1432           zip = "ZIP code (5 digit)"
+1433           image_url = "OCTO property image URL"
+44 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+1434           Proj_addre = "Project address"
+1435           Proj_address_id = "Project MAR address ID"
+1436           Proj_image_url = "OCTO property image URL"
+1437           Proj_lat = "Project latitude"
+1438           Proj_lon = "Project longitude"
+1439           Proj_streetview_url = "Google Street View URL"
+1440           Proj_x = "Project longitude (MD State Plane Coord., NAD 1983 meters)"
+1441           Proj_y = "Project latitude (MD State Plane Coord., NAD 1983 meters)"
+1442           Proj_zip = "ZIP code (5 digit)"
+1443           Bldg_addre = "Building address"
+1444           Bldg_x = "Building longitude (MD State Plane Coord., NAD 1983 meters)"
+1445           Bldg_y = "Building latitude (MD State Plane Coord., NAD 1983 meters)"
+1446           Bldg_lon = "Building longitude"
+1447           Bldg_lat = "Building latitude"
+1448           Bldg_count = "Number of buildings for project";
+1449       
+1450         format Ward2012x $ward12a.;
+1451       
+1452         rename Ward2012x = Ward2012;
+1453         drop Ward2012;
+1454       
+1455       run;
+
+NOTE: There were 608 observations read from the data set WORK.DC_INFO_GEOCODE_MAR.
+NOTE: The data set PRESCAT.PROJECT_GEOCODE has 362 observations and 19 variables.
+NOTE: Compressing data set PRESCAT.PROJECT_GEOCODE decreased size by 66.67 percent. 
+      Compressed is 9 pages; un-compressed would require 27 pages.
+NOTE: The data set PRESCAT.BUILDING_GEOCODE has 608 observations and 18 variables.
+NOTE: Compressing data set PRESCAT.BUILDING_GEOCODE decreased size by 58.06 percent. 
+      Compressed is 13 pages; un-compressed would require 31 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+      
+
+1456       
+1457       %File_info( data=PresCat.Project_geocode, freqvars=Ward2012 Bldg_count )
+MPRINT(FILE_INFO):   title2 "File = PresCat.Project_geocode";
+MPRINT(FILE_INFO):   proc contents data=PresCat.Project_geocode;
+MPRINT(FILE_INFO):   run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+NOTE: The PROCEDURE CONTENTS printed pages 14-15.
+45 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+
+MPRINT(FILE_INFO):   proc print data=PresCat.Project_geocode (obs=10);
+MPRINT(FILE_INFO):   title3 "Printing first 10 obs.";
+MPRINT(FILE_INFO):   run;
+
+NOTE: There were 10 observations read from the data set PRESCAT.PROJECT_GEOCODE.
+NOTE: The PROCEDURE PRINT printed pages 16-18.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(FILE_INFO):   title3;
+MPRINT(FILE_INFO):   options nolabel;
+MPRINT(FILE_INFO):   proc means data=PresCat.Project_geocode n sum mean stddev min max;
+MPRINT(FILE_INFO):   run;
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 362 observations read from the data set PRESCAT.PROJECT_GEOCODE.
+NOTE: The PROCEDURE MEANS printed page 19.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(FILE_INFO):   options label;
+MPRINT(FILE_INFO):   proc freq data=PresCat.Project_geocode;
+MPRINT(FILE_INFO):   tables Ward2012 Bldg_count / missing;
+MPRINT(FILE_INFO):   run;
+
+NOTE: There were 362 observations read from the data set PRESCAT.PROJECT_GEOCODE.
+NOTE: The PROCEDURE FREQ printed page 20.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(FILE_INFO):   title2;
+1458       %File_info( data=PresCat.Building_geocode, freqvars=Ward2012 )
+MPRINT(FILE_INFO):   title2 "File = PresCat.Building_geocode";
+MPRINT(FILE_INFO):   proc contents data=PresCat.Building_geocode;
+MPRINT(FILE_INFO):   run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+46 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+      
+NOTE: The PROCEDURE CONTENTS printed pages 21-22.
+
+MPRINT(FILE_INFO):   proc print data=PresCat.Building_geocode (obs=10);
+MPRINT(FILE_INFO):   title3 "Printing first 10 obs.";
+MPRINT(FILE_INFO):   run;
+
+NOTE: There were 10 observations read from the data set PRESCAT.BUILDING_GEOCODE.
+NOTE: The PROCEDURE PRINT printed pages 23-25.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+MPRINT(FILE_INFO):   title3;
+MPRINT(FILE_INFO):   options nolabel;
+MPRINT(FILE_INFO):   proc means data=PresCat.Building_geocode n sum mean stddev min max;
+MPRINT(FILE_INFO):   run;
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 608 observations read from the data set PRESCAT.BUILDING_GEOCODE.
+NOTE: The PROCEDURE MEANS printed page 26.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(FILE_INFO):   options label;
+MPRINT(FILE_INFO):   proc freq data=PresCat.Building_geocode;
+MPRINT(FILE_INFO):   tables Ward2012 / missing;
+MPRINT(FILE_INFO):   run;
+
+NOTE: There were 608 observations read from the data set PRESCAT.BUILDING_GEOCODE.
+NOTE: The PROCEDURE FREQ printed page 27.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(FILE_INFO):   title2;
+1459       
+1460       %Dup_check(
+1461         data=PresCat.Project_geocode,
+1462         by=nlihc_id,
+1463         id=Proj_Name Proj_addre
+1464       )
+47 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+MPRINT(DUP_CHECK):   options nomprint;
+NOTE: SAS threaded sort was used.
+NOTE: Table WORK._DUP_CHECK created, with 0 rows and 4 columns.
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: [Dup_check] 0 duplicate observations found in data set PRESCAT.PROJECT_GEOCODE
+NOTE: [Dup_check] for BY variables NLIHC_ID.
+
+NOTE: No observations in data set WORK._DUP_CHECK.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: Deleting WORK._DUP_CHECK (memtype=DATA).
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1465       
+1466       proc print data=PresCat.Project_geocode;
+1467         where Ward2012 = '';
+1468         id nlihc_id;
+1469         title2 'PresCat.Project_geocode / Missing Ward';
+1470       run;
+
+NOTE: No observations were selected from data set PRESCAT.PROJECT_GEOCODE.
+NOTE: There were 0 observations read from the data set PRESCAT.PROJECT_GEOCODE.
+      WHERE Ward2012=' ';
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1471       
+48 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+1472       proc print data=PresCat.Building_geocode;
+1473         where Ward2012 = '';
+1474         id nlihc_id;
+1475         title2 'PresCat.Building_geocode / Missing Ward';
+1476       run;
+
+NOTE: No observations were selected from data set PRESCAT.BUILDING_GEOCODE.
+NOTE: There were 0 observations read from the data set PRESCAT.BUILDING_GEOCODE.
+      WHERE Ward2012=' ';
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1477       
+1478       proc print data=PresCat.Building_geocode noobs;
+1479         id nlihc_id;
+1480         var ssl Ward2012 Bldg_address_id bldg_addre;
+1481         title2;
+1482       run;
+
+NOTE: There were 608 observations read from the data set PRESCAT.BUILDING_GEOCODE.
+NOTE: The PROCEDURE PRINT printed pages 28-42.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1483       
+1484       data _null_;
+1485         set PresCat.Building_geocode (where=(nlihc_id='NL001032'));
+1486         file print;
+1487         put / '---PresCat.Building_geocode-----------------';
+1488         put (_all_) (= /);
+1489       run;
+
+NOTE: 19 lines were written to file PRINT.
+NOTE: There were 1 observations read from the data set PRESCAT.BUILDING_GEOCODE.
+      WHERE nlihc_id='NL001032';
+NOTE: The DATA step printed page 43.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+1490       
+49 The SAS System                                                                          18:54 Saturday, February 14, 2015
+
+1491       data _null_;
+1492         set PresCat.Project_geocode (where=(nlihc_id='NL001032'));
+1493         file print;
+1494         put / '---PresCat.Project_geocode-----------------';
+1495         put (_all_) (= /);
+1496       run;
+
+NOTE: 20 lines were written to file PRINT.
+NOTE: There were 1 observations read from the data set PRESCAT.PROJECT_GEOCODE.
+      WHERE nlihc_id='NL001032';
+NOTE: The DATA step printed page 44.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1497       
+1498       
+1499       **** Compare with earlier versions ****;
+1500       
+1501       libname comp 'D:\DCData\Libraries\PresCat\Data\Old';
+NOTE: Libref COMP was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\PresCat\Data\Old
+1502       
+1503       proc compare base=Comp.Project_geocode compare=PresCat.Project_geocode listall maxprint=(40,32000);
+1504         id nlihc_id;
+1505       run;
+
+NOTE: There were 358 observations read from the data set COMP.PROJECT_GEOCODE.
+NOTE: There were 362 observations read from the data set PRESCAT.PROJECT_GEOCODE.
+NOTE: The PROCEDURE COMPARE printed pages 45-47.
+NOTE: PROCEDURE COMPARE used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+1506       
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           2.88 seconds
+      cpu time            1.96 seconds
+      

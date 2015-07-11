@@ -1,0 +1,1777 @@
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015   1
+File = Subsidy_except_test
+Printing first 10 obs.
+
+             Subsidy_ Units_                       contract_ rent_to_fmr_ Subsidy_                   Except_ Except_ Compl_
+Obs Nlihc_id    id    Assist  POA_start    POA_end  number   description   Active  Program Agency       date  init     end
+
+ 1  NL000001     3       .   10/01/2004          .                           .                    07/04/2015   PAT      .  
+ 2  NL000021     2       .            . 11/30/2024                           .                    07/04/2015   PAT      .  
+ 3  NL000023     2       .   12/21/2011          .                           .                    07/04/2015   PAT      .  
+ 4  NL000029     2       .            . 10/31/2044                           .                    07/04/2015   PAT      .  
+ 5  NL000046     3       .   02/28/2014 02/28/2025             Old desc      .                    02/28/2014   PAT      .  
+ 6  NL000046     3       U            . 02/28/2030             New desc      .                    07/04/2015   PAT      .  
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015   2
+File = Subsidy_except_test_norm
+
+           Subsidy_   Units_                             contract_   rent_to_fmr_   Subsidy_                      Compl_
+Nlihc_id      id      Assist    POA_start      POA_end    number     description     Active    Program   Agency     end
+
+NL000001       3         .     10/01/2004            .                                 .                             .  
+NL000021       2         .              .   11/30/2024                                 .                             .  
+NL000023       2         .     12/21/2011            .                                 .                             .  
+NL000029       2         .              .   10/31/2044                                 .                             .  
+NL000046       3         U     02/28/2014   02/28/2030                 New desc        .                             .  
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015   3
+File = Sec8MF_subsidy_update
+
+The CONTENTS Procedure
+
+Data Set Name        WORK.SEC8MF_SUBSIDY_UPDATE             Observations           110 
+Member Type          DATA                                   Variables              20  
+Engine               V9                                     Indexes                0   
+Created              Saturday, July 04, 2015 06:23:04 PM    Observation Length     553 
+Last Modified        Saturday, July 04, 2015 06:23:04 PM    Deleted Observations   0   
+Protection                                                  Compressed             CHAR
+Data Set Type                                               Reuse Space            NO  
+Label                                                       Point to Observations  YES 
+Data Representation  WINDOWS_64                             Sorted                 YES 
+Encoding             wlatin1  Western (Windows)                                        
+
+
+                                            Engine/Host Dependent Information
+
+Data Set Page Size          16384                                                                                         
+Number of Data Set Pages    3                                                                                             
+Number of Data Set Repairs  0                                                                                             
+Filename                    D:\Users\ptatian\AppData\Local\Temp\SAS Temporary Files\_TD5640\sec8mf_subsidy_update.sas7bdat
+Release Created             9.0202M3                                                                                      
+Host Created                X64_VSPRO                                                                                     
+
+
+                                        Alphabetic List of Variables and Attributes
+ 
+ #   Variable                     Type   Len   Format        Label
+
+14   Compl_end                    Num      8   MMDDYY10.                                                                  
+13   POA_end                      Num      8   MMDDYY10.                                                                  
+12   POA_start                    Num      8   MMDDYY10.                                                                  
+20   Program                      Char    32                                                                              
+15   Subsidy_Active               Num      3                                                                              
+16   Subsidy_Info_Source          Char    40                                                                              
+18   Subsidy_Info_Source_Date     Num      8   MMDDYY10.                                                                  
+17   Subsidy_Info_Source_ID       Char    40                                                                              
+11   Units_Assist                 Num      8                                                                              
+19   Update_Dtm                   Num      8   DATETIME16.                                                                
+ 5   address_line1_text           Char    45                 Property street address/first line of mailing address        
+ 1   contract_number              Char    11                 TRACS-assigned contract number                               
+ 9   mgmt_agent_full_name         Char    56                 Management agent full name                                   
+10   mgmt_agent_org_name          Char    50                 Registered organization name for management agent of property
+ 7   owner_individual_full_name   Char    60                 Owner full name                                              
+ 8   owner_organization_name      Char    50                 Registered organization name for owner of property           
+ 6   ownership_effective_date     Num      8   MMDDYY10.     Most recent effective date associated with property owner    
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015   4
+File = Sec8MF_subsidy_update
+
+The CONTENTS Procedure
+
+                                        Alphabetic List of Variables and Attributes
+ 
+ #   Variable                     Type   Len   Format        Label
+
+ 2   program_type_name            Char    20   $S8PGMNM.     Name of program type, provided from TRACS                    
+ 4   property_name_text           Char    50                 Recorded name of property                                    
+ 3   rent_to_fmr_description      Char    40                 Rent to FMR ratio for assisted units                         
+
+
+          Sort Information
+
+Sortedby       Subsidy_Info_Source_ID
+Validated      YES                   
+Character Set  ANSI                  
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015   5
+File = Sec8MF_subsidy_update
+Printing first 10 obs.
+
+ 
+       contract_
+Obs     number       program_type_name                   rent_to_fmr_description    property_name_text
+
+  1   DC39S931002    PRAC/202                            Below 80% FMR              CASA IRIS                            
+  2   DC390007009    Sec 8 New Construction              Between 121% & 130% FMR    FAIRCLIFF PLAZA EAST                 
+  3   DC390007005    Sec 8 New Construction              Between 131% & 140% FMR    PORTNER PLACE                        
+  4   DC39A001001    Sec 8 Substantial Rehabilitation    Between 101% & 120% FMR    TRINITY TOWERS                       
+  5   DC39T871003    202/8 NC                            Between 101% & 120% FMR    ALLEN HOUSE                          
+  6   DC39T792003    202/8 SR                            Between 101% & 120% FMR    ANCHOR HOUSING                       
+
+                              ownership_
+                              effective_    owner_individual_                                            mgmt_agent_
+Obs   address_line1_text         date           full_name        owner_organization_name                  full_name
+
+  1   2201 TWELVETH ST NW     03/24/1994                         NHCOA HOUSING OF D.C., INC.                        
+  2   1356 Fairmont ST NW     03/08/2002                         Faircliff Plaza East, LP                           
+  3   1449 U ST NW                     .                         Portner Place, LLC                                 
+  4   3023 14TH ST NW         05/01/2002                         Trinity Tower Apartments, LP                       
+  5   3760 MINN AVE NE        09/28/1990                         UPPER ROOM HOUSING CORPORATION                     
+  6   1609 LAWRENCE ST NE              .                         Anchor Housing Corp.                               
+
+ 
+                                         Units_                                              Subsidy_     Subsidy_
+Obs   mgmt_agent_org_name                Assist     POA_start       POA_end     Compl_end     Active     Info_Source
+
+  1   NHCOA HOUSING OF D.C., INC.           40     04/01/1997    03/31/2017    03/31/2017        1         HUD/MFA  
+  2   Eagle Point Management, LLC           80     04/01/2002    03/31/2022    03/31/2022        1         HUD/MFA  
+  3   Eagle Point Management, LLC           48     03/01/2014    02/28/2015    02/28/2015        1         HUD/MFA  
+  4   Edmondson & Gallagher                122     11/08/2012    11/07/2022    11/07/2022        1         HUD/MFA  
+  5   Equity Management II LLC              95     10/21/2011    10/20/2031    10/20/2031        1         HUD/MFA  
+  6   First Priority Management              9     12/21/2011    12/20/2014    12/20/2014        1         HUD/MFA  
+
+                                 Subsidy_
+          Subsidy_Info_        Info_Source_
+Obs         Source_ID              Date              Update_Dtm    Program
+
+  1   800000023/DC39S931002     11/25/2014     04JUL15:18:23:05    PRAC/202
+  2   800000032/DC390007009     11/25/2014     04JUL15:18:23:05    S8-NC   
+  3   800000063/DC390007005     11/25/2014     04JUL15:18:23:05    S8-NC   
+  4   800000073/DC39A001001     11/25/2014     04JUL15:18:23:05    S8-SR   
+  5   800003669/DC39T871003     11/25/2014     04JUL15:18:23:05    202/8-NC
+  6   800003671/DC39T792003     11/25/2014     04JUL15:18:23:05    202/8-SR
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015   6
+File = Sec8MF_subsidy_update
+Printing first 10 obs.
+
+ 
+       contract_
+Obs     number       program_type_name                   rent_to_fmr_description    property_name_text
+
+  7   DC392764201    202/8 SR                            Between 101% & 120% FMR    Asbury Dwellings                     
+  8   DC390007006    Sec 8 Substantial Rehabilitation    Below 80% FMR              ATLANTIC GARDENS                     
+  9   DC39M000060    LMSA                                Below 80% FMR              AZEEZE BATES                         
+ 10   DC39L000069    LMSA                                Between 80% & 100% FMR     BROOKLAND MANOR aka Brentwood Village
+
+                              ownership_
+                              effective_    owner_individual_                                            mgmt_agent_
+Obs   address_line1_text         date           full_name        owner_organization_name                  full_name
+
+  7   1616 MARION ST NW       12/22/1982                         Asbury Dwellings, Inc.                             
+  8   4216 4TH ST SE                   .                         Washington Rehabilitation Associates               
+  9   1521 F ST NE            11/13/2006                         Azeeze Bates Limited Partnership                   
+ 10   2400 14th Street, NE    11/23/1971                         Brentwood Associates                               
+
+ 
+                                         Units_                                              Subsidy_     Subsidy_
+Obs   mgmt_agent_org_name                Assist     POA_start       POA_end     Compl_end     Active     Info_Source
+
+  7   EDGEWOOD MANAGEMENT CORPORATION      146     11/01/2013    10/31/2033    10/31/2033        1         HUD/MFA  
+  8   Winn Managed Properties, LLC         108     07/01/2004    06/30/2024    06/30/2024        1         HUD/MFA  
+  9   Horning Brothers                      18     12/01/2006    11/30/2026    11/30/2026        1         HUD/MFA  
+ 10   EDGEWOOD MANAGEMENT CORPORATION       40     10/01/2010    09/30/2015    09/30/2015        1         HUD/MFA  
+
+                                 Subsidy_
+          Subsidy_Info_        Info_Source_
+Obs         Source_ID              Date              Update_Dtm    Program
+
+  7   800003672/DC392764201     11/25/2014     04JUL15:18:23:05    202/8-SR
+  8   800003673/DC390007006     11/25/2014     04JUL15:18:23:05    S8-SR   
+  9   800003674/DC39M000060     11/25/2014     04JUL15:18:23:05    LMSA    
+ 10   800003675/DC39L000069     11/25/2014     04JUL15:18:23:05    LMSA    
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015   7
+File = Sec8MF_subsidy_update
+
+The MEANS Procedure
+
+Variable                      N             Sum            Mean         Std Dev         Minimum         Maximum
+---------------------------------------------------------------------------------------------------------------
+ownership_effective_date     92      1168728.00        12703.57         4733.43        -7640.00        18983.00
+Units_Assist                110        11017.00     100.1545455      83.6360822       6.0000000     406.0000000
+POA_start                   110      1988245.00        18074.95         2121.13         7640.00        20058.00
+POA_end                     110      2489770.00        22634.27         2472.65        17197.00        27278.00
+Compl_end                   110      2489770.00        22634.27         2472.65        17197.00        27278.00
+Subsidy_Active              110     109.0000000       0.9909091       0.0953463               0       1.0000000
+Subsidy_Info_Source_Date    110      2205720.00        20052.00               0        20052.00        20052.00
+Update_Dtm                  110    192681872301      1751653385               0      1751653385      1751653385
+---------------------------------------------------------------------------------------------------------------
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015   8
+File = Sec8MF_subsidy_update
+
+The FREQ Procedure
+
+                                       Cumulative    Cumulative
+Program       Frequency     Percent     Frequency      Percent
+---------------------------------------------------------------
+202/8-NC             7        6.36             7         6.36  
+202/8-SR             6        5.45            13        11.82  
+HFDA/8-NC            3        2.73            16        14.55  
+HFDA/8-SR            4        3.64            20        18.18  
+LMSA                34       30.91            54        49.09  
+PD/8-EXIST           4        3.64            58        52.73  
+PD/8-MR              4        3.64            62        56.36  
+PD/8-SR              4        3.64            66        60.00  
+PRAC/202             7        6.36            73        66.36  
+PRAC/811             8        7.27            81        73.64  
+S8-NC               14       12.73            95        86.36  
+S8-SR               15       13.64           110       100.00  
+
+
+   Subsidy_Info_                             Cumulative    Cumulative
+     Source_Date    Frequency     Percent     Frequency      Percent
+---------------------------------------------------------------------
+      11/25/2014         110      100.00           110       100.00  
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015   9
+File = Subsidy_mfa_update_b
+
+The CONTENTS Procedure
+
+Data Set Name        WORK.SUBSIDY_MFA_UPDATE_B              Observations           121 
+Member Type          DATA                                   Variables              16  
+Engine               V9                                     Indexes                0   
+Created              Saturday, July 04, 2015 06:23:05 PM    Observation Length     323 
+Last Modified        Saturday, July 04, 2015 06:23:05 PM    Deleted Observations   0   
+Protection                                                  Compressed             CHAR
+Data Set Type                                               Reuse Space            NO  
+Label                                                       Point to Observations  YES 
+Data Representation  WINDOWS_64                             Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                        
+
+
+                                            Engine/Host Dependent Information
+
+Data Set Page Size          16384                                                                                        
+Number of Data Set Pages    3                                                                                            
+Number of Data Set Repairs  0                                                                                            
+Filename                    D:\Users\ptatian\AppData\Local\Temp\SAS Temporary Files\_TD5640\subsidy_mfa_update_b.sas7bdat
+Release Created             9.0202M3                                                                                     
+Host Created                X64_VSPRO                                                                                    
+
+
+                                 Alphabetic List of Variables and Attributes
+ 
+ #    Variable                    Type    Len    Format         Label
+
+14    Agency                      Char     80                   Agency responsible for managing subsidy     
+13    Compl_end                   Num       8    MMDDYY10.      Compliance period, end date                 
+ 1    Nlihc_id                    Char      8                   Preservation Catalog project ID             
+ 5    POA_end                     Num       8    MMDDYY10.      Period of affordability, end date           
+ 4    POA_start                   Num       8    MMDDYY10.      Period of affordability, current start date 
+15    POA_start_orig              Num       8    MMDDYY10.      Period of affordability, original start date
+16    Portfolio                   Char     16    $PORTFOLIO.    Subsidy portfolio                           
+12    Program                     Char     32    $PROGFULL.     Subsidy program                             
+ 7    Subsidy_Active              Num       3    DYESNO.        Subsidy is active                           
+ 9    Subsidy_Info_Source         Char     40    $INFOSRC.      Source for latest subsidy update            
+10    Subsidy_Info_Source_Date    Num       8    MMDDYY10.      Date of last subsidy info source            
+ 8    Subsidy_Info_Source_ID      Char     40                   Project ID number for subsidy info source   
+ 2    Subsidy_id                  Num       8                   Preservation Catalog subsidy ID             
+ 3    Units_Assist                Num       8                   Subsidy assisted units                      
+11    Update_Dtm                  Num       8    DATETIME16.    Datetime of last subsidy update             
+ 6    rent_to_fmr_description     Char     40                   Rent to FMR ratio for assisted units        
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  10
+File = Subsidy_mfa_update_b
+Printing first 10 obs.
+
+ 
+               Subsidy_   Units_                                                       Subsidy_   Subsidy_Info_
+Obs Nlihc_id      id      Assist    POA_start      POA_end   rent_to_fmr_description    Active    Source_ID
+
+  1 NL000001       2         84    10/01/2004   09/30/2024   Between 101% & 120% FMR     Yes      800003741/DC39M000025
+  2 NL000001       3         50    11/01/2004   10/31/2024   Between 101% & 120% FMR     Yes      800003741/DC39L000008
+  3 NL000021       2         95    10/21/2011   10/20/2031   Between 101% & 120% FMR     Yes      800003669/DC39T871003
+  4 NL000023       2          9    12/21/2011   12/20/2014   Between 101% & 120% FMR     Yes      800003671/DC39T792003
+  5 NL000026       2        146    11/01/2013   10/31/2033   Between 101% & 120% FMR     Yes      800003672/DC392764201
+  6 NL000028       1        108    07/01/2004   06/30/2024   Below 80% FMR               Yes      800003673/DC390007006
+  7 NL000029       2        196    11/01/2004   10/31/2024   Below 80% FMR               Yes      800025410/DC39M000099
+  8 NL000031       3         18    12/01/2006   11/30/2026   Below 80% FMR               Yes      800003674/DC39M000060
+  9 NL000035       1         24    08/02/1984   08/31/2006                               No       800003703/           
+ 10 NL000036       1         18    05/01/2001   04/30/2021   Between 80% & 100% FMR      Yes      800003678/DC390010018
+
+                                                           Subsidy_
+                                                         Info_Source_
+Obs                 Subsidy_Info_Source                      Date           Update_Dtm              Program
+
+  1 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 8 loan management set-aside   
+  2 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 8 loan management set-aside   
+  3 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 202 new construction          
+  4 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 202 substantial rehabilitation
+  5 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 202 substantial rehabilitation
+  6 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 8 substantial rehabilitation  
+  7 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 8 substantial rehabilitation  
+  8 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 8 loan management set-aside   
+  9 HUD - Multifamily Assistance and Section 8 Contracts  05/01/2007  29JAN15:10:32:36 Sec 8 substantial rehabilitation  
+ 10 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 8 substantial rehabilitation  
+
+ 
+                                                              POA_start_
+Obs  Compl_end                     Agency                        orig       Portfolio
+
+  1 09/30/2024    US Dept of Housing and Urban Development    10/01/2004    Project-based section 8
+  2 10/31/2024    US Dept of Housing and Urban Development    10/01/2004    Project-based section 8
+  3 10/20/2031    US Dept of Housing and Urban Development    10/21/1991    Section 202/811        
+  4 12/20/2014    US Dept of Housing and Urban Development    12/21/2001    Section 202/811        
+  5 10/31/2033    US Dept of Housing and Urban Development    09/01/2008    Section 202/811        
+  6 06/30/2024    US Dept of Housing and Urban Development    04/06/1983    Project-based section 8
+  7 10/31/2024    US Dept of Housing and Urban Development    11/01/2004    Project-based section 8
+  8 11/30/2026    US Dept of Housing and Urban Development    12/01/2006    Project-based section 8
+  9 08/31/2006    US Dept of Housing and Urban Development    08/02/1984    Project-based section 8
+ 10 04/30/2021    US Dept of Housing and Urban Development    05/01/2001    Project-based section 8
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  11
+File = Subsidy_mfa_update_b
+
+The MEANS Procedure
+
+Variable                      N             Sum            Mean         Std Dev         Minimum         Maximum
+---------------------------------------------------------------------------------------------------------------
+Subsidy_id                  121     246.0000000       2.0330579       1.1827502       1.0000000       7.0000000
+Units_Assist                120        12074.00     100.6166667      82.5379142       6.0000000     406.0000000
+POA_start                   120      2137457.00        17812.14         2358.62         7640.00        20058.00
+POA_end                     120      2669071.00        22242.26         2721.67        16344.00        27278.00
+Subsidy_Active              121     109.0000000       0.9008264       0.3001377               0       1.0000000
+Subsidy_Info_Source_Date    121      2404334.00        19870.53     623.4282781        17287.00        20052.00
+Update_Dtm                  121    211801486621      1750425509      3899027.73      1738146756      1751653385
+Compl_end                   120      2669071.00        22242.26         2721.67        16344.00        27278.00
+POA_start_orig              119      1819112.00        15286.66         2954.12         6982.00        19332.00
+---------------------------------------------------------------------------------------------------------------
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  12
+File = Subsidy_mfa_update_b
+
+The FREQ Procedure
+
+                   Date of last subsidy info source
+ 
+   Subsidy_Info_                             Cumulative    Cumulative
+     Source_Date    Frequency     Percent     Frequency      Percent
+---------------------------------------------------------------------
+      05/01/2007           2        1.65             2         1.65  
+      11/27/2007           1        0.83             3         2.48  
+      12/28/2007           2        1.65             5         4.13  
+      08/05/2009           4        3.31             9         7.44  
+      02/10/2012           1        0.83            10         8.26  
+      10/02/2014           1        0.83            11         9.09  
+      11/25/2014         110       90.91           121       100.00  
+
+
+                   Datetime of last subsidy update
+ 
+                                             Cumulative    Cumulative
+      Update_Dtm    Frequency     Percent     Frequency      Percent
+---------------------------------------------------------------------
+29JAN15:10:32:36          11        9.09            11         9.09  
+04JUL15:18:23:05         110       90.91           121       100.00  
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  13
+
+The COMPARE Procedure
+Comparison of WORK.SUBSIDY_MFA with WORK.SUBSIDY_MFA_UPDATE_B
+(Method=EXACT)
+
+Data Set Summary
+
+Dataset                             Created          Modified  NVar    NObs
+
+WORK.SUBSIDY_MFA           04JUL15:18:23:05  04JUL15:18:23:05    17     121
+WORK.SUBSIDY_MFA_UPDATE_B  04JUL15:18:23:05  04JUL15:18:23:05    16     121
+
+
+Variables Summary
+
+Number of Variables in Common: 16.
+Number of Variables in WORK.SUBSIDY_MFA but not in WORK.SUBSIDY_MFA_UPDATE_B: 1.
+Number of ID Variables: 3.
+Number of VAR Statement Variables: 7.
+
+
+Listing of Variables in WORK.SUBSIDY_MFA but not in WORK.SUBSIDY_MFA_UPDATE_B
+
+Variable         Type  Length  Label
+
+contract_number  Char      11  TRACS-assigned contract number
+
+
+Observation Summary
+
+Observation      Base  Compare  ID
+
+First Obs           1        1  Nlihc_id=NL000001 Subsidy_id=2 Subsidy_Info_Source_ID=800003741/DC39M000025
+First Unequal       2        2  Nlihc_id=NL000001 Subsidy_id=3 Subsidy_Info_Source_ID=800003741/DC39L000008
+Last  Unequal     121      121  Nlihc_id=NL001033 Subsidy_id=1 Subsidy_Info_Source_ID=800219652/DC39Q031002
+Last  Obs         121      121  Nlihc_id=NL001033 Subsidy_id=1 Subsidy_Info_Source_ID=800219652/DC39Q031002
+
+Number of Observations in Common: 121.
+Total Number of Observations Read from WORK.SUBSIDY_MFA: 121.
+Total Number of Observations Read from WORK.SUBSIDY_MFA_UPDATE_B: 121.
+
+Number of Observations with Some Compared Variables Unequal: 79.
+Number of Observations with All Compared Variables Equal: 42.
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  14
+
+The COMPARE Procedure
+Comparison of WORK.SUBSIDY_MFA with WORK.SUBSIDY_MFA_UPDATE_B
+(Method=EXACT)
+
+Values Comparison Summary
+
+Number of Variables Compared with All Observations Equal: 1.
+Number of Variables Compared with Some Observations Unequal: 6.
+Number of Variables with Missing Value Differences: 6.
+Total Number of Values which Compare Unequal: 101.
+Maximum Difference: 11554.
+
+
+Variables with Unequal Values
+
+Variable                 Type  Len   Label                                        Ndif   MaxDif  MissDif
+
+Units_Assist             NUM     8   Subsidy assisted units                          1        0        1
+POA_start                NUM     8   Period of affordability, current start date    77    11554        1
+POA_end                  NUM     8   Period of affordability, end date               7     7305        1
+Compl_end                NUM     8   Compliance period, end date                     8     7305        1
+rent_to_fmr_description  CHAR   40   Rent to FMR ratio for assisted units            7                 1
+Subsidy_Active           NUM     3   Subsidy is active                               1        0        1
+
+
+
+Value Comparison Results for Variables
+
+______________________________________________________________________________________________
+                                               ||  Subsidy assisted units
+                                               ||       Base    Compare
+ Nlihc_id  Subsidy_id  Subsidy_Info_Source_ID  ||  Units_Ass  Units_Ass      Diff.     % Diff
+                                               ||        ist        ist
+ ________  __________  ______________________  ||  _________  _________  _________  _________
+                                               ||
+ NL001033           1  800219652/DC39Q031002   ||          .     8.0000          .          .
+______________________________________________________________________________________________
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  15
+
+The COMPARE Procedure
+Comparison of WORK.SUBSIDY_MFA with WORK.SUBSIDY_MFA_UPDATE_B
+(Method=EXACT)
+
+Value Comparison Results for Variables
+
+______________________________________________________________________________________________
+                                               ||  Period of affordability, current start d
+                                               ||  .. ate
+                                               ||       Base    Compare
+ Nlihc_id  Subsidy_id  Subsidy_Info_Source_ID  ||  POA_start  POA_start      Diff.     % Diff
+ ________  __________  ______________________  ||  _________  _________  _________  _________
+                                               ||
+ NL000001           3  800003741/DC39L000008   ||   10/01/04   11/01/04    31.0000     0.1897
+ NL000021           2  800003669/DC39T871003   ||   10/21/91   10/21/11       7305    62.8874
+ NL000023           2  800003671/DC39T792003   ||   12/21/01   12/21/11       3652    23.8226
+ NL000026           2  800003672/DC392764201   ||   09/01/08   11/01/13       1887    10.6154
+ NL000028           1  800003673/DC390007006   ||   04/06/83   07/01/04       7757    91.3018
+ NL000038           1  800003679/DC390005009   ||   09/01/06   09/01/11       1826    10.7128
+ NL000040           1  800003681/DC39E000003   ||   09/29/95   12/01/14       7003    53.6423
+ NL000041           1  800025216/DC39E000005   ||   09/29/95   03/24/12       6021    46.1203
+ NL000046           3  800003675/DC39M000051   ||   10/01/10   11/01/12   762.0000     4.1109
+ NL000048           2  800003684/DC39Q881003   ||   05/01/94   05/01/14       7305    58.2582
+ NL000052           2  800003685/DC398023017   ||   03/01/09   03/01/12       1096     6.1035
+ NL000065           3  800003691/DC39A001003   ||   08/01/05   08/01/14       3287    19.7429
+ NL000069           2  800003762/DC39T802001   ||   04/21/03   04/21/11       2922    18.4750
+ NL000070           1  800003807/DC39T781003   ||   11/02/84   02/02/10       9223   101.6645
+ NL000080           1  800003698/DC390012007   ||   08/03/83   08/03/14      11323   131.4335
+ NL000084           2  800053918/DC39S951003   ||   04/01/04   04/01/14       3652    22.5962
+ NL000091           1  800003705/DC39E000004   ||   09/29/95   01/08/14       6676    51.1375
+ NL000096           5  800003704/DC39E000022   ||   09/01/07   06/01/09   639.0000     3.6703
+ NL000101           2  800000032/DC390007009   ||   04/02/02   04/01/02    -1.0000  -0.006480
+ NL000111           1  800003717/DC390001010   ||   10/01/06   10/01/11       1826    10.6940
+ NL000112           1  800003715/DC398023003   ||   02/12/79   10/01/10      11554   165.4827
+ NL000113           1  800003716/DC398023020   ||   11/01/06   11/01/11       1826    10.6746
+ NL000114           2  800003719/DC39L000078   ||   08/01/05   03/01/10       1673    10.0487
+ NL000116           1  800003720/DC39H001004   ||   09/28/03   04/28/14       3865    24.1925
+ NL000120           3  800003722/DC39M000054   ||   10/01/07   09/01/10       1066     6.1124
+ NL000133           3  800003725/DC39M000033   ||   08/01/05   08/01/14       3287    19.7429
+ NL000135           1  800003728/DC39M000095   ||   05/01/06   08/01/14       3014    17.8111
+ NL000136           4  800003729/DC39L000010   ||   08/01/07   01/01/08   153.0000     0.8804
+ NL000142           2  800003735/DC39T792001   ||   06/13/03   06/13/13       3653    23.0197
+ NL000152           2  800003738/DC39M000030   ||   10/01/05   01/01/11       1918    11.4782
+ NL000164           3  800003739/DC390005015   ||   11/01/01   12/01/12       4048    26.4921
+ NL000170           1  800003742/DC390016002   ||   12/14/83   11/01/06       8358    95.5418
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  16
+
+The COMPARE Procedure
+Comparison of WORK.SUBSIDY_MFA with WORK.SUBSIDY_MFA_UPDATE_B
+(Method=EXACT)
+
+Value Comparison Results for Variables
+
+______________________________________________________________________________________________
+                                               ||  Period of affordability, current start d
+                                               ||  .. ate
+                                               ||       Base    Compare
+ Nlihc_id  Subsidy_id  Subsidy_Info_Source_ID  ||  POA_start  POA_start      Diff.     % Diff
+ ________  __________  ______________________  ||  _________  _________  _________  _________
+                                               ||
+ NL000175           1  800003744/DC39T861001   ||   05/16/91   05/16/11       7305    63.7546
+ NL000185           2  800003746/DC39H001009   ||   06/10/08   09/10/14       2283    12.9034
+ NL000186           2  800003747/DC39M000026   ||   09/01/07   09/01/10       1096     6.2952
+ NL000195           1  800003750/DC39M000035   ||   08/01/07   01/01/14       2345    13.4933
+ NL000200           2  800054053/DC39Q971001   ||   04/01/01   06/01/14       4809    31.9196
+ NL000206           1  800024118/DC39K100006   ||   06/01/05   06/01/13       2922    17.6151
+ NL000208           2  800003755/DC398023002   ||   10/02/07   10/02/14       2557    14.6609
+ NL000215           3  800213311/DC39S001001   ||   02/01/05   02/01/14       3287    19.9599
+
+NOTE: The MAXPRINT=40 printing limit has been reached for the variable POA_start. No more values will be printed for this
+      comparison.
+______________________________________________________________________________________________
+
+
+______________________________________________________________________________________________
+                                               ||  Period of affordability, end date
+                                               ||       Base    Compare
+ Nlihc_id  Subsidy_id  Subsidy_Info_Source_ID  ||    POA_end    POA_end      Diff.     % Diff
+ ________  __________  ______________________  ||  _________  _________  _________  _________
+                                               ||
+ NL000040           1  800003681/DC39E000003   ||   11/30/14   11/30/15   365.0000     1.8198
+ NL000065           3  800003691/DC39A001003   ||   10/31/14   07/31/34       7213    36.0164
+ NL000080           1  800003698/DC390012007   ||   08/02/14   08/02/34       7305    36.6404
+ NL000216           2  800003758/DC39M000071   ||   08/31/14   08/31/19       1826     9.1455
+ NL000218           2  800003761/DC39A001002   ||   09/07/14   09/07/34       7305    36.5744
+ NL000251           3  800054049/DC39Q961001   ||   06/30/12   06/30/15       1095     5.7109
+ NL001033           1  800219652/DC39Q031002   ||          .   11/30/14          .          .
+______________________________________________________________________________________________
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  17
+
+The COMPARE Procedure
+Comparison of WORK.SUBSIDY_MFA with WORK.SUBSIDY_MFA_UPDATE_B
+(Method=EXACT)
+
+Value Comparison Results for Variables
+
+______________________________________________________________________________________________
+                                               ||  Compliance period, end date
+                                               ||       Base    Compare
+ Nlihc_id  Subsidy_id  Subsidy_Info_Source_ID  ||  Compl_end  Compl_end      Diff.     % Diff
+ ________  __________  ______________________  ||  _________  _________  _________  _________
+                                               ||
+ NL000040           1  800003681/DC39E000003   ||   11/30/14   11/30/15   365.0000     1.8198
+ NL000065           3  800003691/DC39A001003   ||   10/31/14   07/31/34       7213    36.0164
+ NL000080           1  800003698/DC390012007   ||   08/02/14   08/02/34       7305    36.6404
+ NL000208           2  800003755/DC398023002   ||   10/01/14   10/01/15   365.0000     1.8253
+ NL000216           2  800003758/DC39M000071   ||   08/31/14   08/31/19       1826     9.1455
+ NL000218           2  800003761/DC39A001002   ||   09/07/14   09/07/34       7305    36.5744
+ NL000251           3  800054049/DC39Q961001   ||   06/30/12   06/30/15       1095     5.7109
+ NL001033           1  800219652/DC39Q031002   ||          .   11/30/14          .          .
+______________________________________________________________________________________________
+
+
+______________________________________________________________________________________________
+                                               ||  Rent to FMR ratio for assisted units
+                                               ||  Base Value           Compare Value
+ Nlihc_id  Subsidy_id  Subsidy_Info_Source_ID  ||  rent_to_fmr_descript  rent_to_fmr_descript
+                                               ||  ion                   ion
+ ________  __________  ______________________  ||  ___________________+  ___________________+
+                                               ||
+ NL000065           3  800003691/DC39A001003   ||  Between 131% & 140%   Between 141% & 160%
+ NL000084           2  800053918/DC39S951003   ||  Below 80% FMR         Between 80% & 100% F
+ NL000103           4  800218816/DC39M000022   ||  Between 131% & 140%   Between 141% & 160%
+ NL000103           5  800218816/DC39M000023   ||  Between 131% & 140%   Between 141% & 160%
+ NL000218           2  800003761/DC39A001002   ||  Between 101% & 120%   Between 131% & 140%
+ NL000280           4  800003784/DC39M000092   ||  Below 80% FMR         Between 80% & 100% F
+ NL001033           1  800219652/DC39Q031002   ||                        Below 80% FMR
+______________________________________________________________________________________________
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  18
+
+The COMPARE Procedure
+Comparison of WORK.SUBSIDY_MFA with WORK.SUBSIDY_MFA_UPDATE_B
+(Method=EXACT)
+
+Value Comparison Results for Variables
+
+______________________________________________________________________________________________
+                                               ||  Subsidy is active
+                                               ||       Base    Compare
+ Nlihc_id  Subsidy_id  Subsidy_Info_Source_ID  ||  Subsidy_A  Subsidy_A      Diff.     % Diff
+                                               ||      ctive      ctive
+ ________  __________  ______________________  ||  _________  _________  _________  _________
+                                               ||
+ NL001033           1  800219652/DC39Q031002   ||          .  Yes                .          .
+______________________________________________________________________________________________
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  19
+File = Update_subsidy_result
+
+           Subsidy_   comp_                   Subsidy_Info_        Units_
+Nlihc_id      id      type       _OBS_          Source_ID          Assist     POA_start       POA_end     Compl_end
+
+NL000001       2      BASE         1      800003741/DC39M000025       84     10/01/2004    09/30/2024    09/30/2024
+NL000001       2      COMPARE      1      800003741/DC39M000025       84     10/01/2004    09/30/2024    09/30/2024
+NL000001       2      DIF          1      800003741/DC39M000025        0     01/01/1960    01/01/1960    01/01/1960
+NL000001       3      BASE         2      800003741/DC39L000008       50     10/01/2004    10/31/2024    10/31/2024
+NL000001       3      COMPARE      2      800003741/DC39L000008       50     11/01/2004    10/31/2024    10/31/2024
+NL000001       3      DIF          2      800003741/DC39L000008        0     02/01/1960    01/01/1960    01/01/1960
+NL000021       2      BASE         3      800003669/DC39T871003       95     10/21/1991    10/20/2031    10/20/2031
+NL000021       2      COMPARE      3      800003669/DC39T871003       95     10/21/2011    10/20/2031    10/20/2031
+NL000021       2      DIF          3      800003669/DC39T871003        0     01/01/1980    01/01/1960    01/01/1960
+NL000023       2      BASE         4      800003671/DC39T792003        9     12/21/2001    12/20/2014    12/20/2014
+NL000023       2      COMPARE      4      800003671/DC39T792003        9     12/21/2011    12/20/2014    12/20/2014
+NL000023       2      DIF          4      800003671/DC39T792003        0     12/31/1969    01/01/1960    01/01/1960
+NL000026       2      BASE         5      800003672/DC392764201      146     09/01/2008    10/31/2033    10/31/2033
+NL000026       2      COMPARE      5      800003672/DC392764201      146     11/01/2013    10/31/2033    10/31/2033
+NL000026       2      DIF          5      800003672/DC392764201        0     03/02/1965    01/01/1960    01/01/1960
+NL000028       1      BASE         6      800003673/DC390007006      108     04/06/1983    06/30/2024    06/30/2024
+NL000028       1      COMPARE      6      800003673/DC390007006      108     07/01/2004    06/30/2024    06/30/2024
+NL000028       1      DIF          6      800003673/DC390007006        0     03/28/1981    01/01/1960    01/01/1960
+NL000029       2      BASE         7      800025410/DC39M000099      196     11/01/2004    10/31/2024    10/31/2024
+
+           Subsidy_                                               Subsidy_
+Nlihc_id      id      rent_to_fmr_description                      Active                  Program
+
+NL000001       2      Between 101% & 120% FMR                       Yes       Sec 8 loan management set-aside   
+NL000001       2      Between 101% & 120% FMR                       Yes       Sec 8 loan management set-aside   
+NL000001       2      ........................................      No        ................................  
+NL000001       3      Between 101% & 120% FMR                       Yes       Sec 8 loan management set-aside   
+NL000001       3      Between 101% & 120% FMR                       Yes       Sec 8 loan management set-aside   
+NL000001       3      ........................................      No        ................................  
+NL000021       2      Between 101% & 120% FMR                       Yes       Sec 202 new construction          
+NL000021       2      Between 101% & 120% FMR                       Yes       Sec 202 new construction          
+NL000021       2      ........................................      No        ................................  
+NL000023       2      Between 101% & 120% FMR                       Yes       Sec 202 substantial rehabilitation
+NL000023       2      Between 101% & 120% FMR                       Yes       Sec 202 substantial rehabilitation
+NL000023       2      ........................................      No        ................................  
+NL000026       2      Between 101% & 120% FMR                       Yes       Sec 202 substantial rehabilitation
+NL000026       2      Between 101% & 120% FMR                       Yes       Sec 202 substantial rehabilitation
+NL000026       2      ........................................      No        ................................  
+NL000028       1      Below 80% FMR                                 Yes       Sec 8 substantial rehabilitation  
+NL000028       1      Below 80% FMR                                 Yes       Sec 8 substantial rehabilitation  
+NL000028       1      ........................................      No        ................................  
+NL000029       2      Below 80% FMR                                 Yes       Sec 8 substantial rehabilitation  
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  20
+File = Update_subsidy_result
+
+           Subsidy_   comp_                   Subsidy_Info_        Units_
+Nlihc_id      id      type       _OBS_          Source_ID          Assist     POA_start       POA_end     Compl_end
+
+NL000029       2      COMPARE      7      800025410/DC39M000099      196     11/01/2004    10/31/2024    10/31/2024
+
+           Subsidy_                                               Subsidy_
+Nlihc_id      id      rent_to_fmr_description                      Active                  Program
+
+NL000029       2      Below 80% FMR                                 Yes       Sec 8 substantial rehabilitation  
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  21
+File = Update_subsidy_result_tr
+
+The CONTENTS Procedure
+
+Data Set Name        WORK.UPDATE_SUBSIDY_RESULT_TR          Observations           121 
+Member Type          DATA                                   Variables              24  
+Engine               V9                                     Indexes                0   
+Created              Saturday, July 04, 2015 06:23:05 PM    Observation Length     377 
+Last Modified        Saturday, July 04, 2015 06:23:05 PM    Deleted Observations   0   
+Protection                                                  Compressed             CHAR
+Data Set Type                                               Reuse Space            NO  
+Label                                                       Point to Observations  YES 
+Data Representation  WINDOWS_64                             Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                        
+
+
+                                             Engine/Host Dependent Information
+
+Data Set Page Size          16384                                                                                           
+Number of Data Set Pages    3                                                                                               
+Number of Data Set Repairs  0                                                                                               
+Filename                    D:\Users\ptatian\AppData\Local\Temp\SAS Temporary                                               
+                            Files\_TD5640\update_subsidy_result_tr.sas7bdat                                                 
+Release Created             9.0202M3                                                                                        
+Host Created                X64_VSPRO                                                                                       
+
+
+                                        Alphabetic List of Variables and Attributes
+ 
+ #    Variable                           Type    Len    Format        Label
+
+13    Compl_end_BASE                     Num       8    MMDDYY10.     Compliance period, end date, BASE                   
+14    Compl_end_COMPARE                  Num       8    MMDDYY10.     Compliance period, end date, COMPARE                
+15    Compl_end_DIF                      Num       8    MMDDYY10.     Compliance period, end date, DIF                    
+ 1    Nlihc_id                           Char      8                  Preservation Catalog project ID                     
+10    POA_end_BASE                       Num       8    MMDDYY10.     Period of affordability, end date, BASE             
+11    POA_end_COMPARE                    Num       8    MMDDYY10.     Period of affordability, end date, COMPARE          
+12    POA_end_DIF                        Num       8    MMDDYY10.     Period of affordability, end date, DIF              
+ 7    POA_start_BASE                     Num       8    MMDDYY10.     Period of affordability, current start date, BASE   
+ 8    POA_start_COMPARE                  Num       8    MMDDYY10.     Period of affordability, current start date, COMPARE
+ 9    POA_start_DIF                      Num       8    MMDDYY10.     Period of affordability, current start date, DIF    
+22    Program_BASE                       Char     32    $PROGFULL.    Subsidy program, BASE                               
+23    Program_COMPARE                    Char     32    $PROGFULL.    Subsidy program, COMPARE                            
+24    Program_DIF                        Char     32    $PROGFULL.    Subsidy program, DIF                                
+19    Subsidy_Active_BASE                Num       3    DYESNO.       Subsidy is active, BASE                             
+20    Subsidy_Active_COMPARE             Num       3    DYESNO.       Subsidy is active, COMPARE                          
+21    Subsidy_Active_DIF                 Num       3    DYESNO.       Subsidy is active, DIF                              
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  22
+File = Update_subsidy_result_tr
+
+The CONTENTS Procedure
+
+                                        Alphabetic List of Variables and Attributes
+ 
+ #    Variable                           Type    Len    Format        Label
+
+ 3    Subsidy_Info_Source_ID             Char     40                  Project ID number for subsidy info source           
+ 2    Subsidy_id                         Num       8                  Preservation Catalog subsidy ID                     
+ 4    Units_Assist_BASE                  Num       8                  Subsidy assisted units, BASE                        
+ 5    Units_Assist_COMPARE               Num       8                  Subsidy assisted units, COMPARE                     
+ 6    Units_Assist_DIF                   Num       8                  Subsidy assisted units, DIF                         
+16    rent_to_FMR_description_BASE       Char     40                  Rent to FMR ratio for assisted units, BASE          
+17    rent_to_FMR_description_COMPARE    Char     40                  Rent to FMR ratio for assisted units, COMPARE       
+18    rent_to_FMR_description_DIF        Char     40                  Rent to FMR ratio for assisted units, DIF           
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  23
+File = Update_subsidy_result_tr
+Printing first 10 obs.
+
+                                                   Units_    Units_    Units_
+               Subsidy_   Subsidy_Info_           Assist_   Assist_   Assist_   POA_start_   POA_start_   POA_start_
+Obs Nlihc_id      id      Source_ID                 BASE    COMPARE     DIF        BASE       COMPARE        DIF
+
+  1 NL000001       2      800003741/DC39M000025      84        84        0      10/01/2004   10/01/2004   01/01/1960
+  2 NL000001       3      800003741/DC39L000008      50        50        0      10/01/2004   11/01/2004   02/01/1960
+  3 NL000021       2      800003669/DC39T871003      95        95        0      10/21/1991   10/21/2011   01/01/1980
+  4 NL000023       2      800003671/DC39T792003       9         9        0      12/21/2001   12/21/2011   12/31/1969
+  5 NL000026       2      800003672/DC392764201     146       146        0      09/01/2008   11/01/2013   03/02/1965
+  6 NL000028       1      800003673/DC390007006     108       108        0      04/06/1983   07/01/2004   03/28/1981
+
+ 
+      POA_end_   POA_end_   POA_end_ Compl_end_ Compl_end_ Compl_end_ rent_to_FMR_            rent_to_FMR_
+Obs       BASE    COMPARE        DIF    BASE     COMPARE      DIF     description_BASE        description_COMPARE
+
+  1 09/30/2024 09/30/2024 01/01/1960 09/30/2024 09/30/2024 01/01/1960 Between 101% & 120% FMR Between 101% & 120% FMR
+  2 10/31/2024 10/31/2024 01/01/1960 10/31/2024 10/31/2024 01/01/1960 Between 101% & 120% FMR Between 101% & 120% FMR
+  3 10/20/2031 10/20/2031 01/01/1960 10/20/2031 10/20/2031 01/01/1960 Between 101% & 120% FMR Between 101% & 120% FMR
+  4 12/20/2014 12/20/2014 01/01/1960 12/20/2014 12/20/2014 01/01/1960 Between 101% & 120% FMR Between 101% & 120% FMR
+  5 10/31/2033 10/31/2033 01/01/1960 10/31/2033 10/31/2033 01/01/1960 Between 101% & 120% FMR Between 101% & 120% FMR
+  6 06/30/2024 06/30/2024 01/01/1960 06/30/2024 06/30/2024 01/01/1960 Below 80% FMR           Below 80% FMR          
+
+                                                Subsidy_    Subsidy_    Subsidy_
+                                                Active_     Active_     Active_
+Obs       rent_to_FMR_description_DIF             BASE      COMPARE       DIF                  Program_BASE
+
+  1 ........................................      Yes         Yes          No       Sec 8 loan management set-aside   
+  2 ........................................      Yes         Yes          No       Sec 8 loan management set-aside   
+  3 ........................................      Yes         Yes          No       Sec 202 new construction          
+  4 ........................................      Yes         Yes          No       Sec 202 substantial rehabilitation
+  5 ........................................      Yes         Yes          No       Sec 202 substantial rehabilitation
+  6 ........................................      Yes         Yes          No       Sec 8 substantial rehabilitation  
+
+ 
+ 
+Obs          Program_COMPARE                        Program_DIF
+
+  1 Sec 8 loan management set-aside       ................................
+  2 Sec 8 loan management set-aside       ................................
+  3 Sec 202 new construction              ................................
+  4 Sec 202 substantial rehabilitation    ................................
+  5 Sec 202 substantial rehabilitation    ................................
+  6 Sec 8 substantial rehabilitation      ................................
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  24
+File = Update_subsidy_result_tr
+Printing first 10 obs.
+
+                                                   Units_    Units_    Units_
+               Subsidy_   Subsidy_Info_           Assist_   Assist_   Assist_   POA_start_   POA_start_   POA_start_
+Obs Nlihc_id      id      Source_ID                 BASE    COMPARE     DIF        BASE       COMPARE        DIF
+
+  7 NL000029       2      800025410/DC39M000099     196       196        0      11/01/2004   11/01/2004   01/01/1960
+  8 NL000031       3      800003674/DC39M000060      18        18        0      12/01/2006   12/01/2006   01/01/1960
+  9 NL000035       1      800003703/                 24        24        0      08/02/1984   08/02/1984   01/01/1960
+ 10 NL000036       1      800003678/DC390010018      18        18        0      05/01/2001   05/01/2001   01/01/1960
+
+ 
+      POA_end_   POA_end_   POA_end_ Compl_end_ Compl_end_ Compl_end_ rent_to_FMR_            rent_to_FMR_
+Obs       BASE    COMPARE        DIF    BASE     COMPARE      DIF     description_BASE        description_COMPARE
+
+  7 10/31/2024 10/31/2024 01/01/1960 10/31/2024 10/31/2024 01/01/1960 Below 80% FMR           Below 80% FMR          
+  8 11/30/2026 11/30/2026 01/01/1960 11/30/2026 11/30/2026 01/01/1960 Below 80% FMR           Below 80% FMR          
+  9 08/31/2006 08/31/2006 01/01/1960 08/31/2006 08/31/2006 01/01/1960                                                
+ 10 04/30/2021 04/30/2021 01/01/1960 04/30/2021 04/30/2021 01/01/1960 Between 80% & 100% FMR  Between 80% & 100% FMR 
+
+                                                Subsidy_    Subsidy_    Subsidy_
+                                                Active_     Active_     Active_
+Obs       rent_to_FMR_description_DIF             BASE      COMPARE       DIF                  Program_BASE
+
+  7 ........................................      Yes         Yes          No       Sec 8 substantial rehabilitation  
+  8 ........................................      Yes         Yes          No       Sec 8 loan management set-aside   
+  9 ........................................      No          No           No       Sec 8 substantial rehabilitation  
+ 10 ........................................      Yes         Yes          No       Sec 8 substantial rehabilitation  
+
+ 
+ 
+Obs          Program_COMPARE                        Program_DIF
+
+  7 Sec 8 substantial rehabilitation      ................................
+  8 Sec 8 loan management set-aside       ................................
+  9 Sec 8 substantial rehabilitation      ................................
+ 10 Sec 8 substantial rehabilitation      ................................
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  25
+File = Subsidy_mfa_except
+
+The CONTENTS Procedure
+
+Data Set Name        WORK.SUBSIDY_MFA_EXCEPT                Observations           121 
+Member Type          DATA                                   Variables              17  
+Engine               V9                                     Indexes                0   
+Created              Saturday, July 04, 2015 06:23:05 PM    Observation Length     334 
+Last Modified        Saturday, July 04, 2015 06:23:05 PM    Deleted Observations   0   
+Protection                                                  Compressed             CHAR
+Data Set Type                                               Reuse Space            NO  
+Label                                                       Point to Observations  YES 
+Data Representation  WINDOWS_64                             Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                        
+
+
+                                           Engine/Host Dependent Information
+
+Data Set Page Size          16384                                                                                      
+Number of Data Set Pages    3                                                                                          
+Number of Data Set Repairs  0                                                                                          
+Filename                    D:\Users\ptatian\AppData\Local\Temp\SAS Temporary Files\_TD5640\subsidy_mfa_except.sas7bdat
+Release Created             9.0202M3                                                                                   
+Host Created                X64_VSPRO                                                                                  
+
+
+                                 Alphabetic List of Variables and Attributes
+ 
+ #    Variable                    Type    Len    Format         Label
+
+14    Agency                      Char     80                   Agency responsible for managing subsidy     
+13    Compl_end                   Num       8    MMDDYY10.      Compliance period, end date                 
+ 1    Nlihc_id                    Char      8                   Preservation Catalog project ID             
+ 5    POA_end                     Num       8    MMDDYY10.      Period of affordability, end date           
+ 4    POA_start                   Num       8    MMDDYY10.      Period of affordability, current start date 
+15    POA_start_orig              Num       8    MMDDYY10.      Period of affordability, original start date
+16    Portfolio                   Char     16    $PORTFOLIO.    Subsidy portfolio                           
+12    Program                     Char     32    $PROGFULL.     Subsidy program                             
+ 7    Subsidy_Active              Num       3    DYESNO.        Subsidy is active                           
+ 9    Subsidy_Info_Source         Char     40    $INFOSRC.      Source for latest subsidy update            
+10    Subsidy_Info_Source_Date    Num       8    MMDDYY10.      Date of last subsidy info source            
+ 8    Subsidy_Info_Source_ID      Char     40                   Project ID number for subsidy info source   
+ 2    Subsidy_id                  Num       8                   Preservation Catalog subsidy ID             
+ 3    Units_Assist                Num       8                   Subsidy assisted units                      
+11    Update_Dtm                  Num       8    DATETIME16.    Datetime of last subsidy update             
+17    contract_number             Char     11                   TRACS-assigned contract number              
+ 6    rent_to_fmr_description     Char     40                   Rent to FMR ratio for assisted units        
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  26
+File = Subsidy_mfa_except
+Printing first 10 obs.
+
+ 
+               Subsidy_   Units_                                                       Subsidy_   Subsidy_Info_
+Obs Nlihc_id      id      Assist    POA_start      POA_end   rent_to_fmr_description    Active    Source_ID
+
+  1 NL000001       2         84    10/01/2004   09/30/2024   Between 101% & 120% FMR     Yes      800003741/DC39M000025
+  2 NL000001       3         50    10/01/2004   10/31/2024   Between 101% & 120% FMR     Yes      800003741/DC39L000008
+  3 NL000021       2         95    10/21/2011   11/30/2024   Between 101% & 120% FMR     Yes      800003669/DC39T871003
+  4 NL000023       2          9    12/21/2011   12/20/2014   Between 101% & 120% FMR     Yes      800003671/DC39T792003
+  5 NL000026       2        146    11/01/2013   10/31/2033   Between 101% & 120% FMR     Yes      800003672/DC392764201
+  6 NL000028       1        108    07/01/2004   06/30/2024   Below 80% FMR               Yes      800003673/DC390007006
+  7 NL000029       2        196    11/01/2004   10/31/2044   Below 80% FMR               Yes      800025410/DC39M000099
+  8 NL000031       3         18    12/01/2006   11/30/2026   Below 80% FMR               Yes      800003674/DC39M000060
+  9 NL000035       1         24    08/02/1984   08/31/2006                               No       800003703/           
+ 10 NL000036       1         18    05/01/2001   04/30/2021   Between 80% & 100% FMR      Yes      800003678/DC390010018
+
+                                                           Subsidy_
+                                                         Info_Source_
+Obs                 Subsidy_Info_Source                      Date           Update_Dtm              Program
+
+  1 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 8 loan management set-aside   
+  2 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 8 loan management set-aside   
+  3 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 202 new construction          
+  4 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 202 substantial rehabilitation
+  5 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 202 substantial rehabilitation
+  6 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 8 substantial rehabilitation  
+  7 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 8 substantial rehabilitation  
+  8 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 8 loan management set-aside   
+  9 HUD - Multifamily Assistance and Section 8 Contracts  05/01/2007  29JAN15:10:32:36 Sec 8 substantial rehabilitation  
+ 10 HUD - Multifamily Assistance and Section 8 Contracts  11/25/2014  04JUL15:18:23:05 Sec 8 substantial rehabilitation  
+
+ 
+                                                              POA_start_                               contract_
+Obs  Compl_end                     Agency                        orig       Portfolio                   number
+
+  1 09/30/2024    US Dept of Housing and Urban Development    10/01/2004    Project-based section 8             
+  2 10/31/2024    US Dept of Housing and Urban Development    10/01/2004    Project-based section 8             
+  3 10/20/2031    US Dept of Housing and Urban Development    10/21/1991    Section 202/811                     
+  4 12/20/2014    US Dept of Housing and Urban Development    12/21/2001    Section 202/811                     
+  5 10/31/2033    US Dept of Housing and Urban Development    09/01/2008    Section 202/811                     
+  6 06/30/2024    US Dept of Housing and Urban Development    04/06/1983    Project-based section 8             
+  7 10/31/2024    US Dept of Housing and Urban Development    11/01/2004    Project-based section 8             
+  8 11/30/2026    US Dept of Housing and Urban Development    12/01/2006    Project-based section 8             
+  9 08/31/2006    US Dept of Housing and Urban Development    08/02/1984    Project-based section 8             
+ 10 04/30/2021    US Dept of Housing and Urban Development    05/01/2001    Project-based section 8             
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  27
+File = Subsidy_except_test_b
+
+          Subsidy_  Units_                          contract_  rent_to_fmr_  Subsidy_                   Compl_  comp_
+Nlihc_id     id     Assist   POA_start     POA_end   number    description    Active   Program  Agency    end    type
+
+NL000001      3        .    10/01/2004           .                              .                          .    EXCEPT
+NL000021      2        .             .  11/30/2024                              .                          .    EXCEPT
+NL000023      2        .    12/21/2011           .                              .                          .    EXCEPT
+NL000029      2        .             .  10/31/2044                              .                          .    EXCEPT
+NL000046      3        U    02/28/2014  02/28/2030               New desc       .                          .    EXCEPT
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  28
+File = Update_except_tr
+
+The CONTENTS Procedure
+
+Data Set Name        WORK.UPDATE_EXCEPT_TR                  Observations           5   
+Member Type          DATA                                   Variables              9   
+Engine               V9                                     Indexes                0   
+Created              Saturday, July 04, 2015 06:23:05 PM    Observation Length     123 
+Last Modified        Saturday, July 04, 2015 06:23:05 PM    Deleted Observations   0   
+Protection                                                  Compressed             CHAR
+Data Set Type                                               Reuse Space            NO  
+Label                                                       Point to Observations  YES 
+Data Representation  WINDOWS_64                             Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                        
+
+
+                                          Engine/Host Dependent Information
+
+Data Set Page Size          8192                                                                                     
+Number of Data Set Pages    2                                                                                        
+Number of Data Set Repairs  0                                                                                        
+Filename                    D:\Users\ptatian\AppData\Local\Temp\SAS Temporary Files\_TD5640\update_except_tr.sas7bdat
+Release Created             9.0202M3                                                                                 
+Host Created                X64_VSPRO                                                                                
+
+
+                                   Alphabetic List of Variables and Attributes
+ 
+#    Variable                          Type    Len    Format        Label
+
+6    Compl_end_EXCEPT                  Num       8                  Compl_end, EXCEPT                           
+1    Nlihc_id                          Char      8                  Preservation Catalog project ID             
+5    POA_end_EXCEPT                    Num       8    MMDDYY10.     Period of affordability, end date, EXCEPT   
+4    POA_start_EXCEPT                  Num       8    MMDDYY10.     Period of affordability, start date, EXCEPT 
+9    Program_EXCEPT                    Char     32    $PROGFULL.    Subsidy program, EXCEPT                     
+8    Subsidy_Active_EXCEPT             Num       3    DYESNO.       Subsidy is active, EXCEPT                   
+2    Subsidy_id                        Num       8                  Preservation Catalog subsidy ID             
+3    Units_Assist_EXCEPT               Num       8                  Subsidy assisted units, EXCEPT              
+7    rent_to_FMR_description_EXCEPT    Char     40                  Rent to FMR ratio for assisted units, EXCEPT
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  29
+File = Update_except_tr
+Printing first 10 obs.
+
+                                Units_                                              rent_to_FMR_    Subsidy_
+                   Subsidy_    Assist_    POA_start_      POA_end_    Compl_end_    description_    Active_     Program_
+Obs    Nlihc_id       id        EXCEPT      EXCEPT          EXCEPT      EXCEPT         EXCEPT        EXCEPT      EXCEPT
+
+ 1     NL000001        3          .       10/01/2004             .         .                           .                
+ 2     NL000021        2          .                .    11/30/2024         .                           .                
+ 3     NL000023        2          .       12/21/2011             .         .                           .                
+ 4     NL000029        2          .                .    10/31/2044         .                           .                
+ 5     NL000046        3          U       02/28/2014    02/28/2030         .          New desc         .                
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  30
+File = Update_subsidy_result_except_tr
+
+                                          Units_   Units_   Units_
+         Subsidy_     Subsidy_Info_      Assist_  Assist_  Assist_  POA_start_  POA_start_  POA_start_    POA_end_
+Nlihc_id    id          Source_ID          BASE   COMPARE    DIF       BASE      COMPARE       DIF            BASE
+
+NL000001     2    800003741/DC39M000025     84       84       0     10/01/2004  10/01/2004  01/01/1960  09/30/2024
+NL000001     3    800003741/DC39L000008     50       50       0     10/01/2004  11/01/2004  02/01/1960  10/31/2024
+
+ 
+         Subsidy_   POA_end_   POA_end_ Compl_end_ Compl_end_ Compl_end_      rent_to_FMR_            rent_to_FMR_
+Nlihc_id    id       COMPARE        DIF    BASE     COMPARE      DIF        description_BASE       description_COMPARE
+
+NL000001     2    09/30/2024 01/01/1960 09/30/2024 09/30/2024 01/01/1960 Between 101% & 120% FMR Between 101% & 120% FMR
+NL000001     3    10/31/2024 01/01/1960 10/31/2024 10/31/2024 01/01/1960 Between 101% & 120% FMR Between 101% & 120% FMR
+
+                                  Subsidy_ Subsidy_ Subsidy_
+         Subsidy_  rent_to_FMR_   Active_  Active_  Active_
+Nlihc_id    id    description_DIF   BASE   COMPARE    DIF             Program_BASE                   Program_COMPARE
+
+NL000001     2                      Yes      Yes       No    Sec 8 loan management set-aside Sec 8 loan management set-aside
+NL000001     3                      Yes      Yes       No    Sec 8 loan management set-aside Sec 8 loan management set-aside
+
+                              Units_                                          rent_to_FMR_   Subsidy_
+         Subsidy_ Program_   Assist_   POA_start_     POA_end_   Compl_end_   description_   Active_    Program_
+Nlihc_id    id      DIF       EXCEPT     EXCEPT         EXCEPT     EXCEPT        EXCEPT       EXCEPT     EXCEPT
+
+NL000001     2                  .               .            .        .                         .               
+NL000001     3                  .      10/01/2004            .        .                         .               
+
+ 
+         Subsidy_
+Nlihc_id    id    i          Category_code
+
+NL000001     2    3    Other Subsidized Property
+NL000001     3    3    Other Subsidized Property
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  31
+File = PRESCAT.Subsidy_Update_Sec8mf_2014_11
+
+The CONTENTS Procedure
+
+Data Set Name        PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11    Observations           707 
+Member Type          DATA                                     Variables              17  
+Engine               V9                                       Indexes                0   
+Created              Saturday, July 04, 2015 06:23:05 PM      Observation Length     334 
+Last Modified        Saturday, July 04, 2015 06:23:05 PM      Deleted Observations   0   
+Protection                                                    Compressed             CHAR
+Data Set Type                                                 Reuse Space            NO  
+Label                                                         Point to Observations  YES 
+Data Representation  WINDOWS_64                               Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                          
+
+
+                             Engine/Host Dependent Information
+
+Data Set Page Size          16384                                                           
+Number of Data Set Pages    8                                                               
+Number of Data Set Repairs  0                                                               
+Filename                    L:\Libraries\PresCat\Data\subsidy_update_sec8mf_2014_11.sas7bdat
+Release Created             9.0202M3                                                        
+Host Created                X64_VSPRO                                                       
+
+
+                                 Alphabetic List of Variables and Attributes
+ 
+ #    Variable                    Type    Len    Format         Label
+
+14    Agency                      Char     80                   Agency responsible for managing subsidy     
+13    Compl_end                   Num       8    MMDDYY10.      Compliance period, end date                 
+ 1    Nlihc_id                    Char      8                   Preservation Catalog project ID             
+ 5    POA_end                     Num       8    MMDDYY10.      Period of affordability, end date           
+ 4    POA_start                   Num       8    MMDDYY10.      Period of affordability, current start date 
+15    POA_start_orig              Num       8    MMDDYY10.      Period of affordability, original start date
+16    Portfolio                   Char     16    $PORTFOLIO.    Subsidy portfolio                           
+12    Program                     Char     32    $PROGFULL.     Subsidy program                             
+ 7    Subsidy_Active              Num       3    DYESNO.        Subsidy is active                           
+ 9    Subsidy_Info_Source         Char     40    $INFOSRC.      Source for latest subsidy update            
+10    Subsidy_Info_Source_Date    Num       8    MMDDYY10.      Date of last subsidy info source            
+ 8    Subsidy_Info_Source_ID      Char     40                   Project ID number for subsidy info source   
+ 2    Subsidy_id                  Num       8                   Preservation Catalog subsidy ID             
+ 3    Units_Assist                Num       8                   Subsidy assisted units                      
+11    Update_Dtm                  Num       8    DATETIME16.    Datetime of last subsidy update             
+17    contract_number             Char     11                   TRACS-assigned contract number              
+ 6    rent_to_fmr_description     Char     40                   Rent to FMR ratio for assisted units        
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  32
+File = PRESCAT.Subsidy_Update_Sec8mf_2014_11
+Printing first 10 obs.
+
+ 
+                   Subsidy_    Units_                                                           Subsidy_
+Obs    Nlihc_id       id       Assist     POA_start       POA_end    rent_to_fmr_description     Active
+
+  1    NL000001        1         136     01/01/2004    01/01/2034                                 Yes   
+  2    NL000001        2          84     10/01/2004    09/30/2024    Between 101% & 120% FMR      Yes   
+  3    NL000001        3          50     10/01/2004    10/31/2024    Between 101% & 120% FMR      Yes   
+  4    NL000001        4         119     03/01/2005    03/01/2020                                 Yes   
+  5    NL000001        5         119     03/01/2005    03/01/2045                                 Yes   
+  6    NL000001        6         136     07/01/2005    05/01/2045                                 Yes   
+  7    NL000004        1          25     05/06/2005    05/06/2020                                 Yes   
+  8    NL000006        1           .              .             .                                 Yes   
+  9    NL000006        2          15     01/01/2004    01/01/2034                                 Yes   
+ 10    NL000008        1           6              .             .                                 Yes   
+
+                                                                                          Subsidy_
+           Subsidy_Info_                                                                Info_Source_
+Obs          Source_ID          Subsidy_Info_Source                                         Date
+
+  1                             HUD/LIHTC                                                09/22/2011 
+  2    800003741/DC39M000025    HUD - Multifamily Assistance and Section 8 Contracts     11/25/2014 
+  3    800003741/DC39L000008    HUD - Multifamily Assistance and Section 8 Contracts     11/25/2014 
+  4                             DC/AFFPIPELINE                                                    . 
+  5                             DC/AFFPIPELINE                                                    . 
+  6                             HUD-Insured Mulitfamily Mortgages                        03/31/2010 
+  7                             HUD/OCPD                                                 03/31/2007 
+  8                             DC/HFAPIPELINE                                           01/02/2008 
+  9                             HUD/LIHTC                                                01/15/2008 
+ 10                             DC/AFFPIPELINE                                                    . 
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  33
+File = PRESCAT.Subsidy_Update_Sec8mf_2014_11
+Printing first 10 obs.
+
+ 
+ 
+Obs          Update_Dtm    Program
+
+  1    18JAN15:11:00:28    Low income housing tax credit                                    
+  2    04JUL15:18:23:05    Sec 8 loan management set-aside                                  
+  3    04JUL15:18:23:05    Sec 8 loan management set-aside                                  
+  4    18JAN15:11:00:28    Tax exempt bond                                                  
+  5    18JAN15:11:00:28    DC housing production trust fund                                 
+  6    18JAN15:11:00:28    Sec 542(c) housing finance agency risk sharing recent completions
+  7    18JAN15:11:00:28    HOME                                                             
+  8    18JAN15:11:00:28    McKinney Vento Act loan                                          
+  9    18JAN15:11:00:28    Low income housing tax credit                                    
+ 10    18JAN15:11:00:28    DC housing production trust fund                                 
+
+ 
+ 
+Obs     Compl_end    Agency
+
+  1    01/01/2019    DC Dept of Housing and Community Development; DC Housing Finance Agency
+  2    09/30/2024    US Dept of Housing and Urban Development                               
+  3    10/31/2024    US Dept of Housing and Urban Development                               
+  4    03/01/2020    DC                                                                     
+  5    03/01/2045    DC                                                                     
+  6    05/01/2045    US Dept of Housing and Urban Development                               
+  7    05/06/2020    US Dept of Housing and Urban Development                               
+  8             .    DC                                                                     
+  9    01/01/2019    DC Dept of Housing and Community Development; DC Housing Finance Agency
+ 10             .    DC                                                                     
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  34
+File = PRESCAT.Subsidy_Update_Sec8mf_2014_11
+Printing first 10 obs.
+
+ 
+       POA_start_                                        contract_
+Obs       orig       Portfolio                            number
+
+  1    01/01/2004    LIHTC                                        
+  2    10/01/2004    Project-based section 8                      
+  3    10/01/2004    Project-based section 8                      
+  4    03/01/2005    Tax exempt bond                              
+  5    03/01/2005    DC housing production trust fund             
+  6    07/01/2005    Section 542(b)&(c)                           
+  7    05/06/2005    HOME                                         
+  8             .    McKinney Vento                               
+  9    01/01/2004    LIHTC                                        
+ 10             .    DC housing production trust fund             
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  35
+File = PRESCAT.Subsidy_Update_Sec8mf_2014_11
+
+The MEANS Procedure
+
+Variable                      N             Sum            Mean         Std Dev         Minimum         Maximum
+---------------------------------------------------------------------------------------------------------------
+Subsidy_id                  707         1372.00       1.9405941       1.2087412       1.0000000       7.0000000
+Units_Assist                671        80781.00     120.3889717     111.1203293       1.0000000     717.0000000
+POA_start                   468      7395862.00        15803.12         3239.22         2677.00        20058.00
+POA_end                     464     11515281.00        24817.42         4362.63        -7336.00        34515.00
+Subsidy_Active              707     675.0000000       0.9547383       0.2080247               0       1.0000000
+Subsidy_Info_Source_Date    587     10715003.00        18253.84         2864.56       -14428.00        20052.00
+Update_Dtm                  707    1.2297995E12      1739461854      5238219.89      1737198028      1751653385
+Compl_end                   464     10935469.00        23567.82         4472.26        -7336.00        34515.00
+POA_start_orig              467      7077064.00        15154.31         3146.98         2677.00        19936.00
+---------------------------------------------------------------------------------------------------------------
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  36
+File = Subsidy_Update_Sec8mf_2014_11
+
+Preservation Catalog project ID=NL001033
+
+ 
+Subsidy_    Units_                                rent_to_fmr_     Subsidy_        Subsidy_Info_
+   id       Assist     POA_start       POA_end     description      Active           Source_ID
+
+    1          8      12/01/2013    11/30/2014    Below 80% FMR      Yes       800219652/DC39Q031002
+
+                                                                      Subsidy_
+Subsidy_                                                            Info_Source_
+   id                       Subsidy_Info_Source                         Date              Update_Dtm
+
+    1       HUD - Multifamily Assistance and Section 8 Contracts     11/25/2014     04JUL15:18:23:05
+
+ 
+Subsidy_
+   id                        Program                       Compl_end                     Agency
+
+    1       Sec 811 project rental assistance contract    11/30/2014    US Dept of Housing and Urban Development
+
+ 
+Subsidy_    POA_start_                                          contract_
+   id          orig                   Portfolio                  number
+
+    1                .    Project rental assistance contract             
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  37
+
+The COMPARE Procedure
+Comparison of PRESCAT.SUBSIDY with PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11
+(Method=EXACT)
+
+Data Set Summary
+
+Dataset                                         Created          Modified  NVar    NObs
+
+PRESCAT.SUBSIDY                        04JUL15:16:49:44  04JUL15:16:49:44    17     707
+PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11  04JUL15:18:23:06  04JUL15:18:23:06    17     707
+
+
+Variables Summary
+
+Number of Variables in Common: 17.
+Number of ID Variables: 2.
+
+
+Observation Summary
+
+Observation      Base  Compare  ID
+
+First Obs           1        1  Nlihc_id=NL000001 Subsidy_id=1
+First Unequal       2        2  Nlihc_id=NL000001 Subsidy_id=2
+Last  Unequal     707      707  Nlihc_id=NL001033 Subsidy_id=1
+Last  Obs         707      707  Nlihc_id=NL001033 Subsidy_id=1
+
+Number of Observations in Common: 707.
+Total Number of Observations Read from PRESCAT.SUBSIDY: 707.
+Total Number of Observations Read from PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11: 707.
+
+Number of Observations with Some Compared Variables Unequal: 113.
+Number of Observations with All Compared Variables Equal: 594.
+
+
+Values Comparison Summary
+
+Number of Variables Compared with All Observations Equal: 6.
+Number of Variables Compared with Some Observations Unequal: 9.
+Number of Variables with Missing Value Differences: 9.
+Total Number of Values which Compare Unequal: 438.
+Maximum Difference: 13506628.
+
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  38
+
+The COMPARE Procedure
+Comparison of PRESCAT.SUBSIDY with PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11
+(Method=EXACT)
+
+Variables with Unequal Values
+
+Variable                  Type  Len   Label                                        Ndif   MaxDif  MissDif
+
+Units_Assist              NUM     8   Subsidy assisted units                          2        0        2
+POA_start                 NUM     8   Period of affordability, current start date    76    11554        1
+POA_end                   NUM     8   Period of affordability, end date              10     7305        1
+contract_number           CHAR   11   TRACS-assigned contract number                113               113
+rent_to_fmr_description   CHAR   40   Rent to FMR ratio for assisted units            8                 1
+Subsidy_Active            NUM     3   Subsidy is active                               1        0        1
+Subsidy_Info_Source_Date  NUM     8   Date of last subsidy info source              110   54.000        1
+Update_Dtm                NUM     8   Datetime of last subsidy update               110  1.351E7        1
+Compl_end                 NUM     8   Compliance period, end date                     8     7305        1
+
+
+
+Value Comparison Results for Variables
+
+______________________________________________________________________
+                       ||  Subsidy assisted units
+                       ||       Base    Compare
+ Nlihc_id  Subsidy_id  ||  Units_Ass  Units_Ass      Diff.     % Diff
+                       ||        ist        ist
+ ________  __________  ||  _________  _________  _________  _________
+                       ||
+ NL000046           3  ||   333.0000          U          .          .
+ NL001033           1  ||          .     8.0000          .          .
+______________________________________________________________________
+
+
+______________________________________________________________________
+                       ||  Period of affordability, current start d
+                       ||  .. ate
+                       ||       Base    Compare
+ Nlihc_id  Subsidy_id  ||  POA_start  POA_start      Diff.     % Diff
+ ________  __________  ||  _________  _________  _________  _________
+                       ||
+ NL000021           2  ||   10/21/91   10/21/11       7305    62.8874
+ NL000023           2  ||   12/21/01   12/21/11       3652    23.8226
+ NL000026           2  ||   09/01/08   11/01/13       1887    10.6154
+ NL000028           1  ||   04/06/83   07/01/04       7757    91.3018
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  39
+
+The COMPARE Procedure
+Comparison of PRESCAT.SUBSIDY with PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11
+(Method=EXACT)
+
+Value Comparison Results for Variables
+
+______________________________________________________________________
+                       ||  Period of affordability, current start d
+                       ||  .. ate
+                       ||       Base    Compare
+ Nlihc_id  Subsidy_id  ||  POA_start  POA_start      Diff.     % Diff
+ ________  __________  ||  _________  _________  _________  _________
+                       ||
+ NL000038           1  ||   09/01/06   09/01/11       1826    10.7128
+ NL000040           1  ||   09/29/95   12/01/14       7003    53.6423
+ NL000041           1  ||   09/29/95   03/24/12       6021    46.1203
+ NL000046           3  ||   10/01/10   02/28/14       1246     6.7221
+ NL000048           2  ||   05/01/94   05/01/14       7305    58.2582
+ NL000052           2  ||   03/01/09   03/01/12       1096     6.1035
+ NL000065           3  ||   08/01/05   08/01/14       3287    19.7429
+ NL000069           2  ||   04/21/03   04/21/11       2922    18.4750
+ NL000070           1  ||   11/02/84   02/02/10       9223   101.6645
+ NL000080           1  ||   08/03/83   08/03/14      11323   131.4335
+ NL000084           2  ||   04/01/04   04/01/14       3652    22.5962
+ NL000091           1  ||   09/29/95   01/08/14       6676    51.1375
+ NL000096           5  ||   09/01/07   06/01/09   639.0000     3.6703
+ NL000101           2  ||   04/02/02   04/01/02    -1.0000  -0.006480
+ NL000111           1  ||   10/01/06   10/01/11       1826    10.6940
+ NL000112           1  ||   02/12/79   10/01/10      11554   165.4827
+ NL000113           1  ||   11/01/06   11/01/11       1826    10.6746
+ NL000114           2  ||   08/01/05   03/01/10       1673    10.0487
+ NL000116           1  ||   09/28/03   04/28/14       3865    24.1925
+ NL000120           3  ||   10/01/07   09/01/10       1066     6.1124
+ NL000133           3  ||   08/01/05   08/01/14       3287    19.7429
+ NL000135           1  ||   05/01/06   08/01/14       3014    17.8111
+ NL000136           4  ||   08/01/07   01/01/08   153.0000     0.8804
+ NL000142           2  ||   06/13/03   06/13/13       3653    23.0197
+ NL000152           2  ||   10/01/05   01/01/11       1918    11.4782
+ NL000164           3  ||   11/01/01   12/01/12       4048    26.4921
+ NL000170           1  ||   12/14/83   11/01/06       8358    95.5418
+ NL000175           1  ||   05/16/91   05/16/11       7305    63.7546
+ NL000185           2  ||   06/10/08   09/10/14       2283    12.9034
+ NL000186           2  ||   09/01/07   09/01/10       1096     6.2952
+ NL000195           1  ||   08/01/07   01/01/14       2345    13.4933
+ NL000200           2  ||   04/01/01   06/01/14       4809    31.9196
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  40
+
+The COMPARE Procedure
+Comparison of PRESCAT.SUBSIDY with PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11
+(Method=EXACT)
+
+Value Comparison Results for Variables
+
+______________________________________________________________________
+                       ||  Period of affordability, current start d
+                       ||  .. ate
+                       ||       Base    Compare
+ Nlihc_id  Subsidy_id  ||  POA_start  POA_start      Diff.     % Diff
+ ________  __________  ||  _________  _________  _________  _________
+                       ||
+ NL000206           1  ||   06/01/05   06/01/13       2922    17.6151
+ NL000208           2  ||   10/02/07   10/02/14       2557    14.6609
+ NL000215           3  ||   02/01/05   02/01/14       3287    19.9599
+ NL000216           2  ||   09/01/04   09/01/14       3652    22.3843
+
+NOTE: The MAXPRINT=40 printing limit has been reached for the variable POA_start. No more values will be printed for this
+      comparison.
+______________________________________________________________________
+
+
+______________________________________________________________________
+                       ||  Period of affordability, end date
+                       ||       Base    Compare
+ Nlihc_id  Subsidy_id  ||    POA_end    POA_end      Diff.     % Diff
+ ________  __________  ||  _________  _________  _________  _________
+                       ||
+ NL000021           2  ||   10/20/31   11/30/24      -2515    -9.5901
+ NL000029           2  ||   10/31/24   10/31/44       7305    30.8488
+ NL000040           1  ||   11/30/14   11/30/15   365.0000     1.8198
+ NL000046           3  ||   10/31/15   02/28/30       5234    25.6669
+ NL000065           3  ||   10/31/14   07/31/34       7213    36.0164
+ NL000080           1  ||   08/02/14   08/02/34       7305    36.6404
+ NL000216           2  ||   08/31/14   08/31/19       1826     9.1455
+ NL000218           2  ||   09/07/14   09/07/34       7305    36.5744
+ NL000251           3  ||   06/30/12   06/30/15       1095     5.7109
+ NL001033           1  ||          .   11/30/14          .          .
+______________________________________________________________________
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  41
+
+The COMPARE Procedure
+Comparison of PRESCAT.SUBSIDY with PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11
+(Method=EXACT)
+
+Value Comparison Results for Variables
+
+______________________________________________________________________
+                       ||  TRACS-assigned contract number
+                       ||  Base Value           Compare Value
+ Nlihc_id  Subsidy_id  ||  contract_number       contract_number
+ ________  __________  ||  ___________           ___________
+                       ||
+ NL000001           2  ||  DC39M000025
+ NL000001           3  ||  DC39L000008
+ NL000021           2  ||  DC39T871003
+ NL000023           2  ||  DC39T792003
+ NL000026           2  ||  DC392764201
+ NL000028           1  ||  DC390007006
+ NL000029           2  ||  DC39M000099
+ NL000031           3  ||  DC39M000060
+ NL000036           1  ||  DC390010018
+ NL000038           1  ||  DC390005009
+ NL000039           1  ||  DC39H001003
+ NL000040           1  ||  DC39E000003
+ NL000041           1  ||  DC39E000005
+ NL000046           2  ||  DC39L000069
+ NL000046           3  ||  DC39M000051
+ NL000047           1  ||  DC398023001
+ NL000048           2  ||  DC39Q881003
+ NL000052           2  ||  DC398023017
+ NL000057           1  ||  DC39H001001
+ NL000060           1  ||  DC390007010
+ NL000064           2  ||  DC39S931002
+ NL000065           3  ||  DC39A001003
+ NL000069           2  ||  DC39T802001
+ NL000070           1  ||  DC39T781003
+ NL000074           2  ||  DC39S901001
+ NL000077           2  ||  DC39M000053
+ NL000080           1  ||  DC390012007
+ NL000081           1  ||  DC390017001
+ NL000082           2  ||  DC392815201
+ NL000084           2  ||  DC39S951003
+ NL000091           1  ||  DC39E000004
+ NL000092           2  ||  DC39M000031
+ NL000094           2  ||  DC39M000039
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  42
+
+The COMPARE Procedure
+Comparison of PRESCAT.SUBSIDY with PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11
+(Method=EXACT)
+
+Value Comparison Results for Variables
+
+______________________________________________________________________
+                       ||  TRACS-assigned contract number
+                       ||  Base Value           Compare Value
+ Nlihc_id  Subsidy_id  ||  contract_number       contract_number
+ ________  __________  ||  ___________           ___________
+                       ||
+ NL000096           5  ||  DC39E000022
+ NL000101           2  ||  DC390007009
+ NL000102           3  ||  DC390001013
+ NL000103           4  ||  DC39M000022
+ NL000103           5  ||  DC39M000023
+ NL000111           1  ||  DC390001010
+ NL000112           1  ||  DC398023003
+
+NOTE: The MAXPRINT=40 printing limit has been reached for the variable contract_number. No more values will be printed for
+      this comparison.
+______________________________________________________________________
+
+
+______________________________________________________________________
+                       ||  Rent to FMR ratio for assisted units
+                       ||  Base Value           Compare Value
+ Nlihc_id  Subsidy_id  ||  rent_to_fmr_descript  rent_to_fmr_descript
+                       ||  ion                   ion
+ ________  __________  ||  ___________________+  ___________________+
+                       ||
+ NL000046           3  ||  Between 80% & 100% F  New desc
+ NL000065           3  ||  Between 131% & 140%   Between 141% & 160%
+ NL000084           2  ||  Below 80% FMR         Between 80% & 100% F
+ NL000103           4  ||  Between 131% & 140%   Between 141% & 160%
+ NL000103           5  ||  Between 131% & 140%   Between 141% & 160%
+ NL000218           2  ||  Between 101% & 120%   Between 131% & 140%
+ NL000280           4  ||  Below 80% FMR         Between 80% & 100% F
+ NL001033           1  ||                        Below 80% FMR
+______________________________________________________________________
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  43
+
+The COMPARE Procedure
+Comparison of PRESCAT.SUBSIDY with PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11
+(Method=EXACT)
+
+Value Comparison Results for Variables
+
+______________________________________________________________________
+                       ||  Subsidy is active
+                       ||       Base    Compare
+ Nlihc_id  Subsidy_id  ||  Subsidy_A  Subsidy_A      Diff.     % Diff
+                       ||      ctive      ctive
+ ________  __________  ||  _________  _________  _________  _________
+                       ||
+ NL001033           1  ||          .  Yes                .          .
+______________________________________________________________________
+
+
+______________________________________________________________________
+                       ||  Date of last subsidy info source
+                       ||       Base    Compare
+ Nlihc_id  Subsidy_id  ||  Subsidy_I  Subsidy_I      Diff.     % Diff
+                       ||  nfo_Sourc  nfo_Sourc
+                       ||     e_Date     e_Date
+ ________  __________  ||  _________  _________  _________  _________
+                       ||
+ NL000001           2  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000001           3  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000021           2  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000023           2  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000026           2  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000028           1  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000029           2  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000031           3  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000036           1  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000038           1  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000039           1  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000040           1  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000041           1  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000046           2  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000046           3  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000047           1  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000048           2  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000052           2  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000057           1  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000060           1  ||   10/02/14   11/25/14    54.0000     0.2700
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  44
+
+The COMPARE Procedure
+Comparison of PRESCAT.SUBSIDY with PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11
+(Method=EXACT)
+
+Value Comparison Results for Variables
+
+______________________________________________________________________
+                       ||  Date of last subsidy info source
+                       ||       Base    Compare
+ Nlihc_id  Subsidy_id  ||  Subsidy_I  Subsidy_I      Diff.     % Diff
+                       ||  nfo_Sourc  nfo_Sourc
+                       ||     e_Date     e_Date
+ ________  __________  ||  _________  _________  _________  _________
+                       ||
+ NL000064           2  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000065           3  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000069           2  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000070           1  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000074           2  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000077           2  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000080           1  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000081           1  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000082           2  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000084           2  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000091           1  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000092           2  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000096           5  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000101           2  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000102           3  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000103           4  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000103           5  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000111           1  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000112           1  ||   10/02/14   11/25/14    54.0000     0.2700
+ NL000113           1  ||   10/02/14   11/25/14    54.0000     0.2700
+
+NOTE: The MAXPRINT=40 printing limit has been reached for the variable Subsidy_Info_Source_Date. No more values will be
+      printed for this comparison.
+______________________________________________________________________
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  45
+
+The COMPARE Procedure
+Comparison of PRESCAT.SUBSIDY with PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11
+(Method=EXACT)
+
+Value Comparison Results for Variables
+
+______________________________________________________________________
+                       ||  Datetime of last subsidy update
+                       ||       Base    Compare
+ Nlihc_id  Subsidy_id  ||  Update_Dt  Update_Dt      Diff.     % Diff
+                       ||          m          m
+ ________  __________  ||  _________  _________  _________  _________
+                       ||
+ NL000001           2  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000001           3  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000021           2  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000023           2  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000026           2  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000028           1  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000029           2  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000031           3  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000036           1  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000038           1  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000039           1  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000040           1  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000041           1  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000046           2  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000046           3  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000047           1  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000048           2  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000052           2  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000057           1  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000060           1  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000064           2  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000065           3  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000069           2  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000070           1  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000074           2  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000077           2  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000080           1  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000081           1  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000082           2  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000084           2  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000091           1  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000092           2  ||  29JAN2015  04JUL2015   13506628     0.7771
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  46
+
+The COMPARE Procedure
+Comparison of PRESCAT.SUBSIDY with PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11
+(Method=EXACT)
+
+Value Comparison Results for Variables
+
+______________________________________________________________________
+                       ||  Datetime of last subsidy update
+                       ||       Base    Compare
+ Nlihc_id  Subsidy_id  ||  Update_Dt  Update_Dt      Diff.     % Diff
+                       ||          m          m
+ ________  __________  ||  _________  _________  _________  _________
+                       ||
+ NL000096           5  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000101           2  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000102           3  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000103           4  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000103           5  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000111           1  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000112           1  ||  29JAN2015  04JUL2015   13506628     0.7771
+ NL000113           1  ||  29JAN2015  04JUL2015   13506628     0.7771
+
+NOTE: The MAXPRINT=40 printing limit has been reached for the variable Update_Dtm. No more values will be printed for this
+      comparison.
+______________________________________________________________________
+
+
+______________________________________________________________________
+                       ||  Compliance period, end date
+                       ||       Base    Compare
+ Nlihc_id  Subsidy_id  ||  Compl_end  Compl_end      Diff.     % Diff
+ ________  __________  ||  _________  _________  _________  _________
+                       ||
+ NL000040           1  ||   11/30/14   11/30/15   365.0000     1.8198
+ NL000065           3  ||   10/31/14   07/31/34       7213    36.0164
+ NL000080           1  ||   08/02/14   08/02/34       7305    36.6404
+ NL000208           2  ||   10/01/14   10/01/15   365.0000     1.8253
+ NL000216           2  ||   08/31/14   08/31/19       1826     9.1455
+ NL000218           2  ||   09/07/14   09/07/34       7305    36.5744
+ NL000251           3  ||   06/30/12   06/30/15       1095     5.7109
+ NL001033           1  ||          .   11/30/14          .          .
+______________________________________________________________________
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  47
+File = Update_history_new
+
+The CONTENTS Procedure
+
+Data Set Name        WORK.UPDATE_HISTORY_NEW                 Observations           1   
+Member Type          DATA                                    Variables              3   
+Engine               V9                                      Indexes                0   
+Created              Saturday, July 04, 2015 06:23:06 PM     Observation Length     56  
+Last Modified        Saturday, July 04, 2015 06:23:06 PM     Deleted Observations   0   
+Protection                                                   Compressed             CHAR
+Data Set Type                                                Reuse Space            NO  
+Label                Preservation Catalog, update history    Point to Observations  YES 
+Data Representation  WINDOWS_64                              Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                         
+
+
+                                           Engine/Host Dependent Information
+
+Data Set Page Size          4096                                                                                       
+Number of Data Set Pages    2                                                                                          
+Number of Data Set Repairs  0                                                                                          
+Filename                    D:\Users\ptatian\AppData\Local\Temp\SAS Temporary Files\_TD5640\update_history_new.sas7bdat
+Release Created             9.0202M3                                                                                   
+Host Created                X64_VSPRO                                                                                  
+
+
+                 Alphabetic List of Variables and Attributes
+ 
+#    Variable            Type    Len    Format         Label
+
+2    Info_Source         Char     40    $INFOSRC.      Source for update    
+3    Info_Source_Date    Num       8    MMDDYY10.      Date of update source
+1    Update_Dtm          Num       8    DATETIME16.    Datetime update ran  
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  48
+File = Update_history_new
+Printing first 10 obs.
+
+                                                                                        Info_
+                                                                                      Source_
+Obs          Update_Dtm                        Info_Source                               Date
+
+ 1     04JUL15:18:23:05    HUD - Multifamily Assistance and Section 8 Contracts    11/25/2014
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  49
+File = Update_subsidy_history_rec
+
+The CONTENTS Procedure
+
+Data Set Name        WORK.UPDATE_SUBSIDY_HISTORY_REC        Observations           121 
+Member Type          DATA                                   Variables              24  
+Engine               V9                                     Indexes                0   
+Created              Saturday, July 04, 2015 06:23:06 PM    Observation Length     377 
+Last Modified        Saturday, July 04, 2015 06:23:06 PM    Deleted Observations   0   
+Protection                                                  Compressed             CHAR
+Data Set Type                                               Reuse Space            NO  
+Label                                                       Point to Observations  YES 
+Data Representation  WINDOWS_64                             Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                        
+
+
+                                             Engine/Host Dependent Information
+
+Data Set Page Size          16384                                                                                           
+Number of Data Set Pages    3                                                                                               
+Number of Data Set Repairs  0                                                                                               
+Filename                    D:\Users\ptatian\AppData\Local\Temp\SAS Temporary                                               
+                            Files\_TD5640\update_subsidy_history_rec.sas7bdat                                               
+Release Created             9.0202M3                                                                                        
+Host Created                X64_VSPRO                                                                                       
+
+
+                                        Alphabetic List of Variables and Attributes
+ 
+ #    Variable                           Type    Len    Format        Label
+
+10    Compl_end_BASE                     Num       8    MMDDYY10.     Compliance period, end date, BASE                   
+11    Compl_end_COMPARE                  Num       8    MMDDYY10.     Compliance period, end date, COMPARE                
+21    Compl_end_EXCEPT                   Num       8                  Compl_end, EXCEPT                                   
+ 1    Nlihc_id                           Char      8                  Preservation Catalog project ID                     
+ 8    POA_end_BASE                       Num       8    MMDDYY10.     Period of affordability, end date, BASE             
+ 9    POA_end_COMPARE                    Num       8    MMDDYY10.     Period of affordability, end date, COMPARE          
+20    POA_end_EXCEPT                     Num       8    MMDDYY10.     Period of affordability, end date, EXCEPT           
+ 6    POA_start_BASE                     Num       8    MMDDYY10.     Period of affordability, current start date, BASE   
+ 7    POA_start_COMPARE                  Num       8    MMDDYY10.     Period of affordability, current start date, COMPARE
+19    POA_start_EXCEPT                   Num       8    MMDDYY10.     Period of affordability, start date, EXCEPT         
+16    Program_BASE                       Char     32    $PROGFULL.    Subsidy program, BASE                               
+17    Program_COMPARE                    Char     32    $PROGFULL.    Subsidy program, COMPARE                            
+24    Program_EXCEPT                     Char     32    $PROGFULL.    Subsidy program, EXCEPT                             
+14    Subsidy_Active_BASE                Num       3    DYESNO.       Subsidy is active, BASE                             
+15    Subsidy_Active_COMPARE             Num       3    DYESNO.       Subsidy is active, COMPARE                          
+23    Subsidy_Active_EXCEPT              Num       3    DYESNO.       Subsidy is active, EXCEPT                           
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  50
+File = Update_subsidy_history_rec
+
+The CONTENTS Procedure
+
+                                        Alphabetic List of Variables and Attributes
+ 
+ #    Variable                           Type    Len    Format        Label
+
+ 3    Subsidy_Info_Source_ID             Char     40                  Project ID number for subsidy info source           
+ 2    Subsidy_id                         Num       8                  Preservation Catalog subsidy ID                     
+ 4    Units_Assist_BASE                  Num       8                  Subsidy assisted units, BASE                        
+ 5    Units_Assist_COMPARE               Num       8                  Subsidy assisted units, COMPARE                     
+18    Units_Assist_EXCEPT                Num       8                  Subsidy assisted units, EXCEPT                      
+12    rent_to_FMR_description_BASE       Char     40                  Rent to FMR ratio for assisted units, BASE          
+13    rent_to_FMR_description_COMPARE    Char     40                  Rent to FMR ratio for assisted units, COMPARE       
+22    rent_to_FMR_description_EXCEPT     Char     40                  Rent to FMR ratio for assisted units, EXCEPT        
+PRESCAT/Update_Sec8mf_2014_11_a.sas:  NeighborhoodInfo DC                                   18:23 Saturday, July 4, 2015  51
+File = Update_subsidy_history_rec
+Printing first 10 obs.
+
+                                                Units_   Units_
+              Subsidy_  Subsidy_Info_          Assist_  Assist_  POA_start_  POA_start_    POA_end_    POA_end_  Compl_end_
+Obs Nlihc_id     id     Source_ID                BASE   COMPARE     BASE      COMPARE          BASE     COMPARE     BASE
+
+  1 NL000001      2     800003741/DC39M000025     84       84    10/01/2004  10/01/2004  09/30/2024  09/30/2024  09/30/2024
+  2 NL000001      3     800003741/DC39L000008     50       50    10/01/2004  11/01/2004  10/31/2024  10/31/2024  10/31/2024
+  3 NL000021      2     800003669/DC39T871003     95       95    10/21/1991  10/21/2011  10/20/2031  10/20/2031  10/20/2031
+  4 NL000023      2     800003671/DC39T792003      9        9    12/21/2001  12/21/2011  12/20/2014  12/20/2014  12/20/2014
+  5 NL000026      2     800003672/DC392764201    146      146    09/01/2008  11/01/2013  10/31/2033  10/31/2033  10/31/2033
+  6 NL000028      1     800003673/DC390007006    108      108    04/06/1983  07/01/2004  06/30/2024  06/30/2024  06/30/2024
+  7 NL000029      2     800025410/DC39M000099    196      196    11/01/2004  11/01/2004  10/31/2024  10/31/2024  10/31/2024
+  8 NL000031      3     800003674/DC39M000060     18       18    12/01/2006  12/01/2006  11/30/2026  11/30/2026  11/30/2026
+  9 NL000035      1     800003703/                24       24    08/02/1984  08/02/1984  08/31/2006  08/31/2006  08/31/2006
+ 10 NL000036      1     800003678/DC390010018     18       18    05/01/2001  05/01/2001  04/30/2021  04/30/2021  04/30/2021
+
+                                                                  Subsidy_  Subsidy_
+    Compl_end_  rent_to_FMR_             rent_to_FMR_             Active_   Active_
+Obs  COMPARE    description_BASE         description_COMPARE        BASE    COMPARE              Program_BASE
+
+  1 09/30/2024  Between 101% & 120% FMR  Between 101% & 120% FMR    Yes       Yes     Sec 8 loan management set-aside   
+  2 10/31/2024  Between 101% & 120% FMR  Between 101% & 120% FMR    Yes       Yes     Sec 8 loan management set-aside   
+  3 10/20/2031  Between 101% & 120% FMR  Between 101% & 120% FMR    Yes       Yes     Sec 202 new construction          
+  4 12/20/2014  Between 101% & 120% FMR  Between 101% & 120% FMR    Yes       Yes     Sec 202 substantial rehabilitation
+  5 10/31/2033  Between 101% & 120% FMR  Between 101% & 120% FMR    Yes       Yes     Sec 202 substantial rehabilitation
+  6 06/30/2024  Below 80% FMR            Below 80% FMR              Yes       Yes     Sec 8 substantial rehabilitation  
+  7 10/31/2024  Below 80% FMR            Below 80% FMR              Yes       Yes     Sec 8 substantial rehabilitation  
+  8 11/30/2026  Below 80% FMR            Below 80% FMR              Yes       Yes     Sec 8 loan management set-aside   
+  9 08/31/2006                                                      No        No      Sec 8 substantial rehabilitation  
+ 10 04/30/2021  Between 80% & 100% FMR   Between 80% & 100% FMR     Yes       Yes     Sec 8 substantial rehabilitation  
+
+                                         Units_                                      rent_to_FMR_  Subsidy_
+                                        Assist_  POA_start_    POA_end_  Compl_end_  description_  Active_   Program_
+Obs          Program_COMPARE             EXCEPT    EXCEPT        EXCEPT    EXCEPT       EXCEPT      EXCEPT    EXCEPT
+
+  1 Sec 8 loan management set-aside        .              .           .       .                       .              
+  2 Sec 8 loan management set-aside        .     10/01/2004           .       .                       .              
+  3 Sec 202 new construction               .              .  11/30/2024       .                       .              
+  4 Sec 202 substantial rehabilitation     .     12/21/2011           .       .                       .              
+  5 Sec 202 substantial rehabilitation     .              .           .       .                       .              
+  6 Sec 8 substantial rehabilitation       .              .           .       .                       .              
+  7 Sec 8 substantial rehabilitation       .              .  10/31/2044       .                       .              
+  8 Sec 8 loan management set-aside        .              .           .       .                       .              
+  9 Sec 8 substantial rehabilitation       .              .           .       .                       .              
+ 10 Sec 8 substantial rehabilitation       .              .           .       .                       .              

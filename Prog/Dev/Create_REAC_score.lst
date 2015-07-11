@@ -1,0 +1,292 @@
+PRESCAT/Create_REAC_score.sas:  NeighborhoodInfo DC                                      15:40 Friday, December 19, 2014   1
+
+            PASS1_                  PASS2_                  PASS3_
+NLIHC_ID    Score     PASS1_Date    Score     PASS2_Date    Score     PASS3_Date
+
+NL000106                       .                       .                       .
+NL000109                       .                       .                       .
+NL000110                       .                       .                       .
+NL000158                       .                       .                       .
+NL000114     83c      07/27/2011     66c      05/05/2010     93c      07/18/2007
+NL000115                       .                       .                       .
+NL000116     81c*     01/20/2010     76c*     11/19/2008     77c      09/12/2007
+NL000117     88c      12/15/2010     80c      10/22/2008     91b      11/30/2005
+NL000257                       .                       .                       .
+NL000119                       .                       .                       .
+NL000395                       .                       .                       .
+NL000396                       .                       .                       .
+NL000382                       .                       .                       .
+NL000383                       .                       .                       .
+NL000384                       .                       .                       .
+NL000094                       .                       .                       .
+NL000133     81c      01/06/2010     87b      11/28/2007     88b      11/30/2005
+NL000079                       .                       .                       .
+NL000080     95b      06/14/2012     90b*     05/21/2009     90c*     05/17/2006
+NL001002                       .                       .                       .
+NL000120     61c      04/08/2009     46c*     08/27/2008     67c*     08/01/2007
+NL000121                       .                       .                       .
+NL000161                       .                       .                       .
+NL000162                       .                       .                       .
+NL000163                       .                       .                       .
+NL000164     82c*     12/15/2010     77c      07/22/2009     74c      06/11/2008
+NL000126     99b      09/26/2007     84c      10/28/2004     65c      08/14/2003
+NL000127     86c      09/10/2008     61c*     10/03/2007     69c*     11/06/2003
+NL000129                       .                       .                       .
+NL000224     81c      11/17/2010     68c      07/15/2009     64c*     12/06/2006
+NL000084     87b*     09/12/2007                       .                       .
+NL000085                       .                       .                       .
+NL000070     88c      10/27/2010     73c*     09/24/2009     42c*     08/13/2008
+NL000071                       .                       .                       .
+NL000401                       .                       .                       .
+NL000402                       .                       .                       .
+NL000380                       .                       .                       .
+NL000403                       .                       .                       .
+NL000404                       .                       .                       .
+NL000405                       .                       .                       .
+NL000407                       .                       .                       .
+NL000226     64c*     10/05/2011     97b      09/19/2007     99b      04/08/2004
+NL000260     81c      02/03/2011     43c*     04/22/2009                       .
+PRESCAT/Create_REAC_score.sas:  NeighborhoodInfo DC                                      15:40 Friday, December 19, 2014   2
+
+            PASS1_                  PASS2_                  PASS3_
+NLIHC_ID    Score     PASS1_Date    Score     PASS2_Date    Score     PASS3_Date
+
+NL000200     81b      07/16/2009     79c      05/22/2008     74b      11/22/2006
+NL000202     56c*     06/07/2006     42c      09/08/2005     78c      09/09/2004
+NL000056                       .                       .                       .
+NL000057     90b      07/15/2009     70c      03/25/2009     65c      09/20/2007
+NL000058                       .                       .                       .
+NL000418                       .                       .                       .
+NL000179     91b      04/05/2006     74c      08/19/2004     41c      08/21/2003
+NL000180                       .                       .                       .
+NL000181                       .                       .                       .
+NL000273     88b      07/03/2008     61c      07/14/2005     70c      07/08/2004
+NL000274                       .                       .                       .
+NL000275     90b      03/11/2009     94c      11/30/2005     89c*     01/08/2004
+NL000050                       .                       .                       .
+NL000052     93b      05/27/2009     60c      07/02/2008     99b      06/05/2003
+NL000183     85c      06/05/2008     93b*     03/30/2005     94b      01/11/2002
+NL000184                       .                       .                       .
+NL000185     76c      05/23/2012     55c      08/03/2005     36c      10/07/2004
+NL000017                       .                       .                       .
+NL000298     75c      12/01/2010     62c      10/01/2008     86c      09/13/2006
+NL000302                       .                       .                       .
+NL000303                       .                       .                       .
+NL000146                       .                       .                       .
+NL000147                       .                       .                       .
+NL000237                       .                       .                       .
+NL000150                       .                       .                       .
+NL000074     65b*     03/04/2009     32c*     08/21/2008     86b      07/06/2006
+NL000075                       .                       .                       .
+NL000076     92c*     05/26/2010     92b*     02/28/2007     55c*     03/09/2005
+NL000408                       .                       .                       .
+NL000411                       .                       .                       .
+NL000412                       .                       .                       .
+NL000077     95b      12/16/2009     67c*     12/24/2008     77c      12/27/2007
+NL000078                       .                       .                       .
+NL000215     88b      12/17/2008                       .                       .
+NL000216     80c*     12/08/2011     67c      10/27/2010     63c      08/26/2009
+NL000217     84c      12/14/2011     89c      10/08/2009     81c      09/12/2007
+NL000295     97c      09/22/2010     56c      08/28/2003     44c      11/07/2002
+NL000296     93b      09/26/2007     92b      10/07/2004     96b      01/11/2001
+NL000297     92b*     11/24/2010     69b      02/25/2009     83c*     10/11/2006
+NL000060     81c*     04/11/2012     93c      05/21/2009     62c*     05/07/2008
+NL000061                       .                       .                       .
+NL000063                       .                       .                       .
+NL000064     64c      05/05/2010     97b      08/09/2006     98a      07/18/2002
+PRESCAT/Create_REAC_score.sas:  NeighborhoodInfo DC                                      15:40 Friday, December 19, 2014   3
+
+            PASS1_                  PASS2_                  PASS3_
+NLIHC_ID    Score     PASS1_Date    Score     PASS2_Date    Score     PASS3_Date
+
+NL000103                       .                       .                       .
+NL000105                       .                       .                       .
+NL000134                       .                       .                       .
+NL000135     97c*     12/21/2011     87c      09/19/2007     82c*     11/09/2005
+NL000136     92b*     12/02/2010     88c      05/10/2006     54c*     04/13/2005
+NL000137     61c*     09/28/2005     45c*     02/10/2005     68c      05/15/2003
+NL000138     79b      02/29/2012     77c      12/15/2010     73c      09/16/2009
+NL000139                       .                       .                       .
+NL000140                       .                       .                       .
+NL000142     91a      09/03/2009     69c      06/11/2008     90b      09/30/2004
+NL000145                       .                       .                       .
+NL000409                       .                       .                       .
+NL000410                       .                       .                       .
+NL000048     88c      12/07/2011     96b      06/06/2007     56b      08/16/2006
+PRESCAT/Create_REAC_score.sas:  NeighborhoodInfo DC                                      15:40 Friday, December 19, 2014   4
+File = PresCat.REAC_score
+
+The CONTENTS Procedure
+
+Data Set Name        PRESCAT.REAC_SCORE                       Observations           366 
+Member Type          DATA                                     Variables              5   
+Engine               V9                                       Indexes                0   
+Created              Friday, December 19, 2014 03:40:57 PM    Observation Length     34  
+Last Modified        Friday, December 19, 2014 03:40:57 PM    Deleted Observations   0   
+Protection                                                    Compressed             CHAR
+Data Set Type                                                 Reuse Space            NO  
+Label                Preservation Catalog, REAC scores        Point to Observations  YES 
+Data Representation  WINDOWS_64                               Sorted                 YES 
+Encoding             wlatin1  Western (Windows)                                          
+
+
+                    Engine/Host Dependent Information
+
+Data Set Page Size          4096                                         
+Number of Data Set Pages    6                                            
+Number of Data Set Repairs  0                                            
+Filename                    L:\Libraries\PresCat\Data\reac_score.sas7bdat
+Release Created             9.0202M3                                     
+Host Created                X64_VSPRO                                    
+
+
+                       Alphabetic List of Variables and Attributes
+ 
+#    Variable             Type    Len    Format       Label
+
+1    Nlihc_id             Char      8                 Preservation Catalog project ID   
+2    REAC_date            Num       8    MMDDYY10.    Date of REAC inspection           
+3    REAC_score           Char      8                 REAC inspection score             
+5    REAC_score_letter    Char      2                 REAC inspection score, letter part
+4    REAC_score_num       Num       8                 REAC inspection score, number part
+
+
+              Sort Information
+
+Sortedby       Nlihc_id DESCENDING REAC_date
+Validated      YES                          
+Character Set  ANSI                         
+PRESCAT/Create_REAC_score.sas:  NeighborhoodInfo DC                                      15:40 Friday, December 19, 2014   5
+File = PresCat.REAC_score
+Printing first 100 obs.
+
+                                           REAC_    REAC_
+                                 REAC_    score_    score_
+Obs    Nlihc_id     REAC_date    score      num     letter
+
+  1    NL000001    07/15/2010    82c        82        c   
+  2    NL000001    12/18/2003    39c        39        c   
+  3    NL000001    09/19/2002    46c*       46        c*  
+  4    NL000016    11/03/2010    92a        92        a   
+  5    NL000016    06/10/2009    77b        77        b   
+  6    NL000016    04/09/2008    78c        78        c   
+  7    NL000021    03/30/2011    93b        93        b   
+  8    NL000021    09/27/2006    96b        96        b   
+  9    NL000021    08/13/2002    99a        99        a   
+ 10    NL000023    08/20/2008    92a        92        a   
+ 11    NL000023    06/13/2007    65c*       65        c*  
+ 12    NL000023    01/04/2007    56c        56        c   
+ 13    NL000026    05/23/2012    67c        67        c   
+ 14    NL000026    09/14/2005    42c*       42        c*  
+ 15    NL000026    10/07/2004    50c*       50        c*  
+ 16    NL000028    06/27/2012    90b*       90        b*  
+ 17    NL000028    06/24/2010    83c        83        c   
+ 18    NL000028    06/18/2008    81c*       81        c*  
+ 19    NL000029    05/31/2012    82c*       82        c*  
+ 20    NL000029    05/05/2010    88b        88        b   
+ 21    NL000029    11/01/2006    91c*       91        c*  
+ 22    NL000031    11/21/2007    87c        87        c   
+ 23    NL000031    12/29/2005    88c        88        c   
+ 24    NL000031    12/18/2003    80c*       80        c*  
+ 25    NL000036    05/19/2011    67c*       67        c*  
+ 26    NL000036    09/26/2007    91b        91        b   
+ 27    NL000036    08/30/2006    69c        69        c   
+ 28    NL000037    09/21/2011    80b        80        b   
+ 29    NL000037    08/26/2009    83c        83        c   
+ 30    NL000037    09/27/2006    93c*       93        c*  
+ 31    NL000038    03/11/2009    84c*       84        c*  
+ 32    NL000038    11/08/2006    81c*       81        c*  
+ 33    NL000038    12/09/2004    61c*       61        c*  
+ 34    NL000039    06/22/2011    94c*       94        c*  
+ 35    NL000039    04/22/2009    88c        88        c   
+ 36    NL000039    04/25/2007    87c        87        c   
+ 37    NL000040    02/03/2010    84c        84        c   
+ 38    NL000040    10/08/2008    61c*       61        c*  
+ 39    NL000040    10/03/2007    44c*       44        c*  
+ 40    NL000041    10/29/2008    88c        88        c   
+PRESCAT/Create_REAC_score.sas:  NeighborhoodInfo DC                                      15:40 Friday, December 19, 2014   6
+File = PresCat.REAC_score
+Printing first 100 obs.
+
+                                           REAC_    REAC_
+                                 REAC_    score_    score_
+Obs    Nlihc_id     REAC_date    score      num     letter
+
+ 41    NL000041    09/19/2007    70c        70        c   
+ 42    NL000041    08/30/2006    53c        53        c   
+ 43    NL000045    03/28/2012    90c        90        c   
+ 44    NL000045    03/11/2010    88b        88        b   
+ 45    NL000045    01/16/2008    88c        88        c   
+ 46    NL000046    11/11/2009    92c        92        c   
+ 47    NL000046    08/27/2008    71c*       71        c*  
+ 48    NL000046    10/04/2007    74c        74        c   
+ 49    NL000047    05/05/2010    97a        97        a   
+ 50    NL000047    09/27/2006    96b        96        b   
+ 51    NL000047    07/18/2002    99a        99        a   
+ 52    NL000048    12/07/2011    88c        88        c   
+ 53    NL000048    06/06/2007    96b        96        b   
+ 54    NL000048    08/16/2006    56b        56        b   
+ 55    NL000052    05/27/2009    93b        93        b   
+ 56    NL000052    07/02/2008    60c        60        c   
+ 57    NL000052    06/05/2003    99b        99        b   
+ 58    NL000057    07/15/2009    90b        90        b   
+ 59    NL000057    03/25/2009    70c        70        c   
+ 60    NL000057    09/20/2007    65c        65        c   
+ 61    NL000060    04/11/2012    81c*       81        c*  
+ 62    NL000060    05/21/2009    93c        93        c   
+ 63    NL000060    05/07/2008    62c*       62        c*  
+ 64    NL000064    05/05/2010    64c        64        c   
+ 65    NL000064    08/09/2006    97b        97        b   
+ 66    NL000064    07/18/2002    98a        98        a   
+ 67    NL000065    10/12/2011    79b        79        b   
+ 68    NL000065    03/15/2006    89c        89        c   
+ 69    NL000065    09/18/2003    60c*       60        c*  
+ 70    NL000068    01/26/2011    75c*       75        c*  
+ 71    NL000068    02/18/2009    80c        80        c   
+ 72    NL000068    01/30/2008    78c        78        c   
+ 73    NL000069    06/24/2010    53c*       53        c*  
+ 74    NL000069    10/06/2006    99a        99        a   
+ 75    NL000069    09/04/2003    82a        82        a   
+ 76    NL000070    10/27/2010    88c        88        c   
+ 77    NL000070    09/24/2009    73c*       73        c*  
+ 78    NL000070    08/13/2008    42c*       42        c*  
+ 79    NL000074    03/04/2009    65b*       65        b*  
+ 80    NL000074    08/21/2008    32c*       32        c*  
+PRESCAT/Create_REAC_score.sas:  NeighborhoodInfo DC                                      15:40 Friday, December 19, 2014   7
+File = PresCat.REAC_score
+Printing first 100 obs.
+
+                                           REAC_    REAC_
+                                 REAC_    score_    score_
+Obs    Nlihc_id     REAC_date    score      num     letter
+
+ 81    NL000074    07/06/2006    86b        86        b   
+ 82    NL000076    05/26/2010    92c*       92        c*  
+ 83    NL000076    02/28/2007    92b*       92        b*  
+ 84    NL000076    03/09/2005    55c*       55        c*  
+ 85    NL000077    12/16/2009    95b        95        b   
+ 86    NL000077    12/24/2008    67c*       67        c*  
+ 87    NL000077    12/27/2007    77c        77        c   
+ 88    NL000080    06/14/2012    95b        95        b   
+ 89    NL000080    05/21/2009    90b*       90        b*  
+ 90    NL000080    05/17/2006    90c*       90        c*  
+ 91    NL000081    03/25/2009    92c*       92        c*  
+ 92    NL000081    09/10/2008    29c*       29        c*  
+ 93    NL000081    07/31/2003    25c*       25        c*  
+ 94    NL000082    09/26/2007    99a        99        a   
+ 95    NL000082    09/23/2004    99b        99        b   
+ 96    NL000082    01/25/2001    96a        96        a   
+ 97    NL000083    10/26/2011    85c*       85        c*  
+ 98    NL000083    11/17/2010    77c*       77        c*  
+ 99    NL000083    08/27/2008    84c*       84        c*  
+100    NL000084    09/12/2007    87b*       87        b*  
+PRESCAT/Create_REAC_score.sas:  NeighborhoodInfo DC                                      15:40 Friday, December 19, 2014   8
+File = PresCat.REAC_score
+
+The MEANS Procedure
+
+Variable            N             Sum            Mean         Std Dev         Minimum         Maximum
+-----------------------------------------------------------------------------------------------------
+REAC_date         366      6394869.40        17472.32         1011.19        14287.00        19171.90
+REAC_score_num    366        28003.00      76.5109290      17.4272229       1.0000000      99.0000000
+-----------------------------------------------------------------------------------------------------

@@ -1,0 +1,343 @@
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   1
+File = PresCat.Subsidy
+
+The CONTENTS Procedure
+
+Data Set Name        PRESCAT.SUBSIDY                            Observations           707 
+Member Type          DATA                                       Variables              17  
+Engine               V9                                         Indexes                0   
+Created              Saturday, July 04, 2015 04:49:43 PM        Observation Length     334 
+Last Modified        Saturday, July 04, 2015 04:49:43 PM        Deleted Observations   0   
+Protection                                                      Compressed             CHAR
+Data Set Type                                                   Reuse Space            NO  
+Label                Preservation Catalog, project subsidies    Point to Observations  YES 
+Data Representation  WINDOWS_64                                 Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                            
+
+
+                  Engine/Host Dependent Information
+
+Data Set Page Size          16384                                     
+Number of Data Set Pages    8                                         
+Number of Data Set Repairs  0                                         
+Filename                    L:\Libraries\PresCat\Data\subsidy.sas7bdat
+Release Created             9.0202M3                                  
+Host Created                X64_VSPRO                                 
+
+
+                                 Alphabetic List of Variables and Attributes
+ 
+ #    Variable                    Type    Len    Format         Label
+
+15    Agency                      Char     80                   Agency responsible for managing subsidy     
+14    Compl_end                   Num       8    MMDDYY10.      Compliance period, end date                 
+ 1    Nlihc_id                    Char      8                   Preservation Catalog project ID             
+ 5    POA_end                     Num       8    MMDDYY10.      Period of affordability, end date           
+ 4    POA_start                   Num       8    MMDDYY10.      Period of affordability, current start date 
+16    POA_start_orig              Num       8    MMDDYY10.      Period of affordability, original start date
+17    Portfolio                   Char     16    $PORTFOLIO.    Subsidy portfolio                           
+13    Program                     Char     32    $PROGFULL.     Subsidy program                             
+ 8    Subsidy_Active              Num       3    DYESNO.        Subsidy is active                           
+10    Subsidy_Info_Source         Char     40    $INFOSRC.      Source for latest subsidy update            
+11    Subsidy_Info_Source_Date    Num       8    MMDDYY10.      Date of last subsidy info source            
+ 9    Subsidy_Info_Source_ID      Char     40                   Project ID number for subsidy info source   
+ 2    Subsidy_id                  Num       8                   Preservation Catalog subsidy ID             
+ 3    Units_Assist                Num       8                   Subsidy assisted units                      
+12    Update_Dtm                  Num       8    DATETIME16.    Datetime of last subsidy update             
+ 6    contract_number             Char     11                   TRACS-assigned contract number              
+ 7    rent_to_fmr_description     Char     40                   Rent to FMR ratio for assisted units        
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   2
+File = PresCat.Subsidy
+Printing first 10 obs.
+
+ 
+             Subsidy_ Units_                        contract_                          Subsidy_     Subsidy_Info_
+Obs Nlihc_id    id    Assist  POA_start    POA_end   number    rent_to_fmr_description  Active        Source_ID
+
+  1 NL000001     1      136  01/01/2004 01/01/2034                                       Yes                         
+  2 NL000001     2       84  10/01/2004 09/30/2024 DC39M000025 Between 101% & 120% FMR   Yes    800003741/DC39M000025
+  3 NL000001     3       50  10/01/2004 10/31/2024 DC39L000008 Between 101% & 120% FMR   Yes    800003741/DC39L000008
+  4 NL000001     4      119  03/01/2005 03/01/2020                                       Yes                         
+  5 NL000001     5      119  03/01/2005 03/01/2045                                       Yes                         
+  6 NL000001     6      136  07/01/2005 05/01/2045                                       Yes                         
+
+                                                              Subsidy_
+                                                            Info_Source_
+Obs Subsidy_Info_Source                                         Date              Update_Dtm
+
+  1 HUD/LIHTC                                                09/22/2011     18JAN15:11:00:28
+  2 HUD - Multifamily Assistance and Section 8 Contracts     10/02/2014     29JAN15:10:32:36
+  3 HUD - Multifamily Assistance and Section 8 Contracts     10/02/2014     29JAN15:10:32:36
+  4 DC/AFFPIPELINE                                                    .     18JAN15:11:00:28
+  5 DC/AFFPIPELINE                                                    .     18JAN15:11:00:28
+  6 HUD-Insured Mulitfamily Mortgages                        03/31/2010     18JAN15:11:00:28
+
+ 
+ 
+Obs Program                                                               Compl_end
+
+  1 Low income housing tax credit                                        01/01/2019
+  2 Sec 8 loan management set-aside                                      09/30/2024
+  3 Sec 8 loan management set-aside                                      10/31/2024
+  4 Tax exempt bond                                                      03/01/2020
+  5 DC housing production trust fund                                     03/01/2045
+  6 Sec 542(c) housing finance agency risk sharing recent completions    05/01/2045
+
+ 
+                                                                             POA_start_
+Obs Agency                                                                      orig     Portfolio
+
+  1 DC Dept of Housing and Community Development; DC Housing Finance Agency  01/01/2004  LIHTC                           
+  2 US Dept of Housing and Urban Development                                 10/01/2004  Project-based section 8         
+  3 US Dept of Housing and Urban Development                                 10/01/2004  Project-based section 8         
+  4 DC                                                                       03/01/2005  Tax exempt bond                 
+  5 DC                                                                       03/01/2005  DC housing production trust fund
+  6 US Dept of Housing and Urban Development                                 07/01/2005  Section 542(b)&(c)              
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   3
+File = PresCat.Subsidy
+Printing first 10 obs.
+
+ 
+             Subsidy_ Units_                        contract_                          Subsidy_     Subsidy_Info_
+Obs Nlihc_id    id    Assist  POA_start    POA_end   number    rent_to_fmr_description  Active        Source_ID
+
+  7 NL000004     1       25  05/06/2005 05/06/2020                                       Yes                         
+  8 NL000006     1        .           .          .                                       Yes                         
+  9 NL000006     2       15  01/01/2004 01/01/2034                                       Yes                         
+ 10 NL000008     1        6           .          .                                       Yes                         
+
+                                                              Subsidy_
+                                                            Info_Source_
+Obs Subsidy_Info_Source                                         Date              Update_Dtm
+
+  7 HUD/OCPD                                                 03/31/2007     18JAN15:11:00:28
+  8 DC/HFAPIPELINE                                           01/02/2008     18JAN15:11:00:28
+  9 HUD/LIHTC                                                01/15/2008     18JAN15:11:00:28
+ 10 DC/AFFPIPELINE                                                    .     18JAN15:11:00:28
+
+ 
+ 
+Obs Program                                                               Compl_end
+
+  7 HOME                                                                 05/06/2020
+  8 McKinney Vento Act loan                                                       .
+  9 Low income housing tax credit                                        01/01/2019
+ 10 DC housing production trust fund                                              .
+
+ 
+                                                                             POA_start_
+Obs Agency                                                                      orig     Portfolio
+
+  7 US Dept of Housing and Urban Development                                 05/06/2005  HOME                            
+  8 DC                                                                                .  McKinney Vento                  
+  9 DC Dept of Housing and Community Development; DC Housing Finance Agency  01/01/2004  LIHTC                           
+ 10 DC                                                                                .  DC housing production trust fund
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   4
+File = PresCat.Subsidy
+
+The MEANS Procedure
+
+Variable                      N             Sum            Mean         Std Dev         Minimum         Maximum
+---------------------------------------------------------------------------------------------------------------
+Subsidy_id                  707         1372.00       1.9405941       1.2087412       1.0000000       7.0000000
+Units_Assist                671        81106.00     120.8733234     111.3378094       1.0000000     717.0000000
+POA_start                   467      7077064.00        15154.31         3146.98         2677.00        19936.00
+POA_end                     463     11460091.00        24751.82         4377.15        -7336.00        34515.00
+Subsidy_Active              706     674.0000000       0.9546742       0.2081652               0       1.0000000
+Subsidy_Info_Source_Date    586     10689065.00        18240.73         2859.79       -14428.00        19998.00
+Update_Dtm                  706    1.2265757E12      1737359285       356602.59      1737198028      1738146756
+Compl_end                   463     10889938.00        23520.38         4478.95        -7336.00        34515.00
+POA_start_orig              467      7077064.00        15154.31         3146.98         2677.00        19936.00
+---------------------------------------------------------------------------------------------------------------
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   5
+File = PresCat.Subsidy
+
+The FREQ Procedure
+
+                                                      Subsidy program
+ 
+                                                                                                     Cumulative   Cumulative
+Program                                                                       Frequency    Percent    Frequency     Percent
+----------------------------------------------------------------------------------------------------------------------------
+Sec 202 direct loan/elderly/pre-1974                                                 2       0.28            2        0.28  
+Sec 202/8 direct loan/elderly-handicapped                                           13       1.84           15        2.12  
+Sec 202 new construction                                                             7       0.99           22        3.11  
+Sec 202 substantial rehabilitation                                                   6       0.85           28        3.96  
+Sec 202/811 capital advance                                                         14       1.98           42        5.94  
+Sec 207/223(f) purchase/refinance housing                                           12       1.70           54        7.64  
+Sec 220 urban renewal housing                                                        4       0.57           58        8.20  
+Sec 221(d)(3) below market rate interest urban renewal/coop housing                  2       0.28           60        8.49  
+Sec 221(d)(3) market rate moderate income/displaced families                         3       0.42           63        8.91  
+Sec 221(d)(4) market rate moderate income/displaced families                        17       2.40           80       11.32  
+Sec 223(a)(7)/207/223(f) refinanced insurance                                        1       0.14           81       11.46  
+Sec 223(a)(7)/220 refinance/urban renewal                                            1       0.14           82       11.60  
+Sec 223(a)(7)/221(d)(3) market refinance/moderate income                             2       0.28           84       11.88  
+Sec 223(a)(7)/221(d)(4) market refinance/moderate income                             8       1.13           92       13.01  
+Sec 223(a)(7)/221(d)(4) market/244 refinance/moderate income co-in                   1       0.14           93       13.15  
+Sec 223(a)(7)/232 refinance nursing homes                                            2       0.28           95       13.44  
+Sec 232 nursing homes                                                                1       0.14           96       13.58  
+Sec 232/223(f) purchase/refinance nursing homes                                      1       0.14           97       13.72  
+Sec 236(j)(1) lower income families                                                 17       2.40          114       16.12  
+Sec 241(a)/221 below market rate interest improvements & additions                   1       0.14          115       16.27  
+Sec 542(c) housing finance agency risk sharing existing                              6       0.85          121       17.11  
+Sec 542(c) housing finance agency risk sharing recent completions                   17       2.40          138       19.52  
+Sec 542(b) qualified participating entities risk sharing existing                    2       0.28          140       19.80  
+Sec 542(b) qualified participating entities risk sharing recent completions          1       0.14          141       19.94  
+Community development block grant                                                   52       7.36          193       27.30  
+DC housing production trust fund                                                    63       8.91          256       36.21  
+Sec 8 housing finance agency (unspecified)                                           1       0.14          257       36.35  
+Sec 8 housing finance agency new construction                                        3       0.42          260       36.78  
+Sec 8 housing finance agency substantial rehabilitation                              4       0.57          264       37.34  
+HOME                                                                                27       3.82          291       41.16  
+Low income housing tax credit                                                      123      17.40          414       58.56  
+Sec 8 loan management set-aside                                                     39       5.52          453       64.07  
+McKinney Vento Act loan                                                             14       1.98          467       66.05  
+Sec 8 property disposition (unspecified)                                             1       0.14          468       66.20  
+Sec 8 property disposition existing                                                  4       0.57          472       66.76  
+Sec 8 property disposition moderate rehabilitation                                   5       0.71          477       67.47  
+Sec 8 property disposition substantial rehabilitation                                4       0.57          481       68.03  
+Sec 202 project rental assistance contract                                           7       0.99          488       69.02  
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   6
+File = PresCat.Subsidy
+
+The FREQ Procedure
+
+                                                      Subsidy program
+ 
+                                                                                                     Cumulative   Cumulative
+Program                                                                       Frequency    Percent    Frequency     Percent
+----------------------------------------------------------------------------------------------------------------------------
+Sec 811 project rental assistance contract                                           8       1.13          496       70.16  
+Public housing                                                                     106      14.99          602       85.15  
+Sec 8 new construction                                                              15       2.12          617       87.27  
+Sec 8 substantial rehabilitation                                                    17       2.40          634       89.67  
+Tax exempt bond                                                                     73      10.33          707      100.00  
+
+
+                                   Subsidy portfolio
+ 
+                                                               Cumulative    Cumulative
+Portfolio                             Frequency     Percent     Frequency      Percent
+---------------------------------------------------------------------------------------
+Section 202/811                             42        5.94            42         5.94  
+Section 221(d)(3)&(4)                       31        4.38            73        10.33  
+Section 221 BMIR                             2        0.28            75        10.61  
+Section 223                                  4        0.57            79        11.17  
+Section 232                                  2        0.28            81        11.46  
+Section 236                                 17        2.40            98        13.86  
+Section 542(b)&(c)                          26        3.68           124        17.54  
+CDBG                                        52        7.36           176        24.89  
+DC housing production trust fund            63        8.91           239        33.80  
+HOME                                        27        3.82           266        37.62  
+LIHTC                                      123       17.40           389        55.02  
+McKinney Vento                              14        1.98           403        57.00  
+Other                                       17        2.40           420        59.41  
+Project-based section 8                     93       13.15           513        72.56  
+Project rental assistance contract          15        2.12           528        74.68  
+Public housing                             106       14.99           634        89.67  
+Tax exempt bond                             73       10.33           707       100.00  
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   7
+File = PresCat.Subsidy
+
+The FREQ Procedure
+
+                                    Source for latest subsidy update
+ 
+                                                                                 Cumulative    Cumulative
+Subsidy_Info_Source                                     Frequency     Percent     Frequency      Percent
+---------------------------------------------------------------------------------------------------------
+DC/AFFPIPELINE                                               148       20.93           148        20.93  
+DC/HFAPIPELINE                                                45        6.36           193        27.30  
+DC/HSNGDAT                                                    20        2.83           213        30.13  
+DCFHA List from Jose at HUD Oct ’11                            1        0.14           214        30.27  
+DCHA Community Walk Map                                        1        0.14           215        30.41  
+DCHA Document                                                 58        8.20           273        38.61  
+DCHA Email                                                     7        0.99           280        39.60  
+DCHA Website                                                  39        5.52           319        45.12  
+DCHFA                                                          6        0.85           325        45.97  
+DHCA Document                                                  1        0.14           326        46.11  
+DHCD Email                                                     1        0.14           327        46.25  
+Email from KIM DCHA                                            1        0.14           328        46.39  
+Email from Kim Cole DCHA                                       1        0.14           329        46.53  
+HUD - Active 202/811 Loans                                    15        2.12           344        48.66  
+HUD - Active Section 236 Projects                              8        1.13           352        49.79  
+HUD - Insured Mulitfamily Mortgages                            1        0.14           353        49.93  
+HUD - Insured Multifamily Mortgages                           14        1.98           367        51.91  
+HUD - Terminated Multifamily Mortgages                        13        1.84           380        53.75  
+HUD-Insured Mulitfamily Mortgages                             62        8.77           442        62.52  
+HUD-Insured Multifamily Mortgages                              1        0.14           443        62.66  
+HUD/LIHTC                                                    101       14.29           544        76.94  
+HUD - Multifamily Assistance and Section 8 Contracts         121       17.11           665        94.06  
+HUD/OCPD                                                      21        2.97           686        97.03  
+NLIHC Value-Added                                             14        1.98           700        99.01  
+Open Arms/Affordable Housing Pipeline                          1        0.14           701        99.15  
+Preservation Network Meeting                                   4        0.57           705        99.72  
+Washington Business Journal                                    2        0.28           707       100.00  
+
+
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   8
+File = PresCat.Subsidy
+
+The FREQ Procedure
+
+                                          Agency responsible for managing subsidy
+ 
+                                                                                                    Cumulative    Cumulative
+Agency                                                                     Frequency     Percent     Frequency      Percent
+----------------------------------------------------------------------------------------------------------------------------
+DC                                                                              195       27.58           195        27.58  
+DC Dept of Housing and Community Development; DC Housing Finance Agency         123       17.40           318        44.98  
+DC Housing Authority                                                            106       14.99           424        59.97  
+Other                                                                            27        3.82           451        63.79  
+US Dept of Housing and Urban Development                                        256       36.21           707       100.00  
+
+
+                    Rent to FMR ratio for assisted units
+ 
+                                                    Cumulative    Cumulative
+rent_to_fmr_description    Frequency     Percent     Frequency      Percent
+----------------------------------------------------------------------------
+                                596       84.30           596        84.30  
+Below 80% FMR                    40        5.66           636        89.96  
+Between 101% & 120% FMR          19        2.69           655        92.64  
+Between 121% & 130% FMR           7        0.99           662        93.64  
+Between 131% & 140% FMR           6        0.85           668        94.48  
+Between 141% & 160% FMR           7        0.99           675        95.47  
+Between 80% & 100% FMR           31        4.38           706        99.86  
+Over 160% FMR                     1        0.14           707       100.00  
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   9
+
+The COMPARE Procedure
+Comparison of WORK.SUBSIDY_OLD with WORK.SUBSIDY_NEW
+(Method=EXACT)
+
+Data Set Summary
+
+Dataset                    Created          Modified  NVar    NObs  Label
+
+WORK.SUBSIDY_OLD  04JUL15:16:49:44  04JUL15:16:49:44    17     707  Preservation Catalog, project subsidies
+WORK.SUBSIDY_NEW  04JUL15:16:49:44  04JUL15:16:49:44    17     707  Preservation Catalog, project subsidies
+
+
+Variables Summary
+
+Number of Variables in Common: 17.
+Number of ID Variables: 3.
+
+
+Observation Summary
+
+Observation      Base  Compare  ID
+
+First Obs           1        1  Nlihc_id=NL000001 Program=542-HFA-RC contract_number=
+Last  Obs         707      707  Nlihc_id=NL001033 Program=PRAC/811 contract_number=DC39Q031002
+
+Number of Observations in Common: 707.
+Total Number of Observations Read from WORK.SUBSIDY_OLD: 707.
+Total Number of Observations Read from WORK.SUBSIDY_NEW: 707.
+
+Number of Observations with Some Compared Variables Unequal: 0.
+Number of Observations with All Compared Variables Equal: 707.
+
+NOTE: No unequal values were found. All values compared are exactly equal.
+

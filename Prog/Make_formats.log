@@ -1,0 +1,459 @@
+1                                         The SAS System        11:13 Wednesday, December 31, 2014
+
+NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
+      Licensed to THE URBAN INSTITUTE, Site 70097024.
+NOTE: This session is executing on the X64_VSPRO  platform.
+
+
+
+NOTE: SAS initialization used:
+      real time           0.78 seconds
+      cpu time            0.26 seconds
+      
+
+NOTE: AUTOEXEC processing beginning; file is D:\Users\ptatian\Documents\My SAS 
+      Files\9.2\Autoexnt.sas.
+
+
+NOTE: AUTOEXEC processing completed.
+
+1          /**************************************************************************
+2           Program:  Make_formats.sas
+3           Library:  PresCat
+4           Project:  NeighborhoodInfo DC
+5           Author:   P. Tatian
+6           Created:  07/25/13
+7           Version:  SAS 9.1
+8           Environment:  Local Windows session (desktop)
+9          
+10          Description:  Make formats for Preservation Catalog.
+11         
+12          Modifications:
+13           09/27/14 PAT Updated for SAS1.
+14           12/30/14 PAT Added $mfatoprog.
+15           12/31/14 PAT Added $progtoportfolio, $progfull, $progshrt, $portfolio.
+16         **************************************************************************/
+17         
+18         %include "L:\SAS\Inc\StdLocal.sas";
+NOTE: Libref _METADAT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\Metadata\Data
+61        +
+62        +options ls=124 ps=48;    ** Landscape **;
+63        +
+64        +** Output title **;
+65        +
+66        +title "&_library/&_program:  NeighborhoodInfo DC";
+67        +
+2 The SAS System                                                                          11:13 Wednesday, December 31, 2014
+
+68        +** Define General library for local session only **;
+69        +
+70        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref GENERA_L was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\General\Data
+NOTE: Libref GENERA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\General\Data
+NOTE: Libref GENERAL was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V9 
+      Physical Name(1): D:\DCData\Libraries\General\Data
+      Engine(2):        V9 
+      Physical Name(2): L:\Libraries\General\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+3 The SAS System                                                                          11:13 Wednesday, December 31, 2014
+
+=====================================================================
+
+71        +
+72        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+NOTE: %INCLUDE (level 1) ending.
+73         
+74         ** Define libraries **;
+75         %DCData_lib( PresCat, local=n )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref PRESCA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\PresCat\Data
+NOTE: Libref PRESCAT was successfully assigned as follows: 
+      Levels:           1
+      Engine(1):        V9 
+      Physical Name(1): L:\Libraries\PresCat\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+76         
+77         proc format library=PresCat;
+78         
+79           value $Status
+80             "A" = "Active"
+4 The SAS System                                                                          11:13 Wednesday, December 31, 2014
+
+81             "I" = "Inactive";
+NOTE: Format $STATUS is already on the library.
+NOTE: Format $STATUS has been written to PRESCAT.FORMATS.
+82         
+83           value $Categry
+84             "1" = "At-Risk or Flagged for Follow-up"
+85             "2" = "Expiring Subsidy"
+86             "3" = "Recent Failing REAC Score"
+87             "4" = "More Info Needed"
+88             "5" = "Other Subsidized Property"
+89             "6" = "Lost Rental";
+NOTE: Format $CATEGRY is already on the library.
+NOTE: Format $CATEGRY has been written to PRESCAT.FORMATS.
+90         
+91           value $Categrn
+92             "1" = "1 - At-Risk or Flagged for Follow-up"
+93             "2" = "2 - Expiring Subsidy"
+94             "3" = "3 - Recent Failing REAC Score"
+95             "4" = "4 - More Info Needed"
+96             "5" = "5 - Other Subsidized Property"
+97             "6" = "6 - Lost Rental";
+NOTE: Format $CATEGRN is already on the library.
+NOTE: Format $CATEGRN has been written to PRESCAT.FORMATS.
+98         
+99           value $Infosrc
+100            "HUD/MFA" = "HUD - Multifamily Assistance and Section 8 Contracts";
+NOTE: Format $INFOSRC is already on the library.
+NOTE: Format $INFOSRC has been written to PRESCAT.FORMATS.
+101        
+102          value $mfatoprog
+103            '202/8 NC' = '202/8-NC'
+104            '202/8 SR' = '202/8-SR'
+105            'HFDA/8 NC' = 'HFDA/8-NC'
+106            'HFDA/8 SR' = 'HFDA/8-SR'
+107            'LMSA' = 'LMSA'
+108            'PD/8 Existing' = 'PD/8-EXIST'
+109            'PD/8 MR' = 'PD/8-MR'
+110            'PD/8 SR' = 'PD/8-SR'
+111            'PRAC/202' = 'PRAC/202'
+112            'PRAC/811' = 'PRAC/811'
+113            'Sec 8 NC  ' = 'S8-NC'
+114            'Sec 8 SR ' = 'S8-SR';
+NOTE: Format $MFATOPROG is already on the library.
+NOTE: Format $MFATOPROG has been written to PRESCAT.FORMATS.
+115        
+116          value $prgh2oc
+5 The SAS System                                                                          11:13 Wednesday, December 31, 2014
+
+117            '202/8 NC' = 'Sec. 202'
+118            '202/8 SR' = 'Sec. 202'
+119            'HFDA/8 NC' = 'S8 State Agency'
+120            /*'HFDA/8 SR' = 'Other S8 Rehab'*/
+121            'HFDA/8 SR' = 'S8 State Agency'
+122            /*'LMSA' = 'Other S8 Rehab'*/
+123            'LMSA' = 'S8 Loan Mgmt'
+124            'PD/8 Existing' = 'S8 Prop. Disp.'
+125            'PD/8 MR' = 'S8 Prop. Disp.'
+126            'PD/8 SR' = 'S8 Prop. Disp.'
+127            'PRAC/202' = 'PRAC 202/811'
+128            'PRAC/811' = 'PRAC 202/811'
+129            'Sec 8 NC' = 'Other S8 New'
+130            'Sec 8 SR' = 'Other S8 Rehab'
+131            /*'Sec 8 SR' = 'S8 State Agency'*/
+132          ;
+NOTE: Format $PRGH2OC is already on the library.
+NOTE: Format $PRGH2OC has been written to PRESCAT.FORMATS.
+133        
+134          value $rptype
+135            "SALE" = "Property sale"
+136            "FCLNOT" = "Foreclosure notice"
+137            "FCLOUT" = "Foreclosure outcome";
+NOTE: Format $RPTYPE is already on the library.
+NOTE: Format $RPTYPE has been written to PRESCAT.FORMATS.
+138        
+139          value $ownmgrtype
+140            "LD" = "Limited dividend"
+141            "NP" = "Non-profit"
+142            "NC" = "Non-profit controlled"
+143            "OT" = "Other"
+144            "HA" = "Public housing authority"
+145            "PM" = "Profit motivated"
+146            "IN" = "Individual";
+NOTE: Format $OWNMGRTYPE is already on the library.
+NOTE: Format $OWNMGRTYPE has been written to PRESCAT.FORMATS.
+147        
+148          value $progtoportfolio
+149            '202/8-NC' = '202/811'
+150            '202/8-SR' = '202/811'
+151            '202/8' = '202/811'
+152            'HFDA/8-NC' = 'PB8'
+153            'HFDA/8-SR' = 'PB8'
+154            'HFDA/8' = 'PB8'
+155            'LMSA' = 'PB8'
+156            'PD/8-EXIST' = 'PB8'
+6 The SAS System                                                                          11:13 Wednesday, December 31, 2014
+
+157            'PD/8-MR' = 'PB8'
+158            'PD/8-SR' = 'PB8'
+159            'PD/8' = 'PB8'
+160            'PRAC/202' = 'PRAC'
+161            'PRAC/811' = 'PRAC'
+162            'PRAC/202/811' = 'PRAC'
+163            'S8-NC' = 'PB8'
+164            'S8-SR' = 'PB8'
+165            '202-DL-E74' = '202/811'
+166            '202-DL-EH' = '202/811'
+167            '202/811-CA' = '202/811'
+168            '207/223-PR' = 'OTHER'
+169            '220-URH' = 'OTHER'
+170            '221-3-BMIR-URC' = '221-BMIR'
+171            '221-3-MRMI' = '221-3-4'
+172            '221-4-MRMI' = '221-3-4'
+173            '223/207/223-RI' = '223'
+174            '223/220-RUR' = '223'
+175            '223/221-3-MRMI' = '221-3-4'
+176            '223/221-4-MRMI' = '221-3-4'
+177            '223/221/244-MRMI' = '221-3-4'
+178            '223/232-RNH' = '223'
+179            '232-NH' = '232'
+180            '232/223-PRNH' = '232'
+181            '236-LIF' = '236'
+182            '241/221-BMIRIA' = 'OTHER'
+183            '542-QPE-RC' = '542'
+184            '542-QPE-E' = '542'
+185            '542-HFA-E' = '542'
+186            '542-HFA-RC' = '542'
+187            'CDBG' = 'CDBG'
+188            'DC-HPTF' = 'DC HPTF'
+189            'HOME' = 'HOME'
+190            'LIHTC' = 'LIHTC'
+191            'MCKINNEY' = 'MCKINNEY'
+192            'PUBHSNG' = 'PUBHSNG'
+193            'TEBOND' = 'TEBOND'
+194            other = ' ';
+NOTE: Format $PROGTOPORTFOLIO is already on the library.
+NOTE: Format $PROGTOPORTFOLIO has been written to PRESCAT.FORMATS.
+195        
+196          value $progfull
+197            '202/8-NC' = 'Sec 202 new construction'
+198            '202/8-SR' = 'Sec 202 substantial rehabilitation'
+199            '202/8' = 'Sec 202 (unspecified)'
+200            'HFDA/8-NC' = 'Sec 8 housing finance agency new construction'
+7 The SAS System                                                                          11:13 Wednesday, December 31, 2014
+
+201            'HFDA/8-SR' = 'Sec 8 housing finance agency substantial rehabilitation'
+202            'HFDA/8' = 'Sec 8 housing finance agency (unspecified)'
+203            'LMSA' = 'Sec 8 loan management set-aside'
+204            'PD/8-EXIST' = 'Sec 8 property disposition existing'
+205            'PD/8-MR' = 'Sec 8 property disposition moderate rehabilitation'
+206            'PD/8-SR' = 'Sec 8 property disposition substantial rehabilitation'
+207            'PD/8' = 'Sec 8 property disposition (unspecified)'
+208            'PRAC/202' = 'Sec 202 project rental assistance contract'
+209            'PRAC/811' = 'Sec 811 project rental assistance contract'
+210            'PRAC/202/811' = 'Sec 202/811 project rental assistance contract'
+211            'S8-NC' = 'Sec 8 new construction'
+212            'S8-SR' = 'Sec 8 substantial rehabilitation'
+213            '202-DL-E74' = 'Sec 202 direct loan/elderly/pre-1974'
+214            '202-DL-EH' = 'Sec 202/8 direct loan/elderly-handicapped'
+215            '202/811-CA' = 'Sec 202/811 capital advance'
+216            '207/223-PR' = 'Sec 207/223(f) purchase/refinance housing'
+217            '220-URH' = 'Sec 220 urban renewal housing'
+218            '221-3-BMIR-URC' = 'Sec 221(d)(3) below market rate interest urban renewal/coop housing'
+219            '221-3-MRMI' = 'Sec 221(d)(3) market rate moderate income/displaced families'
+220            '221-4-MRMI' = 'Sec 221(d)(4) market rate moderate income/displaced families'
+221            '223/207/223-RI' = 'Sec 223(a)(7)/207/223(f) refinanced insurance'
+222            '223/220-RUR' = 'Sec 223(a)(7)/220 refinance/urban renewal'
+223            '223/221-3-MRMI' = 'Sec 223(a)(7)/221(d)(3) market refinance/moderate income'
+224            '223/221-4-MRMI' = 'Sec 223(a)(7)/221(d)(4) market refinance/moderate income'
+225            '223/221/244-MRMI' = 'Sec 223(a)(7)/221(d)(4) market/244 refinance/moderate income co-in'
+226            '223/232-RNH' = 'Sec 223(a)(7)/232 refinance nursing homes'
+227            '232-NH' = 'Sec 232 nursing homes'
+228            '232/223-PRNH' = 'Sec 232/223(f) purchase/refinance nursing homes'
+229            '236-LIF' = 'Sec 236(j)(1) lower income families'
+230            '241/221-BMIRIA' = 'Sec 241(a)/221 below market rate interest improvements & additions'
+231            '542-QPE-RC' = 'Sec 542(b) qualified participating entities risk sharing recent completions'
+232            '542-QPE-E' = 'Sec 542(b) qualified participating entities risk sharing existing'
+233            '542-HFA-E' = 'Sec 542(c) housing finance agency risk sharing existing'
+234            '542-HFA-RC' = 'Sec 542(c) housing finance agency risk sharing recent completions'
+235            'CDBG' = 'Community development block grant'
+236            'DC-HPTF' = 'DC housing production trust fund'
+237            'HOME' = 'HOME'
+238            'LIHTC' = 'Low income housing tax credit'
+239            'MCKINNEY' = 'McKinney Vento Act loan'
+240            'PUBHSNG' = 'Public housing'
+241            'TEBOND' = 'Tax exempt bond';
+NOTE: Format $PROGFULL is already on the library.
+NOTE: Format $PROGFULL has been written to PRESCAT.FORMATS.
+242        
+243          value $progshrt
+244            '202/8-NC' = 'Sec 202 NC/SR'
+8 The SAS System                                                                          11:13 Wednesday, December 31, 2014
+
+245            '202/8-SR' = 'Sec 202 NC/SR'
+246            '202/8' = 'Sec 202 NC/SR'
+247            'HFDA/8-NC' = 'Sec 8 HFA'
+248            'HFDA/8-SR' = 'Sec 8 HFA'
+249            'HFDA/8' = 'Sec 8 HFA'
+250            'LMSA' = 'Sec 8 LMSA'
+251            'PD/8-EXIST' = 'Sec 8 PD'
+252            'PD/8-MR' = 'Sec 8 PD'
+253            'PD/8-SR' = 'Sec 8 PD'
+254            'PD/8' = 'Sec 8 PD'
+255            'PRAC/202' = 'Sec 202 PRAC'
+256            'PRAC/811' = 'Sec 811 PRAC'
+257            'PRAC/202/811' = 'Sec 202/811 PRAC'
+258            'S8-NC' = 'Sec 8 NC/SR'
+259            'S8-SR' = 'Sec 8 NC/SR'
+260            '202-DL-E74' = 'Sec 202 direct loan pre-1974'
+261            '202-DL-EH' = 'Sec 202/8 direct loan'
+262            '202/811-CA' = 'Sec 202/811 capital advance'
+263            '207/223-PR' = 'Sec 207/223(f)'
+264            '220-URH' = 'Sec 220 urban renewal'
+265            '221-3-BMIR-URC' = 'Sec 221(d)(3) BMIR'
+266            '221-3-MRMI' = 'Sec 221(d)(3) moderate income'
+267            '221-4-MRMI' = 'Sec 221(d)(4) moderate income'
+268            '223/207/223-RI' = 'Sec 223(a)(7)/207/223(f) refi insurance'
+269            '223/220-RUR' = 'Sec 223(a)(7)/220 refi'
+270            '223/221-3-MRMI' = 'Sec 223(a)(7)/221(d)(3) market refi'
+271            '223/221-4-MRMI' = 'Sec 223(a)(7)/221(d)(4) market refi'
+272            '223/221/244-MRMI' = 'Sec 223(a)(7)/221(d)(4)/244'
+273            '223/232-RNH' = 'Sec 223(a)(7)/232 refi'
+274            '232-NH' = 'Sec 232'
+275            '232/223-PRNH' = 'Sec 232/223(f) purchase/refi'
+276            '236-LIF' = 'Sec 236(j)(1)'
+277            '241/221-BMIRIA' = 'Sec 241(a)/221 BMIR'
+278            '542-QPE-RC' = 'Sec 542(b) QPE recent'
+279            '542-QPE-E' = 'Sec 542(b) QPE existing'
+280            '542-HFA-E' = 'Sec 542(c) HFA existing'
+281            '542-HFA-RC' = 'Sec 542(c) HFA recent '
+282            'CDBG' = 'CDBG'
+283            'DC-HPTF' = 'DC HPTF'
+284            'HOME' = 'HOME'
+285            'LIHTC' = 'LIHTC'
+286            'MCKINNEY' = 'McKinney Vento'
+287            'PUBHSNG' = 'Public housing'
+288            'TEBOND' = 'Tax exempt bond';
+NOTE: Format $PROGSHRT is already on the library.
+NOTE: Format $PROGSHRT has been written to PRESCAT.FORMATS.
+9 The SAS System                                                                          11:13 Wednesday, December 31, 2014
+
+289        
+290          value $portfolio
+291            '202/811' = 'Section 202/811'
+292            '221-3-4' = 'Section 221(d)(3)&(4)'
+293            '221-BMIR' = 'Section 221 BMIR'
+294            '223' = 'Section 223'
+295            '232' = 'Section 232'
+296            '236' = 'Section 236'
+297            '542' = 'Section 542(b)&(c)'
+298            'CDBG' = 'CDBG'
+299            'DC HPTF' = 'DC housing production trust fund'
+300            'HOME' = 'HOME'
+301            'LIHTC' = 'LIHTC'
+302            'MCKINNEY' = 'McKinney Vento'
+303            'OTHER' = 'Other'
+304            'PB8' = 'Project-based section 8'
+305            'PRAC' = 'Project rental assistance contract'
+306            'PUBHSNG' = 'Public housing'
+307            'TEBOND' = 'Tax exempt bond';
+NOTE: Format $PORTFOLIO is already on the library.
+NOTE: Format $PORTFOLIO has been written to PRESCAT.FORMATS.
+308        
+309        run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.03 seconds
+      
+
+310        
+311        proc catalog catalog=PresCat.Formats;
+312          modify Status (desc="Pres Cat project active status") / entrytype=formatc;
+313          modify Categry (desc="Pres Cat project category") / entrytype=formatc;
+314          modify Categrn (desc="Pres Cat project category w/number") / entrytype=formatc;
+315          modify Infosrc (desc="Data source for subsidy update") / entrytype=formatc;
+316          modify mfatoprog (desc="HUD MFA programs to Catalog program code") / entrytype=formatc;
+317          modify prgh2oc (desc="HUD MFA to old catalog program xwalk") / entrytype=formatc;
+318          modify rptype (desc="Pres Cat real property event type") / entrytype=formatc;
+319          modify ownmgrtype (desc="HUD owner/manager types") / entrytype=formatc;
+320          modify progtoportfolio (desc="Cat program code to portfolio") / entrytype=formatc;
+321          modify progfull (desc="Catalog program full description") / entrytype=formatc;
+322          modify progshrt (desc="Catalog program short description") / entrytype=formatc;
+323          modify portfolio (desc="Catalog subsidy portfolio description") / entrytype=formatc;
+324          contents;
+325        quit;
+
+10 The SAS System                                                                         11:13 Wednesday, December 31, 2014
+
+NOTE: Description changed for entry STATUS.FORMATC in catalog PRESCAT.FORMATS.
+NOTE: Description changed for entry CATEGRY.FORMATC in catalog PRESCAT.FORMATS.
+NOTE: Description changed for entry CATEGRN.FORMATC in catalog PRESCAT.FORMATS.
+NOTE: Description changed for entry INFOSRC.FORMATC in catalog PRESCAT.FORMATS.
+NOTE: Description changed for entry MFATOPROG.FORMATC in catalog PRESCAT.FORMATS.
+NOTE: Description changed for entry PRGH2OC.FORMATC in catalog PRESCAT.FORMATS.
+NOTE: Description changed for entry RPTYPE.FORMATC in catalog PRESCAT.FORMATS.
+NOTE: Description changed for entry OWNMGRTYPE.FORMATC in catalog PRESCAT.FORMATS.
+NOTE: Description changed for entry PROGTOPORTFOLIO.FORMATC in catalog PRESCAT.FORMATS.
+NOTE: Description changed for entry PROGFULL.FORMATC in catalog PRESCAT.FORMATS.
+NOTE: Description changed for entry PROGSHRT.FORMATC in catalog PRESCAT.FORMATS.
+NOTE: Description changed for entry PORTFOLIO.FORMATC in catalog PRESCAT.FORMATS.
+NOTE: The PROCEDURE CATALOG printed page 1.
+NOTE: PROCEDURE CATALOG used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.00 seconds
+      
+
+326        
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           1.03 seconds
+      cpu time            0.37 seconds
+      

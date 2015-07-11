@@ -1,0 +1,331 @@
+1                                         The SAS System          10:43 Thursday, January 29, 2015
+
+NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
+      Licensed to THE URBAN INSTITUTE, Site 70097024.
+NOTE: This session is executing on the X64_VSPRO  platform.
+
+
+
+NOTE: SAS initialization used:
+      real time           0.78 seconds
+      cpu time            0.17 seconds
+      
+
+NOTE: AUTOEXEC processing beginning; file is D:\Users\ptatian\Documents\My SAS 
+      Files\9.2\Autoexnt.sas.
+
+
+NOTE: AUTOEXEC processing completed.
+
+1          /**************************************************************************
+2           Program:  Project_dump.sas
+3           Library:  PresCat
+4           Project:  NeighborhoodInfo DC
+5           Author:   P. Tatian
+6           Created:  09/09/13
+7           Version:  SAS 9.1
+8           Environment:  Windows
+9          
+10          Description:  Dump all data on selected projects.
+11         
+12          Modifications:
+13         **************************************************************************/
+14         
+15         %include "L:\SAS\Inc\StdLocal.sas";
+NOTE: Libref _METADAT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\Metadata\Data
+58        +
+59        +options ls=124 ps=48;    ** Landscape **;
+60        +
+61        +** Output title **;
+62        +
+63        +title "&_library/&_program:  NeighborhoodInfo DC";
+64        +
+65        +** Define General library for local session only **;
+66        +
+67        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+2 The SAS System                                                                            10:43 Thursday, January 29, 2015
+
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref GENERA_L was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\General\Data
+NOTE: Libref GENERA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\General\Data
+NOTE: Libref GENERAL was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V9 
+      Physical Name(1): D:\DCData\Libraries\General\Data
+      Engine(2):        V9 
+      Physical Name(2): L:\Libraries\General\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+68        +
+3 The SAS System                                                                            10:43 Thursday, January 29, 2015
+
+69        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+NOTE: %INCLUDE (level 1) ending.
+70         
+71         ** Define libraries **;
+72         %DCData_lib( PresCat, local=n )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref PRESCA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\PresCat\Data
+NOTE: Libref PRESCAT was successfully assigned as follows: 
+      Levels:           1
+      Engine(1):        V9 
+      Physical Name(1): L:\Libraries\PresCat\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+73         %DCData_lib( HUD )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref HUD_L was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\HUD\Data
+NOTE: Libref HUD_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\HUD\Data
+4 The SAS System                                                                            10:43 Thursday, January 29, 2015
+
+NOTE: Libref HUD was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V9 
+      Physical Name(1): D:\DCData\Libraries\HUD\Data
+      Engine(2):        V9 
+      Physical Name(2): L:\Libraries\HUD\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT HUD
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+NOTE:    HUD.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_R  HUD_L GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_R HUD_L  HUD_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+74         
+75         %let Sel_Nlihc_id = 'NL000137', 'NL000303', 'NL000098', 'NL000999', 'NL000234';
+76         %let Sel_Nlihc_id = 'NL000262';
+77         
+78         proc print data=PresCat.DC_Info;
+79           where nlihc_id in ( &Sel_Nlihc_id );
+5 The SAS System                                                                            10:43 Thursday, January 29, 2015
+
+80           id nlihc_id;
+81           var category Proj_Name Proj_Addre ID_: ;
+82           title2 'data=PresCat.DC_Info';
+83         run;
+
+NOTE: There were 1 observations read from the data set PRESCAT.DC_INFO.
+      WHERE nlihc_id='NL000262';
+NOTE: The PROCEDURE PRINT printed page 1.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.03 seconds
+      
+
+84         
+85         proc print data=PresCat.Project;
+86           where nlihc_id in ( &Sel_Nlihc_id );
+87           id nlihc_id;
+88           title2 'data=PresCat.Project';
+89         run;
+
+NOTE: There were 1 observations read from the data set PRESCAT.PROJECT.
+      WHERE nlihc_id='NL000262';
+NOTE: The PROCEDURE PRINT printed page 2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+      
+
+90         
+91         proc print data=PresCat.Subsidy_mfa;
+92           where nlihc_id in ( &Sel_Nlihc_id );
+93           id nlihc_id;
+94           title2 'data=PresCat.Subsidy_mfa';
+95         run;
+
+NOTE: There were 1 observations read from the data set PRESCAT.SUBSIDY_MFA.
+      WHERE nlihc_id='NL000262';
+NOTE: The PROCEDURE PRINT printed page 3.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+96         
+97         proc print data=PresCat.Subsidy;
+98           where nlihc_id in ( &Sel_Nlihc_id );
+6 The SAS System                                                                            10:43 Thursday, January 29, 2015
+
+99           id nlihc_id;
+100          title2 'data=PresCat.Subsidy';
+101        run;
+
+NOTE: There were 4 observations read from the data set PRESCAT.SUBSIDY.
+      WHERE nlihc_id='NL000262';
+NOTE: The PROCEDURE PRINT printed page 4.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+      
+
+102        
+103        proc print data=PresCat.Parcel;
+104          where ssl in ( "5299    0038" );
+105          id nlihc_id;
+106          title2 'data=PresCat.Parcel';
+107        run;
+
+NOTE: No observations were selected from data set PRESCAT.PARCEL.
+NOTE: There were 0 observations read from the data set PRESCAT.PARCEL.
+      WHERE ssl='5299    0038';
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+      
+
+108        
+109        title2 'data=HUD.sec8mf_2014_11_dc';
+110        
+111        data _null_;
+112          set HUD.sec8mf_2014_11_dc;
+113          where property_id = 800219652;
+114          file print;
+115          put / '--------------------';
+116          put (_all_) (= /);
+117        run;
+
+NOTE: 104 lines were written to file PRINT.
+NOTE: There were 1 observations read from the data set HUD.SEC8MF_2014_11_DC.
+      WHERE property_id=800219652;
+NOTE: The DATA step printed pages 5-7.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+7 The SAS System                                                                            10:43 Thursday, January 29, 2015
+
+
+118        
+119        title2;
+120        
+121        /*
+122        proc sort data=PresCat.DC_Info out=DC_Info;
+123          by nlihc_id;
+124        
+125        proc sort data=PresCat.Subsidy_mfa out=Subsidy_mfa;
+126          by nlihc_id;
+127        
+128        proc compare base=DC_Info compare=Subsidy_mfa maxprint=(40,32000) allvars listequalvar;
+129          where nlihc_id in ( &Sel_Nlihc_id );
+130          id nlihc_id;
+131        run;
+132        
+133        /*
+134        data _null_;
+135        
+136          set PresCat.DC_Info;
+137          where nlihc_id in ( &Sel_Nlihc_id );
+138        
+139          file print;
+140          put / '--------------------';
+141          put (_all_) (= /);
+142        run;
+143        
+144        /*
+145        proc sql print;
+146          select nlihc_id from PresCat.DC_Info
+147          order by nlihc_id desc
+148        ;
+149        
+150        run;
+151        
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           1.19 seconds
+      cpu time            0.29 seconds
+      

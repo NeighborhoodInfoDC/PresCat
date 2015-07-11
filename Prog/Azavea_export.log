@@ -1,0 +1,1102 @@
+1                                         The SAS System             11:40 Tuesday, March 11, 2014
+
+NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
+      Licensed to THE URBAN INSTITUTE, Site 70097024.
+NOTE: This session is executing on the X64_VSPRO  platform.
+
+
+
+NOTE: SAS initialization used:
+      real time           1.18 seconds
+      cpu time            0.23 seconds
+      
+
+NOTE: AUTOEXEC processing beginning; file is D:\Personal Settings\My SAS Files\V9\Autoexnt.sas.
+
+
+NOTE: AUTOEXEC processing completed.
+
+1          /**************************************************************************
+2           Program:  Azavea_export.sas
+3           Library:  PresCat
+4           Project:  NeighborhoodInfo DC
+5           Author:   P. Tatian
+6           Created:  08/11/13
+7           Version:  SAS 9.1
+8           Environment:  Windows
+9          
+10          Description:  Export data files for Avazea.
+11         
+12          Modifications:
+13           10/27/13 PAT Incorporated subsidy vars: Portfolios, Agencies, subsidy
+14                        status and starting year.
+15                        Added Bldg_count.
+16                        Fixed Subsidized variable.
+17           10/28/13 PAT Replaced Subsidized var with version in Project data set.
+18           03/11/14 PAT Added n/a for Parcel_owner_type.
+19         **************************************************************************/
+20         
+21         %include "K:\Metro\PTatian\DCData\SAS\Inc\Stdhead.sas";
+57        +
+58        +options ls=124 ps=48;    ** Landscape **;
+59        +
+60        +** Output title **;
+61        +
+62        +title "&_library/&_program:  NeighborhoodInfo DC";
+63        +
+64        +** Define General library for local session only **;
+2 The SAS System                                                                               11:40 Tuesday, March 11, 2014
+
+65        +
+66        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: The V6 engine on this host is limited to read-only access of SAS data files without index optimization.  V6 data 
+      files cannot be created or updated and V6 catalogs cannot be read.
+NOTE: Libref GENERAV6 was successfully assigned as follows: 
+      Engine:        V6 
+      Physical Name: D:\DCData\Libraries\General\Data
+NOTE: Libref GENERAV8 was successfully assigned as follows: 
+      Engine:        V8 
+      Physical Name: D:\DCData\Libraries\General\Data
+NOTE: Libref GENERAL was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V8 
+      Physical Name(1): D:\DCData\Libraries\General\Data
+      Engine(2):        V6 
+      Physical Name(2): D:\DCData\Libraries\General\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS DOES NOT EXIST
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERAL DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+67        +
+68        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+WARNING: Argument 2 to function PUTC referenced by the %SYSFUNC or %QSYSFUNC macro function is out of range.
+NOTE: %INCLUDE (level 1) ending.
+69         /*%include "C:\DCData\SAS\Inc\Stdhead.sas";*/
+3 The SAS System                                                                               11:40 Tuesday, March 11, 2014
+
+70         
+71         ** Define libraries **;
+72         %DCData_lib( PresCat )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref PRESCAV6 was successfully assigned as follows: 
+      Engine:        V6 
+      Physical Name: D:\DCData\Libraries\PresCat\Data
+NOTE: Libref PRESCAV8 was successfully assigned as follows: 
+      Engine:        V8 
+      Physical Name: D:\DCData\Libraries\PresCat\Data
+NOTE: Libref PRESCAT was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V8 
+      Physical Name(1): D:\DCData\Libraries\PresCat\Data
+      Engine(2):        V6 
+      Physical Name(2): D:\DCData\Libraries\PresCat\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS DOES NOT EXIST
+NOTE:    PRESCAT.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCAT GENERAL DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+73         %DCData_lib( RealProp )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref REALPRV6 was successfully assigned as follows: 
+      Engine:        V6 
+      Physical Name: D:\DCData\Libraries\RealProp\Data
+4 The SAS System                                                                               11:40 Tuesday, March 11, 2014
+
+NOTE: Libref REALPRV8 was successfully assigned as follows: 
+      Engine:        V8 
+      Physical Name: D:\DCData\Libraries\RealProp\Data
+NOTE: Libref REALPROP was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V8 
+      Physical Name(1): D:\DCData\Libraries\RealProp\Data
+      Engine(2):        V6 
+      Physical Name(2): D:\DCData\Libraries\RealProp\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT REALPROP
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS DOES NOT EXIST
+NOTE:    PRESCAT.FORMATS EXISTS
+NOTE:    REALPROP.FORMATS DOES NOT EXIST
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCAT  REALPROP GENERAL DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+74         
+75         options missing=' ';
+76         
+77         proc format;
+78           value $substat
+79             'N' = 'Never'
+80             'C' = 'Current'
+81             'F' = 'Former';
+NOTE: Format $SUBSTAT has been output.
+82         run;
+
+5 The SAS System                                                                               11:40 Tuesday, March 11, 2014
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+83         
+84         **** Collapse subsidy data by project ****;
+85         
+86         data Subsidy_project;
+87         
+88           set PresCat.Subsidy;
+89           by nlihc_id;
+90         
+91           length Agencies Portfolios $ 500
+92             Hud_Fin_Ins_Status HUD_PBRA_Status LIHTC_Status DC_HPTF_Status DC_IZ_ADU_Status $ 1;
+93         
+94           retain Agencies Portfolios
+95             Hud_Fin_Ins_Status HUD_PBRA_Status LIHTC_Status DC_HPTF_Status DC_IZ_ADU_Status
+96             Hud_Fin_Ins_Year HUD_PBRA_Year LIHTC_Year DC_HPTF_Year DC_IZ_ADU_Year;
+97         
+98           if first.Nlihc_id then do;
+99             Agencies = "";
+100            Portfolios = "";
+101            Hud_Fin_Ins_Status = "N";
+102            HUD_PBRA_Status = "N";
+103            LIHTC_Status = "N";
+104            DC_HPTF_Status = "N";
+105            DC_IZ_ADU_Status = "N";
+106            Hud_Fin_Ins_Year = .;
+107            HUD_PBRA_Year = .;
+108            LIHTC_Year = .;
+109            DC_HPTF_Year = .;
+110            DC_IZ_ADU_Year = .;
+111          end;
+112        
+113          if Agencies = "" then Agencies = Agency;
+114          else if indexw( compress( Agencies ), compress( Agency ), ';' ) = 0 then
+115            Agencies = trim( Agencies ) || "; " || Agency;
+116        
+117          if Portfolios = "" then Portfolios = Portfolio;
+118          else if indexw( compress( Portfolios ), compress( Portfolio ), ';' ) = 0 then
+119            Portfolios = trim( Portfolios ) || "; " || Portfolio;
+120        
+121          select ( Portfolio );
+122        
+123            /** HUD financing/insurance programs **/
+6 The SAS System                                                                               11:40 Tuesday, March 11, 2014
+
+124            when ( "Section 202/811",
+125                   "Section 221(d)(3) below market rate interest (BMIR)",
+126                   "Section 221(d)(3)&(4) with affordability restrictions",
+127                   "Section 236",
+128                   "Section 542(b)&(c)"
+129                  ) do;
+130              if Subsidy_active then Hud_Fin_Ins_Status = "C";
+131              else Hud_Fin_Ins_Status = "F";
+132              Hud_Fin_Ins_Year = year( POA_start );
+133            end;
+134        
+135            /** HUD project-based rental assistance **/
+136            when ( "Project-based Section 8",
+137                   "Project Rental Assistance Contract (PRAC)" ) do;
+138              if Subsidy_active then Hud_PBRA_Status = "C";
+139              else Hud_PBRA_Status = "F";
+140              Hud_PBRA_Year = year( POA_start );
+141            end;
+142        
+143            /** LIHTC **/
+144            when ( "LIHTC" ) do;
+145              if Subsidy_active then LIHTC_Status = "C";
+146              else LIHTC_Status = "F";
+147              LIHTC_Year = year( POA_start );
+148            end;
+149        
+150            /** DC HPTF **/
+151            when ( "DC Housing Production Trust Fund" ) do;
+152              if Subsidy_active then DC_HPTF_Status = "C";
+153              else DC_HPTF_Status = "F";
+154              DC_HPTF_Year = year( POA_start );
+155            end;
+156        
+157            /** DC IZ/ADU **/
+158            when ( "DC Inclusionary Zoning/ADU" ) do;
+159              if Subsidy_active then DC_IZ_ADU_Status = "C";
+160              else DC_IZ_ADU_Status = "F";
+161              DC_IZ_ADU_Year = year( POA_start );
+162            end;
+163        
+164            otherwise
+165              /** DO NOTHING **/
+166              ;
+167         end;
+168        
+169         if last.Nlihc_id then do;
+7 The SAS System                                                                               11:40 Tuesday, March 11, 2014
+
+170           output;
+171         end;
+172        
+173         format
+174           Hud_Fin_Ins_Status HUD_PBRA_Status LIHTC_Status DC_HPTF_Status DC_IZ_ADU_Status $substat.;
+175        
+176         keep Nlihc_id Agencies Portfolios
+177            Hud_Fin_Ins_Status HUD_PBRA_Status LIHTC_Status DC_HPTF_Status DC_IZ_ADU_Status
+178            Hud_Fin_Ins_Year HUD_PBRA_Year LIHTC_Year DC_HPTF_Year DC_IZ_ADU_Year;
+179        
+180        run;
+
+NOTE: Format DYESNO was not found or could not be loaded.
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      14 at 132:26   10 at 140:23   19 at 147:20   34 at 154:22   
+NOTE: There were 707 observations read from the data set PRESCAT.SUBSIDY.
+NOTE: The data set WORK.SUBSIDY_PROJECT has 349 observations and 13 variables.
+NOTE: Compressing data set WORK.SUBSIDY_PROJECT decreased size by 79.17 percent. 
+      Compressed is 5 pages; un-compressed would require 24 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.03 seconds
+      
+
+181        
+182        /*%File_info( data=Subsidy_project, printobs=50 )*/
+183        
+184        ******   Project   ******;
+185        
+186        proc sql noprint;
+187          create table Project as
+188          select
+189            coalesce( Project.NLIHC_ID, Subsidy.NLIHC_ID ) as NLIHC_ID,
+190            Status,
+191            Subsidized,
+192            Category,
+193            Proj_Name,
+194            Proj_Addre,
+195            Proj_City,
+196            Proj_ST,
+197            Proj_Zip,
+198            Proj_Units_Tot,
+199            Proj_Units_Assist_Min,
+200            Proj_Units_Assist_Max,
+201            Bldg_count,
+8 The SAS System                                                                               11:40 Tuesday, March 11, 2014
+
+202            Own_Effect,
+203            Own_Name,
+204            "" as Own_Type,
+205            Mgr_Name,
+206            "" as Mgr_Type,
+207            Subsidy_End_First,
+208            Subsidy_End_Last,
+209            Agencies,
+210            Portfolios,
+211            Hud_Fin_Ins_Status,
+212            Hud_Fin_Ins_Year,
+213            HUD_PBRA_Status,
+214            HUD_PBRA_Year,
+215            LIHTC_Status,
+216            LIHTC_Year,
+217            DC_HPTF_Status,
+218            DC_HPTF_Year,
+219            DC_IZ_ADU_Status,
+220            DC_IZ_ADU_Year,
+221            Ward2012,
+222            ANC2012,
+223            PSA2012,
+224            Cluster_tr2000,
+225            Cluster_tr2000_name,
+226            Geo2010 as Census_Tract_2010,
+227            Proj_X,
+228            Proj_Y,
+229            Proj_lat,
+230            Proj_lon,
+231            Proj_Streetview_url as Streetview_url,
+232            Proj_Image_url as Image_url
+233          from PresCat.Project as Project
+234            left join Subsidy_project as Subsidy
+235          on Project.Nlihc_id = Subsidy.Nlihc_id
+236          where not( missing( Proj_lat ) ) and not( missing( Proj_lon ) )
+237          order by NLIHC_ID;
+NOTE: SAS threaded sort was used.
+NOTE: Compressing data set WORK.PROJECT decreased size by 73.08 percent. 
+      Compressed is 14 pages; un-compressed would require 52 pages.
+NOTE: Table WORK.PROJECT created, with 358 rows and 44 columns.
+
+238        quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.03 seconds
+      
+9 The SAS System                                                                               11:40 Tuesday, March 11, 2014
+
+
+239        
+240        **** Clean up missing values for projects not in subsidy table ****;
+241        
+242        data Project;
+243        
+244          set Project;
+245        
+246          if missing( Subsidized ) then Subsidized = 0;
+247        
+248          array a{*} Hud_Fin_Ins_Status HUD_PBRA_Status LIHTC_Status DC_HPTF_Status DC_IZ_ADU_Status;
+249        
+250          do i = 1 to dim( a );
+251            if missing( a{i} ) then a{i} = 'N';
+252          end;
+253        
+254          drop i;
+255        
+256        run;
+
+NOTE: Format DYESNO was not found or could not be loaded.
+NOTE: Format $WARD12A was not found or could not be loaded.
+NOTE: Format $ANC12A was not found or could not be loaded.
+NOTE: Format $PSA12A was not found or could not be loaded.
+NOTE: Format $CLUS00A was not found or could not be loaded.
+NOTE: Format $GEO10A was not found or could not be loaded.
+NOTE: There were 358 observations read from the data set WORK.PROJECT.
+NOTE: The data set WORK.PROJECT has 358 observations and 44 variables.
+NOTE: Compressing data set WORK.PROJECT decreased size by 73.08 percent. 
+      Compressed is 14 pages; un-compressed would require 52 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+257        
+258        filename fexport "&_dcdata_path\PresCat\Raw\Project.csv" lrecl=3000;
+259        
+260        proc export data=Project
+261            outfile=fexport
+262            dbms=csv replace;
+263        
+264        run;
+
+265         /**********************************************************************
+266         *   PRODUCT:   SAS
+10 The SAS System                                                                              11:40 Tuesday, March 11, 2014
+
+267         *   VERSION:   9.2
+268         *   CREATOR:   External File Interface
+269         *   DATE:      11MAR14
+270         *   DESC:      Generated SAS Datastep Code
+271         *   TEMPLATE SOURCE:  (None Specified.)
+272         ***********************************************************************/
+273            data _null_;
+274            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+275            %let _EFIREC_ = 0;     /* clear export record count macro variable */
+276            file FEXPORT delimiter=',' DSD DROPOVER lrecl=32767;
+277            if _n_ = 1 then        /* write column names or labels */
+278             do;
+279               put
+280                  "NLIHC_ID"
+281               ','
+282                  "Status"
+283               ','
+284                  "Subsidized"
+285               ','
+286                  "CATEGORY"
+287               ','
+288                  "Proj_Name"
+289               ','
+290                  "Proj_Addre"
+291               ','
+292                  "Proj_City"
+293               ','
+294                  "Proj_ST"
+295               ','
+296                  "Proj_Zip"
+297               ','
+298                  "Proj_Units_Tot"
+299               ','
+300                  "Proj_Units_Assist_Min"
+301               ','
+302                  "Proj_Units_Assist_Max"
+303               ','
+304                  "Bldg_count"
+305               ','
+306                  "Own_Effect"
+307               ','
+308                  "Own_Name"
+309               ','
+310                  "Own_Type"
+311               ','
+312                  "Mgr_Name"
+11 The SAS System                                                                              11:40 Tuesday, March 11, 2014
+
+313               ','
+314                  "Mgr_Type"
+315               ','
+316                  "Subsidy_End_First"
+317               ','
+318                  "Subsidy_End_Last"
+319               ','
+320                  "Agencies"
+321               ','
+322                  "Portfolios"
+323               ','
+324                  "Hud_Fin_Ins_Status"
+325               ','
+326                  "Hud_Fin_Ins_Year"
+327               ','
+328                  "HUD_PBRA_Status"
+329               ','
+330                  "HUD_PBRA_Year"
+331               ','
+332                  "LIHTC_Status"
+333               ','
+334                  "LIHTC_Year"
+335               ','
+336                  "DC_HPTF_Status"
+337               ','
+338                  "DC_HPTF_Year"
+339               ','
+340                  "DC_IZ_ADU_Status"
+341               ','
+342                  "DC_IZ_ADU_Year"
+343               ','
+344                  "Ward2012"
+345               ','
+346                  "Anc2012"
+347               ','
+348                  "Psa2012"
+349               ','
+350                  "Cluster_tr2000"
+351               ','
+352                  "Cluster_tr2000_name"
+353               ','
+354                  "Census_Tract_2010"
+355               ','
+356                  "Proj_x"
+357               ','
+358                  "Proj_y"
+12 The SAS System                                                                              11:40 Tuesday, March 11, 2014
+
+359               ','
+360                  "Proj_lat"
+361               ','
+362                  "Proj_lon"
+363               ','
+364                  "Streetview_url"
+365               ','
+366                  "Image_url"
+367               ;
+368             end;
+369           set  PROJECT   end=EFIEOD;
+370               format NLIHC_ID $8. ;
+371               format Status $status8. ;
+372               format Subsidized bestx12. ;
+373               format CATEGORY $50. ;
+374               format Proj_Name $80. ;
+375               format Proj_Addre $160. ;
+376               format Proj_City $80. ;
+377               format Proj_ST $2. ;
+378               format Proj_Zip $5. ;
+379               format Proj_Units_Tot best12. ;
+380               format Proj_Units_Assist_Min best12. ;
+381               format Proj_Units_Assist_Max best12. ;
+382               format Bldg_count best12. ;
+383               format Own_Effect mmddyy10. ;
+384               format Own_Name $80. ;
+385               format Own_Type $1. ;
+386               format Mgr_Name $80. ;
+387               format Mgr_Type $1. ;
+388               format Subsidy_End_First mmddyy10. ;
+389               format Subsidy_End_Last mmddyy10. ;
+390               format Agencies $500. ;
+391               format Portfolios $500. ;
+392               format Hud_Fin_Ins_Status $substat7. ;
+393               format Hud_Fin_Ins_Year best12. ;
+394               format HUD_PBRA_Status $substat7. ;
+395               format HUD_PBRA_Year best12. ;
+396               format LIHTC_Status $substat7. ;
+397               format LIHTC_Year best12. ;
+398               format DC_HPTF_Status $substat7. ;
+399               format DC_HPTF_Year best12. ;
+400               format DC_IZ_ADU_Status $substat7. ;
+401               format DC_IZ_ADU_Year best12. ;
+402               format Ward2012 $6. ;
+403               format Anc2012 $2. ;
+404               format Psa2012 $3. ;
+13 The SAS System                                                                              11:40 Tuesday, March 11, 2014
+
+405               format Cluster_tr2000 $2. ;
+406               format Cluster_tr2000_name $80. ;
+407               format Census_Tract_2010 $11. ;
+408               format Proj_x best12. ;
+409               format Proj_y best12. ;
+410               format Proj_lat best12. ;
+411               format Proj_lon best12. ;
+412               format Streetview_url $255. ;
+413               format Image_url $255. ;
+414             do;
+415               EFIOUT + 1;
+416               put NLIHC_ID $ @;
+417               put Status $ @;
+418               put Subsidized @;
+419               put CATEGORY $ @;
+420               put Proj_Name $ @;
+421               put Proj_Addre $ @;
+422               put Proj_City $ @;
+423               put Proj_ST $ @;
+424               put Proj_Zip $ @;
+425               put Proj_Units_Tot @;
+426               put Proj_Units_Assist_Min @;
+427               put Proj_Units_Assist_Max @;
+428               put Bldg_count @;
+429               put Own_Effect @;
+430               put Own_Name $ @;
+431               put Own_Type $ @;
+432               put Mgr_Name $ @;
+433               put Mgr_Type $ @;
+434               put Subsidy_End_First @;
+435               put Subsidy_End_Last @;
+436               put Agencies $ @;
+437               put Portfolios $ @;
+438               put Hud_Fin_Ins_Status $ @;
+439               put Hud_Fin_Ins_Year @;
+440               put HUD_PBRA_Status $ @;
+441               put HUD_PBRA_Year @;
+442               put LIHTC_Status $ @;
+443               put LIHTC_Year @;
+444               put DC_HPTF_Status $ @;
+445               put DC_HPTF_Year @;
+446               put DC_IZ_ADU_Status $ @;
+447               put DC_IZ_ADU_Year @;
+448               put Ward2012 $ @;
+449               put Anc2012 $ @;
+450               put Psa2012 $ @;
+14 The SAS System                                                                              11:40 Tuesday, March 11, 2014
+
+451               put Cluster_tr2000 $ @;
+452               put Cluster_tr2000_name $ @;
+453               put Census_Tract_2010 $ @;
+454               put Proj_x @;
+455               put Proj_y @;
+456               put Proj_lat @;
+457               put Proj_lon @;
+458               put Streetview_url $ @;
+459               put Image_url $ ;
+460               ;
+461             end;
+462            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+463            if EFIEOD then call symputx('_EFIREC_',EFIOUT);
+464            run;
+
+NOTE: The file FEXPORT is:
+      Filename=D:\DCData\Libraries\PresCat\Raw\Project.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=11Mar2014:11:40:37,
+      Create Time=05Sep2013:16:49:33
+
+NOTE: 359 records were written to the file FEXPORT.
+      The minimum record length was 302.
+      The maximum record length was 909.
+NOTE: There were 358 observations read from the data set WORK.PROJECT.
+NOTE: DATA statement used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.01 seconds
+      
+
+358 records created in FEXPORT from PROJECT.
+  
+  
+NOTE: "FEXPORT" file was successfully created.
+NOTE: PROCEDURE EXPORT used (Total process time):
+      real time           0.34 seconds
+      cpu time            0.21 seconds
+      
+
+465        
+466        filename fexport clear;
+NOTE: Fileref FEXPORT has been deassigned.
+467        
+468        
+469        ******  Subsidy  ******;
+470        
+15 The SAS System                                                                              11:40 Tuesday, March 11, 2014
+
+471        proc sql noprint;
+472          create table Subsidy as
+473          select
+474            NLIHC_ID,
+475            Subsidy_Active,
+476            Program,
+477            Subsidy,
+478            Contract_Number,
+479            Units_Assist,
+480            POA_Start,
+481            POA_End,
+482            Subsidy_Info_Source,
+483            "" as Subsidy_Notes,
+484            Update_Date as Subsidy_Update
+485          from PresCat.Subsidy
+486          order by NLIHC_ID;
+ERROR: The following columns were not found in the contributing tables: Subsidy.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+487        quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+488        
+489        filename fexport "&_dcdata_path\PresCat\Raw\Subsidy.csv" lrecl=2000;
+490        
+
+
+491        proc export data=Subsidy
+492            outfile=fexport
+493            dbms=csv replace;
+494        
+495        run;
+
+ERROR: File WORK.SUBSIDY.DATA does not exist. 
+ERROR: Export unsuccessful.  See SAS Log for details.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE EXPORT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.03 seconds
+      
+496        
+497        filename fexport clear;
+NOTE: Fileref FEXPORT has been deassigned.
+498        
+16 The SAS System                                                                              11:40 Tuesday, March 11, 2014
+
+499        
+500        ******  REAC_score  ******;
+501        
+
+
+502        proc sql noprint;
+503          create table REAC_score as
+504          select
+505            NLIHC_ID,
+506            Reac_date,
+507            Reac_score,
+508            Reac_score_num,
+509            Reac_score_letter
+510          from PresCat.Reac_score
+511          order by NLIHC_ID;
+NOTE: Compressing data set WORK.REAC_SCORE increased size by 20.00 percent. 
+      Compressed is 6 pages; un-compressed would require 5 pages.
+NOTE: Table WORK.REAC_SCORE created, with 366 rows and 5 columns.
+
+512        quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.03 seconds
+      
+
+513        
+514        filename fexport "&_dcdata_path\PresCat\Raw\REAC_score.csv" lrecl=2000;
+515        
+516        proc export data=Reac_score
+517            outfile=fexport
+518            dbms=csv replace;
+519        
+520        run;
+
+521         /**********************************************************************
+522         *   PRODUCT:   SAS
+523         *   VERSION:   9.2
+524         *   CREATOR:   External File Interface
+525         *   DATE:      11MAR14
+526         *   DESC:      Generated SAS Datastep Code
+527         *   TEMPLATE SOURCE:  (None Specified.)
+528         ***********************************************************************/
+529            data _null_;
+530            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+531            %let _EFIREC_ = 0;     /* clear export record count macro variable */
+532            file FEXPORT delimiter=',' DSD DROPOVER lrecl=32767;
+17 The SAS System                                                                              11:40 Tuesday, March 11, 2014
+
+533            if _n_ = 1 then        /* write column names or labels */
+534             do;
+535               put
+536                  "NLIHC_ID"
+537               ','
+538                  "REAC_date"
+539               ','
+540                  "REAC_score"
+541               ','
+542                  "REAC_score_num"
+543               ','
+544                  "REAC_score_letter"
+545               ;
+546             end;
+547           set  REAC_SCORE   end=EFIEOD;
+548               format NLIHC_ID $8. ;
+549               format REAC_date mmddyy10. ;
+550               format REAC_score $8. ;
+551               format REAC_score_num best12. ;
+552               format REAC_score_letter $2. ;
+553             do;
+554               EFIOUT + 1;
+555               put NLIHC_ID $ @;
+556               put REAC_date @;
+557               put REAC_score $ @;
+558               put REAC_score_num @;
+559               put REAC_score_letter $ ;
+560               ;
+561             end;
+562            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+563            if EFIEOD then call symputx('_EFIREC_',EFIOUT);
+564            run;
+
+NOTE: The file FEXPORT is:
+      Filename=D:\DCData\Libraries\PresCat\Raw\REAC_score.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=11Mar2014:11:40:38,
+      Create Time=05Sep2013:11:18:06
+
+NOTE: 367 records were written to the file FEXPORT.
+      The minimum record length was 28.
+      The maximum record length was 62.
+NOTE: There were 366 observations read from the data set WORK.REAC_SCORE.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+18 The SAS System                                                                              11:40 Tuesday, March 11, 2014
+
+      
+
+366 records created in FEXPORT from REAC_SCORE.
+  
+  
+NOTE: "FEXPORT" file was successfully created.
+NOTE: PROCEDURE EXPORT used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.01 seconds
+      
+
+565        
+566        filename fexport clear;
+NOTE: Fileref FEXPORT has been deassigned.
+567        
+568        
+569        ******  Parcel  ******;
+570        
+571        data Parcel_bis;
+572        
+573          set PresCat.Parcel;
+574        
+575          if missing( Parcel_owner_date ) then Parcel_owner_date = .;
+576        
+577        run;
+
+NOTE: Format $UIPRTYP was not found or could not be loaded.
+NOTE: There were 497 observations read from the data set PRESCAT.PARCEL.
+NOTE: The data set WORK.PARCEL_BIS has 497 observations and 11 variables.
+NOTE: Compressing data set WORK.PARCEL_BIS decreased size by 58.33 percent. 
+      Compressed is 5 pages; un-compressed would require 12 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.01 seconds
+      
+
+578        
+579        proc sql noprint;
+580          create table Parcel as
+581          select
+582            NLIHC_ID,
+583            ssl,
+584            Parcel_type,
+585            Parcel_owner_name,
+586            Parcel_owner_date,
+587            "n/a" as Parcel_owner_type,
+19 The SAS System                                                                              11:40 Tuesday, March 11, 2014
+
+588            "" as Parcel_units,
+589            Parcel_x,
+590            Parcel_y
+591          from Parcel_bis
+592          order by NLIHC_ID;
+NOTE: SAS threaded sort was used.
+NOTE: Compressing data set WORK.PARCEL decreased size by 50.00 percent. 
+      Compressed is 5 pages; un-compressed would require 10 pages.
+NOTE: Table WORK.PARCEL created, with 497 rows and 9 columns.
+
+593        quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+594        
+595        filename fexport "&_dcdata_path\PresCat\Raw\Parcel.csv" lrecl=2000;
+596        
+597        proc export data=Parcel
+598            outfile=fexport
+599            dbms=csv replace;
+600        
+601        run;
+
+602         /**********************************************************************
+603         *   PRODUCT:   SAS
+604         *   VERSION:   9.2
+605         *   CREATOR:   External File Interface
+606         *   DATE:      11MAR14
+607         *   DESC:      Generated SAS Datastep Code
+608         *   TEMPLATE SOURCE:  (None Specified.)
+609         ***********************************************************************/
+610            data _null_;
+611            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+612            %let _EFIREC_ = 0;     /* clear export record count macro variable */
+613            file FEXPORT delimiter=',' DSD DROPOVER lrecl=32767;
+614            if _n_ = 1 then        /* write column names or labels */
+615             do;
+616               put
+617                  "NLIHC_ID"
+618               ','
+619                  "SSL"
+620               ','
+621                  "Parcel_type"
+622               ','
+20 The SAS System                                                                              11:40 Tuesday, March 11, 2014
+
+623                  "Parcel_owner_name"
+624               ','
+625                  "Parcel_owner_date"
+626               ','
+627                  "Parcel_owner_type"
+628               ','
+629                  "Parcel_units"
+630               ','
+631                  "Parcel_x"
+632               ','
+633                  "Parcel_y"
+634               ;
+635             end;
+636           set  PARCEL   end=EFIEOD;
+637               format NLIHC_ID $8. ;
+638               format SSL $23. ;
+639               format Parcel_type $2. ;
+640               format Parcel_owner_name $150. ;
+641               format Parcel_owner_date mmddyy10. ;
+642               format Parcel_owner_type $3. ;
+643               format Parcel_units $1. ;
+644               format Parcel_x best12. ;
+645               format Parcel_y best12. ;
+646             do;
+647               EFIOUT + 1;
+648               put NLIHC_ID $ @;
+649               put SSL $ @;
+650               put Parcel_type $ @;
+651               put Parcel_owner_name $ @;
+652               put Parcel_owner_date @;
+653               put Parcel_owner_type $ @;
+654               put Parcel_units $ @;
+655               put Parcel_x @;
+656               put Parcel_y ;
+657               ;
+658             end;
+659            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+660            if EFIEOD then call symputx('_EFIREC_',EFIOUT);
+661            run;
+
+NOTE: The file FEXPORT is:
+      Filename=D:\DCData\Libraries\PresCat\Raw\Parcel.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=11Mar2014:11:40:38,
+      Create Time=05Sep2013:11:25:04
+
+21 The SAS System                                                                              11:40 Tuesday, March 11, 2014
+
+NOTE: 498 records were written to the file FEXPORT.
+      The minimum record length was 45.
+      The maximum record length was 146.
+NOTE: There were 497 observations read from the data set WORK.PARCEL.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+      
+
+497 records created in FEXPORT from PARCEL.
+  
+  
+NOTE: "FEXPORT" file was successfully created.
+NOTE: PROCEDURE EXPORT used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.06 seconds
+      
+
+662        
+663        filename fexport clear;
+NOTE: Fileref FEXPORT has been deassigned.
+664        
+665        
+666        ******  Real Property  ******;
+667        
+668        proc sql noprint;
+669          create table Real_property as
+670          select
+671            NLIHC_ID,
+672            ssl,
+673            rp_date,
+674            rp_type,
+675            rp_desc
+676          from PresCat.Real_property
+677          order by NLIHC_ID, RP_date desc, sort_order desc;
+NOTE: The query as specified involves ordering by an item that doesn't appear in its SELECT clause.
+NOTE: Compressing data set WORK.REAL_PROPERTY decreased size by 50.00 percent. 
+      Compressed is 8 pages; un-compressed would require 16 pages.
+NOTE: Table WORK.REAL_PROPERTY created, with 668 rows and 5 columns.
+
+678        quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+      
+
+22 The SAS System                                                                              11:40 Tuesday, March 11, 2014
+
+679        
+680        filename fexport "&_dcdata_path\PresCat\Raw\Real_property.csv" lrecl=2000;
+681        
+682        proc export data=Real_property
+683            outfile=fexport
+684            dbms=csv replace;
+685        
+686        run;
+
+687         /**********************************************************************
+688         *   PRODUCT:   SAS
+689         *   VERSION:   9.2
+690         *   CREATOR:   External File Interface
+691         *   DATE:      11MAR14
+692         *   DESC:      Generated SAS Datastep Code
+693         *   TEMPLATE SOURCE:  (None Specified.)
+694         ***********************************************************************/
+695            data _null_;
+696            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+697            %let _EFIREC_ = 0;     /* clear export record count macro variable */
+698            file FEXPORT delimiter=',' DSD DROPOVER lrecl=32767;
+699            if _n_ = 1 then        /* write column names or labels */
+700             do;
+701               put
+702                  "NLIHC_ID"
+703               ','
+704                  "SSL"
+705               ','
+706                  "RP_date"
+707               ','
+708                  "RP_type"
+709               ','
+710                  "RP_desc"
+711               ;
+712             end;
+713           set  REAL_PROPERTY   end=EFIEOD;
+714               format NLIHC_ID $8. ;
+715               format SSL $23. ;
+716               format RP_date mmddyy10. ;
+717               format RP_type $rptype19. ;
+718               format RP_desc $200. ;
+719             do;
+720               EFIOUT + 1;
+721               put NLIHC_ID $ @;
+722               put SSL $ @;
+723               put RP_date @;
+23 The SAS System                                                                              11:40 Tuesday, March 11, 2014
+
+724               put RP_type $ @;
+725               put RP_desc $ ;
+726               ;
+727             end;
+728            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+729            if EFIEOD then call symputx('_EFIREC_',EFIOUT);
+730            run;
+
+NOTE: The file FEXPORT is:
+      Filename=D:\DCData\Libraries\PresCat\Raw\Real_property.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=11Mar2014:11:40:38,
+      Create Time=05Sep2013:16:49:34
+
+NOTE: 669 records were written to the file FEXPORT.
+      The minimum record length was 36.
+      The maximum record length was 180.
+NOTE: There were 668 observations read from the data set WORK.REAL_PROPERTY.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+668 records created in FEXPORT from REAL_PROPERTY.
+  
+  
+NOTE: "FEXPORT" file was successfully created.
+NOTE: PROCEDURE EXPORT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.04 seconds
+      
+
+731        
+732        filename fexport clear;
+NOTE: Fileref FEXPORT has been deassigned.
+733        
+
+ERROR: Errors printed on page 15.
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           2.15 seconds
+      cpu time            0.79 seconds
+      

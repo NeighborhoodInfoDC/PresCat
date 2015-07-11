@@ -1,0 +1,1692 @@
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015   1
+File = DC_info_geocode
+
+ marid    NLIHC_ID    Bldg_Addre_new
+
+ 20614    NL000181    4500 QUARLES STREET, N.E.                      
+          NL000231    4500 QUARLES STREET, N.E.                      
+
+Number of duplicates = 2
+
+
+150698    NL000184    340 13th Street SE                             
+          NL000418    340 13th Street SE                             
+
+Number of duplicates = 2
+
+
+277969    NL000153    1804 Alabama Ave., SE                          
+          NL000154    1804 Alabama Ave., SE                          
+
+Number of duplicates = 2
+
+
+286318    NL000121    155 RIDGE ROAD, S.E.                           
+          NL000282    155 RIDGE ROAD, S.E.                           
+
+Number of duplicates = 2
+
+
+286806    NL000128    2306 Hartford Street, SE                       
+          NL000237    2306 Hartford St SE                            
+
+Number of duplicates = 2
+
+
+290351    NL000244    1225 G STREET SE                               
+          NL000245    1225 G STREET SE                               
+
+Number of duplicates = 2
+
+
+299401    NL000273    3627 22nd St SE                                
+          NL000274    3627 22nd St SE                                
+
+Number of duplicates = 2
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015   2
+File = DC_info_geocode
+
+ marid    NLIHC_ID    Bldg_Addre_new
+
+301198    NL000180    800 KENILWORTH AVENUE NE                       
+          NL000353    800 Kenilworth Avenue Northeast                
+          NL001006    800 Kenilworth Ave., NE                        
+
+Number of duplicates = 3
+
+
+302595    NL000056    5901 EAST CAPITOL ST S.E.                      
+          NL000375    5901 East Capitol St., SE                      
+
+Number of duplicates = 2
+
+
+303528    NL000990    400 M Street, S.E.                             
+          NL001019    400 M ST SE                                    
+
+Number of duplicates = 2
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015   3
+File = DC_info_geocode_mar
+
+The CONTENTS Procedure
+
+Data Set Name        WORK.DC_INFO_GEOCODE_MAR         Observations           608 
+Member Type          DATA                             Variables              88  
+Engine               V9                               Indexes                0   
+Created              Sat, Feb 14, 2015 06:54:41 PM    Observation Length     1434
+Last Modified        Sat, Feb 14, 2015 06:54:41 PM    Deleted Observations   0   
+Protection                                            Compressed             CHAR
+Data Set Type                                         Reuse Space            NO  
+Label                                                 Point to Observations  YES 
+Data Representation  WINDOWS_64                       Sorted                 YES 
+Encoding             wlatin1  Western (Windows)                                  
+
+
+                                           Engine/Host Dependent Information
+
+Data Set Page Size          16384                                                                                       
+Number of Data Set Pages    32                                                                                          
+Number of Data Set Repairs  0                                                                                           
+Filename                    D:\Users\ptatian\AppData\Local\Temp\SAS Temporary Files\_TD5980\dc_info_geocode_mar.sas7bdat
+Release Created             9.0202M3                                                                                    
+Host Created                X64_VSPRO                                                                                   
+
+
+       Alphabetic List of Variables and Attributes
+ 
+ #    Variable                  Type    Len    Format
+
+24    ADDRNUM                   Num       8             
+25    ADDRNUMSUFFIX             Char      4             
+34    ANC                       Char      6             
+57    ANC_2002                  Char      6             
+58    ANC_2012                  Char      6             
+82    Anc2012                   Char      2    $ANC12A. 
+ 7    Bldg_Addre_new            Char     47             
+ 4    Bldg_City                 Char     10             
+ 3    Bldg_SSL                  Char     14             
+ 5    Bldg_ST                   Char      2             
+ 6    Bldg_Zip                  Num       8             
+40    CENSUS_TRACT              Num       8             
+29    CITY                      Char     10             
+38    CLUSTER_                  Char     11             
+64    CONFIDENCELEVEL           Char      1             
+80    Category                  Char      1             
+85    Cluster_tr2000            Char      2    $CLUS00A.
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015   4
+File = DC_info_geocode_mar
+
+The CONTENTS Procedure
+
+       Alphabetic List of Variables and Attributes
+ 
+ #    Variable                  Type    Len    Format
+
+86    Cluster_tr2000_name       Char     80             
+46    FOCUS_IMPROVEMENT_AREA    Char     61             
+23    FULLADDRESS               Char     44             
+76    FULLINTERSECTION          Char     32             
+71    FULLSTREET1DISPLAY        Char     13             
+75    FULLSTREET2DISPLAY        Char     14             
+84    Geo2010                   Char     11    $GEO10A. 
+47    HAS_ALIAS                 Char      1             
+48    HAS_CONDO_UNIT            Char      1             
+49    HAS_RES_UNIT              Char      1             
+50    HAS_SSL                   Char      1             
+62    IMAGEDIR                  Char      8             
+63    IMAGENAME                 Char     25             
+61    IMAGEURL                  Char     38             
+65    INTERSECTIONID            Num       8             
+88    Image_url                 Char     73             
+51    LATITUDE                  Num       8             
+52    LONGITUDE                 Num       8             
+14    MAR_CENSUS_TRACT          Num       8             
+17    MAR_ERROR                 Char      1             
+20    MAR_IGNORE                Char      1             
+11    MAR_LATITUDE              Num       8             
+12    MAR_LONGITUDE             Num       8             
+ 8    MAR_MATCHADDRESS          Char     44             
+18    MAR_SCORE                 Num       8             
+19    MAR_SOURCEOPERATION       Char     17             
+13    MAR_WARD                  Char      6             
+ 9    MAR_XCOORD                Num       8             
+10    MAR_YCOORD                Num       8             
+15    MAR_ZIPCODE               Num       8             
+44    NATIONALGRID              Char     18             
+37    NBHD_ACTION               Char      1             
+ 2    NLIHC_ID                  Char      8             
+39    POLDIST                   Char     35             
+35    PSA                       Char     23             
+ 1    Proj_Name                 Char    257             
+83    Psa2012                   Char      3    $PSA12A. 
+28    QUADRANT                  Char      2             
+77    REFX                      Num       8             
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015   5
+File = DC_info_geocode_mar
+
+The CONTENTS Procedure
+
+       Alphabetic List of Variables and Attributes
+ 
+ #    Variable                  Type    Len    Format
+
+78    REFY                      Num       8             
+54    RES_TYPE                  Char     17             
+45    ROADWAYSEGID              Num       8             
+21    ROC                       Char      2             
+42    SMD                       Char      8             
+59    SMD_2002                  Char      8             
+60    SMD_2012                  Char      8             
+33    SSL                       Char     14             
+68    ST1NAME                   Char      5             
+70    ST1QUAD                   Char      2             
+69    ST1TYPE                   Char      4             
+72    ST2NAME                   Char      4             
+74    ST2QUAD                   Char      2             
+73    ST2TYPE                   Char      6             
+30    STATE                     Char      2             
+22    STATUS                    Char      6             
+26    STNAME                    Char     30             
+66    STREET1ID                 Num       8             
+67    STREET2ID                 Num       8             
+27    STREET_TYPE               Char      8             
+53    Streetview_url            Char    141             
+41    VOTE_PRCNCT               Char     13             
+36    WARD                      Char      6             
+55    WARD_2002                 Char      6             
+56    WARD_2012                 Char      6             
+81    Ward2012                  Char      6    $WARD12A.
+31    XCOORD                    Num       8             
+32    YCOORD                    Num       8             
+43    ZIPCODE                   Num       8             
+87    Zip                       Char      5    $ZIPA.   
+16    address_id                Num       8             
+79    units                     Num       8             
+
+
+                Sort Information
+
+Sortedby       NLIHC_ID Bldg_SSL MAR_MATCHADDRESS
+Validated      YES                               
+Character Set  ANSI                              
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015   6
+File = DC_info_geocode_mar
+Printing first 10 obs.
+
+ 
+ 
+Obs Proj_Name                                 NLIHC_ID  Bldg_SSL  Bldg_City   Bldg_ST  Bldg_Zip  Bldg_Addre_new
+
+  1 1330 7TH ST APTS (Immaculate Conception)  NL000001            WASHINGTON    DC       20001   1330 7TH ST NW           
+  2 PARKFAIR APTS                             NL000004            WASHINGTON    DC           .   1611 Park Road NW        
+  3 1728 W ST SE                              NL000006            WASHINGTON    DC       20002   1728 W Street, SE        
+  4 2721 PENNSYLVANIA AVE SE                  NL000008            WASHINGTON    DC           .   2721 Pennsylvania Ave. SE
+  5 3471 14TH STREET NW                       NL000010            WASHINGTON    DC       20010   3471 14TH ST NW          
+  6 5320 8TH ST NW                            NL000014            WASHINGTON    DC           .   5320 8th Street NW       
+  7 5401-5407 9TH ST NW                       NL000015            WASHINGTON    DC       20011   5401 9TH STREET NW       
+  8 5401-5407 9TH ST NW                       NL000015            WASHINGTON    DC       20011   5403 9TH STREET NW       
+  9 5401-5407 9TH ST NW                       NL000015            WASHINGTON    DC       20011   5405 9TH STREET NW       
+ 10 5401-5407 9TH ST NW                       NL000015            WASHINGTON    DC       20011   5407 9TH STREET NW       
+
+ 
+                                    MAR_       MAR_      MAR_       MAR_              MAR_CENSUS_    MAR_   address_
+Obs MAR_MATCHADDRESS               XCOORD     YCOORD   LATITUDE  LONGITUDE  MAR_WARD     TRACT     ZIPCODE     id
+
+  1 1330 7th Street NW           398074.80  137806.65   38.9081   -77.0222   Ward 6       4902      20001    238401 
+  2 1611 Park Road NW            396786.79  140468.27   38.9321   -77.0371   Ward 1       2701      20010    233583 
+  3 1728 W Street SE             401769.82  132788.41   38.8629   -76.9796   Ward 8       7504      20020     56983 
+  4 2721 Pennsylvania Avenue SE  402762.68  133813.42   38.8721   -76.9682   Ward 7       7604      20020     45042 
+  5 3471 14th Street NW          397187.35  140712.36   38.9343   -77.0324   Ward 1       2900      20010    230775 
+  6 5320 8th Street NW           397888.05  143002.44   38.9549   -77.0244   Ward 4       2101      20011    254710 
+  7 5401 9th Street NW           397789.06  143053.31   38.9554   -77.0255   Ward 4       2101      20011    276108 
+  8 5403 9th Street NW           397806.10  143054.76   38.9554   -77.0253   Ward 4       2101      20011    299963 
+  9 5405 9th Street NW           397804.93  143072.66   38.9556   -77.0253   Ward 4       2101      20011    299964 
+ 10 5407 9th Street NW           397793.66  143074.54   38.9556   -77.0255   Ward 4       2101      20011    299965 
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015   7
+File = DC_info_geocode_mar
+Printing first 10 obs.
+
+ 
+    MAR_   MAR_                      MAR_
+Obs ERROR SCORE MAR_SOURCEOPERATION IGNORE ROC STATUS FULLADDRESS                 ADDRNUM ADDRNUMSUFFIX STNAME
+
+  1        100      DC Address              -  ACTIVE 1330 7TH STREET NW            1330                7TH         
+  2        100      DC Address              -  ACTIVE 1611 PARK ROAD NW             1611                PARK        
+  3        100      DC Address              -  ACTIVE 1728 W STREET SE              1728                W           
+  4        100      DC Address              -  ACTIVE 2721 PENNSYLVANIA AVENUE SE   2721                PENNSYLVANIA
+  5        100      DC Address              -  ACTIVE 3471 14TH STREET NW           3471                14TH        
+  6        100      DC Address              -  ACTIVE 5320 8TH STREET NW            5320                8TH         
+  7        100      DC Address              -  ACTIVE 5401 9TH STREET NW            5401                9TH         
+  8        100      DC Address              -  ACTIVE 5403 9TH STREET NW            5403                9TH         
+  9        100      DC Address              -  ACTIVE 5405 9TH STREET NW            5405                9TH         
+ 10        100      DC Address              -  ACTIVE 5407 9TH STREET NW            5407                9TH         
+
+ 
+    STREET_
+Obs  TYPE    QUADRANT     CITY     STATE    XCOORD     YCOORD       SSL        ANC              PSA             WARD
+
+  1 STREET      NW     WASHINGTON   DC    398074.80  137806.65  0423    0018  ANC 6E  Police Service Area 308  Ward 6
+  2 ROAD        NW     WASHINGTON   DC    396786.79  140468.27  2609    0822  ANC 1D  Police Service Area 408  Ward 1
+  3 STREET      SE     WASHINGTON   DC    401769.82  132788.41  5778    0166  ANC 8A  Police Service Area 701  Ward 8
+  4 AVENUE      SE     WASHINGTON   DC    402762.68  133813.42  5581    0023  ANC 7B  Police Service Area 607  Ward 7
+  5 STREET      NW     WASHINGTON   DC    397187.35  140712.36  2835    0104  ANC 1A  Police Service Area 409  Ward 1
+  6 STREET      NW     WASHINGTON   DC    397888.05  143002.44  2999    0802  ANC 4D  Police Service Area 403  Ward 4
+  7 STREET      NW     WASHINGTON   DC    397789.06  143053.31  2994    0023  ANC 4D  Police Service Area 403  Ward 4
+  8 STREET      NW     WASHINGTON   DC    397806.10  143054.76  2994    0023  ANC 4D  Police Service Area 403  Ward 4
+  9 STREET      NW     WASHINGTON   DC    397804.93  143072.66  2994    0025  ANC 4D  Police Service Area 403  Ward 4
+ 10 STREET      NW     WASHINGTON   DC    397793.66  143074.54  2994    0025  ANC 4D  Police Service Area 403  Ward 4
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015   8
+File = DC_info_geocode_mar
+Printing first 10 obs.
+
+ 
+    NBHD_                                                   CENSUS_
+Obs ACTION   CLUSTER_                POLDIST                 TRACT   VOTE_PRCNCT     SMD     ZIPCODE     NATIONALGRID
+
+  1         Cluster 7   Police District - Third District      4902   Precinct 18   SMD 6E03   20001   18S UJ 24660 08524
+  2         Cluster 2   Police District - Fourth District     2701   Precinct 40   SMD 1D04   20010   18S UJ 23431 11214
+  3         Cluster 28  Police District - Seventh District    7504   Precinct 114  SMD 8A05   20020   18S UJ 28245 03426
+  4         Cluster 34  Police District - Sixth District      7604   Precinct 111  SMD 7B03   20020   18S UJ 29260 04429
+  5         Cluster 2   Police District - Fourth District     2900   Precinct 41   SMD 1A04   20010   18S UJ 23837 11449
+  6         Cluster 18  Police District - Fourth District     2101   Precinct 56   SMD 4D04   20011   18S UJ 24588 13723
+  7         Cluster 18  Police District - Fourth District     2101   Precinct 56   SMD 4D01   20011   18S UJ 24490 13776
+  8         Cluster 18  Police District - Fourth District     2101   Precinct 56   SMD 4D01   20011   18S UJ 24507 13777
+  9         Cluster 18  Police District - Fourth District     2101   Precinct 56   SMD 4D01   20011   18S UJ 24506 13795
+ 10         Cluster 18  Police District - Fourth District     2101   Precinct 56   SMD 4D01   20011   18S UJ 24495 13797
+
+                       FOCUS_
+                    IMPROVEMENT_    HAS_     HAS_CONDO_    HAS_RES_
+Obs ROADWAYSEGID        AREA        ALIAS       UNIT         UNIT      HAS_SSL    LATITUDE    LONGITUDE
+
+  1      3291                         Y          N            Y           Y        38.9081     -77.0222
+  2     11883                         Y          N            Y           Y        38.9321     -77.0371
+  3     15615                         N          N            Y           Y        38.8629     -76.9796
+  4       283                         N          N            N           Y        38.8721     -76.9682
+  5      3013                         N          N            Y           Y        38.9343     -77.0324
+  6      9635        4D Round 2       N          N            Y           Y        38.9549     -77.0244
+  7     10092        4D Round 2       Y          Y            Y           Y        38.9554     -77.0255
+  8     10092        4D Round 2       Y          Y            Y           Y        38.9554     -77.0253
+  9     10092        4D Round 2       Y          Y            Y           Y        38.9556     -77.0253
+ 10     10092        4D Round 2       Y          Y            Y           Y        38.9556     -77.0255
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015   9
+File = DC_info_geocode_mar
+Printing first 10 obs.
+
+ 
+ 
+Obs                                             Streetview_url
+
+  1 http://maps.google.com/maps?z=16&layer=c&cbll=38.90811789,-77.0221966&cbp=11,268.61496892357,,0,2.09  
+  2 http://maps.google.com/maps?z=16&layer=c&cbll=38.93209086,-77.03705918&cbp=11,43.4024928305739,,0,2.09
+  3 http://maps.google.com/maps?z=16&layer=c&cbll=38.862912,-76.97960778&cbp=11,36.2251352869827,,0,2.09  
+  4 http://maps.google.com/maps?z=16&layer=c&cbll=38.87214315,-76.96816372&cbp=11,197.768729185275,,0,2.09
+  5 http://maps.google.com/maps?z=16&layer=c&cbll=38.93429107,-77.03244037&cbp=11,76.8329307568203,,0,2.09
+  6 http://maps.google.com/maps?z=16&layer=c&cbll=38.95492273,-77.02436573&cbp=11,259.86833802421,,0,2.09 
+  7 http://maps.google.com/maps?z=16&layer=c&cbll=38.95538073,-77.02550795&cbp=11,105.04223640961,,0,2.09 
+  8 http://maps.google.com/maps?z=16&layer=c&cbll=38.95539384,-77.02531136&cbp=11,6.18403585120936,,0,2.09
+  9 http://maps.google.com/maps?z=16&layer=c&cbll=38.95555508,-77.02532491&cbp=11,87.004030488854,,0,2.09 
+ 10 http://maps.google.com/maps?z=16&layer=c&cbll=38.95557199,-77.02545494&cbp=11,80.9068605797869,,0,2.09
+
+ 
+                 WARD_   WARD_
+Obs  RES_TYPE     2002    2012   ANC_2002  ANC_2012  SMD_2002  SMD_2012                 IMAGEURL                 IMAGEDIR
+
+  1 RESIDENTIAL  Ward 2  Ward 6   ANC 2C    ANC 6E   SMD 2C04  SMD 6E03  http://citizenatlas.dc.gov/mobilevideo  20040926
+  2 RESIDENTIAL  Ward 1  Ward 1   ANC 1D    ANC 1D   SMD 1D04  SMD 1D04  http://citizenatlas.dc.gov/mobilevideo  20040919
+  3 RESIDENTIAL  Ward 8  Ward 8   ANC 8A    ANC 8A   SMD 8A04  SMD 8A05  http://citizenatlas.dc.gov/mobilevideo  20040824
+  4 RESIDENTIAL  Ward 7  Ward 7   ANC 7A    ANC 7B   SMD 7A07  SMD 7B03  http://citizenatlas.dc.gov/mobilevideo  20041024
+  5 RESIDENTIAL  Ward 1  Ward 1   ANC 1A    ANC 1A   SMD 1A04  SMD 1A04  http://citizenatlas.dc.gov/mobilevideo  20040817
+  6 RESIDENTIAL  Ward 4  Ward 4   ANC 4D    ANC 4D   SMD 4D04  SMD 4D04  http://citizenatlas.dc.gov/mobilevideo  20040718
+  7 RESIDENTIAL  Ward 4  Ward 4   ANC 4D    ANC 4D   SMD 4D01  SMD 4D01  http://citizenatlas.dc.gov/mobilevideo  20040718
+  8 RESIDENTIAL  Ward 4  Ward 4   ANC 4D    ANC 4D   SMD 4D01  SMD 4D01  http://citizenatlas.dc.gov/mobilevideo  NO_IMAGE
+  9 RESIDENTIAL  Ward 4  Ward 4   ANC 4D    ANC 4D   SMD 4D01  SMD 4D01  http://citizenatlas.dc.gov/mobilevideo  NO_IMAGE
+ 10 RESIDENTIAL  Ward 4  Ward 4   ANC 4D    ANC 4D   SMD 4D01  SMD 4D01  http://citizenatlas.dc.gov/mobilevideo  NO_IMAGE
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  10
+File = DC_info_geocode_mar
+Printing first 10 obs.
+
+ 
+ 
+Obs IMAGENAME              CONFIDENCELEVEL INTERSECTIONID STREET1ID STREET2ID ST1NAME ST1TYPE ST1QUAD FULLSTREET1DISPLAY
+
+  1 QQ112940.jpg                                  .           .         .                                               
+  2 DJ080511.jpg                                  .           .         .                                               
+  3 DO103928.jpg                                  .           .         .                                               
+  4 OO092328.jpg                                  .           .         .                                               
+  5 DH074140.jpg                                  .           .         .                                               
+  6 MI093900.jpg                                  .           .         .                                               
+  7 MI120421.jpg                                  .           .         .                                               
+  8 No_Image_Available.JPG                        .           .         .                                               
+  9 No_Image_Available.JPG                        .           .         .                                               
+ 10 No_Image_Available.JPG                        .           .         .                                               
+
+ 
+ 
+Obs ST2NAME ST2TYPE ST2QUAD FULLSTREET2DISPLAY FULLINTERSECTION REFX REFY units Category Ward2012 Anc2012 Psa2012
+
+  1                                                               .    .    .             Ward 6  ANC 6E  PSA 308
+  2                                                               .    .    .             Ward 1  ANC 1D  PSA 408
+  3                                                               .    .    .             Ward 8  ANC 8A  PSA 701
+  4                                                               .    .    .             Ward 7  ANC 7B  PSA 607
+  5                                                               .    .    .             Ward 1  ANC 1A  PSA 409
+  6                                                               .    .    .             Ward 4  ANC 4D  PSA 403
+  7                                                               .    .    .             Ward 4  ANC 4D  PSA 403
+  8                                                               .    .    .             Ward 4  ANC 4D  PSA 403
+  9                                                               .    .    .             Ward 4  ANC 4D  PSA 403
+ 10                                                               .    .    .             Ward 4  ANC 4D  PSA 403
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  11
+File = DC_info_geocode_mar
+Printing first 10 obs.
+
+ 
+                   Cluster_
+Obs   Geo2010       tr2000     Cluster_tr2000_name                                                                 Zip
+
+  1 Tract 49.02   Cluster 7    Shaw, Logan Circle                                                               ZIP 20001
+  2 Tract 27.01   Cluster 2    Columbia Heights, Mt. Pleasant, Pleasant Plains, Park View                       ZIP 20010
+  3 Tract 75.04   Cluster 28   Historic Anacostia                                                               ZIP 20020
+  4 Tract 76.04   Cluster 34   Twining, Fairlawn, Randle Highlands, Penn Branch, Fort Davis Park, Fort Dupont   ZIP 20020
+  5 Tract 29      Cluster 2    Columbia Heights, Mt. Pleasant, Pleasant Plains, Park View                       ZIP 20010
+  6 Tract 21.01   Cluster 18   Brightwood Park, Crestwood, Petworth                                             ZIP 20011
+  7 Tract 21.01   Cluster 18   Brightwood Park, Crestwood, Petworth                                             ZIP 20011
+  8 Tract 21.01   Cluster 18   Brightwood Park, Crestwood, Petworth                                             ZIP 20011
+  9 Tract 21.01   Cluster 18   Brightwood Park, Crestwood, Petworth                                             ZIP 20011
+ 10 Tract 21.01   Cluster 18   Brightwood Park, Crestwood, Petworth                                             ZIP 20011
+
+ 
+ 
+Obs                          Image_url
+
+  1 http://citizenatlas.dc.gov/mobilevideo/20040926/QQ112940.jpg
+  2 http://citizenatlas.dc.gov/mobilevideo/20040919/DJ080511.jpg
+  3 http://citizenatlas.dc.gov/mobilevideo/20040824/DO103928.jpg
+  4 http://citizenatlas.dc.gov/mobilevideo/20041024/OO092328.jpg
+  5 http://citizenatlas.dc.gov/mobilevideo/20040817/DH074140.jpg
+  6 http://citizenatlas.dc.gov/mobilevideo/20040718/MI093900.jpg
+  7 http://citizenatlas.dc.gov/mobilevideo/20040718/MI120421.jpg
+  8                                                             
+  9                                                             
+ 10                                                             
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  12
+File = DC_info_geocode_mar
+
+The MEANS Procedure
+
+Variable              N             Sum            Mean         Std Dev         Minimum         Maximum
+-------------------------------------------------------------------------------------------------------
+Bldg_Zip            548     10967836.00        20014.30       8.4782677        20001.00        20037.00
+MAR_XCOORD          608       243711082       400840.60         2835.97       391743.09       407297.09
+MAR_YCOORD          608     83258494.48       136938.31         3343.95       128300.07       144908.38
+MAR_LATITUDE        608        23651.38      38.9002927       0.0301233      38.8224804      38.9720913
+MAR_LONGITUDE       608       -46810.11     -76.9903141       0.0326957     -77.0952556     -76.9158902
+MAR_CENSUS_TRACT    607      4311680.00         7103.26         2569.68     300.0000000        11100.00
+MAR_ZIPCODE         607     12148708.00        20014.35       8.4561915        20001.00        20037.00
+address_id          607       136067263       224163.53        89033.64         2323.00       904238.00
+MAR_SCORE           608        60782.00      99.9703947       0.7299964      82.0000000     100.0000000
+ADDRNUM             607      1347437.00         2219.83         1490.66       2.0000000         6676.00
+XCOORD              607       243306859       400835.02         2834.97       391743.09       407297.09
+YCOORD              607     83122918.49       136940.56         3346.25       128300.07       144908.38
+CENSUS_TRACT        607      4311680.00         7103.26         2569.68     300.0000000        11100.00
+ZIPCODE             607     12148708.00        20014.35       8.4561915        20001.00        20037.00
+ROADWAYSEGID        607      9002065.00        14830.42        10538.01               0        37655.00
+LATITUDE            608        23651.38      38.9002927       0.0301233      38.8224804      38.9720913
+LONGITUDE           608       -46810.11     -76.9903141       0.0326957     -77.0952556     -76.9158902
+INTERSECTIONID        1        16510.00        16510.00               .        16510.00        16510.00
+STREET1ID             1       307566.00       307566.00               .       307566.00       307566.00
+STREET2ID             1       300370.00       300370.00               .       300370.00       300370.00
+REFX                  1       404222.71       404222.71               .       404222.71       404222.71
+REFY                  1       135575.99       135575.99               .       135575.99       135575.99
+units                82        43870.00     535.0000000               0     535.0000000     535.0000000
+-------------------------------------------------------------------------------------------------------
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  13
+File = DC_info_geocode_mar
+
+The FREQ Procedure
+
+                                     Cumulative    Cumulative
+Ward2012    Frequency     Percent     Frequency      Percent
+-------------------------------------------------------------
+Ward 1            92       15.13            92        15.13  
+Ward 2            22        3.62           114        18.75  
+Ward 3             4        0.66           118        19.41  
+Ward 4            25        4.11           143        23.52  
+Ward 5           135       22.20           278        45.72  
+Ward 6            87       14.31           365        60.03  
+Ward 7           134       22.04           499        82.07  
+Ward 8           109       17.93           608       100.00  
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  14
+File = PresCat.Project_geocode
+
+The CONTENTS Procedure
+
+Data Set Name        PRESCAT.PROJECT_GEOCODE          Observations           362 
+Member Type          DATA                             Variables              19  
+Engine               V9                               Indexes                0   
+Created              Sat, Feb 14, 2015 06:54:42 PM    Observation Length     1092
+Last Modified        Sat, Feb 14, 2015 06:54:42 PM    Deleted Observations   0   
+Protection                                            Compressed             CHAR
+Data Set Type                                         Reuse Space            NO  
+Label                                                 Point to Observations  YES 
+Data Representation  WINDOWS_64                       Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                  
+
+
+                      Engine/Host Dependent Information
+
+Data Set Page Size          16384                                             
+Number of Data Set Pages    9                                                 
+Number of Data Set Repairs  0                                                 
+Filename                    L:\Libraries\PresCat\Data\project_geocode.sas7bdat
+Release Created             9.0202M3                                          
+Host Created                X64_VSPRO                                         
+
+
+                                    Alphabetic List of Variables and Attributes
+ 
+ #    Variable               Type    Len    Format       Label
+
+ 3    Anc2012                Char      2    $ANC12A.     Advisory Neighborhood Commission (2012)                   
+19    Bldg_count             Num       8                 Number of buildings for project                           
+ 6    Cluster_tr2000         Char      2    $CLUS00A.    Neighborhood cluster (tract-based, 2000)                  
+ 7    Cluster_tr2000_name    Char     80                 Neighborhood cluster names (tract-based, 2000)            
+ 5    Geo2010                Char     11    $GEO10A.     Full census tract ID (2010): ssccctttttt                  
+ 2    NLIHC_ID               Char      8                 Preservation Catalog project ID                           
+ 1    Proj_Name              Char    257                 Project name                                              
+10    Proj_addre             Char    160                 Project address                                           
+14    Proj_address_id        Num       8                 Project MAR address ID                                    
+12    Proj_image_url         Char    255                 OCTO property image URL                                   
+17    Proj_lat               Num       8                 Project latitude                                          
+18    Proj_lon               Num       8                 Project longitude                                         
+13    Proj_streetview_url    Char    255                 Google Street View URL                                    
+15    Proj_x                 Num       8                 Project longitude (MD State Plane Coord., NAD 1983 meters)
+16    Proj_y                 Num       8                 Project latitude (MD State Plane Coord., NAD 1983 meters) 
+11    Proj_zip               Char      5                 ZIP code (5 digit)                                        
+ 4    Psa2012                Char      3    $PSA12A.     Police Service Area (2012)                                
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  15
+File = PresCat.Project_geocode
+
+The CONTENTS Procedure
+
+                                    Alphabetic List of Variables and Attributes
+ 
+ #    Variable               Type    Len    Format       Label
+
+ 9    Ward2012               Char      1    $WARD12A.    Ward (2012)                                               
+ 8    Zip                    Char      5    $ZIPA.       ZIP code (5 digit)                                        
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  16
+File = PresCat.Project_geocode
+Printing first 10 obs.
+
+ 
+                                                                                                     Cluster_
+Obs    Proj_Name                                   NLIHC_ID    Anc2012    Psa2012      Geo2010        tr2000
+
+  1    1330 7TH ST APTS (Immaculate Conception)    NL000001    ANC 6E     PSA 308    Tract 49.02    Cluster 7 
+  2    PARKFAIR APTS                               NL000004    ANC 1D     PSA 408    Tract 27.01    Cluster 2 
+  3    1728 W ST SE                                NL000006    ANC 8A     PSA 701    Tract 75.04    Cluster 28
+  4    2721 PENNSYLVANIA AVE SE                    NL000008    ANC 7B     PSA 607    Tract 76.04    Cluster 34
+  5    3471 14TH STREET NW                         NL000010    ANC 1A     PSA 409    Tract 29       Cluster 2 
+  6    5320 8TH ST NW                              NL000014    ANC 4D     PSA 403    Tract 21.01    Cluster 18
+  7    5401-5407 9TH ST NW                         NL000015    ANC 4D     PSA 403    Tract 21.01    Cluster 18
+  8    636 COOPERATIVE APTS                        NL000016    ANC 6A     PSA 104    Tract 84.02    Cluster 25
+  9    PINEY BRANCH HOUSE                          NL000017    ANC 4B     PSA 402    Tract 19.01    Cluster 17
+ 10    AGAPE APTS                                  NL000020    ANC 8D     PSA 708    Tract 98.10    Cluster 39
+
+ 
+ 
+Obs    Cluster_tr2000_name                                                                  Zip
+
+  1    Shaw, Logan Circle                                                                ZIP 20001
+  2    Columbia Heights, Mt. Pleasant, Pleasant Plains, Park View                        ZIP 20010
+  3    Historic Anacostia                                                                ZIP 20020
+  4    Twining, Fairlawn, Randle Highlands, Penn Branch, Fort Davis Park, Fort Dupont    ZIP 20020
+  5    Columbia Heights, Mt. Pleasant, Pleasant Plains, Park View                        ZIP 20010
+  6    Brightwood Park, Crestwood, Petworth                                              ZIP 20011
+  7    Brightwood Park, Crestwood, Petworth                                              ZIP 20011
+  8    NoMa, Union Station, Stanton Park, Kingman Park                                   ZIP 20002
+  9    Takoma, Brightwood, Manor Park                                                    ZIP 20012
+ 10    Congress Heights, Bellevue, Washington Highlands                                  ZIP 20032
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  17
+File = PresCat.Project_geocode
+Printing first 10 obs.
+
+ 
+ 
+Obs    Ward2012    Proj_addre                                                            Proj_zip
+
+  1     Ward 6     1330 7th Street NW                                                     20001  
+  2     Ward 1     1611 Park Road NW                                                      20010  
+  3     Ward 8     1728 W Street SE                                                       20020  
+  4     Ward 7     2721 Pennsylvania Avenue SE                                            20020  
+  5     Ward 1     3471 14th Street NW                                                    20010  
+  6     Ward 4     5320 8th Street NW                                                     20011  
+  7     Ward 4     5401 9th Street NW; 5403 9th Street NW; 5405 9th Street NW; others     20011  
+  8     Ward 6     636 12th Street NE                                                     20002  
+  9     Ward 4     6411 Piney Branch Road NW                                              20012  
+ 10     Ward 8     209 Atlantic Street SE                                                 20032  
+
+ 
+ 
+Obs                           Proj_image_url
+
+  1    http://citizenatlas.dc.gov/mobilevideo/20040926/QQ112940.jpg
+  2    http://citizenatlas.dc.gov/mobilevideo/20040919/DJ080511.jpg
+  3    http://citizenatlas.dc.gov/mobilevideo/20040824/DO103928.jpg
+  4    http://citizenatlas.dc.gov/mobilevideo/20041024/OO092328.jpg
+  5    http://citizenatlas.dc.gov/mobilevideo/20040817/DH074140.jpg
+  6    http://citizenatlas.dc.gov/mobilevideo/20040718/MI093900.jpg
+  7    http://citizenatlas.dc.gov/mobilevideo/20040718/MI120421.jpg
+  8    http://citizenatlas.dc.gov/mobilevideo/20040825/MP105007.jpg
+  9    http://citizenatlas.dc.gov/mobilevideo/20040612/DC133614.jpg
+ 10    http://citizenatlas.dc.gov/mobilevideo/20041014/OE081848.jpg
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  18
+File = PresCat.Project_geocode
+Printing first 10 obs.
+
+ 
+ 
+Obs                                             Proj_streetview_url
+
+  1    http://maps.google.com/maps?z=16&layer=c&cbll=38.90811789,-77.0221966&cbp=11,268.61496892357,,0,2.09  
+  2    http://maps.google.com/maps?z=16&layer=c&cbll=38.93209086,-77.03705918&cbp=11,43.4024928305739,,0,2.09
+  3    http://maps.google.com/maps?z=16&layer=c&cbll=38.862912,-76.97960778&cbp=11,36.2251352869827,,0,2.09  
+  4    http://maps.google.com/maps?z=16&layer=c&cbll=38.87214315,-76.96816372&cbp=11,197.768729185275,,0,2.09
+  5    http://maps.google.com/maps?z=16&layer=c&cbll=38.93429107,-77.03244037&cbp=11,76.8329307568203,,0,2.09
+  6    http://maps.google.com/maps?z=16&layer=c&cbll=38.95492273,-77.02436573&cbp=11,259.86833802421,,0,2.09 
+  7    http://maps.google.com/maps?z=16&layer=c&cbll=38.95557199,-77.02545494&cbp=11,80.9068605797869,,0,2.09
+  8    http://maps.google.com/maps?z=16&layer=c&cbll=38.8983742,-76.99061073&cbp=11,263.710538436296,,0,2.09 
+  9    http://maps.google.com/maps?z=16&layer=c&cbll=38.96779768,-77.02644129&cbp=11,140.451671124253,,0,2.09
+ 10    http://maps.google.com/maps?z=16&layer=c&cbll=38.83070613,-77.0031013&cbp=11,39.2458536402051,,0,2.09 
+
+         Proj_
+       address_                                                      Bldg_
+Obs       id         Proj_x       Proj_y     Proj_lat    Proj_lon    count
+
+  1     238401     398074.80    137806.65     38.9081    -77.0222      1  
+  2     233583     396786.79    140468.27     38.9321    -77.0371      1  
+  3      56983     401769.82    132788.41     38.8629    -76.9796      1  
+  4      45042     402762.68    133813.42     38.8721    -76.9682      1  
+  5     230775     397187.35    140712.36     38.9343    -77.0324      1  
+  6     254710     397888.05    143002.44     38.9549    -77.0244      1  
+  7     276108     397798.44    143063.82     38.9555    -77.0254      4  
+  8       2323     400814.48    136724.83     38.8984    -76.9906      1  
+  9     254029     397708.56    144431.73     38.9678    -77.0264      1  
+ 10      51958     399730.72    129213.14     38.8307    -77.0031      1  
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  19
+File = PresCat.Project_geocode
+
+The MEANS Procedure
+
+Variable             N             Sum            Mean         Std Dev         Minimum         Maximum
+------------------------------------------------------------------------------------------------------
+Proj_address_id    361     78588000.00       217695.29        97139.60         2323.00       904238.00
+Proj_x             362       144838585       400106.59         2844.46       391743.09       407297.09
+Proj_y             362     49369020.15       136378.51         3843.01       128300.07       144908.38
+Proj_lat           362        14080.08      38.8952501       0.0346181      38.8224804      38.9720913
+Proj_lon           362       -27873.56     -76.9987786       0.0327934     -77.0952556     -76.9158902
+Bldg_count         362     608.0000000       1.6795580       5.1079290       1.0000000      82.0000000
+------------------------------------------------------------------------------------------------------
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  20
+File = PresCat.Project_geocode
+
+The FREQ Procedure
+
+                         Ward (2012)
+ 
+                                     Cumulative    Cumulative
+Ward2012    Frequency     Percent     Frequency      Percent
+-------------------------------------------------------------
+Ward 1            74       20.44            74        20.44  
+Ward 2            22        6.08            96        26.52  
+Ward 3             4        1.10           100        27.62  
+Ward 4            21        5.80           121        33.43  
+Ward 5            39       10.77           160        44.20  
+Ward 6            57       15.75           217        59.94  
+Ward 7            51       14.09           268        74.03  
+Ward 8            94       25.97           362       100.00  
+
+
+                Number of buildings for project
+ 
+                                       Cumulative    Cumulative
+Bldg_count    Frequency     Percent     Frequency      Percent
+---------------------------------------------------------------
+         1         340       93.92           340        93.92  
+         2           5        1.38           345        95.30  
+         3           4        1.10           349        96.41  
+         4           2        0.55           351        96.96  
+         5           1        0.28           352        97.24  
+         8           2        0.55           354        97.79  
+         9           1        0.28           355        98.07  
+        10           1        0.28           356        98.34  
+        11           1        0.28           357        98.62  
+        20           1        0.28           358        98.90  
+        25           1        0.28           359        99.17  
+        28           1        0.28           360        99.45  
+        32           1        0.28           361        99.72  
+        82           1        0.28           362       100.00  
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  21
+File = PresCat.Building_geocode
+
+The CONTENTS Procedure
+
+Data Set Name        PRESCAT.BUILDING_GEOCODE         Observations           608 
+Member Type          DATA                             Variables              18  
+Engine               V9                               Indexes                0   
+Created              Sat, Feb 14, 2015 06:54:42 PM    Observation Length     800 
+Last Modified        Sat, Feb 14, 2015 06:54:42 PM    Deleted Observations   0   
+Protection                                            Compressed             CHAR
+Data Set Type                                         Reuse Space            NO  
+Label                                                 Point to Observations  YES 
+Data Representation  WINDOWS_64                       Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                  
+
+
+                       Engine/Host Dependent Information
+
+Data Set Page Size          16384                                              
+Number of Data Set Pages    13                                                 
+Number of Data Set Repairs  0                                                  
+Filename                    L:\Libraries\PresCat\Data\building_geocode.sas7bdat
+Release Created             9.0202M3                                           
+Host Created                X64_VSPRO                                          
+
+
+                                     Alphabetic List of Variables and Attributes
+ 
+ #    Variable               Type    Len    Format       Label
+
+ 5    Anc2012                Char      2    $ANC12A.     Advisory Neighborhood Commission (2012)                    
+13    Bldg_addre             Char    160                 Building address                                           
+ 3    Bldg_address_id        Num       8                 MAR address ID                                             
+11    Bldg_image_url         Char     73                 OCTO property image URL                                    
+18    Bldg_lat               Num       8                 Building latitude                                          
+17    Bldg_lon               Num       8                 Building longitude                                         
+ 4    Bldg_streetview_url    Char    141                 Google Street View URL                                     
+15    Bldg_x                 Num       8                 Building longitude (MD State Plane Coord., NAD 1983 meters)
+16    Bldg_y                 Num       8                 Building latitude (MD State Plane Coord., NAD 1983 meters) 
+10    Bldg_zip               Char      5    $ZIPA.       ZIP code (5 digit)                                         
+ 8    Cluster_tr2000         Char      2    $CLUS00A.    Neighborhood cluster (tract-based, 2000)                   
+ 9    Cluster_tr2000_name    Char     80                 Neighborhood cluster names (tract-based, 2000)             
+ 7    Geo2010                Char     11    $GEO10A.     Full census tract ID (2010): ssccctttttt                   
+ 2    NLIHC_ID               Char      8                 Preservation Catalog project ID                            
+ 1    Proj_Name              Char    257                 Project name                                               
+ 6    Psa2012                Char      3    $PSA12A.     Police Service Area (2012)                                 
+14    Ssl                    Char     17                 Property identification number (square/suffix/lot)         
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  22
+File = PresCat.Building_geocode
+
+The CONTENTS Procedure
+
+                                     Alphabetic List of Variables and Attributes
+ 
+ #    Variable               Type    Len    Format       Label
+
+12    Ward2012               Char      1    $WARD12A.    Ward (2012)                                                
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  23
+File = PresCat.Building_geocode
+Printing first 10 obs.
+
+                                                              Bldg_
+                                                            address_
+Obs Proj_Name                                   NLIHC_ID       id
+
+  1 1330 7TH ST APTS (Immaculate Conception)    NL000001     238401 
+  2 PARKFAIR APTS                               NL000004     233583 
+  3 1728 W ST SE                                NL000006      56983 
+  4 2721 PENNSYLVANIA AVE SE                    NL000008      45042 
+  5 3471 14TH STREET NW                         NL000010     230775 
+  6 5320 8TH ST NW                              NL000014     254710 
+  7 5401-5407 9TH ST NW                         NL000015     276108 
+  8 5401-5407 9TH ST NW                         NL000015     299963 
+  9 5401-5407 9TH ST NW                         NL000015     299964 
+ 10 5401-5407 9TH ST NW                         NL000015     299965 
+
+ 
+ 
+Obs                                          Bldg_streetview_url
+
+  1 http://maps.google.com/maps?z=16&layer=c&cbll=38.90811789,-77.0221966&cbp=11,268.61496892357,,0,2.09  
+  2 http://maps.google.com/maps?z=16&layer=c&cbll=38.93209086,-77.03705918&cbp=11,43.4024928305739,,0,2.09
+  3 http://maps.google.com/maps?z=16&layer=c&cbll=38.862912,-76.97960778&cbp=11,36.2251352869827,,0,2.09  
+  4 http://maps.google.com/maps?z=16&layer=c&cbll=38.87214315,-76.96816372&cbp=11,197.768729185275,,0,2.09
+  5 http://maps.google.com/maps?z=16&layer=c&cbll=38.93429107,-77.03244037&cbp=11,76.8329307568203,,0,2.09
+  6 http://maps.google.com/maps?z=16&layer=c&cbll=38.95492273,-77.02436573&cbp=11,259.86833802421,,0,2.09 
+  7 http://maps.google.com/maps?z=16&layer=c&cbll=38.95538073,-77.02550795&cbp=11,105.04223640961,,0,2.09 
+  8 http://maps.google.com/maps?z=16&layer=c&cbll=38.95539384,-77.02531136&cbp=11,6.18403585120936,,0,2.09
+  9 http://maps.google.com/maps?z=16&layer=c&cbll=38.95555508,-77.02532491&cbp=11,87.004030488854,,0,2.09 
+ 10 http://maps.google.com/maps?z=16&layer=c&cbll=38.95557199,-77.02545494&cbp=11,80.9068605797869,,0,2.09
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  24
+File = PresCat.Building_geocode
+Printing first 10 obs.
+
+ 
+                                 Cluster_
+Obs Anc2012 Psa2012   Geo2010     tr2000   Cluster_tr2000_name
+
+  1 ANC 6E  PSA 308 Tract 49.02 Cluster 7  Shaw, Logan Circle                                                            
+  2 ANC 1D  PSA 408 Tract 27.01 Cluster 2  Columbia Heights, Mt. Pleasant, Pleasant Plains, Park View                    
+  3 ANC 8A  PSA 701 Tract 75.04 Cluster 28 Historic Anacostia                                                            
+  4 ANC 7B  PSA 607 Tract 76.04 Cluster 34 Twining, Fairlawn, Randle Highlands, Penn Branch, Fort Davis Park, Fort Dupont
+  5 ANC 1A  PSA 409 Tract 29    Cluster 2  Columbia Heights, Mt. Pleasant, Pleasant Plains, Park View                    
+  6 ANC 4D  PSA 403 Tract 21.01 Cluster 18 Brightwood Park, Crestwood, Petworth                                          
+  7 ANC 4D  PSA 403 Tract 21.01 Cluster 18 Brightwood Park, Crestwood, Petworth                                          
+  8 ANC 4D  PSA 403 Tract 21.01 Cluster 18 Brightwood Park, Crestwood, Petworth                                          
+  9 ANC 4D  PSA 403 Tract 21.01 Cluster 18 Brightwood Park, Crestwood, Petworth                                          
+ 10 ANC 4D  PSA 403 Tract 21.01 Cluster 18 Brightwood Park, Crestwood, Petworth                                          
+
+ 
+ 
+Obs Bldg_zip                            Bldg_image_url                           Ward2012    Bldg_addre
+
+  1 ZIP 20001    http://citizenatlas.dc.gov/mobilevideo/20040926/QQ112940.jpg     Ward 6     1330 7th Street NW         
+  2 ZIP 20010    http://citizenatlas.dc.gov/mobilevideo/20040919/DJ080511.jpg     Ward 1     1611 Park Road NW          
+  3 ZIP 20020    http://citizenatlas.dc.gov/mobilevideo/20040824/DO103928.jpg     Ward 8     1728 W Street SE           
+  4 ZIP 20020    http://citizenatlas.dc.gov/mobilevideo/20041024/OO092328.jpg     Ward 7     2721 Pennsylvania Avenue SE
+  5 ZIP 20010    http://citizenatlas.dc.gov/mobilevideo/20040817/DH074140.jpg     Ward 1     3471 14th Street NW        
+  6 ZIP 20011    http://citizenatlas.dc.gov/mobilevideo/20040718/MI093900.jpg     Ward 4     5320 8th Street NW         
+  7 ZIP 20011    http://citizenatlas.dc.gov/mobilevideo/20040718/MI120421.jpg     Ward 4     5401 9th Street NW         
+  8 ZIP 20011                                                                     Ward 4     5403 9th Street NW         
+  9 ZIP 20011                                                                     Ward 4     5405 9th Street NW         
+ 10 ZIP 20011                                                                     Ward 4     5407 9th Street NW         
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  25
+File = PresCat.Building_geocode
+Printing first 10 obs.
+
+ 
+ 
+Obs     Ssl           Bldg_x       Bldg_y     Bldg_lon    Bldg_lat
+
+  1 0423    0018    398074.80    137806.65    -77.0222     38.9081
+  2 2609    0822    396786.79    140468.27    -77.0371     38.9321
+  3 5778    0166    401769.82    132788.41    -76.9796     38.8629
+  4 5581    0023    402762.68    133813.42    -76.9682     38.8721
+  5 2835    0104    397187.35    140712.36    -77.0324     38.9343
+  6 2999    0802    397888.05    143002.44    -77.0244     38.9549
+  7 2994    0023    397789.06    143053.31    -77.0255     38.9554
+  8 2994    0023    397806.10    143054.76    -77.0253     38.9554
+  9 2994    0025    397804.93    143072.66    -77.0253     38.9556
+ 10 2994    0025    397793.66    143074.54    -77.0255     38.9556
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  26
+File = PresCat.Building_geocode
+
+The MEANS Procedure
+
+Variable             N             Sum            Mean         Std Dev         Minimum         Maximum
+------------------------------------------------------------------------------------------------------
+Bldg_address_id    607       136067263       224163.53        89033.64         2323.00       904238.00
+Bldg_x             608       243711082       400840.60         2835.97       391743.09       407297.09
+Bldg_y             608     83258494.48       136938.31         3343.95       128300.07       144908.38
+Bldg_lon           608       -46810.11     -76.9903141       0.0326957     -77.0952556     -76.9158902
+Bldg_lat           608        23651.38      38.9002927       0.0301233      38.8224804      38.9720913
+------------------------------------------------------------------------------------------------------
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  27
+File = PresCat.Building_geocode
+
+The FREQ Procedure
+
+                         Ward (2012)
+ 
+                                     Cumulative    Cumulative
+Ward2012    Frequency     Percent     Frequency      Percent
+-------------------------------------------------------------
+Ward 1            92       15.13            92        15.13  
+Ward 2            22        3.62           114        18.75  
+Ward 3             4        0.66           118        19.41  
+Ward 4            25        4.11           143        23.52  
+Ward 5           135       22.20           278        45.72  
+Ward 6            87       14.31           365        60.03  
+Ward 7           134       22.04           499        82.07  
+Ward 8           109       17.93           608       100.00  
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  28
+
+                                          Bldg_
+                                        address_
+NLIHC_ID        Ssl         Ward2012       id       Bldg_addre
+
+NL000001    0423    0018     Ward 6      238401     1330 7th Street NW         
+NL000004    2609    0822     Ward 1      233583     1611 Park Road NW          
+NL000006    5778    0166     Ward 8       56983     1728 W Street SE           
+NL000008    5581    0023     Ward 7       45042     2721 Pennsylvania Avenue SE
+NL000010    2835    0104     Ward 1      230775     3471 14th Street NW        
+NL000014    2999    0802     Ward 4      254710     5320 8th Street NW         
+NL000015    2994    0023     Ward 4      276108     5401 9th Street NW         
+NL000015    2994    0023     Ward 4      299963     5403 9th Street NW         
+NL000015    2994    0025     Ward 4      299964     5405 9th Street NW         
+NL000015    2994    0025     Ward 4      299965     5407 9th Street NW         
+NL000016    0983    0830     Ward 6        2323     636 12th Street NE         
+NL000017    2975    0011     Ward 4      254029     6411 Piney Branch Road NW  
+NL000020    6168    0840     Ward 8       51958     209 Atlantic Street SE     
+NL000021    5046E   0047     Ward 7       30794     3760 Minnesota Avenue NE   
+NL000023    4144    0008     Ward 5       60033     1609 Lawrence Street NE    
+NL000026    0444    0810     Ward 6      279266     1616 Marion Street NW      
+NL000027    2947    0080     Ward 4      253375     6676 Georgia Avenue NW     
+NL000028    6207    0031     Ward 8      147359     4216 4th Street SE         
+NL000029    6219    0032     Ward 8      295768     4301 3rd Street SE         
+NL000031    4544    0179     Ward 6      297798     1521 F Street NE           
+NL000032    5436    0008     Ward 7      150815     407 Ridge Road SE          
+NL000032    5436    0008     Ward 7      155845     409 Ridge Road SE          
+NL000032    5436    0008     Ward 7      155857     411 Ridge Road SE          
+NL000033    6157    0077     Ward 8      295925     840 Barnaby Street SE      
+NL000034    5862    0136     Ward 8      285960     1230 Sumner Road SE        
+NL000035    0614    0072     Ward 5      236758     1619 1st Street NW         
+NL000036    1316S   0003     Ward 3      224285     2307 41st Street NW        
+NL000037    6208    0829     Ward 8      149585     4201 7th Street SE         
+NL000038    4511    0068     Ward 6      297820     1703 Benning Road NE       
+NL000039    5394    0825     Ward 7      152229     4806 Alabama Avenue SE     
+NL000040    5339    0002     Ward 7      288506     5113 Fitch Street SE       
+NL000041    5087    0920     Ward 7       24953     4228 Benning Road NE       
+NL000043    5356    0108     Ward 7       21041     4450 G Street SE           
+NL000044    6001    0818     Ward 8      150563     2942 2nd Street SE         
+NL000045    6092    0801     Ward 8      147492     3719 4th Street SE         
+NL000046    3953    0001     Ward 5      149898     1301 Saratoga Avenue NE    
+NL000046    3953    0001     Ward 5      149270     1303 Saratoga Avenue NE    
+NL000046    3953    0001     Ward 5      149271     1305 Saratoga Avenue NE    
+NL000046    3953    0001     Ward 5      149272     1307 Saratoga Avenue NE    
+NL000046    3953    0002     Ward 5      149935     1335 Saratoga Avenue NE    
+NL000046    3953    0002     Ward 5      149273     1337 Saratoga Avenue NE    
+NL000046    3953    0002     Ward 5      149274     1339 Saratoga Avenue NE    
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  29
+
+                                          Bldg_
+                                        address_
+NLIHC_ID        Ssl         Ward2012       id             Bldg_addre
+
+NL000046    3953    0002     Ward 5      149275     1341 Saratoga Avenue NE
+NL000046    3953    0002     Ward 5      149276     1343 Saratoga Avenue NE
+NL000046    3953    0002     Ward 5      149277     1345 Saratoga Avenue NE
+NL000046    3953    0003     Ward 5      150410     2420 14th Street NE    
+NL000046    3953    0003     Ward 5      149310     2422 14th Street NE    
+NL000046    3953    0003     Ward 5      149311     2424 14th Street NE    
+NL000046    3953    0003     Ward 5      149312     2426 14th Street NE    
+NL000046    3953    0003     Ward 5      149313     2428 14th Street NE    
+NL000046    3954    0001     Ward 5      150434     2500 14th Street NE    
+NL000046    3954    0001     Ward 5      149279     2502 14th Street NE    
+NL000046    3954    0001     Ward 5      149280     2504 14th Street NE    
+NL000046    3954    0001     Ward 5      149281     2506 14th Street NE    
+NL000046    3954    0002     Ward 5      149893     1300 Saratoga Avenue NE
+NL000046    3954    0002     Ward 5      149261     1302 Saratoga Avenue NE
+NL000046    3954    0002     Ward 5      149262     1304 Saratoga Avenue NE
+NL000046    3954    0002     Ward 5      149263     1306 Saratoga Avenue NE
+NL000046    3954    0002     Ward 5      149264     1308 Saratoga Avenue NE
+NL000046    3954    0002     Ward 5      149265     1310 Saratoga Avenue NE
+NL000046    3954    0002     Ward 5      149266     1312 Saratoga Avenue NE
+NL000046    3954    0002     Ward 5      149267     1314 Saratoga Avenue NE
+NL000046    3954    0002     Ward 5      149268     1316 Saratoga Avenue NE
+NL000046    3954    0002     Ward 5      149269     1318 Saratoga Avenue NE
+NL000046    3954    0003     Ward 5      149885     1275 Brentwood Road NE 
+NL000046    3954    0003     Ward 5      155228     1277 Brentwood Road NE 
+NL000046    3954    0004     Ward 5      286008     1279 Brentwood Road NE 
+NL000046    3954    0004     Ward 5      155234     1281 Brentwood Road NE 
+NL000046    3954    0004     Ward 5      297747     1283 Brentwood Road NE 
+NL000046    3954    0004     Ward 5      155236     1285 Brentwood Road NE 
+NL000046    3954    0004     Ward 5      155238     1287 Brentwood Road NE 
+NL000046    3954    0004     Ward 5      155240     1289 Brentwood Road NE 
+NL000046    3954    0004     Ward 5      297748     1291 Brentwood Road NE 
+NL000046    3954    0004     Ward 5      297749     1293 Brentwood Road NE 
+NL000046    3954    0004     Ward 5      297750     1295 Brentwood Road NE 
+NL000046    3954    0005     Ward 5      150454     2530 14th Street NE    
+NL000046    3954    0005     Ward 5      149282     2532 14th Street NE    
+NL000046    3954    0005     Ward 5      149283     2534 14th Street NE    
+NL000046    4024    0001     Ward 5      150436     2501 14th Street NE    
+NL000046    4024    0001     Ward 5      149284     2503 14th Street NE    
+NL000046    4024    0001     Ward 5      149285     2505 14th Street NE    
+NL000046    4024    0002     Ward 5      150453     2525 14th Street NE    
+NL000046    4024    0002     Ward 5      149290     2527 14th Street NE    
+NL000046    4024    0002     Ward 5      149291     2529 14th Street NE    
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  30
+
+                                          Bldg_
+                                        address_
+NLIHC_ID        Ssl         Ward2012       id       Bldg_addre
+
+NL000046    4024    0002     Ward 5      149292     2531 14th Street NE        
+NL000046    4024    0003     Ward 5      149996     1414 Saratoga Avenue NE    
+NL000046    4024    0003     Ward 5      149286     1416 Saratoga Avenue NE    
+NL000046    4024    0003     Ward 5      149288     1418 Saratoga Avenue NE    
+NL000046    4024    0003     Ward 5      149287     1420 Saratoga Avenue NE    
+NL000046    4024    0003     Ward 5      149289     1422 Saratoga Avenue NE    
+NL000046    4024    0004     Ward 5      150443     2511 14th Street NE        
+NL000046    4024    0004     Ward 5      147220     2513 14th Street NE        
+NL000046    4024    0004     Ward 5      295749     2515 14th Street NE        
+NL000046    4025    0002     Ward 5      150414     2423 14th Street NE        
+NL000046    4025    0002     Ward 5      149308     2425 14th Street NE        
+NL000046    4025    0003     Ward 5      287056     2435 14th Street NE        
+NL000046    4025    0004     Ward 5      150007     1425 Montana Avenue NE     
+NL000046    4025    0004     Ward 5      149293     1427 Montana Avenue NE     
+NL000046    4025    0004     Ward 5      149294     1429 Montana Avenue NE     
+NL000046    4025    0005     Ward 5      150012     1431 Montana Avenue NE     
+NL000046    4025    0005     Ward 5      149295     1433 Montana Avenue NE     
+NL000046    4025    0005     Ward 5      149296     1435 Montana Avenue NE     
+NL000046    4025    0005     Ward 5      149297     1437 Montana Avenue NE     
+NL000046    4025    0006     Ward 5      149989     1406 Downing Street NE     
+NL000046    4025    0006     Ward 5      149298     1408 Downing Street NE     
+NL000046    4025    0006     Ward 5      149299     1410 Downing Street NE     
+NL000046    4025    0006     Ward 5      149300     1412 Downing Street NE     
+NL000046    4025    0006     Ward 5      149301     1414 Downing Street NE     
+NL000046    4025    0006     Ward 5      149302     1416 Downing Street NE     
+NL000046    4025    0006     Ward 5      149303     1418 Downing Street NE     
+NL000046    4025    0006     Ward 5      149304     1420 Downing Street NE     
+NL000046    4025    0007     Ward 5      149977     1400 Downing Street NE     
+NL000046    4025    0007     Ward 5      149309     1402 Downing Street NE     
+NL000046    4025    0007     Ward 5      149305     1404 Downing Street NE     
+NL000046    4025    0001     Ward 5      150405     2411 14th Street NE        
+NL000046    4025    0001     Ward 5      149306     2413 14th Street NE        
+NL000046    4025    0001     Ward 5      149307     2415 14th Street NE        
+NL000047    0204    0846     Ward 1      239975     2001 15th Street NW        
+NL000048    2820    0003     Ward 4      259628     4202 13th Street NW        
+NL000050    5280    0297     Ward 7      288717     5725 East Capitol Street SE
+NL000052    0912    0057     Ward 6      289042     900 G Street NE            
+NL000054    0540    0109     Ward 6      297573     103 G Street SW            
+NL000055    0755    0003     Ward 6      286606     208 Massachusetts Avenue NE
+NL000056    5279    0831     Ward 7      302595     5901 East Capitol Street SE
+NL000057    0560    0841     Ward 6      238362     200 K Street NW            
+NL000058    0825S   0845     Ward 6      155956     410 M Street SE            
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  31
+
+                                          Bldg_
+                                        address_
+NLIHC_ID        Ssl         Ward2012       id       Bldg_addre
+
+NL000060    5812    0102     Ward 8      150375     2338 Pitts Place SE      
+NL000061    4469    0095     Ward 5       52408     2026 Maryland Avenue NE  
+NL000063    2668    0068     Ward 1      234310     1461 Girard Street NW    
+NL000064    0302    0074     Ward 1      238964     2201 12th Street NW      
+NL000065    2688    0043     Ward 1      234780     3500 14th Street NW      
+NL000066    2661    0037     Ward 1      234160     1474 Chapin Street NW    
+NL000068    0192    0825     Ward 2      242225     1701 16th Street NW      
+NL000069    3927    0015     Ward 5      301975     1203 1/2 Otis Street NE  
+NL000070    2868    0121     Ward 1      232077     1301 Belmont Street NW   
+NL000071    0281    0047     Ward 2      278959     1221 M Street NW         
+NL000074    3008    0146     Ward 4      303273     4921 Georgia Avenue NW   
+NL000075    2718    0847     Ward 4      255873     5336 Colorado Avenue NW  
+NL000076    2795    0029     Ward 4      257795     5746 Colorado Avenue NW  
+NL000077    2670    0839     Ward 1      234356     2900 14th Street NW      
+NL000078    2672    0820     Ward 1      234372     1475 Columbia Road NW    
+NL000079    3689    0010     Ward 5       16680     4860 Fort Totten Drive NE
+NL000080    5915    0007     Ward 8      149920     1320 Congress Street SE  
+NL000081    5916    0803     Ward 8      155917     1313 Congress Street SE  
+NL000082    4068    0182     Ward 5       65280     1400 Florida Avenue NE   
+NL000083    5895    0072     Ward 8      150185     1900 Savannah Terrace SE 
+NL000084    6159    0129     Ward 8       81597     896 Southern Avenue SE   
+NL000085    5318    0022     Ward 7      305190     4861 F Street SE         
+NL000085    5318    0023     Ward 7      305191     4863 F Street SE         
+NL000085    5318    0024     Ward 7      305192     4865 F Street SE         
+NL000085    5318    0025     Ward 7      305193     4867 F Street SE         
+NL000085    5318    0026     Ward 7      305194     4869 F Street SE         
+NL000085    5318    0027     Ward 7      305195     4871 F Street SE         
+NL000085    5318    0028     Ward 7      305196     4873 F Street SE         
+NL000085    5318    0029     Ward 7      305197     4875 F Street SE         
+NL000085    5318    0030     Ward 7      305198     4877 F Street SE         
+NL000085    5318    0031     Ward 7      305199     4879 F Street SE         
+NL000085    5318    0032     Ward 7      305200     4881 F Street SE         
+NL000085    5318    0033     Ward 7      305201     4883 F Street SE         
+NL000085    5318    0034     Ward 7      305202     4885 F Street SE         
+NL000085    5318    0035     Ward 7      305203     4887 F Street SE         
+NL000085    5318    0036     Ward 7      305204     4889 F Street SE         
+NL000085    5318    0037     Ward 7      305205     4891 F Street SE         
+NL000085    5318    0038     Ward 7      305206     4893 F Street SE         
+NL000085    5318    0039     Ward 7      305207     4895 F Street SE         
+NL000085    5318    0040     Ward 7      305208     4897 F Street SE         
+NL000085    5318    0041     Ward 7      305209     4899 F Street SE         
+NL000087    5867    0217     Ward 8       62544     1500 Eaton Road SE       
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  32
+
+                                          Bldg_
+                                        address_
+NLIHC_ID        Ssl         Ward2012       id       Bldg_addre
+
+NL000089    3630    0002     Ward 5      289564     401 Edgewood Street NE               
+NL000089    3630    0002     Ward 5      289565     415 Edgewood Street NE               
+NL000089    3630    0002     Ward 5      289566     425 Edgewood Street NE               
+NL000091    3630    0807     Ward 5      289571     601 Edgewood Street NE               
+NL000092    3630    0808     Ward 5      289572     611 Edgewood Street NE               
+NL000093    0397    0830     Ward 6      225645     1514 8th Street NW                   
+NL000094    0341    0066     Ward 2      239353     1107 11th Street NW                  
+NL000096    5299    0033     Ward 7        9938     5330 E Street SE                     
+NL000097    5874    0043     Ward 8      290659     2440 Elvans Road SE                  
+NL000097    5874    0043     Ward 8      290661     2442 Elvans Road SE                  
+NL000097    5874    0043     Ward 8      290663     2444 Elvans Road SE                  
+NL000097    5874    0043     Ward 8      290665     2446 Elvans Road SE                  
+NL000097    5874    0043     Ward 8      290667     2448 Elvans Road SE                  
+NL000097    5874    0043     Ward 8      290670     2450 Elvans Road SE                  
+NL000097    5874    0043     Ward 8      290672     2452 Elvans Road SE                  
+NL000097    5874    0043     Ward 8      290674     2454 Elvans Road SE                  
+NL000097    5874    0043     Ward 8      290676     2456 Elvans Road SE                  
+NL000097    5874    0043     Ward 8      287070     2458 Elvans Road SE                  
+NL000098    2866    0063     Ward 1      232066     1312 Euclid Street NW                
+NL000099    2866    0836     Ward 1      232072     1368 Euclid Street NW                
+NL000101    2861    0078     Ward 1      284004     1356 Fairmont Street NW              
+NL000102    2664    0053     Ward 1      284013     1400 Euclid Street NW                
+NL000103    2665    0042     Ward 1      234255     1400 Fairmont Street NW              
+NL000105    0205    0063     Ward 2      218551     1903 15th Street NW                  
+NL000106    5797    0114     Ward 8      286320     1560 Butler Street SE                
+NL000109    5085    0842     Ward 7      305753     4212 East Capitol Street NE          
+NL000110    4325    0020     Ward 5      289764     2855 Bladensburg Road NE             
+NL000111    4325    0026     Ward 5      287351     3001 Bladensburg Road NE             
+NL000112    4325    0035     Ward 5      287362     3005 Bladensburg Road NE             
+NL000113    4325    0041     Ward 5      151262     3298 Fort Lincoln Drive NE           
+NL000114    0396N   0006     Ward 6      225972     801 Rhode Island Avenue NW           
+NL000115    5127    0114     Ward 7      288188     4400 Hunt Place NE                   
+NL000116    3501    0125     Ward 5      149719     101 Franklin Street NE               
+NL000117    5813    0023     Ward 8      150028     1460 Bangor Street SE                
+NL000117    5813    0023     Ward 8      148143     1462 Bangor Street SE                
+NL000117    5813    0024     Ward 8      150023     1452 Bangor Street SE                
+NL000117    5813    0024     Ward 8      148141     1454 Bangor Street SE                
+NL000117    5813    0024     Ward 8      148142     1456 Bangor Street SE                
+NL000119    6242    0805     Ward 8      147337     4632 Livingston Road SE              
+NL000120    1676    0015     Ward 3      266144     4201 Butterworth Place NW            
+NL000121    5422    0017     Ward 7      286318     155 Ridge Road SE                    
+NL000123    4327    0001     Ward 5      146166     3500 Commodore Joshua Barney Drive NE
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  33
+
+                                          Bldg_
+                                        address_
+NLIHC_ID        Ssl         Ward2012       id       Bldg_addre
+
+NL000123    4327    0001     Ward 5      146158     3502 Commodore Joshua Barney Drive NE
+NL000123    4327    0001     Ward 5      146194     3504 Commodore Joshua Barney Drive NE
+NL000123    4327    0001     Ward 5      146191     3506 Commodore Joshua Barney Drive NE
+NL000123    4327    0001     Ward 5      146159     3508 Commodore Joshua Barney Drive NE
+NL000123    4327    0001     Ward 5      146168     3510 Commodore Joshua Barney Drive NE
+NL000123    4327    0001     Ward 5      146196     3512 Commodore Joshua Barney Drive NE
+NL000123    4327    0001     Ward 5      146169     3514 Commodore Joshua Barney Drive NE
+NL000123    4327    0001     Ward 5      146161     3516 Commodore Joshua Barney Drive NE
+NL000123    4327    0001     Ward 5      146228     3518 Commodore Joshua Barney Drive NE
+NL000123    4327    0001     Ward 5      146223     3520 Commodore Joshua Barney Drive NE
+NL000126    5755    0138     Ward 8      148153     1649 W Street SE                     
+NL000127    5842    0018     Ward 8      148203     2303 Hartford Street SE              
+NL000128    5741    0136     Ward 8      286806     2306 Hartford Street SE              
+NL000129    2864    0333     Ward 1      290631     2335 11th Street NW                  
+NL000129    2864    0333     Ward 1      309479     2337 11th Street NW                  
+NL000129    2864    0333     Ward 1      290632     2339 11th Street NW                  
+NL000129    2864    0333     Ward 1      290634     2341 11th Street NW                  
+NL000129    2864    0333     Ward 1      307380     2343 11th Street NW                  
+NL000129    2864    0333     Ward 1      290635     2345 11th Street NW                  
+NL000129    2864    0333     Ward 1      290636     2347 11th Street NW                  
+NL000129    2864    0333     Ward 1      290637     2349 11th Street NW                  
+NL000129    2864    0333     Ward 1      290641     2351 11th Street NW                  
+NL000130    2864    0332     Ward 1      284334     2301 11th Street NW                  
+NL000132    5924    0083     Ward 8      147538     4313 Wheeler Road SE                 
+NL000133    0447    0039     Ward 6      238632     1301 7th Street NW                   
+NL000134    5147    0081     Ward 7      288260     4651 Nannie Helen Burroughs Avenue NE
+NL000135    2565    0018     Ward 1      235708     2524 17th Street NW                  
+NL000135    2565    0048     Ward 1      235729     2518 17th Street NW                  
+NL000136    0561    0037     Ward 6      238376     901 New Jersey Avenue NW             
+NL000137    0621    0245     Ward 6      300254     21 K Terrace NW                      
+NL000138    0525    0840     Ward 6      300893     1050 New Jersey Avenue NW            
+NL000139    5760    0045     Ward 8       57429     1715 V Street SE                     
+NL000140    5753    0087     Ward 8      150352     2310 16th Street SE                  
+NL000142    0193    0145     Ward 2      242289     1623 16th Street NW                  
+NL000145    0597    0100     Ward 6      277800     203 N Street SW                      
+NL000146    0597    0829     Ward 6       72281     1200 Delaware Avenue SW              
+NL000147    5411    0802     Ward 7       33307     3539 A Street SE                     
+NL000148    5140    0088     Ward 7       17394     4800 East Capitol Street NE          
+NL000150    2588    0222     Ward 1      236261     1845 Harvard Street NW               
+NL000151    2681    0698     Ward 1      234585     1477 Newton Street NW                
+NL000152    4307    0801     Ward 5      287312     2900 Newton Street NE                
+NL000153    5882W   0012     Ward 8      277969     1804 Alabama Avenue SE               
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  34
+
+                                          Bldg_
+                                        address_
+NLIHC_ID        Ssl         Ward2012       id       Bldg_addre
+
+NL000154    5882W   0012     Ward 8      277969     1804 Alabama Avenue SE   
+NL000157    6156    0117     Ward 8      155614     4001 8th Street SE       
+NL000158    6123    0076     Ward 8      150760     3801 9th Street SE       
+NL000159    6093    0054     Ward 8       31648     3715 2nd Street SE       
+NL000161    1023    0122     Ward 6      280103     1000 12th Street SE      
+NL000162    0282    0814     Ward 2      278887     1150 12th Street NW      
+NL000163    5869    1095     Ward 8       66618     1341 Howard Road SE      
+NL000164    5908    0005     Ward 8      299292     3526 Stanton Road SE     
+NL000166    5178    0041     Ward 7      150874     5000 Hunt Street NE      
+NL000169    5506    0012     Ward 7       44694     2800 N Street SE         
+NL000170    4049    0033     Ward 5      298305     1050 Mount Olivet Road NE
+NL000171    5359    0324     Ward 7      300715     4638 H Street SE         
+NL000173    0211    0856     Ward 2      240239     1425 N Street NW         
+NL000174    0650    0078     Ward 6      156174     1265 Half Street SW      
+NL000175    2820    0002     Ward 4      259629     1325 Upshur Street NW    
+NL000176    2576    0062     Ward 1      235861     1630 Fuller Street NW    
+NL000177    0517    0049     Ward 2      237585     461 H Street NW          
+NL000178    3070    0091     Ward 1      284166     2101 4th Street NW       
+NL000178    3070    0091     Ward 1      290582     2103 4th Street NW       
+NL000178    3070    0091     Ward 1      290586     2105 4th Street NW       
+NL000178    3070    0091     Ward 1      290588     2107 4th Street NW       
+NL000178    3070    0091     Ward 1      290590     2109 4th Street NW       
+NL000178    3070    0091     Ward 1      290592     2111 4th Street NW       
+NL000178    3070    0091     Ward 1      290593     2113 4th Street NW       
+NL000178    3070    0091     Ward 1      290594     2115 4th Street NW       
+NL000179    0421    0068     Ward 6      279886     700 Q Street NW          
+NL000180    5058    0008     Ward 7      301198     800 Kenilworth Avenue NE 
+NL000181    5113    0009     Ward 7       20614     4500 Quarles Street NE   
+NL000183    1493    0804     Ward 3      269434     4815 Chesapeake Street NW
+NL000184    1041    0129     Ward 6      150698     340 13th Street SE       
+NL000185    2848    0838     Ward 1      231365     1372 Kenyon Street NW    
+NL000186    0281    0049     Ward 2      240913     1220 12th Street NW      
+NL000188    5726    0026     Ward 8      278227     2700 Jasper Street SE    
+NL000190    5741    0138     Ward 8      298593     2732 Langston Place SE   
+NL000191    PAR 01600036     Ward 5      290580     2101 G Street NE         
+NL000192    3070    0095     Ward 1      284228     2125 4th Street NW       
+NL000193    5185    0021     Ward 7       28532     400 50th Street NE       
+NL000194    3521    0099     Ward 5       74509     11 R Street NE           
+NL000195    0419    0847     Ward 6      279356     1730 7th Street NW       
+NL000196    0419    0034     Ward 6      279317     1711 8th Street NW       
+NL000197    6219    0006     Ward 8      295411     4419 3rd Street SE       
+NL000199    0241    0001     Ward 2      225960     4 Logan Circle NW        
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  35
+
+                                          Bldg_
+                                        address_
+NLIHC_ID        Ssl         Ward2012       id       Bldg_addre
+
+NL000200    3937    0824     Ward 5      300454     2635 12th Street NE         
+NL000202    5057    0803     Ward 7      306617     3724 B Hayes Street NE      
+NL000202    5057    0803     Ward 7      288001     3724 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295302     3726 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295304     3728 Hayes Street NE        
+NL000202    5057    0803     Ward 7      287998     3730 Hayes Street NE        
+NL000202    5057    0803     Ward 7      288003     3732 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295308     3734 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295310     3736 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295312     3738 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295314     3740 Hayes Street NE        
+NL000202    5057    0803     Ward 7      288007     3742 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295317     3744 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295319     3746 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295321     3748 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295323     3750 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295325     3752 Hayes Street NE        
+NL000202    5057    0803     Ward 7      288010     3754 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295328     3756 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295330     3758 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295332     3760 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295334     3762 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295336     3764 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295338     3766 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295340     3768 Hayes Street NE        
+NL000202    5057    0803     Ward 7      288011     3770 Hayes Street NE        
+NL000202    5057    0803     Ward 7      288012     3772 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295344     3774 Hayes Street NE        
+NL000202    5057    0803     Ward 7      288013     3776 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295345     3778 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295346     3780 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295347     3782 Hayes Street NE        
+NL000202    5057    0803     Ward 7      295348     3784 Hayes Street NE        
+NL000204    2661    0044     Ward 1      234161     1424 Chapin Street NW       
+NL000205    4121    0830     Ward 5      290552     1625 Montana Avenue NE      
+NL000206    5803    0876     Ward 8      149960     1360 Morris Road SE         
+NL000208    0515    0157     Ward 6      237561     401 K Street NW             
+NL000209    0242    0093     Ward 2      225359     1301 14th Street NW         
+NL000211    2595    0681     Ward 1      236403     1622 Lamont Street NW       
+NL000215    3698    0016     Ward 5      298101     5233 North Capitol Street NE
+NL000216    0551    0231     Ward 5      296082     205 Q Street NW             
+NL000217    0512    0111     Ward 6      279057     1321 5th Street NW          
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  36
+
+                                          Bldg_
+                                        address_
+NLIHC_ID        Ssl         Ward2012       id       Bldg_addre
+
+NL000218    2684    0555     Ward 1      234605     1456 Oak Street NW          
+NL000219    2563    0858     Ward 1      235681     2422 Ontario Road NW        
+NL000220    5898    0022     Ward 8       51886     2100 Mississippi Avenue SE  
+NL000221    5869    0068     Ward 8      156224     2607 Bowen Road SE          
+NL000222    5057    0039     Ward 7      295261     3598 Hayes Street NE        
+NL000224    2667    0848     Ward 1      284039     1443 Fairmont Street NW     
+NL000225    3039    0129     Ward 1      285318     617 Morton Street NW        
+NL000226    2676    0795     Ward 1      284634     3322 14th Street NW         
+NL000227    6210    0038     Ward 8       79579     800 Southern Avenue SE      
+NL000228    5867    0899     Ward 8      278231     2704 Wade Road SE           
+NL000229    5867    0229     Ward 8      289450     2906 Pomeroy Road SE        
+NL000231    5113    0009     Ward 7       20614     4500 Quarles Street NE      
+NL000232    5926    0003     Ward 8      278421     3700 9th Street SE          
+NL000234    5875    0038     Ward 8      295851     2701 Robinson Place SE      
+NL000235    2918    0805     Ward 4      252736     4506 Georgia Avenue NW      
+NL000236    6201    0027     Ward 8      147185     18 Chesapeake Street SW     
+NL000237    5741    0136     Ward 8      286806     2306 Hartford Street SE     
+NL000238    0315    0026     Ward 2      239117     1111 Massachusetts Avenue NW
+NL000239    3642    0050     Ward 5       43480     2912 7th Street NE          
+NL000240    2790    0812     Ward 4      259562     1339 Fort Stevens Drive NW  
+NL000241    2905    0812     Ward 4      225073     930 Randolph Street NW      
+NL000242    0364    0151     Ward 6      243262     901 Rhode Island Avenue NW  
+NL000243    0204    0208     Ward 1      279194     1449 U Street NW            
+NL000244    1020    0085     Ward 6      290351     1225 G Street SE            
+NL000245    1020    0085     Ward 6      290351     1225 G Street SE            
+NL000247    5585    0042     Ward 7      303673     2700 R Street SE            
+NL000248    1874    0061     Ward 3      264202     5201 Connecticut Avenue NW  
+NL000249    5238    0041     Ward 7      148821     5231 Cloud Place NE         
+NL000251    3936    0802     Ward 5       71900     1208 Evarts Street NE       
+NL000252    0208    0127     Ward 2      240186     1420 R Street NW            
+NL000253    5897    0047     Ward 8      289461     2201 Savannah Street SE     
+NL000255    5725    0803     Ward 8      297887     2600 Jasper Street SE       
+NL000257    5760    0047     Ward 8       51417     2125 18th Street SE         
+NL000259    2855    0078     Ward 1      231582     2801 14th Street NW         
+NL000260    5978    1071     Ward 8      302726     251 Savannah Street SE      
+NL000261    5894    0021     Ward 8      155345     2224 Savannah Terrace SE    
+NL000262    5872    0989     Ward 8      298583     2716 Douglas Place SE       
+NL000264    0880    0026     Ward 6      302625     900 5th Street SE           
+NL000265    5869    0961     Ward 8       45892     2612 Bowen Road SE          
+NL000266    3567    0811     Ward 5      156294     1876 4th Street NE          
+NL000267    5724    0801     Ward 8      155359     2515 Savannah Street SE     
+NL000268    0620    0247     Ward 6      285576     1140 North Capitol Street NW
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  37
+
+                                          Bldg_
+                                        address_
+NLIHC_ID        Ssl         Ward2012       id       Bldg_addre
+
+NL000270    6160    0872     Ward 8      290128     838 Chesapeake Street SE
+NL000271    6167    0049     Ward 8      149646     4335 4th Street SE      
+NL000272    5921    0013     Ward 8      290168     1212 Southern Avenue SE 
+NL000273    5898    0019     Ward 8      299401     3627 22nd Street SE     
+NL000274    5898    0019     Ward 8      299401     3627 22nd Street SE     
+NL000275    0547    0023     Ward 6      156257     215 O Street SW         
+NL000276    6118    0045     Ward 8      149796     114 Wayne Place SE      
+NL000277    0042    0051     Ward 2      242350     725 24th Street NW      
+NL000279    5879    0011     Ward 8      287500     3098 Stanton Road SE    
+NL000280    5873    0921     Ward 8      296117     2549 Elvans Road SE     
+NL000282    5422    0017     Ward 7      286318     155 Ridge Road SE       
+NL000283    5434    0812     Ward 7      289815     325 Anacostia Road SE   
+NL000284    5440    0805     Ward 7      298645     324 Anacostia Road SE   
+NL000285    5720    0055     Ward 8      278324     3103 Naylor Road SE     
+NL000286    2681    0681     Ward 1      234582     1440 Meridian Place NW  
+NL000287    0621    0244     Ward 6      290893     45 K Street NW          
+NL000287    0621    0244     Ward 6      290928     47 K Street NW          
+NL000287    0621    0244     Ward 6      290937     49 K Street NW          
+NL000287    0621    0244     Ward 6      290942     51 K Street NW          
+NL000287    0621    0244     Ward 6      290954     53 K Street NW          
+NL000287    0621    0244     Ward 6      290961     55 K Street NW          
+NL000287    0621    0244     Ward 6      290962     57 K Street NW          
+NL000287    0621    0244     Ward 6      290963     59 K Street NW          
+NL000287    0621    0244     Ward 6      290976     61 K Street NW          
+NL000287    0621    0244     Ward 6      290999     63 K Street NW          
+NL000287    0621    0244     Ward 6      291017     65 K Street NW          
+NL000287    0621    0244     Ward 6      291040     67 K Street NW          
+NL000287    0621    0244     Ward 6      291050     69 K Street NW          
+NL000287    0621    0244     Ward 6      291071     71 K Street NW          
+NL000287    0621    0244     Ward 6      291101     73 K Street NW          
+NL000287    0621    0244     Ward 6      291122     75 K Street NW          
+NL000287    0621    0244     Ward 6      291136     77 K Street NW          
+NL000287    0621    0244     Ward 6      291138     79 K Street NW          
+NL000287    0621    0244     Ward 6      291145     81 K Street NW          
+NL000287    0621    0244     Ward 6      291149     83 K Street NW          
+NL000287    0621    0244     Ward 6      291150     85 K Street NW          
+NL000287    0621    0244     Ward 6      291152     87 K Street NW          
+NL000287    0621    0244     Ward 6      291153     89 K Street NW          
+NL000287    0621    0244     Ward 6      291154     91 K Street NW          
+NL000287    0621    0244     Ward 6      278823     93 K Street NW          
+NL000287    0621    0244     Ward 6      291156     95 K Street NW          
+NL000287    0621    0244     Ward 6      291157     97 K Street NW          
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  38
+
+                                          Bldg_
+                                        address_
+NLIHC_ID        Ssl         Ward2012       id       Bldg_addre
+
+NL000287    0621    0244     Ward 6      278835     99 K Street NW                       
+NL000288    0620    0248     Ward 6      296133     50 M Street NW                       
+NL000288    0620    0249     Ward 6      295981     1111 1st Terrace NW                  
+NL000288    0620    0250     Ward 6      278840     1103 1st Street NW                   
+NL000289    0656    0052     Ward 6      276554     1501 Half Street SW                  
+NL000290    0654    0038     Ward 6       35450     34 O Street SW                       
+NL000291    0621    0246     Ward 6      237134     33 K Street NW                       
+NL000292    5894    0003     Ward 8      146745     3347 23rd Street SE                  
+NL000293    0275    0052     Ward 1      240851     1222 T Street NW                     
+NL000295    2551    0806     Ward 1      235404     1848 Columbia Road NW                
+NL000296    0206    0828     Ward 2      239990     1407 S Street NW                     
+NL000297    4286    0020     Ward 5      287033     2412 Franklin Street NE              
+NL000298    4509    0157     Ward 6      295843     1521 Benning Road NE                 
+NL000301    3630    0811     Ward 5      289573     635 Edgewood Street NE               
+NL000302    5672    0099     Ward 7       30453     3810 Southern Avenue SE              
+NL000303    3070    0054     Ward 1      284293     222 W Street NW                      
+NL000304    6271    0027     Ward 8       18525     4660 Martin Luther King Jr Avenue SW 
+NL000305    5917    0813     Ward 8       63162     1443 Savannah Street SE              
+NL000306    5969    0005     Ward 8      295899     3649 6th Street SE                   
+NL000307    5934    0018     Ward 8       82883     950 Mississippi Avenue SE            
+NL000309    2849    0839     Ward 1      284554     3023 14th Street NW                  
+NL000310    0619    0176     Ward 6      237128     1200 North Capitol Street NW         
+NL000311    2820    0004     Ward 4      297752     1301 Upshur Street NW                
+NL000312    2681    0799     Ward 1      284657     3403 16th Street NW                  
+NL000315    6210    0039     Ward 8      298224     845 Chesapeake Street SE             
+NL000316    5755    0137     Ward 8      150123     1737 W Street SE                     
+NL000317    5865    0992     Ward 8      277928     1249 Eaton Road SE                   
+NL000319    0453    0052     Ward 2      279939     800 6th Street NW                    
+NL000320    2672    0722     Ward 1      234364     3025 15th Street NW                  
+NL000322    2574    0032     Ward 1      235839     2633 16th Street NW                  
+NL000324    0481    0023     Ward 6      296065     1204 5th Street NW                   
+NL000325    5409    0010     Ward 7       41307     305 37th Street SE                   
+NL000326    4327    0002     Ward 5      306501     3400 Commodore Joshua Barney Drive NE
+NL000327    5928    0043     Ward 8      278744     900 Varney Street SE                 
+NL000329    5928    0016     Ward 8       71378     1217 Valley Avenue SE                
+NL000330    0275    0054     Ward 1      240853     1839 13th Street NW                  
+NL000333    5743    0154     Ward 8      286837     2313 Ainger Place SE                 
+NL000334    2672    0632     Ward 1      226642     1421 Columbia Road NW                
+NL000335    5735    0806     Ward 8      289820     2327 Good Hope Court SE              
+NL000336    2661    0153     Ward 1      234166     1430 Chapin Street NW                
+NL000337    0557    0888     Ward 6      293195     1151 New Jersey Avenue NW            
+NL000337    0557    0888     Ward 6      285530     216 New York Avenue NW               
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  39
+
+                                          Bldg_
+                                        address_
+NLIHC_ID        Ssl         Ward2012       id       Bldg_addre
+
+NL000338                     Ward 7      904238     Ridge Road SE And 37th Street SE
+NL000339    2850    0805     Ward 1      231470     1200 Irving Street NW           
+NL000340    2868    0153     Ward 1      232079     2425 14th Street NW             
+NL000342    0203    0080     Ward 1      239962     1436 W Street NW                
+NL000343    0208    0128     Ward 2      240187     1416 R Street NW                
+NL000344    0314    0045     Ward 2      239109     1236 11th Street NW             
+NL000347    2853    0051     Ward 1      231509     1236 Columbia Road NW           
+NL000348    PAR 02240045     Ward 8      286437     1724 Minnesota Avenue SE        
+NL000349    3322    0802     Ward 4      244510     4211 2nd Street NW              
+NL000350    5799    0976     Ward 8      286958     2352 High Street SE             
+NL000350    5799    0976     Ward 8      299904     2356 High Street SE             
+NL000350    5799    0976     Ward 8      299905     2360 High Street SE             
+NL000351    2848    0077     Ward 1      302713     1369 Irving Street NW           
+NL000352    2560    0863     Ward 1      242863     2233 18th Street NW             
+NL000352    2563    0873     Ward 1      235679     1740 Euclid Street NW           
+NL000353    5058    0008     Ward 7      301198     800 Kenilworth Avenue NE        
+NL000354    2910    0810     Ward 4      300492     4100 Georgia Avenue NW          
+NL000357    5765    0894     Ward 8       58175     1667 Good Hope Road SE          
+NL000358    2668    0822     Ward 1      234318     1468 Harvard Street NW          
+NL000359    3389    0133     Ward 4      245828     21 Kennedy Street NW            
+NL000359    3389    0134     Ward 4      245830     25 Kennedy Street NW            
+NL000360    2689    0864     Ward 1      234805     1498 Spring Place NW            
+NL000361    2591    1029     Ward 1      236397     1630 Irving Street NW           
+NL000362    2843    0004     Ward 1      231067     1327 Kenyon Street NW           
+NL000364    0552    0075     Ward 5      237803     202 Q Street NW                 
+NL000364    0552    0132     Ward 5      237855     230 Bates Street NW             
+NL000364    0615    0275     Ward 5      236854     24 Bates Street NW              
+NL000364    0615    0815     Ward 5      236893     52 Bates Street NW              
+NL000365    2991    0031     Ward 4      254437     939 Longfellow Street NW        
+NL000367    2664    0057     Ward 1      234234     1428 Euclid Street NW           
+NL000368    2668    0066     Ward 1      234309     1429 Girard Street NW           
+NL000369    2846    0805     Ward 1      231312     3128 Sherman Avenue NW          
+NL000370    5331    0021     Ward 7      288325     4920 A Street SE                
+NL000371    2859    0092     Ward 1      231842     1225 Fairmont Street NW         
+NL000372    4060    0252     Ward 5       69542     1256 Owen Place NE              
+NL000373    2670    0094     Ward 1      284042     1458 Columbia Road NW           
+NL000374    2852    0034     Ward 1      231487     2922 Sherman Avenue NW          
+NL000375    5279    0831     Ward 7      302595     5901 East Capitol Street SE     
+NL000376    0878    0925     Ward 6      297663     750 6th Street SE               
+NL000378    5350    0114     Ward 7      150833     4715 Texas Avenue SE            
+NL000379    3048    0064     Ward 1      229278     526 Kenyon Street NW            
+NL000380    1046    0833     Ward 6       68283     1314 K Street SE                
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  40
+
+                                          Bldg_
+                                        address_
+NLIHC_ID        Ssl         Ward2012       id       Bldg_addre
+
+NL000381    4074    0095     Ward 5      302476     1058 Bladensburg Road NE             
+NL000382    3605    0811     Ward 5      294859     919 Rhode Island Avenue NE           
+NL000383    3207    0090     Ward 4      246737     506 Longfellow Street NW             
+NL000384    3605    0815     Ward 5      288830     650 T Street NE                      
+NL000385    2906    0854     Ward 4      224826     3910 Georgia Avenue NW               
+NL000386    0771    0013     Ward 6      307282     301 Tingey Street SE                 
+NL000387    0825    0860     Ward 6       28332     400 L Street SE                      
+NL000388    5890    0167     Ward 8      300911     1556 Alabama Avenue SE               
+NL000389    5874    0054     Ward 8      287057     2436 Elvans Road SE                  
+NL000390    4047    0035     Ward 5       54991     1836 Central Place NE                
+NL000391    5346    0007     Ward 7       19737     4540 Benning Road SE                 
+NL000392    6219    0802     Ward 8       25803     4180 Livingston Road SE              
+NL000393    2555    0811     Ward 1      235557     1820 California Street NW            
+NL000394    5805    0304     Ward 8       71982     1204 Talbert Street SE               
+NL000395    6118    0040     Ward 8      149886     128 Wayne Place SE                   
+NL000396    5341    0039     Ward 7       14767     5024 H Street SE                     
+NL000397    0240    0818     Ward 2      242888     1338 R Street NW                     
+NL000398    2565    0806     Ward 1      235735     2544 17th Street NW                  
+NL000399    2857    0804     Ward 1      231742     2824 Sherman Avenue NW               
+NL000400    5128    0001     Ward 7       21578     4425 Nannie Helen Burroughs Avenue NE
+NL000401    1110    0086     Ward 6       53210     2 18th Street SE                     
+NL000402    3564    0003     Ward 5       53058     2008 3rd Street NE                   
+NL000403    1082    0069     Ward 6       60315     1605 North Carolina Avenue NE        
+NL000404    3403    0804     Ward 4      243585     5030 1st Street NW                   
+NL000405    5450    0035     Ward 7       15220     501 32nd Street SE                   
+NL000407    5764    0051     Ward 8      148116     1827 Good Hope Road SE               
+NL000408    3151    0826     Ward 4      250242     5311 8th Street NW                   
+NL000409    3048    0062     Ward 1      229279     524 Kenyon Street NW                 
+NL000410    1003    0116     Ward 6       69761     1249 I Street NE                     
+NL000411    2562    0825     Ward 1      235650     2201 Champlain Street NW             
+NL000412    2595    0634     Ward 1      236399     3149 Mount Pleasant Street NW        
+NL000413    2864    0817     Ward 1      233078     1034 Euclid Street NW                
+NL000414    0205    0052     Ward 2      239985     1425 T Street NW                     
+NL000415    5871    0148     Ward 8      287155     2629 Douglass Road SE                
+NL000416    0751    0013     Ward 6      288958     800 3rd Street NE                    
+NL000417    0542    0826     Ward 6       28161     401 M Street SW                      
+NL000418    1041    0129     Ward 6      150698     340 13th Street SE                   
+NL000419    5409    0026     Ward 7      301154     3600 B Street SE                     
+NL000990    0825S   0844     Ward 6      303528     400 M Street SE                      
+NL000995    5903    0001     Ward 8       57173     1720 Trenton Place SE                
+NL000996    5902    0004     Ward 8      277964     1717 Alabama Avenue SE               
+NL000997    5734    0036     Ward 8       47261     2422 Wagner Street SE                
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  41
+
+                                          Bldg_
+                                        address_
+NLIHC_ID        Ssl         Ward2012       id       Bldg_addre
+
+NL000998    5835    0043     Ward 8       55832     1811 Gainesville Street SE
+NL000999    2868    0820     Ward 1      232074     1350 Clifton Street NW    
+NL001000    5273    0066     Ward 7      286586     201 58th Street NE        
+NL001001    6214    0039     Ward 8      155341     2 Elmira Street SE        
+NL001002    0616    0108     Ward 5      236921     57 O Street NW            
+NL001003    5908    0008     Ward 8      277967     1781 Trenton Place SE     
+NL001004    2861    0069     Ward 1      231665     2620 13th Street NW       
+NL001005    5057    0804     Ward 7      295316     3743 Jay Street NE        
+NL001005    5057    0804     Ward 7      295318     3745 Jay Street NE        
+NL001005    5057    0804     Ward 7      295320     3747 Jay Street NE        
+NL001005    5057    0804     Ward 7      295322     3749 Jay Street NE        
+NL001005    5057    0804     Ward 7      295324     3751 Jay Street NE        
+NL001005    5057    0804     Ward 7      295326     3753 Jay Street NE        
+NL001005    5057    0804     Ward 7      295327     3755 Jay Street NE        
+NL001005    5057    0804     Ward 7      295329     3757 Jay Street NE        
+NL001005    5057    0804     Ward 7      295331     3759 Jay Street NE        
+NL001005    5057    0804     Ward 7      295333     3761 Jay Street NE        
+NL001005    5057    0804     Ward 7      295335     3763 Jay Street NE        
+NL001005    5057    0804     Ward 7      295337     3765 Jay Street NE        
+NL001005    5057    0804     Ward 7      295339     3767 Jay Street NE        
+NL001005    5057    0804     Ward 7      295341     3769 Jay Street NE        
+NL001005    5057    0804     Ward 7      295342     3771 Jay Street NE        
+NL001005    5057    0804     Ward 7      295343     3773 Jay Street NE        
+NL001005    5057    0804     Ward 7      295351     3801 Jay Street NE        
+NL001005    5057    0804     Ward 7      295353     3803 Jay Street NE        
+NL001005    5057    0804     Ward 7      295355     3805 Jay Street NE        
+NL001005    5057    0804     Ward 7      295357     3807 Jay Street NE        
+NL001005    5057    0804     Ward 7      295358     3809 Jay Street NE        
+NL001005    5057    0804     Ward 7      295360     3811 Jay Street NE        
+NL001005    5057    0804     Ward 7      295361     3813 Jay Street NE        
+NL001005    5057    0804     Ward 7      295363     3815 Jay Street NE        
+NL001005    5057    0804     Ward 7      295365     3817 Jay Street NE        
+NL001006    5058    0008     Ward 7      301198     800 Kenilworth Avenue NE  
+NL001007    5398E   0804     Ward 7       28147     401 Chaplin Street SE     
+NL001008    5323    0031     Ward 7       14837     5027 C Street SE          
+NL001008    5323    0032     Ward 7       14626     5028 Call Place SE        
+NL001008    5323    0033     Ward 7       14760     5024 Call Place SE        
+NL001008    5323    0034     Ward 7       14891     5020 Call Place SE        
+NL001008    5581    0807     Ward 7      150482     2700 Q Street SE          
+NL001008    5583    0803     Ward 7       44049     2834 Q Street SE          
+NL001008    5585    0811     Ward 7      150485     2701 Q Street SE          
+NL001008    5585    0811     Ward 7      148081     2703 Q Street SE          
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  42
+
+                                          Bldg_
+                                        address_
+NLIHC_ID        Ssl         Ward2012       id       Bldg_addre
+
+NL001009    5365    0171     Ward 7       23109     4339 Bowen Road SE                   
+NL001010    5722    0080     Ward 8       37883     3229 Buena Vista Terrace SE          
+NL001011    0216    0027     Ward 2      240257     1010 Vermont Avenue NW               
+NL001012    0673    0845     Ward 6      304584     1160 1st Street NE                   
+NL001013    0514    0094     Ward 6      294308     443 New York Avenue NW               
+NL001014    0369    0068     Ward 2      239802     930 M Street NW                      
+NL001015    5179    0090     Ward 7      289526     5000 Nannie Helen Burroughs Avenue NE
+NL001016    4491    0809     Ward 5      307668     1600 Maryland Avenue NE              
+NL001017    5740    0296     Ward 8      287047     2425 25th Street SE                  
+NL001018    2615    0098     Ward 1      233807     1818 Newton Street NW                
+NL001019    0825S   0844     Ward 6      303528     400 M Street SE                      
+NL001020    PAR 02180096     Ward 8       58024     1701 19th Street SE                  
+NL001021    0672    0258     Ward 6      308422     2 M Street NE                        
+NL001022    0741    0816     Ward 6      299772     1000 New Jersey Avenue SE            
+NL001023    2860    0081     Ward 1      298447     1375 Fairmont Street NW              
+NL001023    2860    0081     Ward 1      231633     2701 14th Street NW                  
+NL001030    2596    1052     Ward 1      236465     1636 Kenyon Street NW                
+NL001031    2547    0026     Ward 1      236619     1919 Calvert Street NW               
+NL001032    PAR 02290160     Ward 8           U     Alabama Avenue SE                    
+NL001033    5299    0038     Ward 7      307121     431 54th Street SE                   
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  43
+
+---PresCat.Building_geocode-----------------
+
+Proj_Name=Congress Heights PUD
+NLIHC_ID=NL001032
+Bldg_address_id=U
+Bldg_streetview_url=
+Anc2012=ANC 8E
+Psa2012=PSA 705
+Geo2010=Tract 73.04
+Cluster_tr2000=Cluster 38
+Cluster_tr2000_name=Douglas, Shipley Terrace
+Bldg_zip=ZIP 20032
+Bldg_image_url=
+Ward2012=Ward 8
+Bldg_addre=Alabama Avenue SE
+Ssl=PAR 02290160
+Bldg_x=401042.46
+Bldg_y=130751.44
+Bldg_lon=-76.98799165
+Bldg_lat=38.84456326
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  44
+
+---PresCat.Project_geocode-----------------
+
+Proj_Name=Congress Heights PUD
+NLIHC_ID=NL001032
+Anc2012=ANC 8E
+Psa2012=PSA 705
+Geo2010=Tract 73.04
+Cluster_tr2000=Cluster 38
+Cluster_tr2000_name=Douglas, Shipley Terrace
+Zip=ZIP 20032
+Ward2012=Ward 8
+Proj_addre=Alabama Avenue SE
+Proj_zip=20032
+Proj_image_url=
+Proj_streetview_url=
+Proj_address_id=.
+Proj_x=401042.46
+Proj_y=130751.44
+Proj_lat=38.84456326
+Proj_lon=-76.98799165
+Bldg_count=1
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  45
+
+The COMPARE Procedure
+Comparison of COMP.PROJECT_GEOCODE with PRESCAT.PROJECT_GEOCODE
+(Method=EXACT)
+
+Data Set Summary
+
+Dataset                           Created          Modified  NVar    NObs
+
+COMP.PROJECT_GEOCODE     18DEC14:15:18:31  18DEC14:15:18:31    19     358
+PRESCAT.PROJECT_GEOCODE  14FEB15:18:54:42  14FEB15:18:54:42    19     362
+
+
+Variables Summary
+
+Number of Variables in Common: 19.
+Number of Variables with Differing Attributes: 18.
+Number of ID Variables: 1.
+
+
+Listing of Common Variables with Differing Attributes
+
+Variable             Dataset                  Type  Length  Format
+
+Proj_Name            COMP.PROJECT_GEOCODE     Char     257
+                     PRESCAT.PROJECT_GEOCODE  Char     257
+NLIHC_ID             COMP.PROJECT_GEOCODE     Char       8
+                     PRESCAT.PROJECT_GEOCODE  Char       8
+Anc2012              COMP.PROJECT_GEOCODE     Char       2  $ANC12A.
+                     PRESCAT.PROJECT_GEOCODE  Char       2  $ANC12A.
+Psa2012              COMP.PROJECT_GEOCODE     Char       3  $PSA12A.
+                     PRESCAT.PROJECT_GEOCODE  Char       3  $PSA12A.
+Geo2010              COMP.PROJECT_GEOCODE     Char      11  $GEO10A.
+                     PRESCAT.PROJECT_GEOCODE  Char      11  $GEO10A.
+Cluster_tr2000       COMP.PROJECT_GEOCODE     Char       2  $CLUS00A.
+                     PRESCAT.PROJECT_GEOCODE  Char       2  $CLUS00A.
+Cluster_tr2000_name  COMP.PROJECT_GEOCODE     Char      80
+                     PRESCAT.PROJECT_GEOCODE  Char      80
+Zip                  COMP.PROJECT_GEOCODE     Char       5  $ZIPA.
+                     PRESCAT.PROJECT_GEOCODE  Char       5  $ZIPA.
+Proj_addre           COMP.PROJECT_GEOCODE     Char     160
+                     PRESCAT.PROJECT_GEOCODE  Char     160
+Proj_zip             COMP.PROJECT_GEOCODE     Char       5
+                     PRESCAT.PROJECT_GEOCODE  Char       5
+Proj_image_url       COMP.PROJECT_GEOCODE     Char     255
+                     PRESCAT.PROJECT_GEOCODE  Char     255
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  46
+
+The COMPARE Procedure
+Comparison of COMP.PROJECT_GEOCODE with PRESCAT.PROJECT_GEOCODE
+(Method=EXACT)
+
+Listing of Common Variables with Differing Attributes
+
+Variable             Dataset                  Type  Length  Format
+
+Proj_streetview_url  COMP.PROJECT_GEOCODE     Char     255
+                     PRESCAT.PROJECT_GEOCODE  Char     255
+Proj_address_id      COMP.PROJECT_GEOCODE     Num        8
+                     PRESCAT.PROJECT_GEOCODE  Num        8
+Proj_x               COMP.PROJECT_GEOCODE     Num        8
+                     PRESCAT.PROJECT_GEOCODE  Num        8
+Proj_y               COMP.PROJECT_GEOCODE     Num        8
+                     PRESCAT.PROJECT_GEOCODE  Num        8
+Proj_lat             COMP.PROJECT_GEOCODE     Num        8
+                     PRESCAT.PROJECT_GEOCODE  Num        8
+Proj_lon             COMP.PROJECT_GEOCODE     Num        8
+                     PRESCAT.PROJECT_GEOCODE  Num        8
+Bldg_count           COMP.PROJECT_GEOCODE     Num        8
+                     PRESCAT.PROJECT_GEOCODE  Num        8
+
+Comparison Results for Observations
+
+Observation 342 in PRESCAT.PROJECT_GEOCODE not found in COMP.PROJECT_GEOCODE:
+NLIHC_ID=NL001007.
+
+Observation 360 in PRESCAT.PROJECT_GEOCODE not found in COMP.PROJECT_GEOCODE:
+NLIHC_ID=NL001031.
+
+Observation 361 in PRESCAT.PROJECT_GEOCODE not found in COMP.PROJECT_GEOCODE:
+NLIHC_ID=NL001032.
+
+Observation 362 in PRESCAT.PROJECT_GEOCODE not found in COMP.PROJECT_GEOCODE:
+NLIHC_ID=NL001033.
+PRESCAT/DC_info_geocode.sas:  NeighborhoodInfo DC                                      18:54 Saturday, February 14, 2015  47
+
+The COMPARE Procedure
+Comparison of COMP.PROJECT_GEOCODE with PRESCAT.PROJECT_GEOCODE
+(Method=EXACT)
+
+Observation Summary
+
+Observation      Base  Compare  ID
+
+First Obs           1        1  NLIHC_ID=NL000001
+Last  Match       358      359  NLIHC_ID=NL001030
+Last  Obs           .      362  NLIHC_ID=NL001033
+
+Number of Observations in Common: 358.
+Number of Observations in PRESCAT.PROJECT_GEOCODE but not in COMP.PROJECT_GEOCODE: 4.
+Total Number of Observations Read from COMP.PROJECT_GEOCODE: 358.
+Total Number of Observations Read from PRESCAT.PROJECT_GEOCODE: 362.
+
+Number of Observations with Some Compared Variables Unequal: 0.
+Number of Observations with All Compared Variables Equal: 358.
+
+NOTE: No unequal values were found. All values compared are exactly equal.
+

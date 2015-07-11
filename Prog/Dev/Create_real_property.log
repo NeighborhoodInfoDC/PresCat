@@ -1,0 +1,728 @@
+1                                         The SAS System           15:43 Friday, December 19, 2014
+
+NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
+      Licensed to THE URBAN INSTITUTE, Site 70097024.
+NOTE: This session is executing on the X64_VSPRO  platform.
+
+
+
+NOTE: SAS initialization used:
+      real time           0.89 seconds
+      cpu time            0.23 seconds
+      
+
+NOTE: AUTOEXEC processing beginning; file is D:\Users\ptatian\Documents\My SAS 
+      Files\9.2\Autoexnt.sas.
+
+
+NOTE: AUTOEXEC processing completed.
+
+1          /**************************************************************************
+2           Program:  Create_real_property.sas
+3           Library:  PresCat
+4           Project:  NeighborhoodInfo DC
+5           Author:   P. Tatian
+6           Created:  09/05/13
+7           Version:  SAS 9.1
+8           Environment:  Local Windows session (desktop)
+9          
+10          Description:  Create Real_Property table for Preservation Catalog
+11          (real property events such as sales, foreclosures).
+12         
+13          Modifications:
+14           09/27/14 PAT Updated for SAS1.
+15           12/19/14 PAT Added variable labels.
+16         **************************************************************************/
+17         
+18         %include "L:\SAS\Inc\StdLocal.sas";
+NOTE: Libref _METADAT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\Metadata\Data
+61        +
+62        +options ls=124 ps=48;    ** Landscape **;
+63        +
+64        +** Output title **;
+65        +
+66        +title "&_library/&_program:  NeighborhoodInfo DC";
+67        +
+2 The SAS System                                                                             15:43 Friday, December 19, 2014
+
+68        +** Define General library for local session only **;
+69        +
+70        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref GENERA_L was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\General\Data
+NOTE: Libref GENERA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\General\Data
+NOTE: Libref GENERAL was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V9 
+      Physical Name(1): D:\DCData\Libraries\General\Data
+      Engine(2):        V9 
+      Physical Name(2): L:\Libraries\General\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+3 The SAS System                                                                             15:43 Friday, December 19, 2014
+
+=====================================================================
+
+71        +
+72        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+NOTE: %INCLUDE (level 1) ending.
+73         
+74         ** Define libraries **;
+75         %DCData_lib( PresCat, local=n )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref PRESCA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\PresCat\Data
+NOTE: Libref PRESCAT was successfully assigned as follows: 
+      Levels:           1
+      Engine(1):        V9 
+      Physical Name(1): L:\Libraries\PresCat\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+76         %DCData_lib( RealProp, local=n )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref REALPR_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\RealProp\Data
+4 The SAS System                                                                             15:43 Friday, December 19, 2014
+
+NOTE: Libref REALPROP was successfully assigned as follows: 
+      Levels:           1
+      Engine(1):        V9 
+      Physical Name(1): L:\Libraries\RealProp\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT REALPROP
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+NOTE:    REALPROP.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_R  REALPR_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+77         %DCData_lib( ROD, local=n )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref ROD_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\ROD\Data
+NOTE: Libref ROD was successfully assigned as follows: 
+      Levels:           1
+      Engine(1):        V9 
+      Physical Name(1): L:\Libraries\ROD\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT REALPROP ROD
+
+   *implicitly included by default.
+5 The SAS System                                                                             15:43 Friday, December 19, 2014
+
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+NOTE:    REALPROP.FORMATS EXISTS
+NOTE:    ROD.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_R REALPR_R  ROD_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+78         
+79         *options obs=0;
+80         
+81         ** Create format for selecting SSL's of enrolled borrowers **;
+82         
+83         proc sort data=PresCat.Parcel out=Parcel_list (keep=ssl) nodupkey;
+84           by ssl;
+85         
+86         %Data_to_format(
+87           FmtLib=work,
+88           FmtName=$sslsel,
+89           Desc=,
+90           Data=Parcel_list,
+91           Value=ssl,
+92           Label=ssl,
+93           OtherLabel="",
+94           DefaultLen=.,
+95           MaxLen=.,
+96           MinLen=.,
+97           Print=N,
+98           Contents=N
+99           )
+NOTE: [Data_to_format] Starting macro.
+
+NOTE: There were 905 observations read from the data set PRESCAT.PARCEL.
+NOTE: SAS sort was used.
+6 The SAS System                                                                             15:43 Friday, December 19, 2014
+
+NOTE: 12 observations with duplicate key values were deleted.
+NOTE: The data set WORK.PARCEL_LIST has 893 observations and 1 variables.
+NOTE: Compressing data set WORK.PARCEL_LIST increased size by 40.00 percent. 
+      Compressed is 7 pages; un-compressed would require 5 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.04 seconds
+      
+
+MPRINT(DATA_TO_FORMAT):   data _cntlin (compress=no);
+MPRINT(DATA_TO_FORMAT):   length hlo $ 8;
+MPRINT(DATA_TO_FORMAT):   retain fmtname "$sslsel" type "C" default . max . min .;
+MPRINT(DATA_TO_FORMAT):   retain hlo " ";
+MPRINT(DATA_TO_FORMAT):   set Parcel_list end=last;
+MPRINT(DATA_TO_FORMAT):   label = ssl;
+MPRINT(DATA_TO_FORMAT):   start = ssl;
+MPRINT(DATA_TO_FORMAT):   output;
+MPRINT(DATA_TO_FORMAT):   if last then do;
+MPRINT(DATA_TO_FORMAT):   hlo = trim( hlo ) || 'o';
+MPRINT(DATA_TO_FORMAT):   label = "";
+MPRINT(DATA_TO_FORMAT):   output;
+MPRINT(DATA_TO_FORMAT):   end;
+MPRINT(DATA_TO_FORMAT):   keep fmtname type hlo label start default max min;
+MPRINT(DATA_TO_FORMAT):   run;
+
+NOTE: There were 893 observations read from the data set WORK.PARCEL_LIST.
+NOTE: The data set WORK._CNTLIN has 894 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+MPRINT(DATA_TO_FORMAT):   proc format library=work cntlin=_cntlin;
+NOTE: Format $SSLSEL has been output.
+MPRINT(DATA_TO_FORMAT):   run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+NOTE: There were 894 observations read from the data set WORK._CNTLIN.
+
+MPRINT(DATA_TO_FORMAT):   proc datasets library=work memtype=(data) nolist;
+MPRINT(DATA_TO_FORMAT):   delete _cntlin;
+MPRINT(DATA_TO_FORMAT):   quit;
+
+7 The SAS System                                                                             15:43 Friday, December 19, 2014
+
+NOTE: Deleting WORK._CNTLIN (memtype=DATA).
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: [Data_to_format] Exiting macro.
+100        
+101        ** Compile OTR property transaction data **;
+102        
+103        data Transactions;
+104        
+105          set Realprop.Sales_master (keep=ssl saledate saleprice ownername_full acceptcode acceptcode_new);
+106        
+107          where put( ssl, $sslsel. ) ~= "" and not( missing( saledate ) );
+108        
+109          /**Ownername_full = propcase( Ownername_full );**/
+110          %Owner_name_clean( Ownername_full, Ownername_full )
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = propcase( left( compbl( Ownername_full ) ) );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'Iii', 'III' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'Ii', 'II' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'Iv', 'IV' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'Ne', 'NE' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'Nw', 'NW' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'Se', 'SE' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'Sw', 'SW' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'Na', 'NA' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'Ncb', 'NCB' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'Of', 'of' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'Fsb', 'FSB' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'Pnc', 'PNC' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'Lp', 'LP' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'Llc', 'LLC' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'Nja', 'NJA' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'IVy', 'Ivy' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'NEw', 'New' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'NAtion', 'Nation' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'NAylor', 'Naylor' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'atlantic', 'Atlantic' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'SEven', 'Seven' );
+MPRINT(OWNER_NAME_CLEAN):   Ownername_full = tranwrd( Ownername_full, 'SEan', 'Sean' );
+111        
+112          length sale_type_desc $ 80;
+113        
+114          if acceptcode_new ~= "" then
+115            sale_type_desc = put( acceptcode_new, $accptnw. );
+8 The SAS System                                                                             15:43 Friday, December 19, 2014
+
+116          else if acceptcode ~= "" then
+117            sale_type_desc = put( acceptcode, $accept. );
+118          else
+119            sale_type_desc = "";
+120        
+121          length RP_type $ 40 RP_desc $ 200;
+122        
+123          retain sort_order 1 RP_type "SALE";
+124        
+125          RP_desc = "OTR: Sold";
+126        
+127          if Ownername_full ~= "" then
+128            RP_desc = trim( RP_desc ) || " to " || trim( Ownername_full );
+129        
+130          if saleprice > 0 then
+131            RP_desc = trim( RP_desc ) || "; price: " || left( put( saleprice, dollar20.0 ) );
+132        
+133          if sale_type_desc ~= "" then
+134            RP_desc = trim( RP_desc ) || "; sale type: " || sale_type_desc;
+135        
+136          RP_desc = trim( RP_desc ) || ".";
+137        
+138          drop sale_type_desc;
+139        
+140        run;
+
+NOTE: There were 945 observations read from the data set REALPROP.SALES_MASTER.
+      WHERE (PUT(ssl, $SSLSEL12.) not = ' ') and (not MISSING(saledate));
+NOTE: The data set WORK.TRANSACTIONS has 945 observations and 9 variables.
+NOTE: Compressing data set WORK.TRANSACTIONS decreased size by 64.29 percent. 
+      Compressed is 10 pages; un-compressed would require 28 pages.
+NOTE: DATA statement used (Total process time):
+      real time           24.31 seconds
+      cpu time            3.05 seconds
+      
+
+141        
+142        /*%File_info( data=Transactions, printobs=50 )*/
+143        
+144        ** Compile ROD foreclosure notice records **;
+145        
+146        %let fcl_keep_vars = ssl filingdate ui_instrument documentno grantee grantor verified;
+147        
+148        data Foreclosure_notices;
+149        
+150          set
+9 The SAS System                                                                             15:43 Friday, December 19, 2014
+
+151            Rod.Foreclosures_1997 (keep=&fcl_keep_vars)
+152            Rod.Foreclosures_1998 (keep=&fcl_keep_vars)
+153            Rod.Foreclosures_1999 (keep=&fcl_keep_vars)
+154            Rod.Foreclosures_2000 (keep=&fcl_keep_vars)
+155            Rod.Foreclosures_2001 (keep=&fcl_keep_vars)
+156            Rod.Foreclosures_2002 (keep=&fcl_keep_vars)
+157            Rod.Foreclosures_2003 (keep=&fcl_keep_vars)
+158            Rod.Foreclosures_2004 (keep=&fcl_keep_vars)
+159            Rod.Foreclosures_2005 (keep=&fcl_keep_vars)
+160            Rod.Foreclosures_2006 (keep=&fcl_keep_vars)
+161            Rod.Foreclosures_2007 (keep=&fcl_keep_vars)
+162            Rod.Foreclosures_2008 (keep=&fcl_keep_vars)
+163            Rod.Foreclosures_2009 (keep=&fcl_keep_vars)
+164            Rod.Foreclosures_2010 (keep=&fcl_keep_vars)
+165            Rod.Foreclosures_2011 (keep=&fcl_keep_vars)
+166            Rod.Foreclosures_2012 (keep=&fcl_keep_vars)
+167            Rod.Foreclosures_2013 (keep=&fcl_keep_vars);
+168        
+169          where put( ssl, $sslsel. ) ~= "";
+170        
+171          %Owner_name_clean( grantee, grantee )
+MPRINT(OWNER_NAME_CLEAN):   grantee = propcase( left( compbl( grantee ) ) );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'Iii', 'III' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'Ii', 'II' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'Iv', 'IV' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'Ne', 'NE' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'Nw', 'NW' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'Se', 'SE' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'Sw', 'SW' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'Na', 'NA' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'Ncb', 'NCB' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'Of', 'of' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'Fsb', 'FSB' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'Pnc', 'PNC' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'Lp', 'LP' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'Llc', 'LLC' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'Nja', 'NJA' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'IVy', 'Ivy' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'NEw', 'New' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'NAtion', 'Nation' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'NAylor', 'Naylor' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'atlantic', 'Atlantic' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'SEven', 'Seven' );
+MPRINT(OWNER_NAME_CLEAN):   grantee = tranwrd( grantee, 'SEan', 'Sean' );
+172          %Owner_name_clean( grantor, grantor )
+MPRINT(OWNER_NAME_CLEAN):   grantor = propcase( left( compbl( grantor ) ) );
+10 The SAS System                                                                            15:43 Friday, December 19, 2014
+
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'Iii', 'III' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'Ii', 'II' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'Iv', 'IV' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'Ne', 'NE' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'Nw', 'NW' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'Se', 'SE' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'Sw', 'SW' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'Na', 'NA' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'Ncb', 'NCB' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'Of', 'of' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'Fsb', 'FSB' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'Pnc', 'PNC' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'Lp', 'LP' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'Llc', 'LLC' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'Nja', 'NJA' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'IVy', 'Ivy' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'NEw', 'New' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'NAtion', 'Nation' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'NAylor', 'Naylor' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'atlantic', 'Atlantic' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'SEven', 'Seven' );
+MPRINT(OWNER_NAME_CLEAN):   grantor = tranwrd( grantor, 'SEan', 'Sean' );
+173        
+174          length verified_desc $ 40;
+175        
+176          if not verified then verified_desc = " (UNVERIFIED)";
+177          else verified_desc = "";
+178        
+179          length RP_type $ 40 RP_desc $ 200;
+180        
+181          retain sort_order 2 RP_type "FCLNOT";
+182        
+183          RP_desc = "ROD: " || trim( put( ui_instrument, $uinstr. ) ) ||
+184            " (" || trim( documentno ) || ")" ||
+185            /**** "; issued to " || trim( grantee ) || ****/
+186            "; issued by " || trim( grantor ) ||
+187            trim( compbl( verified_desc ) );
+188        
+189          RP_desc = trim( RP_desc ) || ".";
+190        
+191          fcl_rel_notice = 1;
+192        
+193        run;
+
+NOTE: There were 17 observations read from the data set ROD.FORECLOSURES_1997.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+11 The SAS System                                                                            15:43 Friday, December 19, 2014
+
+NOTE: There were 13 observations read from the data set ROD.FORECLOSURES_1998.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: There were 5 observations read from the data set ROD.FORECLOSURES_1999.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: There were 10 observations read from the data set ROD.FORECLOSURES_2000.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: There were 4 observations read from the data set ROD.FORECLOSURES_2001.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: There were 1 observations read from the data set ROD.FORECLOSURES_2002.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: There were 2 observations read from the data set ROD.FORECLOSURES_2003.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: There were 3 observations read from the data set ROD.FORECLOSURES_2004.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: There were 1 observations read from the data set ROD.FORECLOSURES_2005.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: There were 0 observations read from the data set ROD.FORECLOSURES_2006.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: There were 5 observations read from the data set ROD.FORECLOSURES_2007.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: There were 4 observations read from the data set ROD.FORECLOSURES_2008.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: There were 10 observations read from the data set ROD.FORECLOSURES_2009.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: There were 15 observations read from the data set ROD.FORECLOSURES_2010.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: There were 4 observations read from the data set ROD.FORECLOSURES_2011.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: There were 3 observations read from the data set ROD.FORECLOSURES_2012.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: There were 1 observations read from the data set ROD.FORECLOSURES_2013.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: The data set WORK.FORECLOSURE_NOTICES has 98 observations and 12 variables.
+NOTE: Compressing data set WORK.FORECLOSURE_NOTICES decreased size by 25.00 percent. 
+      Compressed is 3 pages; un-compressed would require 4 pages.
+NOTE: DATA statement used (Total process time):
+      real time           1.41 seconds
+      cpu time            0.25 seconds
+      
+
+194        
+195        proc sort data=Foreclosure_notices;
+196          by ssl descending filingdate;
+197        run;
+
+NOTE: There were 98 observations read from the data set WORK.FORECLOSURE_NOTICES.
+12 The SAS System                                                                            15:43 Friday, December 19, 2014
+
+NOTE: SAS sort was used.
+NOTE: The data set WORK.FORECLOSURE_NOTICES has 98 observations and 12 variables.
+NOTE: Compressing data set WORK.FORECLOSURE_NOTICES decreased size by 25.00 percent. 
+      Compressed is 3 pages; un-compressed would require 4 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+198        
+199        /*%File_info( data=Foreclosure_notices, printobs=50 )*/
+200        
+201        ** Get foreclosure outcomes from Realprop.Sales_master_forecl **;
+202        ** Only use foreclosure sale and distressed sale outcomes **;
+203        
+204        data Foreclosure_outcomes;
+205        
+206          set Realprop.Sales_master_forecl;
+207        
+208          where put( ssl, $sslsel. ) ~= "";
+209        
+210          length RP_type $ 40 RP_desc $ 200;
+211        
+212          retain sort_order 3 RP_type "FCLOUT";
+213        
+214          array a_end{*} episode1_end episode2_end episode3_end episode4_end episode5_end;
+215          array a_out{*} episode1_outcome2 episode2_outcome2 episode3_outcome2 episode4_outcome2 episode5_outcome2;
+216        
+217          do i = 1 to dim( a_end );
+218        
+219            if a_end{i} >= 0 and a_out{i} in ( 2, 3, 4, 5 ) then do;
+220        
+221              episode_num = i;
+222              episode_end = a_end{i};
+223              episode_outcome2 = a_out{i};
+224        
+225              RP_desc = "UI: " || trim( put( a_out{i}, outcomii. ) ) || ".";
+226        
+227              if a_out{i} in ( 2, 3 ) then fcl_sale = 1;
+228              else if a_out{i} in ( 4, 5 ) then distr_sale = 1;
+229        
+230              output;
+231        
+232            end;
+233        
+234          end;
+13 The SAS System                                                                            15:43 Friday, December 19, 2014
+
+235        
+236          keep ssl episode_num episode_end episode_outcome2 sort_order RP_type RP_desc;
+237        
+238        run;
+
+NOTE: There were 1406 observations read from the data set REALPROP.SALES_MASTER_FORECL.
+      WHERE PUT(ssl, $SSLSEL12.) not = ' ';
+NOTE: The data set WORK.FORECLOSURE_OUTCOMES has 27 observations and 7 variables.
+NOTE: Compressing data set WORK.FORECLOSURE_OUTCOMES increased size by 100.00 percent. 
+      Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+      real time           23.64 seconds
+      cpu time            4.08 seconds
+      
+
+239        
+240        /*%File_info( data=Foreclosure_outcomes, printobs=50 )*/
+241        
+242        ** Combine foreclosure notice, transaction, and outcome data **;
+243        
+244        data Foreclosures_transactions;
+245        
+246          set
+247            Foreclosure_notices
+248              (keep=ssl filingdate sort_order RP_type RP_desc ui_instrument
+249               rename=(filingdate=RP_date))
+250            Transactions
+251              (keep=ssl saledate sort_order RP_type RP_desc
+252               rename=(saledate=RP_date))
+253            Foreclosure_outcomes
+254               (rename=(episode_end=RP_date));
+255        
+256          if missing( RP_date ) then delete;
+257        
+258          label
+259            RP_type = 'Real property event, type'
+260            RP_desc = 'Real property event, description';
+261        
+262          format RP_type $rptype.;
+263        
+264          drop episode_: ui_instrument;
+265        
+266        run;
+
+NOTE: There were 98 observations read from the data set WORK.FORECLOSURE_NOTICES.
+NOTE: There were 945 observations read from the data set WORK.TRANSACTIONS.
+14 The SAS System                                                                            15:43 Friday, December 19, 2014
+
+NOTE: There were 27 observations read from the data set WORK.FORECLOSURE_OUTCOMES.
+NOTE: The data set WORK.FORECLOSURES_TRANSACTIONS has 1070 observations and 5 variables.
+NOTE: Compressing data set WORK.FORECLOSURES_TRANSACTIONS decreased size by 57.69 percent. 
+      Compressed is 11 pages; un-compressed would require 26 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+267        
+268        ** Add NLIHC_ID to data (NB: can have multiple parcels) **;
+269        
+270        proc sql noprint;
+271          create table PresCat.Real_property (label="Preservation Catalog, real property events" drop=sort_order) as
+272          select * from PresCat.Parcel (keep=ssl nlihc_id) as Parcel right join Foreclosures_transactions as Tran
+273          on Parcel.ssl = Tran.ssl
+274          order by Nlihc_id, RP_date desc, sort_order desc;
+WARNING: Variable SSL already exists on file PRESCAT.REAL_PROPERTY.
+NOTE: SAS threaded sort was used.
+NOTE: Compressing data set PRESCAT.REAL_PROPERTY decreased size by 57.69 percent. 
+      Compressed is 11 pages; un-compressed would require 26 pages.
+NOTE: Table PRESCAT.REAL_PROPERTY created, with 1078 rows and 5 columns.
+
+275        
+276        %File_info( data=PresCat.Real_property, printobs=0, freqvars=RP_type )
+MPRINT(FILE_INFO):   title2 "File = PresCat.Real_property";
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.03 seconds
+      
+
+MPRINT(FILE_INFO):   proc contents data=PresCat.Real_property;
+MPRINT(FILE_INFO):   run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+NOTE: The PROCEDURE CONTENTS printed page 1.
+
+MPRINT(FILE_INFO):   options nolabel;
+MPRINT(FILE_INFO):   proc means data=PresCat.Real_property n sum mean stddev min max;
+MPRINT(FILE_INFO):   run;
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 1078 observations read from the data set PRESCAT.REAL_PROPERTY.
+15 The SAS System                                                                            15:43 Friday, December 19, 2014
+
+NOTE: The PROCEDURE MEANS printed page 2.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+MPRINT(FILE_INFO):   options label;
+MPRINT(FILE_INFO):   proc freq data=PresCat.Real_property;
+MPRINT(FILE_INFO):   tables RP_type / missing;
+MPRINT(FILE_INFO):   run;
+
+NOTE: There were 1078 observations read from the data set PRESCAT.REAL_PROPERTY.
+NOTE: The PROCEDURE FREQ printed page 3.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(FILE_INFO):   title2;
+277        
+278        ** Generate Excel (XML) file **;
+279        
+280        ods tagsets.excelxp file="&_dcdata_path\PresCat\Prog\Real_property.xls"
+281          style=Minimal options(sheet_interval='None' sheet_name="Real_property");
+NOTE: Writing TAGSETS.EXCELXP Body file: L:\Libraries\PresCat\Prog\Real_property.xls
+NOTE: This is the Excel XP tagset (Compatible with SAS 9.1.3 and above, v1.94, 09/09/12). Add options(doc='help') to the 
+ods statement for more information.
+282        ods listing close;
+283        
+284        proc print data=PresCat.Real_property noobs;
+285          id NLIHC_ID;
+286          var ssl RP_date RP_type RP_desc;
+287        run;
+
+NOTE: There were 1078 observations read from the data set PRESCAT.REAL_PROPERTY.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.60 seconds
+      cpu time            0.56 seconds
+      
+
+288        
+289        ods tagsets.excelxp close;
+290        ods listing;
+291        
+292        run;
+293        
+16 The SAS System                                                                            15:43 Friday, December 19, 2014
+
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           53.45 seconds
+      cpu time            8.92 seconds
+      

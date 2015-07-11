@@ -1,0 +1,64 @@
+PRESCAT/Create_project_except.sas:  NeighborhoodInfo DC                                  10:46 Sunday, February 15, 2015   1
+File = PresCat.Project_except
+
+The CONTENTS Procedure
+
+Data Set Name        PRESCAT.PROJECT_EXCEPT                          Observations           0   
+Member Type          DATA                                            Variables              24  
+Engine               V9                                              Indexes                0   
+Created              Sunday, February 15, 2015 10:46:45 AM           Observation Length     569 
+Last Modified        Sunday, February 15, 2015 10:46:45 AM           Deleted Observations   0   
+Protection                                                           Compressed             CHAR
+Data Set Type                                                        Reuse Space            NO  
+Label                Preservation Catalog, project exception file    Point to Observations  YES 
+Data Representation  WINDOWS_64                                      Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                                 
+
+
+                      Engine/Host Dependent Information
+
+Data Set Page Size          16384                                            
+Number of Data Set Pages    2                                                
+Number of Data Set Repairs  0                                                
+Filename                    L:\Libraries\PresCat\Data\project_except.sas7bdat
+Release Created             9.0202M3                                         
+Host Created                X64_VSPRO                                        
+
+
+                                  Alphabetic List of Variables and Attributes
+ 
+ #    Variable                 Type    Len    Format          Label
+
+ 4    Cat_At_Risk              Num       3    DYESNO.         Project at risk                                  
+ 5    Cat_Expiring             Num       3    DYESNO.         Project has upcoming expiring subsidy            
+ 6    Cat_Failing_Insp         Num       3    DYESNO.         Project has failed recent REAC inspection        
+ 8    Cat_Lost                 Num       3    DYESNO.         Lost affordable housing                          
+ 7    Cat_More_Info            Num       3    DYESNO.         Project flagged for gathering more information   
+ 9    Cat_Replaced             Num       3    DYESNO.         Replaced affordable housing                      
+23    Except_date              Num       8    MMDDYY10.       Date exception added                             
+24    Except_init              Char      8                    Initials of person entering exception            
+21    Hud_Mgr_Name             Char     80                    Current property manager name (from HUD)         
+22    Hud_Mgr_Type             Char      2    $OWNMGRTYPE.    Current property manager type (from HUD)         
+18    Hud_Own_Effect_dt        Num       8    MMDDYY10.       Date current owner acquired property (from HUD)  
+19    Hud_Own_Name             Char     80                    Current property owner name (from HUD)           
+20    Hud_Own_Type             Char      2    $OWNMGRTYPE.    Current property owner type (from HUD)           
+ 1    Nlihc_id                 Char      8                    Preservation Catalog project ID                  
+11    Proj_Addre               Char    160                    Project main address                             
+12    Proj_City                Char     80                    Project city                                     
+10    Proj_Name                Char     80                    Project name                                     
+PRESCAT/Create_project_except.sas:  NeighborhoodInfo DC                                  10:46 Sunday, February 15, 2015   2
+File = PresCat.Project_except
+
+The CONTENTS Procedure
+
+                                  Alphabetic List of Variables and Attributes
+ 
+ #    Variable                 Type    Len    Format          Label
+
+13    Proj_ST                  Char      2                    Project state                                    
+17    Proj_Units_Assist_Max    Num       8                    Total assisted housing units in project (maximum)
+16    Proj_Units_Assist_Min    Num       8                    Total assisted housing units in project (minimum)
+15    Proj_Units_Tot           Num       8                    Total housing units in project                   
+14    Proj_Zip                 Char      5                    Project ZIP code                                 
+ 2    Status                   Char      1    $STATUS.        Project is active                                
+ 3    Subsidized               Num       3    DYESNO.         Project is subsidized                            

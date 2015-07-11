@@ -1,0 +1,698 @@
+1                                         The SAS System          15:51 Tuesday, November 11, 2014
+
+NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
+      Licensed to THE URBAN INSTITUTE, Site 70097024.
+NOTE: This session is executing on the X64_VSPRO  platform.
+
+
+
+NOTE: SAS initialization used:
+      real time           1.15 seconds
+      cpu time            0.26 seconds
+      
+
+NOTE: AUTOEXEC processing beginning; file is D:\Users\ptatian\Documents\My SAS 
+      Files\9.2\Autoexnt.sas.
+
+
+NOTE: AUTOEXEC processing completed.
+
+1          /**************************************************************************
+2           Program:  Parcel_subsidy.sas
+3           Library:  PresCat
+4           Project:  NeighborhoodInfo DC
+5           Author:   P. Tatian
+6           Created:  09/27/14
+7           Version:  SAS 9.2
+8           Environment:  Local Windows session (desktop)
+9          
+10          Description:  Create parcel-level data set that flags active
+11          subsidies in Preservation Catalog.
+12         
+13          Modifications:
+14           10/12/14 PAT Added final code for summarizing to parcel level.
+15         **************************************************************************/
+16         
+17         %include "L:\SAS\Inc\StdLocal.sas";
+NOTE: Libref _METADAT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\Metadata\Data
+60        +
+61        +options ls=124 ps=48;    ** Landscape **;
+62        +
+63        +** Output title **;
+64        +
+65        +title "&_library/&_program:  NeighborhoodInfo DC";
+66        +
+67        +** Define General library for local session only **;
+2 The SAS System                                                                            15:51 Tuesday, November 11, 2014
+
+68        +
+69        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref GENERA_L was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\General\Data
+NOTE: Libref GENERA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\General\Data
+NOTE: Libref GENERAL was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V9 
+      Physical Name(1): D:\DCData\Libraries\General\Data
+      Engine(2):        V9 
+      Physical Name(2): L:\Libraries\General\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+3 The SAS System                                                                            15:51 Tuesday, November 11, 2014
+
+
+70        +
+71        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+NOTE: %INCLUDE (level 1) ending.
+72         
+73         ** Define libraries **;
+74         %DCData_lib( PresCat, local=n )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref PRESCA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\PresCat\Data
+NOTE: Libref PRESCAT was successfully assigned as follows: 
+      Levels:           1
+      Engine(1):        V9 
+      Physical Name(1): L:\Libraries\PresCat\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+75         %DCData_lib( RealProp, local=n )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref REALPR_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\RealProp\Data
+NOTE: Libref REALPROP was successfully assigned as follows: 
+4 The SAS System                                                                            15:51 Tuesday, November 11, 2014
+
+      Levels:           1
+      Engine(1):        V9 
+      Physical Name(1): L:\Libraries\RealProp\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT REALPROP
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+NOTE:    REALPROP.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_R  REALPR_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+76         
+77         %let PROJECT_CHECK = 'NL000137';
+78         
+79         ** Merge Pres Catalog parcel list with Parcel_base **;
+80         
+81         proc sort data=PresCat.Parcel out=Parcel_by_ssl;
+82           by ssl;
+83         run;
+
+NOTE: There were 904 observations read from the data set PRESCAT.PARCEL.
+NOTE: SAS sort was used.
+NOTE: The data set WORK.PARCEL_BY_SSL has 904 observations and 10 variables.
+NOTE: Compressing data set WORK.PARCEL_BY_SSL decreased size by 52.94 percent. 
+      Compressed is 8 pages; un-compressed would require 17 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+5 The SAS System                                                                            15:51 Tuesday, November 11, 2014
+
+      
+
+84         
+85         data PresCat_parcel;
+86         
+87           merge
+88             RealProp.Parcel_base
+89               (keep=ssl ui_proptype in_last_ownerpt
+90                in=_in_Parcel_base)
+91             Parcel_by_ssl
+92               (keep=ssl nlihc_id
+93                in=_in_PresCat);
+94           by ssl;
+95         
+96           if _in_PresCat;
+97         
+98           in_Parcel_base = _in_Parcel_base;
+99           in_PresCat = _in_PresCat;
+100        
+101        run;
+
+NOTE: There were 211406 observations read from the data set REALPROP.PARCEL_BASE.
+NOTE: There were 904 observations read from the data set WORK.PARCEL_BY_SSL.
+NOTE: The data set WORK.PRESCAT_PARCEL has 904 observations and 6 variables.
+NOTE: Compressing data set WORK.PRESCAT_PARCEL decreased size by 0.00 percent. 
+      Compressed is 12 pages; un-compressed would require 12 pages.
+NOTE: DATA statement used (Total process time):
+      real time           2.30 seconds
+      cpu time            0.74 seconds
+      
+
+102        
+103        ** Sort by project code, listing active and residential parcels first **;
+104        
+105        proc sort data=PresCat_parcel;
+106          by nlihc_id descending in_last_ownerpt ui_proptype;
+107        run;
+
+NOTE: There were 904 observations read from the data set WORK.PRESCAT_PARCEL.
+NOTE: SAS sort was used.
+NOTE: The data set WORK.PRESCAT_PARCEL has 904 observations and 6 variables.
+NOTE: Compressing data set WORK.PRESCAT_PARCEL decreased size by 0.00 percent. 
+      Compressed is 12 pages; un-compressed would require 12 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+6 The SAS System                                                                            15:51 Tuesday, November 11, 2014
+
+      
+
+108        
+109        /*
+110        proc print data=PresCat_parcel;
+111          where nlihc_id = &PROJECT_CHECK;
+112          id nlihc_id;
+113        run;
+114         */
+115        
+116        ** Add assisted units by project and by subsidy type **;
+117        
+118        data Subsidy;
+119        
+120          set PresCat.Subsidy
+121            (keep=nlihc_id Portfolio Subsidy_Active Units_assist
+122             where=(Subsidy_Active));
+123        
+124          Sub_all_proj = 1;
+125          Sub_all_units = Units_assist;
+126        
+127          select ( Portfolio );
+128            when ( "Community Development Block Grants" ) do;
+129              Sub_CDBG_proj = 1;
+130              Sub_CDBG_units = Units_assist;
+131            end;
+132        
+133            when ( "DC Housing Production Trust Fund" ) do;
+134              Sub_HPTF_proj = 1;
+135              Sub_HPTF_units = Units_assist;
+136            end;
+137        
+138            when ( "HOME" ) do;
+139              Sub_HOME_proj = 1;
+140              Sub_HOME_units = Units_assist;
+141            end;
+142        
+143            when ( "LIHTC" ) do;
+144              Sub_LIHTC_proj = 1;
+145              Sub_LIHTC_units = Units_assist;
+146            end;
+147        
+148            when ( "McKinney Vento Act loan" ) do;
+149              Sub_McKinney_proj = 1;
+150              Sub_McKinney_units = Units_assist;
+151            end;
+7 The SAS System                                                                            15:51 Tuesday, November 11, 2014
+
+152        
+153            when ( "Other" ) do;
+154              Sub_Other_proj = 1;
+155              Sub_Other_units = Units_assist;
+156            end;
+157        
+158            when ( "Project Rental Assistance Contract (PRAC)" ) do;
+159              Sub_ProjectBased_proj = 1;
+160              Sub_ProjectBased_units = Units_assist;
+161            end;
+162        
+163            when ( "Project-based Section 8" ) do;
+164              Sub_ProjectBased_proj = 1;
+165              Sub_ProjectBased_units = Units_assist;
+166            end;
+167        
+168            when ( "Public Housing" ) do;
+169              Sub_PublicHsng_proj = 1;
+170              Sub_PublicHsng_units = Units_assist;
+171              end;
+172        
+173            when ( "Section 202/811" ) do;
+174              Sub_ProjectBased_proj = 1;
+175              Sub_ProjectBased_units = Units_assist;
+176            end;
+177        
+178            when ( "Section 221(d)(3) below market rate interest (BMIR)" ) do;
+179              Sub_ProjectBased_proj = 1;
+180              Sub_ProjectBased_units = Units_assist;
+181            end;
+182        
+183            when ( "Section 221(d)(3)&(4) with affordability restrictions" ) do;
+184              Sub_ProjectBased_proj = 1;
+185              Sub_ProjectBased_units = Units_assist;
+186            end;
+187        
+188            when ( "Section 223" ) do;
+189              Sub_ProjectBased_proj = 1;
+190              Sub_ProjectBased_units = Units_assist;
+191            end;
+192        
+193            when ( "Section 232" ) do;
+194              Sub_ProjectBased_proj = 1;
+195              Sub_ProjectBased_units = Units_assist;
+196            end;
+197        
+8 The SAS System                                                                            15:51 Tuesday, November 11, 2014
+
+198            when ( "Section 236" ) do;
+199              Sub_ProjectBased_proj = 1;
+200              Sub_ProjectBased_units = Units_assist;
+201            end;
+202        
+203            when ( "Section 542(b)&(c)" ) do;
+204              Sub_ProjectBased_proj = 1;
+205              Sub_ProjectBased_units = Units_assist;
+206            end;
+207        
+208            when ( "Tax exempt bond" ) do;
+209              Sub_TEBond_proj = 1;
+210              Sub_TEBond_units = Units_assist;
+211              end;
+212        
+213            otherwise do;
+214              %err_put( msg='Subsidy not found: ' Nlihc_id= Portfolio= )
+MPRINT(ERR_PUT):   put "ER" "ROR:" " " 'Subsidy not found: ' Nlihc_id= Portfolio=;
+215            end;
+216        
+217          end;
+218        
+219          array Sub{*} Sub_: ;
+220        
+221          do i = 1 to dim( Sub );
+222            if Sub{i} = . then Sub{i} = 0;
+223          end;
+224        
+225          label
+226            Sub_all_proj = 'Any assisted project'
+227            Sub_CDBG_proj = 'CDBG project'
+228            Sub_HOME_proj = 'HOME project'
+229            Sub_HPTF_proj = 'DC Housing Production Trust Fund project'
+230            Sub_LIHTC_proj = 'Low-Income Housing Tax Credit project'
+231            Sub_McKinney_proj = 'McKinney Vento loan project'
+232            Sub_Other_proj = 'Other subsidy project'
+233            Sub_ProjectBased_proj = 'Federal project-based assistance project'
+234            Sub_PublicHsng_proj = 'Public housing project'
+235            Sub_TEBond_proj = 'Tax-exempt bond project'
+236            Sub_all_units = 'All assisted units'
+237            Sub_CDBG_units = 'CDBG assisted units'
+238            Sub_HOME_units = 'HOME assisted units'
+239            Sub_HPTF_units = 'DC Housing Production Trust Fund assisted units'
+240            Sub_LIHTC_units = 'Low-Income Housing Tax Credit assisted units'
+241            Sub_McKinney_units = 'McKinney Vento loan assisted units'
+242            Sub_Other_units = 'Other subsidy assisted units'
+9 The SAS System                                                                            15:51 Tuesday, November 11, 2014
+
+243            Sub_ProjectBased_units = 'Federal project-based assistance assisted units'
+244            Sub_PublicHsng_units = 'Public housing assisted units'
+245            Sub_TEBond_units = 'Tax-exempt bond units';
+246        
+247          drop i;
+248        
+249        run;
+
+ERROR: Subsidy not found: NLIHC_ID=NL000094 Portfolio= 
+ERROR: Subsidy not found: NLIHC_ID=NL000303 Portfolio= 
+ERROR: Subsidy not found: NLIHC_ID=NL000999 Portfolio= 
+NOTE: There were 681 observations read from the data set PRESCAT.SUBSIDY.
+      WHERE Subsidy_Active;
+NOTE: The data set WORK.SUBSIDY has 681 observations and 24 variables.
+NOTE: Compressing data set WORK.SUBSIDY decreased size by 60.00 percent. 
+      Compressed is 6 pages; un-compressed would require 15 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+250        
+251        /*
+252        proc print data=Subsidy;
+253          where nlihc_id = &PROJECT_CHECK;
+254          id nlihc_id;
+255        run;
+256         */
+257        
+258        proc summary data=Subsidy nway;
+259          class nlihc_id;
+260          var
+261            Sub_all_proj
+262            Sub_CDBG_proj Sub_HOME_proj Sub_HPTF_proj Sub_LIHTC_proj
+263            Sub_McKinney_proj Sub_Other_proj Sub_ProjectBased_proj
+264            Sub_PublicHsng_proj Sub_TEBond_proj
+265            Sub_all_units
+266            Sub_CDBG_units Sub_HOME_units Sub_HPTF_units Sub_LIHTC_units
+267            Sub_McKinney_units Sub_Other_units Sub_ProjectBased_units
+268            Sub_PublicHsng_units Sub_TEBond_units;
+269          output out=Subsidy_agg
+270            max(
+271              Sub_all_proj
+272              Sub_CDBG_proj Sub_HOME_proj Sub_HPTF_proj Sub_LIHTC_proj
+273              Sub_McKinney_proj Sub_Other_proj Sub_ProjectBased_proj
+274              Sub_PublicHsng_proj Sub_TEBond_proj
+10 The SAS System                                                                           15:51 Tuesday, November 11, 2014
+
+275              Sub_all_units
+276              Sub_CDBG_units Sub_HOME_units Sub_HPTF_units Sub_LIHTC_units
+277              Sub_McKinney_units Sub_Other_units Sub_ProjectBased_units
+278              Sub_PublicHsng_units Sub_TEBond_units
+279            )=
+280            ;
+281        run;
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 681 observations read from the data set WORK.SUBSIDY.
+NOTE: The data set WORK.SUBSIDY_AGG has 331 observations and 23 variables.
+NOTE: Compressing data set WORK.SUBSIDY_AGG decreased size by 50.00 percent. 
+      Compressed is 3 pages; un-compressed would require 6 pages.
+NOTE: PROCEDURE SUMMARY used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+282        
+283        /*
+284        proc print data=Subsidy_agg;
+285          where nlihc_id = &PROJECT_CHECK;
+286          id nlihc_id;
+287        run;
+288         */
+289        
+290        /* %File_info( data=Subsidy_agg ) */
+291        
+292        ** Merge with parcel data to assign subsidies to parcels **;
+293        
+294        data PresCat_parcel_subsidy;
+295        
+296          retain Saved;
+297        
+298          merge
+299            PresCat_parcel
+300            Subsidy_agg (in=in_Subsidy);
+301          by NLIHC_ID;
+302        
+303          if in_Subsidy;
+304        
+305          ** Save only one parcel per project **;
+306        
+307          if first.Nlihc_id then do;
+308            Saved = 0;
+309          end;
+11 The SAS System                                                                           15:51 Tuesday, November 11, 2014
+
+310        
+311          if Saved = 0 and ( ui_proptype =: "1" or last.Nlihc_id ) then do;
+312            Saved = 1;
+313            Output;
+314          end;
+315        
+316          label
+317            _freq_ = "Number of subsidy records for parcel";
+318        
+319          drop Saved in_Parcel_base in_PresCat _type_;
+320        
+321          rename _freq_ = Num_subsidy_recs;
+322        
+323        run;
+
+NOTE: There were 904 observations read from the data set WORK.PRESCAT_PARCEL.
+NOTE: There were 331 observations read from the data set WORK.SUBSIDY_AGG.
+NOTE: The data set WORK.PRESCAT_PARCEL_SUBSIDY has 331 observations and 25 variables.
+NOTE: Compressing data set WORK.PRESCAT_PARCEL_SUBSIDY decreased size by 33.33 percent. 
+      Compressed is 4 pages; un-compressed would require 6 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+324        
+325        ** Summarize to parcel level **;
+326        
+327        proc summary data=PresCat_parcel_subsidy nway;
+328          class ssl;
+329          var
+330            Sub_all_proj
+331            Sub_CDBG_proj Sub_HOME_proj Sub_HPTF_proj Sub_LIHTC_proj
+332            Sub_McKinney_proj Sub_Other_proj Sub_ProjectBased_proj
+333            Sub_PublicHsng_proj Sub_TEBond_proj
+334            Sub_all_units
+335            Sub_CDBG_units Sub_HOME_units Sub_HPTF_units Sub_LIHTC_units
+336            Sub_McKinney_units Sub_Other_units Sub_ProjectBased_units
+337            Sub_PublicHsng_units Sub_TEBond_units;
+338          output
+339            out=PresCat.Parcel_subsidy
+340              (label="Assisted projects and units by real property parcel"
+341               drop=_type_ _freq_)
+342            sum= ;
+343        run;
+
+12 The SAS System                                                                           15:51 Tuesday, November 11, 2014
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 331 observations read from the data set WORK.PRESCAT_PARCEL_SUBSIDY.
+NOTE: The data set PRESCAT.PARCEL_SUBSIDY has 320 observations and 21 variables.
+NOTE: Compressing data set PRESCAT.PARCEL_SUBSIDY decreased size by 50.00 percent. 
+      Compressed is 4 pages; un-compressed would require 8 pages.
+NOTE: PROCEDURE SUMMARY used (Total process time):
+      real time           0.28 seconds
+      cpu time            0.01 seconds
+      
+
+344        
+345        %File_info( data=PresCat.Parcel_subsidy, freqvars=Sub_all_proj )
+MPRINT(FILE_INFO):   title2 "File = PresCat.Parcel_subsidy";
+MPRINT(FILE_INFO):   proc contents data=PresCat.Parcel_subsidy;
+MPRINT(FILE_INFO):   run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.03 seconds
+      
+NOTE: The PROCEDURE CONTENTS printed pages 1-2.
+
+MPRINT(FILE_INFO):   proc print data=PresCat.Parcel_subsidy (obs=10);
+MPRINT(FILE_INFO):   title3 "Printing first 10 obs.";
+MPRINT(FILE_INFO):   run;
+
+NOTE: There were 10 observations read from the data set PRESCAT.PARCEL_SUBSIDY.
+NOTE: The PROCEDURE PRINT printed page 3.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(FILE_INFO):   title3;
+MPRINT(FILE_INFO):   options nolabel;
+MPRINT(FILE_INFO):   proc means data=PresCat.Parcel_subsidy n sum mean stddev min max;
+MPRINT(FILE_INFO):   run;
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 320 observations read from the data set PRESCAT.PARCEL_SUBSIDY.
+NOTE: The PROCEDURE MEANS printed page 4.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+13 The SAS System                                                                           15:51 Tuesday, November 11, 2014
+
+MPRINT(FILE_INFO):   options label;
+MPRINT(FILE_INFO):   proc freq data=PresCat.Parcel_subsidy;
+MPRINT(FILE_INFO):   tables Sub_all_proj / missing;
+MPRINT(FILE_INFO):   run;
+
+NOTE: There were 320 observations read from the data set PRESCAT.PARCEL_SUBSIDY.
+NOTE: The PROCEDURE FREQ printed page 5.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+MPRINT(FILE_INFO):   title2;
+346        
+347        
+348        **** CHECKS ****;
+349        
+350        title2 '---Projects without any parcel assigned---';
+351        
+352        proc print data=PresCat_parcel_subsidy;
+353          where ssl = '';
+354          var Nlihc_id;
+355        run;
+
+NOTE: There were 2 observations read from the data set WORK.PRESCAT_PARCEL_SUBSIDY.
+      WHERE ssl=' ';
+NOTE: The PROCEDURE PRINT printed page 6.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+356        
+357        title2 '---Multiple projects in same SSL---';
+358        
+359        %Dup_check(
+360          data=PresCat_parcel_subsidy (where=(ssl~="")),
+361          by=ssl,
+362          id=nlihc_id ui_proptype,
+363          out=_dup_check,
+364          listdups=Y,
+365          count=dup_check_count,
+366          quiet=N,
+367          debug=N
+368        )
+MPRINT(DUP_CHECK):   options nomprint;
+14 The SAS System                                                                           15:51 Tuesday, November 11, 2014
+
+NOTE: SAS threaded sort was used.
+NOTE: Compressing data set WORK._DUP_CHECK increased size by 100.00 percent. 
+      Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: Table WORK._DUP_CHECK created, with 17 rows and 4 columns.
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: [Dup_check] 17 duplicate observations found in data set PRESCAT_PARCEL_SUBSIDY (WHERE=(SSL~=""))
+NOTE: [Dup_check] for BY variables SSL.
+
+NOTE: There were 17 observations read from the data set WORK._DUP_CHECK.
+NOTE: The PROCEDURE PRINT printed pages 7-8.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: Deleting WORK._DUP_CHECK (memtype=DATA).
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+369        
+370        title2 '---Projects assigned to nonresidential parcels---';
+371        
+372        proc print data=PresCat_parcel_subsidy;
+373          where ui_proptype ~=: '1';
+374          id nlihc_id;
+375          var ssl in_last_ownerpt ui_proptype
+376            Sub_all_units
+377            Sub_CDBG_units Sub_HOME_units Sub_HPTF_units Sub_LIHTC_units
+378            Sub_McKinney_units Sub_Other_units Sub_ProjectBased_units
+379            Sub_PublicHsng_units Sub_TEBond_units
+380          ;
+381          sum
+382            Sub_all_units
+15 The SAS System                                                                           15:51 Tuesday, November 11, 2014
+
+383            Sub_CDBG_units Sub_HOME_units Sub_HPTF_units Sub_LIHTC_units
+384            Sub_McKinney_units Sub_Other_units Sub_ProjectBased_units
+385            Sub_PublicHsng_units Sub_TEBond_units
+386          ;
+387        run;
+
+NOTE: There were 28 observations read from the data set WORK.PRESCAT_PARCEL_SUBSIDY.
+      WHERE ui_proptype not =: '1';
+NOTE: The PROCEDURE PRINT printed pages 9-10.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+388        
+389        title2;
+
+ERROR: Errors printed on page 9.
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           4.24 seconds
+      cpu time            1.27 seconds
+      

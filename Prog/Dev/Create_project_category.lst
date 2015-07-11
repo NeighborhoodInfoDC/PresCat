@@ -1,0 +1,67 @@
+PRESCAT/Create_project_category.sas:  NeighborhoodInfo DC                                   15:39 Saturday, July 4, 2015   1
+File = PresCat.Project_category
+
+The CONTENTS Procedure
+
+Data Set Name        PRESCAT.PROJECT_CATEGORY                  Observations           362 
+Member Type          DATA                                      Variables              6   
+Engine               V9                                        Indexes                0   
+Created              Saturday, July 04, 2015 03:39:02 PM       Observation Length     21  
+Last Modified        Saturday, July 04, 2015 03:39:02 PM       Deleted Observations   0   
+Protection                                                     Compressed             CHAR
+Data Set Type                                                  Reuse Space            NO  
+Label                Preservation Catalog, project category    Point to Observations  YES 
+Data Representation  WINDOWS_64                                Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                           
+
+
+                       Engine/Host Dependent Information
+
+Data Set Page Size          4096                                               
+Number of Data Set Pages    4                                                  
+Number of Data Set Repairs  0                                                  
+Filename                    L:\Libraries\PresCat\Data\project_category.sas7bdat
+Release Created             9.0202M3                                           
+Host Created                X64_VSPRO                                          
+
+
+                           Alphabetic List of Variables and Attributes
+ 
+#    Variable         Type    Len    Format       Label
+
+3    Cat_At_Risk      Num       3    DYESNO.      Project at risk                               
+5    Cat_Lost         Num       3    DYESNO.      Lost affordable housing                       
+4    Cat_More_Info    Num       3    DYESNO.      Project flagged for gathering more information
+6    Cat_Replaced     Num       3    DYESNO.      Replaced affordable housing                   
+2    Category_Code    Char      1    $CATEGRY.    Preservation Catalog project category         
+1    Nlihc_id         Char      8                 Preservation Catalog project ID               
+PRESCAT/Create_project_category.sas:  NeighborhoodInfo DC                                   15:39 Saturday, July 4, 2015   2
+File = PresCat.Project_category
+Printing first 10 obs.
+
+                                                           Cat_
+                                                Cat_At_    More_                  Cat_
+Obs    Nlihc_id          Category_Code           Risk      Info     Cat_Lost    Replaced
+
+  1    NL000001    Other Subsidized Property      No        No         No          No   
+  2    NL000004    Other Subsidized Property      No        No         No          No   
+  3    NL000006    Other Subsidized Property      No        No         No          No   
+  4    NL000008    Other Subsidized Property      No        No         No          No   
+  5    NL000010    Other Subsidized Property      No        No         No          No   
+  6    NL000014    Other Subsidized Property      No        No         No          No   
+  7    NL000015    Other Subsidized Property      No        No         No          No   
+  8    NL000016    Other Subsidized Property      No        No         No          No   
+  9    NL000017    Other Subsidized Property      No        No         No          No   
+ 10    NL000020    Other Subsidized Property      No        No         No          No   
+PRESCAT/Create_project_category.sas:  NeighborhoodInfo DC                                   15:39 Saturday, July 4, 2015   3
+File = PresCat.Project_category
+
+The MEANS Procedure
+
+Variable           N             Sum            Mean         Std Dev         Minimum         Maximum
+----------------------------------------------------------------------------------------------------
+Cat_At_Risk      362      10.0000000       0.0276243       0.1641207               0       1.0000000
+Cat_More_Info    362       2.0000000       0.0055249       0.0742264               0       1.0000000
+Cat_Lost         362      20.0000000       0.0552486       0.2287811               0       1.0000000
+Cat_Replaced     362               0               0               0               0               0
+----------------------------------------------------------------------------------------------------

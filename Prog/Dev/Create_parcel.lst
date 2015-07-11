@@ -1,0 +1,499 @@
+PRESCAT/Create_parcel.sas:  NeighborhoodInfo DC                                         17:25 Tuesday, December 23, 2014   1
+
+  Bldg_
+address_
+   id       NLIHC_ID    Proj_Name                                         Bldg_addre
+
+  20614     NL000181    KENILWORTH COURTS                                 4500 Quarles Street NE     
+            NL000231    PARKSIDE                                          4500 Quarles Street NE     
+
+Number of duplicates = 2
+
+
+ 150698     NL000184    KENTUCKY COURTS                                   340 13th Street SE         
+            NL000418    KENTUCKY COURTS II                                340 13th Street SE         
+
+Number of duplicates = 2
+
+
+ 277969     NL000153    HENSON RIDGE PHASE II                             1804 Alabama Avenue SE     
+            NL000154    HENSON RIDGE I                                    1804 Alabama Avenue SE     
+
+Number of duplicates = 2
+
+
+ 286318     NL000121    FT. DUPONT DWELLINGS & ADDITION                   155 Ridge Road SE          
+            NL000282    STODDERT TERRACE                                  155 Ridge Road SE          
+
+Number of duplicates = 2
+
+
+ 286806     NL000128    MAPLEWOOD COURT                                   2306 Hartford Street SE    
+            NL000237    HANOVER COURT (Hartford Knox St Apts)             2306 Hartford Street SE    
+
+Number of duplicates = 2
+
+
+ 290351     NL000244    POTOMAC GARDENS FAMILY                            1225 G Street SE           
+            NL000245    POTOMAC GARDENS SENIOR                            1225 G Street SE           
+
+Number of duplicates = 2
+PRESCAT/Create_parcel.sas:  NeighborhoodInfo DC                                         17:25 Tuesday, December 23, 2014   2
+
+  Bldg_
+address_
+   id       NLIHC_ID    Proj_Name                                         Bldg_addre
+
+ 299401     NL000273    ORCHARD PARK (SOUTHVIEW APTS I)                   3627 22nd Street SE        
+            NL000274    Orchard Park (formerly SOUTHVIEW APTS II)         3627 22nd Street SE        
+
+Number of duplicates = 2
+
+
+ 301198     NL000180    KENILWORTH AVENUE APTS                            800 Kenilworth Avenue NE   
+            NL000353    POLLIN MEMORIAL                                   800 Kenilworth Avenue NE   
+            NL001006    LOTUS SQUARE                                      800 Kenilworth Avenue NE   
+
+Number of duplicates = 3
+
+
+ 302595     NL000056    CAPITOL VIEW PLAZA PHASE II                       5901 East Capitol Street SE
+            NL000375    CAPITOL GATEWAY TOWNHOMES                         5901 East Capitol Street SE
+
+Number of duplicates = 2
+
+
+ 303528     NL000990    CAPITOL QUARTER - SENIOR II (Capper Senior II)    400 M Street SE            
+            NL001019    CAPPER SENIOR II APARTMENTS                       400 M Street SE            
+
+Number of duplicates = 2
+PRESCAT/Create_parcel.sas:  NeighborhoodInfo DC                                         17:25 Tuesday, December 23, 2014   3
+File = PresCat.Parcel
+
+The CONTENTS Procedure
+
+Data Set Name        PRESCAT.PARCEL                                 Observations           905 
+Member Type          DATA                                           Variables              12  
+Engine               V9                                             Indexes                0   
+Created              Tuesday, December 23, 2014 05:25:34 PM         Observation Length     240 
+Last Modified        Tuesday, December 23, 2014 05:25:34 PM         Deleted Observations   0   
+Protection                                                          Compressed             CHAR
+Data Set Type                                                       Reuse Space            NO  
+Label                Preservation Catalog, real property parcels    Point to Observations  YES 
+Data Representation  WINDOWS_64                                     Sorted                 YES 
+Encoding             wlatin1  Western (Windows)                                                
+
+
+                  Engine/Host Dependent Information
+
+Data Set Page Size          12288                                    
+Number of Data Set Pages    10                                       
+Number of Data Set Repairs  0                                        
+Filename                    L:\Libraries\PresCat\Data\parcel.sas7bdat
+Release Created             9.0202M3                                 
+Host Created                X64_VSPRO                                
+
+
+                                        Alphabetic List of Variables and Attributes
+ 
+ #   Variable                  Type   Len   Format      Label
+
+ 1   Nlihc_id                  Char     8               Preservation Catalog project ID                                    
+ 6   Parcel_Info_Source_Date   Num      8   MMDDYY10.   Extract date of Ownerpt update where parcel last appeared          
+ 3   Parcel_address_id         Num      8               Parcel MAR address ID                                              
+ 5   Parcel_owner_date         Num      8   MMDDYY10.   Most recent property sale date                                     
+11   Parcel_owner_name         Char   150               Name(s) of property owners                                         
+12   Parcel_owner_type         Char     3   $OWNCAT.    Property owner type                                                
+ 8   Parcel_type               Char     2   $UIPRTYP.   UI property type code                                              
+ 9   Parcel_x                  Num      8               Longitude of parcel center (MD State Plane Coord., NAD 1983 meters)
+10   Parcel_y                  Num      8               Latitude of parcel center (MD State Plane Coord., NAD 1983 meters) 
+ 2   Ssl                       Char    17               Property identification number (square/suffix/lot)                 
+ 4   Ssl_orig                  Char    17               Original property identification number                            
+ 7   in_last_ownerpt           Num      3   YESNO.      Parcel was in most recent Ownerpt update [Ownerpt_2014_01]         
+
+
+PRESCAT/Create_parcel.sas:  NeighborhoodInfo DC                                         17:25 Tuesday, December 23, 2014   4
+File = PresCat.Parcel
+
+The CONTENTS Procedure
+
+     Sort Information
+
+Sortedby       Nlihc_id Ssl
+Validated      YES         
+Character Set  ANSI        
+PRESCAT/Create_parcel.sas:  NeighborhoodInfo DC                                         17:25 Tuesday, December 23, 2014   5
+File = PresCat.Parcel
+Printing first 10 obs.
+
+                           Parcel_
+                          address_               Parcel_   Parcel_Info_ in_last_
+Obs Nlihc_id     Ssl         id      Ssl_orig   owner_date Source_Date  ownerpt  Parcel_type
+
+  1 NL000001 0423    0018  238401  0423    0018 01/30/2004  01/25/2014    Yes    Commercial: Retail                    
+  2 NL000004 2609    0822  233583  2609    0822 05/31/2001  01/25/2014    Yes    Residential: Rental apartment building
+  3 NL000006 5778    0166   56983  5778    0166 04/02/2004  01/25/2014    Yes    Residential: Rental apartment building
+  4 NL000008 5581    0023   45042  5581    0023 11/08/2002  01/25/2014    Yes    Residential: Single-family home       
+  5 NL000010 2835    0104  230775  2835    0104 06/13/2001  01/25/2014    Yes    Residential: Rental apartment building
+  6 NL000014 2999    0802  254710  2999    0802 05/13/2002  01/25/2014    Yes    Residential: Rental apartment building
+  7 NL000015 2994    0023  276108  2994    0023 07/31/2002  01/12/2008    No     Residential: Rental apartment building
+  8 NL000015 2994    0024  299965  2994    0024 07/31/2002  01/12/2008    No     Vacant: Unimproved land               
+  9 NL000015 2994    0025  276108  2994    0025 07/31/2002  01/12/2008    No     Vacant: Unimproved land               
+ 10 NL000015 2994    2001  276108  2994    2001 05/15/2008  01/25/2014    Yes    Residential: Condominium unit         
+
+ 
+ 
+Obs  Parcel_x    Parcel_y   Parcel_owner_name                          Parcel_owner_type
+
+  1 398070.00   137764.00   1330 Seventh Street Limiited Partnership   Nontaxable corporations, partnerships, associations
+  2 396786.00   140468.00   Parkfair Associates Llc                    Taxable corporations, partnerships, associations   
+  3 401774.00   132795.00   1728 W Street Limited Partnership          Nontaxable corporations, partnerships, associations
+  4 402760.00   133809.00   Green Door                                 Nontaxable corporations, partnerships, associations
+  5 397193.00   140712.00   Green Door                                 Nontaxable corporations, partnerships, associations
+  6 397894.00   143002.00   Eads Llc                                   Taxable corporations, partnerships, associations   
+  7 397799.28   143052.77   Bhi International Inc                      Taxable corporations, partnerships, associations   
+  8 397807.26   143064.02   Bhi International Inc                      Taxable corporations, partnerships, associations   
+  9 397797.10   143074.35   Bhi International Inc                      Taxable corporations, partnerships, associations   
+ 10 397784.00   143081.00   Harriett V Lyon                            Other individuals                                  
+PRESCAT/Create_parcel.sas:  NeighborhoodInfo DC                                         17:25 Tuesday, December 23, 2014   6
+File = PresCat.Parcel
+
+The MEANS Procedure
+
+Variable                     N             Sum            Mean         Std Dev         Minimum         Maximum
+--------------------------------------------------------------------------------------------------------------
+Parcel_address_id          905       196099061       216684.05        78024.31         2323.00       308422.00
+Parcel_owner_date          455      7856073.00        17266.09         1662.01         6815.00        19718.00
+Parcel_Info_Source_Date    905     17781183.00        19647.72     488.3062247        15272.00        19748.00
+in_last_ownerpt            905     859.0000000       0.9491713       0.2197693               0       1.0000000
+Parcel_x                   904       349931635       387092.52        71817.26               0       407288.00
+Parcel_y                   904       120873907       133710.07        25048.85               0       144908.00
+--------------------------------------------------------------------------------------------------------------
+PRESCAT/Create_parcel.sas:  NeighborhoodInfo DC                                         17:25 Tuesday, December 23, 2014   7
+File = PresCat.Parcel
+
+The FREQ Procedure
+
+                                          Property owner type
+ 
+                                                                                Cumulative    Cumulative
+Parcel_owner_type                                      Frequency     Percent     Frequency      Percent
+--------------------------------------------------------------------------------------------------------
+                                                              2        0.22             2         0.22  
+Single-family owner-occupied                                  7        0.77             9         0.99  
+Multifamily owner-occupied                                  128       14.14           137        15.14  
+Other individuals                                           101       11.16           238        26.30  
+DC government                                                74        8.18           312        34.48  
+US government                                                13        1.44           325        35.91  
+Quasi-public entities                                         1        0.11           326        36.02  
+Community development corporations/organizations              9        0.99           335        37.02  
+Churches, synagogues, religious                               5        0.55           340        37.57  
+Nontaxable corporations, partnerships, associations         111       12.27           451        49.83  
+Taxable corporations, partnerships, associations            453       50.06           904        99.89  
+Banks, Lending, Mortgage and Servicing Companies              1        0.11           905       100.00  
+
+
+                                   UI property type code
+ 
+                                                                   Cumulative    Cumulative
+Parcel_type                               Frequency     Percent     Frequency      Percent
+-------------------------------------------------------------------------------------------
+Residential: Single-family home                 34        3.76            34         3.76  
+Residential: Condominium unit                  422       46.63           456        50.39  
+Residential: Cooperative building               42        4.64           498        55.03  
+Residential: Rental apartment building         311       34.36           809        89.39  
+Commercial: Retail                              10        1.10           819        90.50  
+Commercial: Office                               6        0.66           825        91.16  
+Commercial: Parking garage/lot                   8        0.88           833        92.04  
+Commercial: Industrial                           2        0.22           835        92.27  
+Commercial: Other                               15        1.66           850        93.92  
+Group quarters                                   2        0.22           852        94.14  
+Garage                                           7        0.77           859        94.92  
+Vacant: Unimproved land                         43        4.75           902        99.67  
+Vacant: With structures                          1        0.11           903        99.78  
+Unknown                                          2        0.22           905       100.00  
+PRESCAT/Create_parcel.sas:  NeighborhoodInfo DC                                         17:25 Tuesday, December 23, 2014   8
+
+Preservation Catalog project ID=NL000046
+
+ Parcel_
+address_                                     Parcel_      Parcel_Info_    in_last_
+   id           Ssl           Ssl_orig      owner_date    Source_Date     ownerpt                  Parcel_type
+
+ 149898     3953    0001    3953    0001             N     01/25/2014       Yes       Residential: Rental apartment building
+ 149276     3953    0002    3953    0002             N     01/25/2014       Yes       Residential: Rental apartment building
+ 149313     3953    0003    3953    0003             N     01/25/2014       Yes       Residential: Rental apartment building
+ 149279     3954    0001    3954    0001             N     01/25/2014       Yes       Residential: Rental apartment building
+ 149264     3954    0002    3954    0002             N     01/25/2014       Yes       Residential: Rental apartment building
+ 149885     3954    0003    3954    0003             N     01/25/2014       Yes       Residential: Rental apartment building
+ 155234     3954    0004    3954    0004             N     01/25/2014       Yes       Residential: Rental apartment building
+ 149282     3954    0005    3954    0005             N     01/25/2014       Yes       Residential: Rental apartment building
+ 149285     4024    0001    4024    0001             N     01/25/2014       Yes       Residential: Rental apartment building
+ 149290     4024    0002    4024    0002             N     01/25/2014       Yes       Residential: Rental apartment building
+ 149289     4024    0003    4024    0003             N     01/25/2014       Yes       Residential: Rental apartment building
+ 147220     4024    0004    4024    0004             N     01/25/2014       Yes       Residential: Rental apartment building
+ 150405     4025    0001    4025    0001             N     01/25/2014       Yes       Residential: Rental apartment building
+ 150414     4025    0002    4025    0002             N     01/25/2014       Yes       Residential: Rental apartment building
+ 287056     4025    0003    4025    0003             N     01/25/2014       Yes       Residential: Rental apartment building
+ 150007     4025    0004    4025    0004             N     01/25/2014       Yes       Residential: Rental apartment building
+ 150012     4025    0005    4025    0005             N     01/25/2014       Yes       Residential: Rental apartment building
+
+ Parcel_
+address_
+   id       Parcel_x    Parcel_y     Parcel_owner_name                     Parcel_owner_type
+
+ 149898      401038      139318     Brentwood Associates    Taxable corporations, partnerships, associations
+ 149276      401149      139319     Brentwood Associates    Taxable corporations, partnerships, associations
+ 149313      401244      139322     Brentwood Associates    Taxable corporations, partnerships, associations
+ 149279      401162      139401     Brentwood Associates    Taxable corporations, partnerships, associations
+ 149264      401089      139404     Brentwood Associates    Taxable corporations, partnerships, associations
+ 149885      401040      139422     Brentwood Associates    Taxable corporations, partnerships, associations
+ 155234      401068      139485     Brentwood Associates    Taxable corporations, partnerships, associations
+ 149282      401125      139460     Brentwood Associates    Taxable corporations, partnerships, associations
+ 149285      401199      139435     Brentwood Associates    Taxable corporations, partnerships, associations
+ 149290      401273      139521     Brentwood Associates    Taxable corporations, partnerships, associations
+ 149289      401238      139462     Brentwood Associates    Taxable corporations, partnerships, associations
+ 147220      401203      139458     Brentwood Associates    Taxable corporations, partnerships, associations
+ 150405      401325      139349     Brentwood Associates    Taxable corporations, partnerships, associations
+ 150414      401295      139367     Brentwood Associates    Taxable corporations, partnerships, associations
+ 287056      401259      139383     Brentwood Associates    Taxable corporations, partnerships, associations
+ 150007      401327      139433     Brentwood Associates    Taxable corporations, partnerships, associations
+ 150012      401415      139432     Brentwood Associates    Taxable corporations, partnerships, associations
+PRESCAT/Create_parcel.sas:  NeighborhoodInfo DC                                         17:25 Tuesday, December 23, 2014   9
+
+Preservation Catalog project ID=NL000046
+(continued)
+
+ Parcel_
+address_                                     Parcel_      Parcel_Info_    in_last_
+   id           Ssl           Ssl_orig      owner_date    Source_Date     ownerpt                  Parcel_type
+
+ 149300     4025    0006    4025    0006             N     01/25/2014       Yes       Residential: Rental apartment building
+ 149305     4025    0007    4025    0007             N     01/25/2014       Yes       Residential: Rental apartment building
+
+ Parcel_
+address_
+   id       Parcel_x    Parcel_y     Parcel_owner_name                     Parcel_owner_type
+
+ 149300      401380      139392     Brentwood Associates    Taxable corporations, partnerships, associations
+ 149305      401349      139325     Brentwood Associates    Taxable corporations, partnerships, associations
+
+N = 19
+PRESCAT/Create_parcel.sas:  NeighborhoodInfo DC                                         17:25 Tuesday, December 23, 2014  10
+---Comparison with previous parcel data set---
+
+The COMPARE Procedure
+Comparison of WORK.PARCEL_09_28_14 with PRESCAT.PARCEL
+(Method=EXACT)
+
+Data Set Summary
+
+Dataset                        Created          Modified  NVar    NObs  Label
+
+WORK.PARCEL_09_28_14  23DEC14:17:25:35  23DEC14:17:25:35    10     886
+PRESCAT.PARCEL        23DEC14:17:25:35  23DEC14:17:25:35    12     905  Preservation Catalog, real property parcels
+
+
+Variables Summary
+
+Number of Variables in Common: 9.
+Number of Variables in WORK.PARCEL_09_28_14 but not in PRESCAT.PARCEL: 1.
+Number of Variables in PRESCAT.PARCEL but not in WORK.PARCEL_09_28_14: 3.
+Number of Variables with Differing Attributes: 2.
+Number of ID Variables: 2.
+
+
+Listing of Common Variables with Differing Attributes
+
+Variable           Dataset               Type  Length  Format    Label
+
+NLIHC_ID           WORK.PARCEL_09_28_14  Char       8
+                   PRESCAT.PARCEL        Char       8            Preservation Catalog project ID
+Parcel_owner_type  WORK.PARCEL_09_28_14  Char       1
+                   PRESCAT.PARCEL        Char       3  $OWNCAT.  Property owner type
+
+
+Observation Summary
+
+Observation      Base  Compare  ID
+
+First Obs           1        1  NLIHC_ID=NL000001 Ssl=0423    0018
+First Unequal       1        1  NLIHC_ID=NL000001 Ssl=0423    0018
+Last  Unequal     886      905  NLIHC_ID=NL001030 Ssl=2596    1052
+Last  Obs         886      905  NLIHC_ID=NL001030 Ssl=2596    1052
+
+Number of Observations in Common: 886.
+Number of Observations in PRESCAT.PARCEL but not in WORK.PARCEL_09_28_14: 19.
+Total Number of Observations Read from WORK.PARCEL_09_28_14: 886.
+Total Number of Observations Read from PRESCAT.PARCEL: 905.
+
+PRESCAT/Create_parcel.sas:  NeighborhoodInfo DC                                         17:25 Tuesday, December 23, 2014  11
+---Comparison with previous parcel data set---
+
+The COMPARE Procedure
+Comparison of WORK.PARCEL_09_28_14 with PRESCAT.PARCEL
+(Method=EXACT)
+
+Number of Observations with Some Compared Variables Unequal: 884.
+Number of Observations with All Compared Variables Equal: 2.
+
+
+Values Comparison Summary
+
+Number of Variables Compared with All Observations Equal: 5.
+Number of Variables Compared with Some Observations Unequal: 2.
+Number of Variables with Missing Value Differences: 1.
+Total Number of Values which Compare Unequal: 1768.
+Maximum Difference: 0.
+
+
+Variables with Unequal Values
+
+Variable           Type  Len1 Len2   Label                        Compare Label               Ndif   MaxDif  MissDif
+
+Parcel_owner_name  CHAR   150  150   Name(s) of property owners   Name(s) of property owners   884                 0
+Parcel_owner_type  CHAR     1    3                                Property owner type          884               884
+
+
+
+Value Comparison Results for Variables
+
+_____________________________________________________________________________
+                              ||  Name(s) of property owners
+                              ||  Base Value           Compare Value
+ NLIHC_ID  Ssl                ||  Parcel_owner_name     Parcel_owner_name
+ ________  _________________  ||  ___________________+  ___________________+
+                              ||
+ NL000001  0423    0018       ||  1330 SEVENTH STREET   1330 Seventh Street
+ NL000004  2609    0822       ||  PARKFAIR ASSOCIATES   Parkfair Associates
+ NL000006  5778    0166       ||  1728 W STREET LIMITE  1728 W Street Limite
+ NL000008  5581    0023       ||  GREEN DOOR            Green Door
+ NL000010  2835    0104       ||  GREEN DOOR            Green Door
+ NL000014  2999    0802       ||  EADS LLC              Eads Llc
+ NL000015  2994    0023       ||  BHI INTERNATIONAL IN  Bhi International In
+ NL000015  2994    0024       ||  BHI INTERNATIONAL IN  Bhi International In
+ NL000015  2994    0025       ||  BHI INTERNATIONAL IN  Bhi International In
+ NL000015  2994    2001       ||  HARRIETT V LYON       Harriett V Lyon
+PRESCAT/Create_parcel.sas:  NeighborhoodInfo DC                                         17:25 Tuesday, December 23, 2014  12
+---Comparison with previous parcel data set---
+
+The COMPARE Procedure
+Comparison of WORK.PARCEL_09_28_14 with PRESCAT.PARCEL
+(Method=EXACT)
+
+Value Comparison Results for Variables
+
+_____________________________________________________________________________
+                              ||  Name(s) of property owners
+                              ||  Base Value           Compare Value
+ NLIHC_ID  Ssl                ||  Parcel_owner_name     Parcel_owner_name
+ ________  _________________  ||  ___________________+  ___________________+
+                              ||
+ NL000015  2994    2002       ||  SEVEN BRICK ROW LLC   Seven Brick Row Llc
+ NL000015  2994    2003       ||  SEVEN BRICK ROW LLC   Seven Brick Row Llc
+ NL000015  2994    2004       ||  JOSEPH J GEARY        Joseph J Geary
+ NL000015  2994    2005       ||  OSCAR VIERA           Oscar Viera
+ NL000015  2994    2006       ||  SEVEN BRICK ROW LLC   Seven Brick Row Llc
+ NL000015  2994    2007       ||  SEVEN BRICK ROW LLC   Seven Brick Row Llc
+ NL000015  2994    2008       ||  SEVEN BRICK ROW LLC   Seven Brick Row Llc
+ NL000015  2994    2009       ||  PHILLIP C JOHNSON     Phillip C Johnson
+ NL000015  2994    2010       ||  JENNIFER KRASZEWSKI   Jennifer Kraszewski
+ NL000015  2994    2011       ||  NELSON L LOCKLEAR     Nelson L Locklear
+ NL000015  2994    2012       ||  MARIA BRADLEY         Maria Bradley
+ NL000015  2994    2013       ||  JEREMY DILLARD        Jeremy Dillard
+ NL000015  2994    2014       ||  CAROLYN BRADY         Carolyn Brady
+ NL000015  2994    2015       ||  DANIEL DELAROSA       Daniel Delarosa
+ NL000015  2994    2016       ||  SEVEN BRICK ROW LLC   Seven Brick Row Llc
+ NL000015  2994    2017       ||  JESSICA MILTON        Jessica Milton
+ NL000015  2994    2018       ||  SAUD NAZAR + CHRISTO  Saud Nazar + Christo
+ NL000015  2994    2019       ||  MATT O MULLEN + CARR  Matt O Mullen + Carr
+ NL000015  2994    2020       ||  JEFFREY P ROCKETT     Jeffrey P Rockett
+ NL000015  2994    2021       ||  STEVEN H BROWN        Steven H Brown
+ NL000015  2994    2022       ||  SEVEN BRICK ROW LLC   Seven Brick Row Llc
+ NL000015  2994    2023       ||  SHAWN BUETTNER        Shawn Buettner
+ NL000015  2994    2024       ||  AARON M SHAFFER       Aaron M Shaffer
+ NL000015  2994    2025       ||  PAMELA S DALEY        Pamela S Daley
+ NL000015  2994    2026       ||  NATHAN G BYNUM        Nathan G Bynum
+ NL000015  2994    2027       ||  JUANA LLORENS         Juana Llorens
+ NL000015  2994    2028       ||  EVAN A HAUPTMANN + T  Evan A Hauptmann + T
+ NL000015  2994    2029       ||  SEVEN BRICK ROW LLC   Seven Brick Row Llc
+ NL000015  2994    2030       ||  VAN JACKSON + VERONI  Van Jackson + Veroni
+ NL000015  2994    2031       ||  ASHLEY A WEYENBERG    Ashley A Weyenberg
+
+NOTE: The MAXPRINT=40 printing limit has been reached for the variable Parcel_owner_name. No more values will be printed
+      for this comparison.
+PRESCAT/Create_parcel.sas:  NeighborhoodInfo DC                                         17:25 Tuesday, December 23, 2014  13
+---Comparison with previous parcel data set---
+
+The COMPARE Procedure
+Comparison of WORK.PARCEL_09_28_14 with PRESCAT.PARCEL
+(Method=EXACT)
+
+_____________________________________________________________________________
+
+
+_____________________________________________________________________________
+                              ||  Property owner type
+                              ||  Base Value           Compare Value
+ NLIHC_ID  Ssl                ||  Parcel_owner_type     Parcel_owner_type
+ ________  _________________  ||  _                     ___
+                              ||
+ NL000001  0423    0018       ||                        111
+ NL000004  2609    0822       ||                        115
+ NL000006  5778    0166       ||                        111
+ NL000008  5581    0023       ||                        111
+ NL000010  2835    0104       ||                        111
+ NL000014  2999    0802       ||                        115
+ NL000015  2994    0023       ||                        115
+ NL000015  2994    0024       ||                        115
+ NL000015  2994    0025       ||                        115
+ NL000015  2994    2001       ||                        030
+ NL000015  2994    2002       ||                        115
+ NL000015  2994    2003       ||                        115
+ NL000015  2994    2004       ||                        030
+ NL000015  2994    2005       ||                        030
+ NL000015  2994    2006       ||                        115
+ NL000015  2994    2007       ||                        115
+ NL000015  2994    2008       ||                        115
+ NL000015  2994    2009       ||                        030
+ NL000015  2994    2010       ||                        030
+ NL000015  2994    2011       ||                        030
+ NL000015  2994    2012       ||                        020
+ NL000015  2994    2013       ||                        020
+ NL000015  2994    2014       ||                        030
+ NL000015  2994    2015       ||                        020
+ NL000015  2994    2016       ||                        115
+ NL000015  2994    2017       ||                        020
+ NL000015  2994    2018       ||                        020
+ NL000015  2994    2019       ||                        020
+ NL000015  2994    2020       ||                        020
+ NL000015  2994    2021       ||                        030
+ NL000015  2994    2022       ||                        115
+PRESCAT/Create_parcel.sas:  NeighborhoodInfo DC                                         17:25 Tuesday, December 23, 2014  14
+---Comparison with previous parcel data set---
+
+The COMPARE Procedure
+Comparison of WORK.PARCEL_09_28_14 with PRESCAT.PARCEL
+(Method=EXACT)
+
+Value Comparison Results for Variables
+
+_____________________________________________________________________________
+                              ||  Property owner type
+                              ||  Base Value           Compare Value
+ NLIHC_ID  Ssl                ||  Parcel_owner_type     Parcel_owner_type
+ ________  _________________  ||  _                     ___
+                              ||
+ NL000015  2994    2023       ||                        020
+ NL000015  2994    2024       ||                        020
+ NL000015  2994    2025       ||                        020
+ NL000015  2994    2026       ||                        030
+ NL000015  2994    2027       ||                        030
+ NL000015  2994    2028       ||                        020
+ NL000015  2994    2029       ||                        115
+ NL000015  2994    2030       ||                        020
+ NL000015  2994    2031       ||                        020
+
+NOTE: The MAXPRINT=40 printing limit has been reached for the variable Parcel_owner_type. No more values will be printed
+      for this comparison.
+_____________________________________________________________________________
