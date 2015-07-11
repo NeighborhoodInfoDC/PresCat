@@ -15,7 +15,8 @@
  Modifications:
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+/*%include "L:\SAS\Inc\StdLocal.sas";*/
+%include "C:\DCData\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
@@ -500,7 +501,7 @@ run;
 
 ***options mprint symbolgen mlogic;
 
-%Archive_catalog_data( data=Project Subsidy Update_history, zip_pre=Update_&Update_file, zip_suf= )
+/*** SKIP FOR NOW ***%Archive_catalog_data( data=Project Subsidy Update_history, zip_pre=Update_&Update_file, zip_suf= )****/
 
 ***options mprint nosymbolgen nomlogic;
 
