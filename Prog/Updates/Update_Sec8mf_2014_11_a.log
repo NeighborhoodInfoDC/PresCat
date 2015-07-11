@@ -1,4 +1,4 @@
-1                                       The SAS System            16:42 Saturday, July 11, 2015
+1                                       The SAS System            17:29 Saturday, July 11, 2015
 
 NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
 NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
@@ -8,8 +8,8 @@ NOTE: This session is executing on the X64_VSHOME  platform.
 
 
 NOTE: SAS initialization used:
-      real time           0.18 seconds
-      cpu time            0.14 seconds
+      real time           0.14 seconds
+      cpu time            0.18 seconds
       
 
 NOTE: AUTOEXEC processing beginning; file is C:\Users\Peter\Documents\My SAS 
@@ -46,7 +46,7 @@ NOTE: Library _METADAT does not exist.
 69        +title "&_library/&_program:  NeighborhoodInfo DC";
 70        +
 71        +** Define General library for local session only **;
-2 The SAS System                                                                               16:42 Saturday, July 11, 2015
+2 The SAS System                                                                               17:29 Saturday, July 11, 2015
 
 72        +
 73        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
@@ -94,7 +94,7 @@ Current Sasautos Option value:
 
      GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
 
-3 The SAS System                                                                               16:42 Saturday, July 11, 2015
+3 The SAS System                                                                               17:29 Saturday, July 11, 2015
 
 =====================================================================
 
@@ -142,7 +142,7 @@ MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref HUD_R was successfully assigned as follows: 
       Engine:        V9 
       Physical Name: C:\DCData\Libraries\HUD\Data
-4 The SAS System                                                                               16:42 Saturday, July 11, 2015
+4 The SAS System                                                                               17:29 Saturday, July 11, 2015
 
 NOTE: Libref HUD was successfully assigned as follows: 
       Levels:           1
@@ -175,47 +175,48 @@ Current Sasautos Option value:
 =====================================================================
 
 80         
-81         %let Update_file = Sec8mf_2014_11;
-82         %let Finalize = N;
-83         %let NO_SUBSIDY_ID = 9999999999;
-84         %let Update_dtm = %sysfunc( datetime() );
-85         
-86         %let Subsidy_update_vars =
-87             Units_Assist POA_start POA_end Compl_end
-88             rent_to_FMR_description Subsidy_Active Program
-89             ;
-90         
-91         %let Subsidy_tech_vars = Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm;
-92         
-93         %let Subsidy_missing_info_vars =
-94             contract_number property_name_text address_line1_text program_type_name
-95             ;
-5 The SAS System                                                                               16:42 Saturday, July 11, 2015
+81         %let Subsidy_info_source = "HUD/MFA";
+82         %let Update_file = Sec8mf_2014_11;
+83         %let Finalize = N;
+84         %let NO_SUBSIDY_ID = 9999999999;
+85         %let Update_dtm = %sysfunc( datetime() );
+86         
+87         %let Subsidy_update_vars =
+88             Units_Assist POA_start POA_end Compl_end
+89             rent_to_FMR_description Subsidy_Active Program
+90             ;
+91         
+92         %let Subsidy_tech_vars = Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm;
+93         
+94         %let Subsidy_missing_info_vars =
+95             contract_number property_name_text address_line1_text program_type_name
+5 The SAS System                                                                               17:29 Saturday, July 11, 2015
 
-96         
-97         %let Project_update_vars =
-98             Hud_Own_Effect_dt Hud_Own_Name Hud_Own_Type Hud_Mgr_Name
-99             Hud_Mgr_Type Update_Dtm;
-100        
-101        %let Project_missing_info_vars = ;
-102        
-103        proc sql noprint;
-104          select Extract_date into :Sec8MF_update_date from Hud.&Update_file._dc;
-105        quit;
+96             ;
+97         
+98         %let Project_update_vars =
+99             Hud_Own_Effect_dt Hud_Own_Name Hud_Own_Type Hud_Mgr_Name
+100            Hud_Mgr_Type Update_Dtm;
+101        
+102        %let Project_missing_info_vars = ;
+103        
+104        proc sql noprint;
+105          select Extract_date into :Sec8MF_update_date from Hud.&Update_file._dc;
+106        quit;
 NOTE: PROCEDURE SQL used (Total process time):
       real time           0.01 seconds
       cpu time            0.00 seconds
       
 
-106        
-107        %put _user_;
+107        
+108        %put _user_;
 GLOBAL FINALIZE N
 GLOBAL SQLOBS 1
 GLOBAL SEC8MF_UPDATE_DATE 11/25/2014
 GLOBAL PROJECT_UPDATE_VARS Hud_Own_Effect_dt Hud_Own_Name Hud_Own_Type Hud_Mgr_Name     Hud_Mgr_Type Update_Dtm
 GLOBAL PROJECT_MISSING_INFO_VARS 
 GLOBAL SQLOOPS 16
-GLOBAL UPDATE_DTM 1752252127.754
+GLOBAL UPDATE_DTM 1752254967.099
 GLOBAL _RECURSE 
 GLOBAL UPDATE_FILE Sec8mf_2014_11
 GLOBAL SYS_SQL_IP_ALL -1
@@ -232,77 +233,78 @@ GLOBAL SQLRC 0
 GLOBAL _USERID peter
 GLOBAL _LIBRARY PRESCAT
 GLOBAL _PROGRAM Update_Sec8mf_2014_11_a.sas
+GLOBAL SUBSIDY_INFO_SOURCE "HUD/MFA"
 GLOBAL SUBSIDY_UPDATE_VARS Units_Assist POA_start POA_end Compl_end      rent_to_FMR_description Subsidy_Active Program
-GLOBAL SUBSIDY_TECH_VARS Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm
+GLOBAL SUBSIDY_TECH_VARS Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm
 GLOBAL SUBSIDY_MISSING_INFO_VARS contract_number property_name_text address_line1_text program_type_name
 GLOBAL SQLEXITCODE 0
+6 The SAS System                                                                               17:29 Saturday, July 11, 2015
+
 GLOBAL _NEWFMS GENERAL PRESCAT
-108        
-6 The SAS System                                                                               16:42 Saturday, July 11, 2015
+109        
+110        **************************************************************************;
+111        ***** Create test version of subsidy exception file **;
+112        
+113        data Subsidy_except_test;
+114        
+115          set PresCat.Subsidy_except_test;
+116        
+117          ** Exception for updated var **;
+118          nlihc_id = "NL000001";
+119          Subsidy_id = 3;
+120          POA_start = '01oct2004'd;
+121          Except_date = date();
+122          Except_init = 'PAT';
+123          output;
+124        
+125          ** Exception for nonupdated var **;
+126          nlihc_id = "NL000021";
+127          Subsidy_id = 2;
+128          POA_start = .;
+129          POA_end = '30nov2024'd;
+130          Compl_end = .;
+131          Except_date = date();
+132          Except_init = 'PAT';
+133          output;
+134        
+135          ** Exception same as updated var **;
+136          nlihc_id = "NL000023";
+137          Subsidy_id = 2;
+138          POA_start = '21dec2011'd;
+139          POA_end = .;
+140          Except_date = date();
+141          Except_init = 'PAT';
+142          output;
+143        
+144          ** Exception for nonupdated obs **;
+145          nlihc_id = "NL000029";
+146          Subsidy_id = 2;
+147          POA_start = .;
+148          POA_end = '31oct2044'd;
+149          Except_date = date();
+150          Except_init = 'PAT';
+151          output;
+152        
+153          ** Multiple exception records **;
+7 The SAS System                                                                               17:29 Saturday, July 11, 2015
 
-109        **************************************************************************;
-110        ***** Create test version of subsidy exception file **;
-111        
-112        data Subsidy_except_test;
-113        
-114          set PresCat.Subsidy_except_test;
-115        
-116          ** Exception for updated var **;
-117          nlihc_id = "NL000001";
-118          Subsidy_id = 3;
-119          POA_start = '01oct2004'd;
-120          Except_date = date();
-121          Except_init = 'PAT';
-122          output;
-123        
-124          ** Exception for nonupdated var **;
-125          nlihc_id = "NL000021";
-126          Subsidy_id = 2;
-127          POA_start = .;
-128          POA_end = '30nov2024'd;
-129          Compl_end = .;
-130          Except_date = date();
-131          Except_init = 'PAT';
-132          output;
-133        
-134          ** Exception same as updated var **;
-135          nlihc_id = "NL000023";
-136          Subsidy_id = 2;
-137          POA_start = '21dec2011'd;
-138          POA_end = .;
-139          Except_date = date();
-140          Except_init = 'PAT';
-141          output;
-142        
-143          ** Exception for nonupdated obs **;
-144          nlihc_id = "NL000029";
-145          Subsidy_id = 2;
-146          POA_start = .;
-147          POA_end = '31oct2044'd;
-148          Except_date = date();
-149          Except_init = 'PAT';
-150          output;
-151        
-152          ** Multiple exception records **;
-153          nlihc_id = "NL000046";
-154          Subsidy_id = 3;
-7 The SAS System                                                                               16:42 Saturday, July 11, 2015
-
-155          POA_start = '28feb2014'd;
-156          POA_end = '28feb2025'd;
-157          rent_to_fmr_description = 'Old desc';
-158          Except_date = '28feb2014'd;
-159          Except_init = 'PAT';
-160          output;
-161          POA_start = .;
-162          POA_end = '28feb2030'd;
-163          Units_assist = .u;
-164          Except_date = date();
-165          Except_init = 'PAT';
-166          rent_to_fmr_description = 'New desc';
-167          output;
-168        
-169        run;
+154          nlihc_id = "NL000046";
+155          Subsidy_id = 3;
+156          POA_start = '28feb2014'd;
+157          POA_end = '28feb2025'd;
+158          rent_to_fmr_description = 'Old desc';
+159          Except_date = '28feb2014'd;
+160          Except_init = 'PAT';
+161          output;
+162          POA_start = .;
+163          POA_end = '28feb2030'd;
+164          Units_assist = .u;
+165          Except_date = date();
+166          Except_init = 'PAT';
+167          rent_to_fmr_description = 'New desc';
+168          output;
+169        
+170        run;
 
 NOTE: There were 1 observations read from the data set PRESCAT.SUBSIDY_EXCEPT_TEST.
 NOTE: The data set WORK.SUBSIDY_EXCEPT_TEST has 6 observations and 13 variables.
@@ -310,11 +312,11 @@ NOTE: Compressing data set WORK.SUBSIDY_EXCEPT_TEST increased size by 100.00 per
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: DATA statement used (Total process time):
       real time           0.01 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
-170        
-171        %File_info( data=Subsidy_except_test, contents=n, stats= )
+171        
+172        %File_info( data=Subsidy_except_test, contents=n, stats= )
 MPRINT(FILE_INFO):   title2 "File = Subsidy_except_test";
 MPRINT(FILE_INFO):   proc print data=Subsidy_except_test (obs=10);
 MPRINT(FILE_INFO):   title3 "Printing first 10 obs.";
@@ -323,21 +325,21 @@ MPRINT(FILE_INFO):   run;
 NOTE: There were 6 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST.
 NOTE: The PROCEDURE PRINT printed page 1.
 NOTE: PROCEDURE PRINT used (Total process time):
-      real time           0.03 seconds
-      cpu time            0.04 seconds
+      real time           0.02 seconds
+      cpu time            0.01 seconds
       
 
 MPRINT(FILE_INFO):   title3;
 MPRINT(FILE_INFO):   title2;
-172        
 173        
-174        ***** NORMALIZE EXCEPTION FILE *****;
-175        
-176        ***options mprint symbolgen mlogic spool;
-8 The SAS System                                                                               16:42 Saturday, July 11, 2015
+174        
+175        ***** NORMALIZE EXCEPTION FILE *****;
+8 The SAS System                                                                               17:29 Saturday, July 11, 2015
 
-177        
-178        %Except_norm( data=Subsidy_except_test, by=nlihc_id subsidy_id )
+176        
+177        ***options mprint symbolgen mlogic spool;
+178        
+179        %Except_norm( data=Subsidy_except_test, by=nlihc_id subsidy_id )
 MPRINT(EXCEPT_NORM):   proc sql noprint;
 MPRINT(EXCEPT_NORM):   select distinct name into :charvarlist separated by ' ' from dictionary.columns where libname="WORK" 
 and memname="SUBSIDY_EXCEPT_TEST" and type='char';
@@ -380,10 +382,10 @@ EXCEPT_NORM LASTBY subsidy_id
 EXCEPT_NORM BY nlihc_id subsidy_id
 MPRINT(EXCEPT_NORM):   data Subsidy_except_test_norm;
 MPRINT(EXCEPT_NORM):   set _Subsidy_except_test;
+9 The SAS System                                                                               17:29 Saturday, July 11, 2015
+
 MPRINT(EXCEPT_NORM):   by nlihc_id subsidy_id;
 MPRINT(EXCEPT_NORM):   length agency_ret program_ret contract_number_ret rent_to_fmr_description_ret $ 400;
-9 The SAS System                                                                               16:42 Saturday, July 11, 2015
-
 MPRINT(EXCEPT_NORM):   length compl_end_ret poa_end_ret poa_start_ret subsidy_active_ret units_assist_ret 8;
 MPRINT(EXCEPT_NORM):   retain agency_ret program_ret contract_number_ret rent_to_fmr_description_ret;
 MPRINT(EXCEPT_NORM):   retain compl_end_ret poa_end_ret poa_start_ret subsidy_active_ret units_assist_ret;
@@ -428,58 +430,58 @@ WARNING: Multiple exceptions specified: Nlihc_id=NL000046 Subsidy_id=3 rent_to_f
 Except_date=02/28/2014
 WARNING: Multiple exceptions specified: Nlihc_id=NL000046 Subsidy_id=3 POA_end=02/28/2025 Except_date=02/28/2014
 NOTE: There were 6 observations read from the data set WORK._SUBSIDY_EXCEPT_TEST.
+10 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
 NOTE: The data set WORK.SUBSIDY_EXCEPT_TEST_NORM has 5 observations and 11 variables.
 NOTE: Compressing data set WORK.SUBSIDY_EXCEPT_TEST_NORM increased size by 100.00 percent. 
-10 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: DATA statement used (Total process time):
       real time           0.01 seconds
       cpu time            0.01 seconds
       
 
-179        
-180          proc print data=Subsidy_except_test_norm;
-181            id nlihc_id subsidy_id;
-182            title2 "File = Subsidy_except_test_norm";
-183          run;
+180        
+181          proc print data=Subsidy_except_test_norm;
+182            id nlihc_id subsidy_id;
+183            title2 "File = Subsidy_except_test_norm";
+184          run;
 
 NOTE: There were 5 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST_NORM.
 NOTE: The PROCEDURE PRINT printed page 2.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
-184        
 185        
-186        ********************************************************************************;
-187        ** Update subsidy file;
-188        
-189        ** Get Category IDs **;
-190        
-191        %Data_to_format(
-192          FmtLib=work,
-193          FmtName=$nlihcid2cat,
-194          Desc=,
-195          Data=PresCat.Project_category,
-196          Value=nlihc_id,
-197          Label=category_code,
-198          OtherLabel='',
-199          DefaultLen=1,
-200          Print=N,
-201          Contents=N
-202          )
+186        
+187        ********************************************************************************;
+188        ** Update subsidy file;
+189        
+190        ** Get Category IDs **;
+191        
+192        %Data_to_format(
+193          FmtLib=work,
+194          FmtName=$nlihcid2cat,
+195          Desc=,
+196          Data=PresCat.Project_category,
+197          Value=nlihc_id,
+198          Label=category_code,
+199          OtherLabel='',
+200          DefaultLen=1,
+201          Print=N,
+202          Contents=N
+203          )
 NOTE: [Data_to_format] Starting macro.
 MPRINT(DATA_TO_FORMAT):   data _cntlin (compress=no);
 MPRINT(DATA_TO_FORMAT):   length hlo $ 8;
 MPRINT(DATA_TO_FORMAT):   retain fmtname "$nlihcid2cat" type "C" default 1 max . min .;
 MPRINT(DATA_TO_FORMAT):   retain hlo " ";
 MPRINT(DATA_TO_FORMAT):   set PresCat.Project_category end=last;
+11 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
 MPRINT(DATA_TO_FORMAT):   label = category_code;
 MPRINT(DATA_TO_FORMAT):   start = nlihc_id;
-11 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
 MPRINT(DATA_TO_FORMAT):   output;
 MPRINT(DATA_TO_FORMAT):   if last then do;
 MPRINT(DATA_TO_FORMAT):   hlo = trim( hlo ) || 'o';
@@ -493,7 +495,7 @@ NOTE: There were 362 observations read from the data set PRESCAT.PROJECT_CATEGOR
 NOTE: The data set WORK._CNTLIN has 363 observations and 8 variables.
 NOTE: DATA statement used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 MPRINT(DATA_TO_FORMAT):   proc format library=work cntlin=_cntlin;
@@ -517,91 +519,91 @@ NOTE: PROCEDURE DATASETS used (Total process time):
       
 
 NOTE: [Data_to_format] Exiting macro.
-203        
-204        data Sec8MF_subsidy_update;
-205        
-206          set Hud.&Update_file._dc;
-207          where not( program_type_name = "UnasstPrj SCHAP" and assisted_units_count = 0 );
-208        
-209          ** Create update variables **;
-210        
-211          length
-12 The SAS System                                                                              16:42 Saturday, July 11, 2015
+204        
+205        data Sec8MF_subsidy_update;
+206        
+207          set Hud.&Update_file._dc;
+208          where not( program_type_name = "UnasstPrj SCHAP" and assisted_units_count = 0 );
+209        
+210          ** Create update variables **;
+12 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
-212            Units_Assist POA_start POA_end Compl_end 8
-213            Subsidy_Active 3
-214            Subsidy_Info_Source $ 40
-215            Subsidy_Info_Source_ID $ 40
-216            Subsidy_Info_Source_Date 8
-217            Update_Dtm 8
-218          ;
-219        
-220          retain Subsidy_Info_Source "HUD/MFA";
-221        
-222          Subsidy_Info_Source_ID = trim( left( put( property_id, 16. ) ) ) || "/" ||
-223                                   left( contract_number );
-224        
-225          if assisted_units_count > 0 then Units_Assist = assisted_units_count;
-226        
-227          POA_start = tracs_effective_date;
-228        
-229          POA_end = tracs_overall_expiration_date;
-230        
-231          Compl_end = POA_end;
-232        
-233          if tracs_status in ( 'T' ) then Subsidy_Active = 0;
-234          else Subsidy_Active = 1;
-235        
-236          Subsidy_Info_Source_Date = extract_date;
-237        
-238          Update_Dtm = &Update_Dtm;
-239        
-240          ** Program code **;
-241        
-242          length Program $ 32;
-243        
-244          Program = put( program_type_name, $mfatoprog. );
-245        
-246          if missing( Program ) then do;
-247            %warn_put( msg="Missing program type: " _n_= property_id= contract_number= assisted_units_count=
-247      ! program_type_name= )
+211        
+212          length
+213            Units_Assist POA_start POA_end Compl_end 8
+214            Subsidy_Active 3
+215            Subsidy_Info_Source $ 40
+216            Subsidy_Info_Source_ID $ 40
+217            Subsidy_Info_Source_Date 8
+218            Update_Dtm 8
+219          ;
+220        
+221          retain Subsidy_Info_Source &Subsidy_Info_Source;
+222        
+223          Subsidy_Info_Source_ID = trim( left( put( property_id, 16. ) ) ) || "/" ||
+224                                   left( contract_number );
+225        
+226          if assisted_units_count > 0 then Units_Assist = assisted_units_count;
+227        
+228          POA_start = tracs_effective_date;
+229        
+230          POA_end = tracs_overall_expiration_date;
+231        
+232          Compl_end = POA_end;
+233        
+234          if tracs_status in ( 'T' ) then Subsidy_Active = 0;
+235          else Subsidy_Active = 1;
+236        
+237          Subsidy_Info_Source_Date = extract_date;
+238        
+239          Update_Dtm = &Update_Dtm;
+240        
+241          ** Program code **;
+242        
+243          length Program $ 32;
+244        
+245          Program = put( program_type_name, $mfatoprog. );
+246        
+247          if missing( Program ) then do;
+248            %warn_put( msg="Missing program type: " _n_= property_id= contract_number= assisted_units_count=
+248      ! program_type_name= )
 MPRINT(WARN_PUT):   put "WARN" "ING:" " " "Missing program type: " _n_= property_id= contract_number= assisted_units_count= 
 program_type_name=;
-248          end;
-249        
-250          /********** SKIP FOR NOW ************
-251          length Agency $ 80;
-252        
-253          if Program = "Low Income Housing Tax Credit" then Agency = "DC Dept of Housing and Community Development; DC
-253      ! Housing Finance Agency";
-13 The SAS System                                                                              16:42 Saturday, July 11, 2015
+249          end;
+250        
+251          /********** SKIP FOR NOW ************
+252          length Agency $ 80;
+253        
+13 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
-254          else if Subsidy_info_Source =: "DCFHA" then Agency = "DC Housing Finance Agency";
-255          else if Subsidy_Info_Source =: "DCHA" then Agency = "DC Housing Authority";
-256          else if Subsidy_Info_Source in ( "Email from KIM DCHA", "Email from Kim Cole DCHA" ) then Agency = "DC Housing
-256      ! Authority";
-257          else if Subsidy_Info_Source =: "DHCD" then Agency = "DC Dept of Housing and Community Development";
-258          else if Subsidy_Info_Source =: "DC/" then Agency = "DC";
-259          else if Subsidy_Info_Source =: "HUD" then Agency = "US Dept of Housing and Urban Development";
-260          else Agency = "Other";
-261          **********************************/
-262        
-263          format POA_start POA_end Compl_end Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
-264        
-265          keep
-266            Units_Assist POA_start POA_end Compl_end
-267            contract_number rent_to_FMR_description Subsidy_Active
-268            Subsidy_Info_Source
-269            Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm
-270            Program
-271            property_name_text address_line1_text program_type_name
-272            ownership_effective_date
-273            owner_organization_name owner_individual_full_name
+254          if Program = "Low Income Housing Tax Credit" then Agency = "DC Dept of Housing and Community Development; DC
+254      ! Housing Finance Agency";
+255          else if Subsidy_info_Source =: "DCFHA" then Agency = "DC Housing Finance Agency";
+256          else if Subsidy_Info_Source =: "DCHA" then Agency = "DC Housing Authority";
+257          else if Subsidy_Info_Source in ( "Email from KIM DCHA", "Email from Kim Cole DCHA" ) then Agency = "DC Housing
+257      ! Authority";
+258          else if Subsidy_Info_Source =: "DHCD" then Agency = "DC Dept of Housing and Community Development";
+259          else if Subsidy_Info_Source =: "DC/" then Agency = "DC";
+260          else if Subsidy_Info_Source =: "HUD" then Agency = "US Dept of Housing and Urban Development";
+261          else Agency = "Other";
+262          **********************************/
+263        
+264          format POA_start POA_end Compl_end Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
+265        
+266          keep
+267            Units_Assist POA_start POA_end Compl_end
+268            contract_number rent_to_FMR_description Subsidy_Active
+269            Subsidy_Info_Source
+270            Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm
+271            Program
+272            property_name_text address_line1_text program_type_name
+273            ownership_effective_date
 274            owner_organization_name owner_individual_full_name
-275            mgmt_agent_org_name mgmt_agent_full_name
-276            mgmt_agent_org_name mgmt_agent_full_name;
-277        
-278        run;
+275            owner_organization_name owner_individual_full_name
+276            mgmt_agent_org_name mgmt_agent_full_name
+277            mgmt_agent_org_name mgmt_agent_full_name;
+278        
+279        run;
 
 NOTE: Format $S8EXQTR was not found or could not be loaded.
 NOTE: Format $S8DOCTY was not found or could not be loaded.
@@ -619,16 +621,16 @@ NOTE: The data set WORK.SEC8MF_SUBSIDY_UPDATE has 110 observations and 20 variab
 NOTE: Compressing data set WORK.SEC8MF_SUBSIDY_UPDATE decreased size by 40.00 percent. 
       Compressed is 3 pages; un-compressed would require 5 pages.
 NOTE: DATA statement used (Total process time):
-      real time           0.02 seconds
+      real time           0.01 seconds
+14 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
       cpu time            0.03 seconds
       
-14 The SAS System                                                                              16:42 Saturday, July 11, 2015
 
-
-279        
-280        proc sort data=Sec8MF_subsidy_update;
-281          by Subsidy_Info_Source_ID;
-282        run;
+280        
+281        proc sort data=Sec8MF_subsidy_update;
+282          by Subsidy_Info_Source_ID;
+283        run;
 
 NOTE: There were 110 observations read from the data set WORK.SEC8MF_SUBSIDY_UPDATE.
 NOTE: SAS sort was used.
@@ -640,15 +642,15 @@ NOTE: PROCEDURE SORT used (Total process time):
       cpu time            0.00 seconds
       
 
-283        
-284        %File_info( data=Sec8MF_subsidy_update, freqvars=Program Subsidy_Info_Source_Date )
+284        
+285        %File_info( data=Sec8MF_subsidy_update, freqvars=Program Subsidy_Info_Source_Date )
 MPRINT(FILE_INFO):   title2 "File = Sec8MF_subsidy_update";
 MPRINT(FILE_INFO):   proc contents data=Sec8MF_subsidy_update;
 MPRINT(FILE_INFO):   run;
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 NOTE: The PROCEDURE CONTENTS printed pages 3-4.
 
@@ -660,7 +662,7 @@ NOTE: There were 10 observations read from the data set WORK.SEC8MF_SUBSIDY_UPDA
 NOTE: The PROCEDURE PRINT printed page 5.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 MPRINT(FILE_INFO):   title3;
@@ -668,14 +670,14 @@ MPRINT(FILE_INFO):   options nolabel;
 MPRINT(FILE_INFO):   proc means data=Sec8MF_subsidy_update n sum mean stddev min max;
 MPRINT(FILE_INFO):   run;
 
+15 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
 NOTE: Multiple concurrent threads will be used to summarize data.
 NOTE: There were 110 observations read from the data set WORK.SEC8MF_SUBSIDY_UPDATE.
-15 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
 NOTE: The PROCEDURE MEANS printed page 6.
 NOTE: PROCEDURE MEANS used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
 MPRINT(FILE_INFO):   options label;
@@ -687,38 +689,38 @@ NOTE: There were 110 observations read from the data set WORK.SEC8MF_SUBSIDY_UPD
 NOTE: The PROCEDURE FREQ printed page 7.
 NOTE: PROCEDURE FREQ used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
 MPRINT(FILE_INFO):   title2;
-285        
-286        title2 'File = Sec8MF_subsidy_update';
-287        
-288        %Dup_check(
-289          data=Sec8MF_subsidy_update,
-290          by=Subsidy_Info_Source_ID,
-291          id=contract_number,
-292          out=_dup_check,
-293          listdups=Y,
-294          count=dup_check_count,
-295          quiet=N,
-296          debug=N
-297        )
+286        
+287        title2 'File = Sec8MF_subsidy_update';
+288        
+289        %Dup_check(
+290          data=Sec8MF_subsidy_update,
+291          by=Subsidy_Info_Source_ID,
+292          id=contract_number,
+293          out=_dup_check,
+294          listdups=Y,
+295          count=dup_check_count,
+296          quiet=N,
+297          debug=N
+298        )
 MPRINT(DUP_CHECK):   options nomprint;
 NOTE: SAS threaded sort was used.
 NOTE: Table WORK._DUP_CHECK created, with 0 rows and 3 columns.
 
 NOTE: PROCEDURE SQL used (Total process time):
       real time           0.01 seconds
-      cpu time            0.01 seconds
+      cpu time            0.03 seconds
       
 
 NOTE: PROCEDURE SQL used (Total process time):
       real time           0.00 seconds
       cpu time            0.00 seconds
-      
+16 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
-16 The SAS System                                                                              16:42 Saturday, July 11, 2015
+      
 
 NOTE: [Dup_check] 0 duplicate observations found in data set SEC8MF_SUBSIDY_UPDATE
 NOTE: [Dup_check] for BY variables SUBSIDY_INFO_SOURCE_ID.
@@ -733,29 +735,29 @@ NOTE: PROCEDURE PRINT used (Total process time):
 NOTE: Deleting WORK._DUP_CHECK (memtype=DATA).
 NOTE: PROCEDURE DATASETS used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
-298        
-299        title2 'File = PresCat.Subsidy (where=(Subsidy_Info_Source="HUD/MFA"))';
-300        
-301        %Dup_check(
-302          data=PresCat.Subsidy (where=(Subsidy_Info_Source="HUD/MFA")),
-303          by=Subsidy_Info_Source_ID,
-304          id=nlihc_id contract_number Subsidy_Info_Source portfolio,
-305          out=_dup_check,
-306          listdups=Y,
-307          count=dup_check_count,
-308          quiet=N,
-309          debug=N
-310        )
+299        
+300        title2 'File = PresCat.Subsidy (where=(Subsidy_Info_Source=&Subsidy_Info_Source))';
+301        
+302        %Dup_check(
+303          data=PresCat.Subsidy (where=(Subsidy_Info_Source=&Subsidy_Info_Source)),
+304          by=Subsidy_Info_Source_ID,
+305          id=nlihc_id contract_number Subsidy_Info_Source portfolio,
+306          out=_dup_check,
+307          listdups=Y,
+308          count=dup_check_count,
+309          quiet=N,
+310          debug=N
+311        )
 MPRINT(DUP_CHECK):   options nomprint;
 NOTE: SAS threaded sort was used.
 NOTE: Table WORK._DUP_CHECK created, with 0 rows and 6 columns.
 
 NOTE: PROCEDURE SQL used (Total process time):
       real time           0.02 seconds
-      cpu time            0.00 seconds
+      cpu time            0.03 seconds
       
 
 NOTE: PROCEDURE SQL used (Total process time):
@@ -764,9 +766,9 @@ NOTE: PROCEDURE SQL used (Total process time):
       
 
 NOTE: [Dup_check] 0 duplicate observations found in data set PRESCAT.SUBSIDY (WHERE=(SUBSIDY_INFO_SOURCE="HUD/MFA"))
-NOTE: [Dup_check] for BY variables SUBSIDY_INFO_SOURCE_ID.
+17 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
-17 The SAS System                                                                              16:42 Saturday, July 11, 2015
+NOTE: [Dup_check] for BY variables SUBSIDY_INFO_SOURCE_ID.
 
 NOTE: No observations in data set WORK._DUP_CHECK.
 NOTE: PROCEDURE PRINT used (Total process time):
@@ -781,21 +783,21 @@ NOTE: PROCEDURE DATASETS used (Total process time):
       cpu time            0.00 seconds
       
 
-311        
-312        title2;
-313        
-314        ***** Update subsidy file *****;
-315        
-316        ** Prepare Catalog file for update **;
-317        
-318        data Subsidy_mfa Subsidy_other;
-319        
-320          set PresCat.Subsidy;
-321        
-322          if Subsidy_Info_Source="HUD/MFA" then output Subsidy_mfa;
-323          else output Subsidy_other;
-324        
-325        run;
+312        
+313        title2;
+314        
+315        ***** Update subsidy file *****;
+316        
+317        ** Prepare Catalog file for update **;
+318        
+319        data Subsidy_mfa Subsidy_other;
+320        
+321          set PresCat.Subsidy;
+322        
+323          if Subsidy_Info_Source=&Subsidy_Info_Source then output Subsidy_mfa;
+324          else output Subsidy_other;
+325        
+326        run;
 
 NOTE: There were 707 observations read from the data set PRESCAT.SUBSIDY.
 NOTE: The data set WORK.SUBSIDY_MFA has 121 observations and 17 variables.
@@ -809,12 +811,12 @@ NOTE: DATA statement used (Total process time):
       cpu time            0.01 seconds
       
 
-326        
-327        proc sort data=Subsidy_mfa;
-328          by Subsidy_Info_Source_ID;
-329        run;
+327        
+328        proc sort data=Subsidy_mfa;
+329          by Subsidy_Info_Source_ID;
+18 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
-18 The SAS System                                                                              16:42 Saturday, July 11, 2015
+330        run;
 
 NOTE: There were 121 observations read from the data set WORK.SUBSIDY_MFA.
 NOTE: SAS sort was used.
@@ -826,18 +828,18 @@ NOTE: PROCEDURE SORT used (Total process time):
       cpu time            0.01 seconds
       
 
-330        
-331        ** Perform update **;
-332        
-333        data Subsidy_mfa_update_a;
-334        
-335          update
-336            Subsidy_mfa Sec8MF_subsidy_update (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars);
-337          by Subsidy_Info_Source_ID;
-338        
-339          if missing( Subsidy_id ) then Subsidy_id = &NO_SUBSIDY_ID;
-340        
-341        run;
+331        
+332        ** Perform update **;
+333        
+334        data Subsidy_mfa_update_a;
+335        
+336          update
+337            Subsidy_mfa Sec8MF_subsidy_update (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars);
+338          by Subsidy_Info_Source_ID;
+339        
+340          if missing( Subsidy_id ) then Subsidy_id = &NO_SUBSIDY_ID;
+341        
+342        run;
 
 NOTE: Format $S8PGMNM was not found or could not be loaded.
 NOTE: There were 121 observations read from the data set WORK.SUBSIDY_MFA.
@@ -846,48 +848,48 @@ NOTE: The data set WORK.SUBSIDY_MFA_UPDATE_A has 121 observations and 20 variabl
 NOTE: Compressing data set WORK.SUBSIDY_MFA_UPDATE_A decreased size by 25.00 percent. 
       Compressed is 3 pages; un-compressed would require 4 pages.
 NOTE: DATA statement used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.00 seconds
+      real time           0.01 seconds
+      cpu time            0.01 seconds
       
 
-342        
-343        proc sort data=Subsidy_mfa_update_a;
-344          by Nlihc_id Subsidy_id poa_start poa_end;
-345        run;
+343        
+344        proc sort data=Subsidy_mfa_update_a;
+345          by Nlihc_id Subsidy_id poa_start poa_end;
+346        run;
 
 NOTE: There were 121 observations read from the data set WORK.SUBSIDY_MFA_UPDATE_A.
 NOTE: SAS sort was used.
 NOTE: The data set WORK.SUBSIDY_MFA_UPDATE_A has 121 observations and 20 variables.
 NOTE: Compressing data set WORK.SUBSIDY_MFA_UPDATE_A decreased size by 25.00 percent. 
       Compressed is 3 pages; un-compressed would require 4 pages.
+19 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
 NOTE: PROCEDURE SORT used (Total process time):
       real time           0.00 seconds
-19 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
-346        
-347        ** Add subsidy ID to new subsidy records **;
-348        
-349        data Subsidy_mfa_update_b;
-350        
-351          set Subsidy_mfa_update_a (in=in1) Subsidy_other;
-352          by nlihc_id Subsidy_id;
-353        
-354          retain Subsidy_id_ret;
-355        
-356          if first.nlihc_id then Subsidy_id_ret = 0;
-357        
-358          if Subsidy_id = &NO_SUBSIDY_ID then Subsidy_id = Subsidy_id_ret + 1;
-359        
-360          Subsidy_id_ret = Subsidy_id;
-361        
-362          if in1 then output;
-363        
-364          drop Subsidy_id_ret &Subsidy_missing_info_vars;
-365        
-366        run;
+347        
+348        ** Add subsidy ID to new subsidy records **;
+349        
+350        data Subsidy_mfa_update_b;
+351        
+352          set Subsidy_mfa_update_a (in=in1) Subsidy_other;
+353          by nlihc_id Subsidy_id;
+354        
+355          retain Subsidy_id_ret;
+356        
+357          if first.nlihc_id then Subsidy_id_ret = 0;
+358        
+359          if Subsidy_id = &NO_SUBSIDY_ID then Subsidy_id = Subsidy_id_ret + 1;
+360        
+361          Subsidy_id_ret = Subsidy_id;
+362        
+363          if in1 then output;
+364        
+365          drop Subsidy_id_ret &Subsidy_missing_info_vars;
+366        
+367        run;
 
 NOTE: Format $S8PGMNM was not found or could not be loaded.
 NOTE: There were 121 observations read from the data set WORK.SUBSIDY_MFA_UPDATE_A.
@@ -900,18 +902,18 @@ NOTE: DATA statement used (Total process time):
       cpu time            0.01 seconds
       
 
-367        
-368        /*
-369        proc compare base=Subsidy_mfa_update_a compare=Subsidy_mfa_update_b maxprint=(40,32000);
-370        run;
-371        */
-372        
+368        
+369        /*
+370        proc compare base=Subsidy_mfa_update_a compare=Subsidy_mfa_update_b maxprint=(40,32000);
+371        run;
+372        */
 373        
-374        ***** Summarize update changes *****;
-375        
-376        %file_info( data=Subsidy_mfa_update_b, freqvars=Subsidy_Info_Source_Date Update_Dtm )
-20 The SAS System                                                                              16:42 Saturday, July 11, 2015
+374        
+375        ***** Summarize update changes *****;
+20 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
+376        
+377        %file_info( data=Subsidy_mfa_update_b, freqvars=Subsidy_Info_Source_Date Update_Dtm )
 MPRINT(FILE_INFO):   title2 "File = Subsidy_mfa_update_b";
 MPRINT(FILE_INFO):   proc contents data=Subsidy_mfa_update_b;
 MPRINT(FILE_INFO):   run;
@@ -930,7 +932,7 @@ NOTE: There were 10 observations read from the data set WORK.SUBSIDY_MFA_UPDATE_
 NOTE: The PROCEDURE PRINT printed page 9.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
 MPRINT(FILE_INFO):   title3;
@@ -942,7 +944,7 @@ NOTE: Multiple concurrent threads will be used to summarize data.
 NOTE: There were 121 observations read from the data set WORK.SUBSIDY_MFA_UPDATE_B.
 NOTE: The PROCEDURE MEANS printed page 10.
 NOTE: PROCEDURE MEANS used (Total process time):
-      real time           0.00 seconds
+      real time           0.01 seconds
       cpu time            0.01 seconds
       
 
@@ -955,16 +957,16 @@ NOTE: There were 121 observations read from the data set WORK.SUBSIDY_MFA_UPDATE
 NOTE: The PROCEDURE FREQ printed page 11.
 NOTE: PROCEDURE FREQ used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
+21 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
       
 
-21 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
 MPRINT(FILE_INFO):   title2;
-377        
-378        proc sort data=Subsidy_mfa;
-379          by nlihc_id Subsidy_ID;
-380        
+378        
+379        proc sort data=Subsidy_mfa;
+380          by nlihc_id Subsidy_ID;
+381        
 
 NOTE: There were 121 observations read from the data set WORK.SUBSIDY_MFA.
 NOTE: SAS sort was used.
@@ -973,12 +975,12 @@ NOTE: Compressing data set WORK.SUBSIDY_MFA decreased size by 0.00 percent.
       Compressed is 3 pages; un-compressed would require 3 pages.
 NOTE: PROCEDURE SORT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
-381        proc sort data=Subsidy_mfa_update_b;
-382          by nlihc_id Subsidy_ID;
-383        
+382        proc sort data=Subsidy_mfa_update_b;
+383          by nlihc_id Subsidy_ID;
+384        
 
 NOTE: There were 121 observations read from the data set WORK.SUBSIDY_MFA_UPDATE_B.
 NOTE: SAS sort was used.
@@ -987,75 +989,75 @@ NOTE: Compressing data set WORK.SUBSIDY_MFA_UPDATE_B decreased size by 0.00 perc
       Compressed is 3 pages; un-compressed would require 3 pages.
 NOTE: PROCEDURE SORT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
-384        proc compare base=Subsidy_mfa compare=Subsidy_mfa_update_b
-385            listall /*outnoequal*/ outbase outcomp outdif maxprint=(40,32000)
-386            out=Update_subsidy_result (rename=(_type_=comp_type));
-387          id nlihc_id Subsidy_ID Subsidy_Info_Source_ID;
-388          var Units_Assist POA_start POA_end Compl_end
-389            rent_to_FMR_description Subsidy_Active
-390            Program;
-391        run;
+385        proc compare base=Subsidy_mfa compare=Subsidy_mfa_update_b
+386            listall /*outnoequal*/ outbase outcomp outdif maxprint=(40,32000)
+387            out=Update_subsidy_result (rename=(_type_=comp_type));
+388          id nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_Date Subsidy_Info_Source_ID Update_Dtm;
+389          var Units_Assist POA_start POA_end Compl_end
+390            rent_to_FMR_description Subsidy_Active
+391            Program;
+392        run;
 
 NOTE: There were 121 observations read from the data set WORK.SUBSIDY_MFA.
 NOTE: There were 121 observations read from the data set WORK.SUBSIDY_MFA_UPDATE_B.
-NOTE: The data set WORK.UPDATE_SUBSIDY_RESULT has 363 observations and 12 variables.
+NOTE: The data set WORK.UPDATE_SUBSIDY_RESULT has 253 observations and 15 variables.
 NOTE: Compressing data set WORK.UPDATE_SUBSIDY_RESULT decreased size by 33.33 percent. 
-      Compressed is 6 pages; un-compressed would require 9 pages.
-NOTE: The PROCEDURE COMPARE printed pages 12-17.
-NOTE: PROCEDURE COMPARE used (Total process time):
-22 The SAS System                                                                              16:42 Saturday, July 11, 2015
+      Compressed is 4 pages; un-compressed would require 6 pages.
+22 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
+NOTE: The PROCEDURE COMPARE printed pages 12-35.
+NOTE: PROCEDURE COMPARE used (Total process time):
       real time           0.01 seconds
       cpu time            0.01 seconds
       
 
-392        
-393        proc print data=Update_subsidy_result (obs=20) noobs;
-394          id nlihc_id Subsidy_ID;
-395          title2 'File = Update_subsidy_result';
-396        run;
+393        
+394        proc print data=Update_subsidy_result (obs=20) noobs;
+395          id nlihc_id Subsidy_ID;
+396          title2 'File = Update_subsidy_result';
+397        run;
 
 NOTE: There were 20 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
-NOTE: The PROCEDURE PRINT printed pages 18-19.
+NOTE: The PROCEDURE PRINT printed pages 36-37.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
-397        
-398        title2;
-399        
-400        ** Formatted compare output **;
-401        
-402        %Super_transpose(
-403          data=Update_subsidy_result,
-404          out=Update_subsidy_result_tr,
-405          var=Units_Assist POA_start POA_end Compl_end
-406            rent_to_FMR_description Subsidy_Active
-407            Program,
-408          id=comp_type,
-409          by=nlihc_id Subsidy_ID Subsidy_Info_Source_ID,
-410          mprint=N
-411        )
+398        
+399        title2;
+400        
+401        ** Formatted compare output **;
+402        
+403        %Super_transpose(
+404          data=Update_subsidy_result,
+405          out=Update_subsidy_result_tr,
+406          var=Units_Assist POA_start POA_end Compl_end
+407            rent_to_FMR_description Subsidy_Active
+408            Program,
+409          id=comp_type,
+410          by=nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_Date Subsidy_Info_Source_ID Update_Dtm,
+411          mprint=N
+412        )
 NOTE: [Super_transpose] Macro starting.
 NOTE: [Push_option] System option MPRINT saved.
 MPRINT(SUPER_TRANSPOSE):   options nomprint;
 
 NOTE: Multiple concurrent threads will be used to summarize data.
-NOTE: There were 363 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
+NOTE: There were 253 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
 NOTE: The data set WORK._ST_IDVALS has 3 observations and 1 variables.
 NOTE: PROCEDURE SUMMARY used (Total process time):
       real time           0.01 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
+
+23 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
 
 NOTE: There were 3 observations read from the data set WORK._ST_IDVALS.
-23 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
 NOTE: DATA statement used (Total process time):
       real time           0.00 seconds
       cpu time            0.01 seconds
@@ -1070,10 +1072,10 @@ NOTE: DATA statement used (Total process time):
       
 
 
-NOTE: There were 363 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
-NOTE: The data set WORK._ST_UNITS_ASSIST has 121 observations and 6 variables.
-NOTE: Compressing data set WORK._ST_UNITS_ASSIST increased size by 50.00 percent. 
-      Compressed is 3 pages; un-compressed would require 2 pages.
+NOTE: There were 253 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
+NOTE: The data set WORK._ST_UNITS_ASSIST has 231 observations and 9 variables.
+NOTE: Compressing data set WORK._ST_UNITS_ASSIST decreased size by 20.00 percent. 
+      Compressed is 4 pages; un-compressed would require 5 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
       real time           0.01 seconds
       cpu time            0.01 seconds
@@ -1087,29 +1089,10 @@ NOTE: DATA statement used (Total process time):
       
 
 
-NOTE: There were 363 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
-NOTE: The data set WORK._ST_POA_START has 121 observations and 6 variables.
-NOTE: Compressing data set WORK._ST_POA_START increased size by 50.00 percent. 
-      Compressed is 3 pages; un-compressed would require 2 pages.
-NOTE: PROCEDURE TRANSPOSE used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.00 seconds
-      
-
-
-NOTE: There were 1 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
-NOTE: DATA statement used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.00 seconds
-      
-24 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
-
-
-NOTE: There were 363 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
-NOTE: The data set WORK._ST_POA_END has 121 observations and 6 variables.
-NOTE: Compressing data set WORK._ST_POA_END increased size by 50.00 percent. 
-      Compressed is 3 pages; un-compressed would require 2 pages.
+NOTE: There were 253 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
+NOTE: The data set WORK._ST_POA_START has 231 observations and 9 variables.
+NOTE: Compressing data set WORK._ST_POA_START decreased size by 20.00 percent. 
+      Compressed is 4 pages; un-compressed would require 5 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
       real time           0.01 seconds
       cpu time            0.01 seconds
@@ -1119,14 +1102,33 @@ NOTE: PROCEDURE TRANSPOSE used (Total process time):
 NOTE: There were 1 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
 NOTE: DATA statement used (Total process time):
       real time           0.00 seconds
+24 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
       cpu time            0.00 seconds
       
 
 
-NOTE: There were 363 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
-NOTE: The data set WORK._ST_COMPL_END has 121 observations and 6 variables.
-NOTE: Compressing data set WORK._ST_COMPL_END increased size by 50.00 percent. 
-      Compressed is 3 pages; un-compressed would require 2 pages.
+NOTE: There were 253 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
+NOTE: The data set WORK._ST_POA_END has 231 observations and 9 variables.
+NOTE: Compressing data set WORK._ST_POA_END decreased size by 20.00 percent. 
+      Compressed is 4 pages; un-compressed would require 5 pages.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 1 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 253 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
+NOTE: The data set WORK._ST_COMPL_END has 231 observations and 9 variables.
+NOTE: Compressing data set WORK._ST_COMPL_END decreased size by 20.00 percent. 
+      Compressed is 4 pages; un-compressed would require 5 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
       real time           0.01 seconds
       cpu time            0.00 seconds
@@ -1140,17 +1142,17 @@ NOTE: DATA statement used (Total process time):
       
 
 
-NOTE: There were 363 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
-NOTE: The data set WORK._ST_RENT_TO_FMR_DESCRIPTION has 121 observations and 6 variables.
-NOTE: Compressing data set WORK._ST_RENT_TO_FMR_DESCRIPTION decreased size by 0.00 percent. 
-      Compressed is 3 pages; un-compressed would require 3 pages.
+NOTE: There were 253 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
+NOTE: The data set WORK._ST_RENT_TO_FMR_DESCRIPTION has 231 observations and 9 variables.
+NOTE: Compressing data set WORK._ST_RENT_TO_FMR_DESCRIPTION decreased size by 40.00 percent. 
+      Compressed is 3 pages; un-compressed would require 5 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
       real time           0.01 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
+25 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
 
-25 The SAS System                                                                              16:42 Saturday, July 11, 2015
 
 NOTE: There were 1 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
 NOTE: DATA statement used (Total process time):
@@ -1159,10 +1161,10 @@ NOTE: DATA statement used (Total process time):
       
 
 
-NOTE: There were 363 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
-NOTE: The data set WORK._ST_SUBSIDY_ACTIVE has 121 observations and 6 variables.
+NOTE: There were 253 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
+NOTE: The data set WORK._ST_SUBSIDY_ACTIVE has 231 observations and 9 variables.
 NOTE: Compressing data set WORK._ST_SUBSIDY_ACTIVE decreased size by 0.00 percent. 
-      Compressed is 3 pages; un-compressed would require 3 pages.
+      Compressed is 4 pages; un-compressed would require 4 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
       real time           0.01 seconds
       cpu time            0.01 seconds
@@ -1176,140 +1178,140 @@ NOTE: DATA statement used (Total process time):
       
 
 
-NOTE: There were 363 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
-NOTE: The data set WORK._ST_PROGRAM has 121 observations and 6 variables.
-NOTE: Compressing data set WORK._ST_PROGRAM decreased size by 0.00 percent. 
-      Compressed is 3 pages; un-compressed would require 3 pages.
+NOTE: There were 253 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
+NOTE: The data set WORK._ST_PROGRAM has 231 observations and 9 variables.
+NOTE: Compressing data set WORK._ST_PROGRAM decreased size by 40.00 percent. 
+      Compressed is 3 pages; un-compressed would require 5 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
       real time           0.01 seconds
       cpu time            0.01 seconds
       
 
 
-NOTE: There were 121 observations read from the data set WORK._ST_UNITS_ASSIST.
-NOTE: There were 121 observations read from the data set WORK._ST_POA_START.
-NOTE: There were 121 observations read from the data set WORK._ST_POA_END.
-NOTE: There were 121 observations read from the data set WORK._ST_COMPL_END.
-NOTE: There were 121 observations read from the data set WORK._ST_RENT_TO_FMR_DESCRIPTION.
-NOTE: There were 121 observations read from the data set WORK._ST_SUBSIDY_ACTIVE.
-NOTE: There were 121 observations read from the data set WORK._ST_PROGRAM.
-NOTE: The data set WORK.UPDATE_SUBSIDY_RESULT_TR has 121 observations and 24 variables.
-NOTE: Compressing data set WORK.UPDATE_SUBSIDY_RESULT_TR decreased size by 25.00 percent. 
-      Compressed is 3 pages; un-compressed would require 4 pages.
+NOTE: There were 231 observations read from the data set WORK._ST_UNITS_ASSIST.
+NOTE: There were 231 observations read from the data set WORK._ST_POA_START.
+NOTE: There were 231 observations read from the data set WORK._ST_POA_END.
+NOTE: There were 231 observations read from the data set WORK._ST_COMPL_END.
+NOTE: There were 231 observations read from the data set WORK._ST_RENT_TO_FMR_DESCRIPTION.
+NOTE: There were 231 observations read from the data set WORK._ST_SUBSIDY_ACTIVE.
+NOTE: There were 231 observations read from the data set WORK._ST_PROGRAM.
+NOTE: The data set WORK.UPDATE_SUBSIDY_RESULT_TR has 231 observations and 27 variables.
+NOTE: Compressing data set WORK.UPDATE_SUBSIDY_RESULT_TR decreased size by 42.86 percent. 
+      Compressed is 4 pages; un-compressed would require 7 pages.
+26 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
 NOTE: DATA statement used (Total process time):
       real time           0.02 seconds
-26 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
       cpu time            0.03 seconds
       
 
 NOTE: [Pop_option] System option MPRINT restored.
 NOTE: [Super_transpose] Macro exiting.
-412        
-413        %file_info( data=Update_subsidy_result_tr, printobs=10, stats= )
+413        
+414        %file_info( data=Update_subsidy_result_tr, printobs=10, stats= )
 MPRINT(FILE_INFO):   title2 "File = Update_subsidy_result_tr";
 MPRINT(FILE_INFO):   proc contents data=Update_subsidy_result_tr;
 MPRINT(FILE_INFO):   run;
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
-NOTE: The PROCEDURE CONTENTS printed pages 20-21.
+NOTE: The PROCEDURE CONTENTS printed pages 38-39.
 
 MPRINT(FILE_INFO):   proc print data=Update_subsidy_result_tr (obs=10);
 MPRINT(FILE_INFO):   title3 "Printing first 10 obs.";
 MPRINT(FILE_INFO):   run;
 
 NOTE: There were 10 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT_TR.
-NOTE: The PROCEDURE PRINT printed pages 22-23.
+NOTE: The PROCEDURE PRINT printed pages 40-41.
 NOTE: PROCEDURE PRINT used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.00 seconds
-      
-
-MPRINT(FILE_INFO):   title3;
-MPRINT(FILE_INFO):   title2;
-414        
-415        
-416        ******** Apply exception file ************;
-417        
-418        data Subsidy_mfa_except;
-419        
-420          update Subsidy_mfa_update_b (in=in1) Subsidy_except_test_norm /*(drop=Except_:)*/;
-421          by nlihc_id Subsidy_ID;
-422        
-423          if in1;
-424        
-425        run;
-
-NOTE: There were 121 observations read from the data set WORK.SUBSIDY_MFA_UPDATE_B.
-NOTE: There were 5 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST_NORM.
-NOTE: The data set WORK.SUBSIDY_MFA_EXCEPT has 121 observations and 17 variables.
-27 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
-NOTE: Compressing data set WORK.SUBSIDY_MFA_EXCEPT decreased size by 0.00 percent. 
-      Compressed is 3 pages; un-compressed would require 3 pages.
-NOTE: DATA statement used (Total process time):
       real time           0.00 seconds
       cpu time            0.01 seconds
       
 
-426        
-427        %File_info( data=Subsidy_mfa_except, printobs=10, stats= )
+MPRINT(FILE_INFO):   title3;
+MPRINT(FILE_INFO):   title2;
+415        
+416        
+417        ******** Apply exception file ************;
+418        
+419        data Subsidy_mfa_except;
+420        
+421          update Subsidy_mfa_update_b (in=in1) Subsidy_except_test_norm /*(drop=Except_:)*/;
+422          by nlihc_id Subsidy_ID;
+423        
+424          if in1;
+425        
+426        run;
+
+NOTE: There were 121 observations read from the data set WORK.SUBSIDY_MFA_UPDATE_B.
+27 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
+NOTE: There were 5 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST_NORM.
+NOTE: The data set WORK.SUBSIDY_MFA_EXCEPT has 121 observations and 17 variables.
+NOTE: Compressing data set WORK.SUBSIDY_MFA_EXCEPT decreased size by 0.00 percent. 
+      Compressed is 3 pages; un-compressed would require 3 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+427        
+428        %File_info( data=Subsidy_mfa_except, printobs=10, stats= )
 MPRINT(FILE_INFO):   title2 "File = Subsidy_mfa_except";
 MPRINT(FILE_INFO):   proc contents data=Subsidy_mfa_except;
 MPRINT(FILE_INFO):   run;
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
-NOTE: The PROCEDURE CONTENTS printed page 24.
+NOTE: The PROCEDURE CONTENTS printed page 42.
 
 MPRINT(FILE_INFO):   proc print data=Subsidy_mfa_except (obs=10);
 MPRINT(FILE_INFO):   title3 "Printing first 10 obs.";
 MPRINT(FILE_INFO):   run;
 
 NOTE: There were 10 observations read from the data set WORK.SUBSIDY_MFA_EXCEPT.
-NOTE: The PROCEDURE PRINT printed page 25.
+NOTE: The PROCEDURE PRINT printed page 43.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 MPRINT(FILE_INFO):   title3;
 MPRINT(FILE_INFO):   title2;
-428        
-429        /*
-430        proc print data=Subsidy_mfa_except;
-431          where nlihc_id in ( 'NL000001' );
-432          id nlihc_id subsidy_id;
-433          title2 "File = Subsidy_mfa_except";
-434        run;
-435        title2;
-436        */
-437        
-438        /*
-439        proc compare base=Subsidy_mfa_update_b compare=Subsidy_mfa_except
-440            listall outnoequal outbase outcomp outdif maxprint=(40,32000)
-441            out=Update_except (rename=(_type_=comp_type));
-28 The SAS System                                                                              16:42 Saturday, July 11, 2015
+429        
+430        /*
+431        proc print data=Subsidy_mfa_except;
+432          where nlihc_id in ( 'NL000001' );
+433          id nlihc_id subsidy_id;
+434          title2 "File = Subsidy_mfa_except";
+435        run;
+436        title2;
+437        */
+438        
+439        /*
+440        proc compare base=Subsidy_mfa_update_b compare=Subsidy_mfa_except
+28 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
-442          id nlihc_id Subsidy_ID;
-443          var Units_Assist POA_start POA_end Compl_end
-444            rent_to_FMR_description Subsidy_Active
-445            Program;
-446        run;
-447        */
-448        
-449        data Subsidy_except_test_b;
-450        
-451          set Subsidy_except_test_norm;
-452        
-453          retain comp_type 'EXCEPT';
-454        
-455        run;
+441            listall outnoequal outbase outcomp outdif maxprint=(40,32000)
+442            out=Update_except (rename=(_type_=comp_type));
+443          id nlihc_id Subsidy_ID;
+444          var Units_Assist POA_start POA_end Compl_end
+445            rent_to_FMR_description Subsidy_Active
+446            Program;
+447        run;
+448        */
+449        
+450        data Subsidy_except_test_b;
+451        
+452          set Subsidy_except_test_norm;
+453        
+454          retain comp_type 'EXCEPT';
+455        
+456        run;
 
 NOTE: There were 5 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST_NORM.
 NOTE: The data set WORK.SUBSIDY_EXCEPT_TEST_B has 5 observations and 12 variables.
@@ -1317,39 +1319,39 @@ NOTE: Compressing data set WORK.SUBSIDY_EXCEPT_TEST_B increased size by 100.00 p
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: DATA statement used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
-456        
-457        proc print data=Subsidy_except_test_b (obs=10) noobs;
-458          id nlihc_id Subsidy_ID;
-459          title2 'File = Subsidy_except_test_b';
-460        run;
+457        
+458        proc print data=Subsidy_except_test_b (obs=10) noobs;
+459          id nlihc_id Subsidy_ID;
+460          title2 'File = Subsidy_except_test_b';
+461        run;
 
 NOTE: There were 5 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST_B.
-NOTE: The PROCEDURE PRINT printed page 26.
+NOTE: The PROCEDURE PRINT printed page 44.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
       cpu time            0.00 seconds
       
 
-461        
-462        title2;
-463        
-464        ** Formatted compare output **;
-465        
-466        %Super_transpose(
-467          data=Subsidy_except_test_b,
-468          out=Update_except_tr,
-469          var=Units_Assist POA_start POA_end Compl_end
-29 The SAS System                                                                              16:42 Saturday, July 11, 2015
+462        
+463        title2;
+464        
+465        ** Formatted compare output **;
+466        
+467        %Super_transpose(
+468          data=Subsidy_except_test_b,
+29 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
-470            rent_to_FMR_description Subsidy_Active
-471            Program,
-472          id=comp_type,
-473          by=nlihc_id Subsidy_ID /*Subsidy_Info_Source_ID*/,
-474          mprint=N
-475        )
+469          out=Update_except_tr,
+470          var=Units_Assist POA_start POA_end Compl_end
+471            rent_to_FMR_description Subsidy_Active
+472            Program,
+473          id=comp_type,
+474          by=nlihc_id Subsidy_ID /*Subsidy_Info_Source_ID*/,
+475          mprint=N
+476        )
 NOTE: [Super_transpose] Macro starting.
 NOTE: [Push_option] System option MPRINT saved.
 MPRINT(SUPER_TRANSPOSE):   options nomprint;
@@ -1374,7 +1376,7 @@ idvals=  EXCEPT
 NOTE: There were 1 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST_B.
 NOTE: DATA statement used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
 
@@ -1384,14 +1386,14 @@ NOTE: Compressing data set WORK._ST_UNITS_ASSIST increased size by 100.00 percen
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 
+30 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
 NOTE: There were 1 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST_B.
 NOTE: DATA statement used (Total process time):
-30 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
       real time           0.00 seconds
       cpu time            0.00 seconds
       
@@ -1420,7 +1422,7 @@ NOTE: Compressing data set WORK._ST_POA_END increased size by 100.00 percent.
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
 
@@ -1436,10 +1438,10 @@ NOTE: The data set WORK._ST_COMPL_END has 5 observations and 3 variables.
 NOTE: Compressing data set WORK._ST_COMPL_END increased size by 100.00 percent. 
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
+31 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
       real time           0.00 seconds
       cpu time            0.00 seconds
-31 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
       
 
 
@@ -1456,7 +1458,7 @@ NOTE: Compressing data set WORK._ST_RENT_TO_FMR_DESCRIPTION increased size by 10
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 
@@ -1473,26 +1475,26 @@ NOTE: Compressing data set WORK._ST_SUBSIDY_ACTIVE increased size by 100.00 perc
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 
 NOTE: There were 1 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST_B.
 NOTE: DATA statement used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
 
+32 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
 NOTE: There were 5 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST_B.
 NOTE: The data set WORK._ST_PROGRAM has 5 observations and 3 variables.
-32 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
 NOTE: Compressing data set WORK._ST_PROGRAM increased size by 100.00 percent. 
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.01 seconds
+      real time           0.00 seconds
+      cpu time            0.00 seconds
       
 
 
@@ -1508,115 +1510,115 @@ NOTE: Compressing data set WORK.UPDATE_EXCEPT_TR increased size by 100.00 percen
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: DATA statement used (Total process time):
       real time           0.02 seconds
-      cpu time            0.01 seconds
+      cpu time            0.03 seconds
       
 
 NOTE: [Pop_option] System option MPRINT restored.
 NOTE: [Super_transpose] Macro exiting.
-476        
-477        %file_info( data=Update_except_tr, printobs=10, stats= )
+477        
+478        %file_info( data=Update_except_tr, printobs=10, stats= )
 MPRINT(FILE_INFO):   title2 "File = Update_except_tr";
 MPRINT(FILE_INFO):   proc contents data=Update_except_tr;
 MPRINT(FILE_INFO):   run;
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
-NOTE: The PROCEDURE CONTENTS printed page 27.
+NOTE: The PROCEDURE CONTENTS printed page 45.
 
 MPRINT(FILE_INFO):   proc print data=Update_except_tr (obs=10);
 MPRINT(FILE_INFO):   title3 "Printing first 10 obs.";
 MPRINT(FILE_INFO):   run;
 
 NOTE: There were 5 observations read from the data set WORK.UPDATE_EXCEPT_TR.
-NOTE: The PROCEDURE PRINT printed page 28.
+NOTE: The PROCEDURE PRINT printed page 46.
 NOTE: PROCEDURE PRINT used (Total process time):
+33 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
       real time           0.00 seconds
       cpu time            0.00 seconds
-33 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
       
 
 MPRINT(FILE_INFO):   title3;
 MPRINT(FILE_INFO):   title2;
-478        
-479        ** Combine update and exception changes **;
-480        
-481        data Update_subsidy_result_except_tr;
-482        
-483          merge Update_subsidy_result_tr Update_except_tr;
-484          by nlihc_id subsidy_id;
-485        
-486          ** Convert DIF for char vars to missing if no differences **;
-487        
-488          array charvars{*} rent_to_FMR_description_DIF Program_DIF;
-489        
-490          do i = 1 to dim( charvars );
-491            charvars{i} = compress( charvars{i}, '.' );
-492          end;
-493        
-494          ** Add category codes for report **;
-495        
-496          length Category_code $ 1;
-497        
-498          Category_code = put( nlihc_id, $nlihcid2cat. );
-499        
-500          format Category_code $categry.;
-501        
-502        run;
+479        
+480        ** Combine update and exception changes **;
+481        
+482        data Update_subsidy_result_except_tr;
+483        
+484          merge Update_subsidy_result_tr Update_except_tr;
+485          by nlihc_id subsidy_id;
+486        
+487          ** Convert DIF for char vars to missing if no differences **;
+488        
+489          array charvars{*} rent_to_FMR_description_DIF Program_DIF;
+490        
+491          do i = 1 to dim( charvars );
+492            charvars{i} = compress( charvars{i}, '.' );
+493          end;
+494        
+495          ** Add category codes for report **;
+496        
+497          length Category_code $ 1;
+498        
+499          Category_code = put( nlihc_id, $nlihcid2cat. );
+500        
+501          format Category_code $categry.;
+502        
+503        run;
 
-NOTE: There were 121 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT_TR.
+NOTE: There were 231 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT_TR.
 NOTE: There were 5 observations read from the data set WORK.UPDATE_EXCEPT_TR.
-NOTE: The data set WORK.UPDATE_SUBSIDY_RESULT_EXCEPT_TR has 121 observations and 33 variables.
-NOTE: Compressing data set WORK.UPDATE_SUBSIDY_RESULT_EXCEPT_TR decreased size by 40.00 percent. 
-      Compressed is 3 pages; un-compressed would require 5 pages.
+NOTE: The data set WORK.UPDATE_SUBSIDY_RESULT_EXCEPT_TR has 231 observations and 36 variables.
+NOTE: Compressing data set WORK.UPDATE_SUBSIDY_RESULT_EXCEPT_TR decreased size by 44.44 percent. 
+      Compressed is 5 pages; un-compressed would require 9 pages.
 NOTE: DATA statement used (Total process time):
       real time           0.01 seconds
       cpu time            0.01 seconds
       
 
-503        
-504        proc print data=Update_subsidy_result_except_tr;
-505          where nlihc_id in ( 'NL000001' );
-506          id nlihc_id subsidy_id;
-507          title2 "File = Update_subsidy_result_except_tr";
-508        run;
-34 The SAS System                                                                              16:42 Saturday, July 11, 2015
+504        
+505        proc print data=Update_subsidy_result_except_tr;
+506          where nlihc_id in ( 'NL000001' );
+507          id nlihc_id subsidy_id;
+34 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
+508          title2 "File = Update_subsidy_result_except_tr";
+509        run;
 
-NOTE: There were 2 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT_EXCEPT_TR.
+NOTE: There were 4 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT_EXCEPT_TR.
       WHERE nlihc_id='NL000001';
-NOTE: The PROCEDURE PRINT printed page 29.
+NOTE: The PROCEDURE PRINT printed page 47.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
       cpu time            0.01 seconds
       
 
-509        title2;
-510        
+510        title2;
 511        
-512        ** Recombine with other subsidy data **;
-513        
-514        data /**TEMP LIB**/PRESCAT.Subsidy_Update_&Update_file;
-515        
-516          set Subsidy_mfa_except Subsidy_other;
-517          by nlihc_id Subsidy_id;
-518        
-519          where not( missing( nlihc_id ) );
-520        
-521          ** Subsidy portfolio **;
-522        
-523          length Portfolio $ 16;
-524        
-525          Portfolio = put( Program, $progtoportfolio. );
-526        
-527          if missing( Portfolio ) then do;
-528            %warn_put( msg="Missing subsidy portfolio: " _n_= nlihc_id= subsidy_id= Program= )
+512        
+513        ** Recombine with other subsidy data **;
+514        
+515        data /**TEMP LIB**/PRESCAT.Subsidy_Update_&Update_file;
+516        
+517          set Subsidy_mfa_except Subsidy_other;
+518          by nlihc_id Subsidy_id;
+519        
+520          where not( missing( nlihc_id ) );
+521        
+522          ** Subsidy portfolio **;
+523        
+524          length Portfolio $ 16;
+525        
+526          Portfolio = put( Program, $progtoportfolio. );
+527        
+528          if missing( Portfolio ) then do;
+529            %warn_put( msg="Missing subsidy portfolio: " _n_= nlihc_id= subsidy_id= Program= )
 MPRINT(WARN_PUT):   put "WARN" "ING:" " " "Missing subsidy portfolio: " _n_= nlihc_id= subsidy_id= Program=;
-529          end;
-530        
-531        run;
+530          end;
+531        
+532        run;
 
 NOTE: There were 121 observations read from the data set WORK.SUBSIDY_MFA_EXCEPT.
       WHERE not MISSING(nlihc_id);
@@ -1628,12 +1630,12 @@ NOTE: Compressing data set PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11 decreased size 
 NOTE: DATA statement used (Total process time):
       real time           0.01 seconds
       cpu time            0.01 seconds
+35 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
       
 
-35 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
-532        
-533        %File_info( data=/**TEMP LIB**/PRESCAT.Subsidy_Update_&Update_file )
+533        
+534        %File_info( data=/**TEMP LIB**/PRESCAT.Subsidy_Update_&Update_file )
 MPRINT(FILE_INFO):   title2 "File = PRESCAT.Subsidy_Update_Sec8mf_2014_11";
 MPRINT(FILE_INFO):   proc contents data=PRESCAT.Subsidy_Update_Sec8mf_2014_11;
 MPRINT(FILE_INFO):   run;
@@ -1642,17 +1644,17 @@ NOTE: PROCEDURE CONTENTS used (Total process time):
       real time           0.00 seconds
       cpu time            0.00 seconds
       
-NOTE: The PROCEDURE CONTENTS printed page 30.
+NOTE: The PROCEDURE CONTENTS printed page 48.
 
 MPRINT(FILE_INFO):   proc print data=PRESCAT.Subsidy_Update_Sec8mf_2014_11 (obs=10);
 MPRINT(FILE_INFO):   title3 "Printing first 10 obs.";
 MPRINT(FILE_INFO):   run;
 
 NOTE: There were 10 observations read from the data set PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11.
-NOTE: The PROCEDURE PRINT printed pages 31-33.
+NOTE: The PROCEDURE PRINT printed pages 49-51.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 MPRINT(FILE_INFO):   title3;
@@ -1662,7 +1664,7 @@ MPRINT(FILE_INFO):   run;
 
 NOTE: Multiple concurrent threads will be used to summarize data.
 NOTE: There were 707 observations read from the data set PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11.
-NOTE: The PROCEDURE MEANS printed page 34.
+NOTE: The PROCEDURE MEANS printed page 52.
 NOTE: PROCEDURE MEANS used (Total process time):
       real time           0.01 seconds
       cpu time            0.00 seconds
@@ -1670,75 +1672,75 @@ NOTE: PROCEDURE MEANS used (Total process time):
 
 MPRINT(FILE_INFO):   options label;
 MPRINT(FILE_INFO):   title2;
-534        
-535        proc print data=/**TEMP LIB**/PRESCAT.Subsidy_Update_&Update_file;
-536          where nlihc_id in ( "NL001030", "NL001031", "NL001032", "NL001033" );
-537          by nlihc_id;
-538          id subsidy_id;
-539          title2 "File = Subsidy_Update_&Update_file";
-540        run;
+535        
+536        proc print data=/**TEMP LIB**/PRESCAT.Subsidy_Update_&Update_file;
+537          where nlihc_id in ( "NL001030", "NL001031", "NL001032", "NL001033" );
+538          by nlihc_id;
+539          id subsidy_id;
+540          title2 "File = Subsidy_Update_&Update_file";
+36 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
-36 The SAS System                                                                              16:42 Saturday, July 11, 2015
+541        run;
 
 NOTE: There were 1 observations read from the data set PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11.
       WHERE nlihc_id in ('NL001030', 'NL001031', 'NL001032', 'NL001033');
-NOTE: The PROCEDURE PRINT printed page 35.
+NOTE: The PROCEDURE PRINT printed page 53.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
-541        title2;
-542        
-543        proc compare base=PresCat.Subsidy compare=/**TEMP LIB**/PRESCAT.Subsidy_Update_&Update_file maxprint=(40,32000)
-543      ! listall;
-544          id nlihc_id subsidy_id;
-545          /*
-546          var Units_Assist POA_start POA_end
-547            rent_to_FMR_description Subsidy_Active
-548            Program;
-549          */
-550        run;
+542        title2;
+543        
+544        proc compare base=PresCat.Subsidy compare=/**TEMP LIB**/PRESCAT.Subsidy_Update_&Update_file maxprint=(40,32000)
+544      ! listall;
+545          id nlihc_id subsidy_id;
+546          /*
+547          var Units_Assist POA_start POA_end
+548            rent_to_FMR_description Subsidy_Active
+549            Program;
+550          */
+551        run;
 
 NOTE: There were 707 observations read from the data set PRESCAT.SUBSIDY.
 NOTE: There were 707 observations read from the data set PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11.
 NOTE: At least one W.D format was too small for the number to be printed. The decimal may be shifted by the "BEST" format.
-NOTE: The PROCEDURE COMPARE printed pages 36-45.
+NOTE: The PROCEDURE COMPARE printed pages 54-63.
 NOTE: PROCEDURE COMPARE used (Total process time):
       real time           0.01 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
-551        
 552        
-553        ***** Write final file *****;
-554        
-555        ** Archive past Catalog datasets before updating **;
-556        
+553        
+554        ***** Write final file *****;
+555        
+556        ** Archive past Catalog datasets before updating **;
 557        
-558        ***options mprint symbolgen mlogic;
-559        
-560        /*** SKIP FOR NOW ***%Archive_catalog_data( data=Project Subsidy Update_history, zip_pre=Update_&Update_file,
-560      ! zip_suf= )****/
-561        
-562        ***options mprint nosymbolgen nomlogic;
-563        
-564        /* proc copy */
-565        
-566        
-37 The SAS System                                                                              16:42 Saturday, July 11, 2015
+558        
+559        ***options mprint symbolgen mlogic;
+560        
+561        /*** SKIP FOR NOW ***%Archive_catalog_data( data=Project Subsidy Update_history, zip_pre=Update_&Update_file,
+561      ! zip_suf= )****/
+562        
+563        ***options mprint nosymbolgen nomlogic;
+564        
+565        /* proc copy */
+37 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
-567        ***** Add record to Update_history  *****;
-568        
-569        data Update_history_rec;
-570        
-571          set Sec8MF_subsidy_update (obs=1 keep=Subsidy_Info_Source Subsidy_Info_Source_Date Update_Dtm);
-572        
-573          rename
-574            Subsidy_Info_Source=Info_Source
-575            Subsidy_Info_Source_Date=Info_Source_Date;
-576        
-577        run;
+566        
+567        
+568        ***** Add record to Update_history  *****;
+569        
+570        data Update_history_rec;
+571        
+572          set Sec8MF_subsidy_update (obs=1 keep=Subsidy_Info_Source Subsidy_Info_Source_Date Update_Dtm);
+573        
+574          rename
+575            Subsidy_Info_Source=Info_Source
+576            Subsidy_Info_Source_Date=Info_Source_Date;
+577        
+578        run;
 
 NOTE: There were 1 observations read from the data set WORK.SEC8MF_SUBSIDY_UPDATE.
 NOTE: The data set WORK.UPDATE_HISTORY_REC has 1 observations and 3 variables.
@@ -1749,10 +1751,10 @@ NOTE: DATA statement used (Total process time):
       cpu time            0.01 seconds
       
 
-578        
-579        proc sort data=PresCat.Update_history out=Update_history;
-580          by Info_source Info_source_date;
-581        
+579        
+580        proc sort data=PresCat.Update_history out=Update_history;
+581          by Info_source Info_source_date;
+582        
 
 NOTE: Input data set is empty.
 NOTE: The data set WORK.UPDATE_HISTORY has 0 observations and 3 variables.
@@ -1761,148 +1763,148 @@ NOTE: PROCEDURE SORT used (Total process time):
       cpu time            0.00 seconds
       
 
-582        data Update_history_new (label="Preservation Catalog, update history");
-583        
-584          update Update_history Update_history_rec;
-585          by Info_source Info_source_date;
-586        
-587        run;
+583        data Update_history_new (label="Preservation Catalog, update history");
+584        
+585          update Update_history Update_history_rec;
+586          by Info_source Info_source_date;
+587        
+588        run;
 
 NOTE: There were 0 observations read from the data set WORK.UPDATE_HISTORY.
 NOTE: There were 1 observations read from the data set WORK.UPDATE_HISTORY_REC.
 NOTE: The data set WORK.UPDATE_HISTORY_NEW has 1 observations and 3 variables.
 NOTE: Compressing data set WORK.UPDATE_HISTORY_NEW increased size by 100.00 percent. 
+38 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: DATA statement used (Total process time):
-38 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
       real time           0.00 seconds
       cpu time            0.01 seconds
       
 
-588        
-589        %File_info( data=Update_history_new, stats= )
+589        
+590        %File_info( data=Update_history_new, stats= )
 MPRINT(FILE_INFO):   title2 "File = Update_history_new";
 MPRINT(FILE_INFO):   proc contents data=Update_history_new;
 MPRINT(FILE_INFO):   run;
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
-      real time           0.00 seconds
+      real time           0.02 seconds
       cpu time            0.00 seconds
       
-NOTE: The PROCEDURE CONTENTS printed page 46.
+NOTE: The PROCEDURE CONTENTS printed page 64.
 
 MPRINT(FILE_INFO):   proc print data=Update_history_new (obs=10);
 MPRINT(FILE_INFO):   title3 "Printing first 10 obs.";
 MPRINT(FILE_INFO):   run;
 
 NOTE: There were 1 observations read from the data set WORK.UPDATE_HISTORY_NEW.
-NOTE: The PROCEDURE PRINT printed page 47.
+NOTE: The PROCEDURE PRINT printed page 65.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
 MPRINT(FILE_INFO):   title3;
 MPRINT(FILE_INFO):   title2;
-590        
 591        
-592        ***** Add record to Update_subsidy_history *****;
-593        
-594        %** Create variable lists **;
-595        %let Update_vars_dif = %ListChangeDelim( &Subsidy_update_vars, new_delim=%str( ), suffix=_DIF );
+592        
+593        ***** Add record to Update_subsidy_history *****;
+594        
+595        %** Create variable lists **;
+596        %let Update_vars_dif = %ListChangeDelim( &Subsidy_update_vars, new_delim=%str( ), suffix=_DIF );
 NOTE: [ListChangeDelim] Processing list=Units_Assist POA_start POA_end Compl_end      rent_to_FMR_description 
 Subsidy_Active Program
 NOTE: [ListChangeDelim] New list=Units_Assist_DIF POA_start_DIF POA_end_DIF Compl_end_DIF rent_to_FMR_description_DIF 
 Subsidy_Active_DIF Program_DIF
-596        %let Update_vars_base = %ListChangeDelim( &Subsidy_update_vars, new_delim=%str( ), suffix=_BASE );
+597        %let Update_vars_base = %ListChangeDelim( &Subsidy_update_vars, new_delim=%str( ), suffix=_BASE );
 NOTE: [ListChangeDelim] Processing list=Units_Assist POA_start POA_end Compl_end      rent_to_FMR_description 
 Subsidy_Active Program
 NOTE: [ListChangeDelim] New list=Units_Assist_BASE POA_start_BASE POA_end_BASE Compl_end_BASE rent_to_FMR_description_BASE 
 Subsidy_Active_BASE Program_BASE
-597        %let Update_vars_compare = %ListChangeDelim( &Subsidy_update_vars, new_delim=%str( ), suffix=_COMPARE );
-NOTE: [ListChangeDelim] Processing list=Units_Assist POA_start POA_end Compl_end      rent_to_FMR_description 
-39 The SAS System                                                                              16:42 Saturday, July 11, 2015
+39 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
+598        %let Update_vars_compare = %ListChangeDelim( &Subsidy_update_vars, new_delim=%str( ), suffix=_COMPARE );
+NOTE: [ListChangeDelim] Processing list=Units_Assist POA_start POA_end Compl_end      rent_to_FMR_description 
 Subsidy_Active Program
 NOTE: [ListChangeDelim] New list=Units_Assist_COMPARE POA_start_COMPARE POA_end_COMPARE Compl_end_COMPARE 
 rent_to_FMR_description_COMPARE Subsidy_Active_COMPARE Program_COMPARE
-598        %let Update_vars_except = %ListChangeDelim( &Subsidy_update_vars, new_delim=%str( ), suffix=_EXCEPT );
+599        %let Update_vars_except = %ListChangeDelim( &Subsidy_update_vars, new_delim=%str( ), suffix=_EXCEPT );
 NOTE: [ListChangeDelim] Processing list=Units_Assist POA_start POA_end Compl_end      rent_to_FMR_description 
 Subsidy_Active Program
 NOTE: [ListChangeDelim] New list=Units_Assist_EXCEPT POA_start_EXCEPT POA_end_EXCEPT Compl_end_EXCEPT 
 rent_to_FMR_description_EXCEPT Subsidy_Active_EXCEPT Program_EXCEPT
-599        %let Update_vars_dif_char = ;
-600        %let Update_vars_dif_num = ;
-601        %let Update_vars_base_char = ;
-602        %let Update_vars_base_num = ;
-603        %let Update_vars_compare_char = ;
-604        %let Update_vars_compare_num = ;
-605        %let Update_vars_except_char = ;
-606        %let Update_vars_except_num = ;
-607        
-608        ** Separate lists of numeric and character vars **;
-609        
-610        proc sql noprint;
-611        
-612          select distinct name into :Update_vars_dif_char separated by ' '
-613          from dictionary.columns
-614          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='char'
-615            and indexw( "%upcase(&Update_vars_dif)", upcase( name ) ) > 0;
-616        
-617          select distinct name into :Update_vars_dif_num separated by ' '
-618          from dictionary.columns
-619          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='num'
-620            and indexw( "%upcase(&Update_vars_dif)", upcase( name ) ) > 0;
-621        
-622          select distinct name into :Update_vars_base_char separated by ' '
-623          from dictionary.columns
-624          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='char'
-625            and indexw( "%upcase(&Update_vars_base)", upcase( name ) ) > 0;
-626        
-627          select distinct name into :Update_vars_base_num separated by ' '
-628          from dictionary.columns
-629          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='num'
-630            and indexw( "%upcase(&Update_vars_base)", upcase( name ) ) > 0;
-631        
-632          select distinct name into :Update_vars_compare_char separated by ' '
-633          from dictionary.columns
-634          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='char'
-635            and indexw( "%upcase(&Update_vars_compare)", upcase( name ) ) > 0;
-636        
-40 The SAS System                                                                              16:42 Saturday, July 11, 2015
+600        %let Update_vars_dif_char = ;
+601        %let Update_vars_dif_num = ;
+602        %let Update_vars_base_char = ;
+603        %let Update_vars_base_num = ;
+604        %let Update_vars_compare_char = ;
+605        %let Update_vars_compare_num = ;
+606        %let Update_vars_except_char = ;
+607        %let Update_vars_except_num = ;
+608        
+609        ** Separate lists of numeric and character vars **;
+610        
+611        proc sql noprint;
+612        
+613          select distinct name into :Update_vars_dif_char separated by ' '
+614          from dictionary.columns
+615          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='char'
+616            and indexw( "%upcase(&Update_vars_dif)", upcase( name ) ) > 0;
+617        
+618          select distinct name into :Update_vars_dif_num separated by ' '
+619          from dictionary.columns
+620          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='num'
+621            and indexw( "%upcase(&Update_vars_dif)", upcase( name ) ) > 0;
+622        
+623          select distinct name into :Update_vars_base_char separated by ' '
+624          from dictionary.columns
+625          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='char'
+626            and indexw( "%upcase(&Update_vars_base)", upcase( name ) ) > 0;
+627        
+628          select distinct name into :Update_vars_base_num separated by ' '
+629          from dictionary.columns
+630          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='num'
+631            and indexw( "%upcase(&Update_vars_base)", upcase( name ) ) > 0;
+632        
+633          select distinct name into :Update_vars_compare_char separated by ' '
+634          from dictionary.columns
+635          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='char'
+40 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
-637          select distinct name into :Update_vars_compare_num separated by ' '
-638          from dictionary.columns
-639          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='num'
-640            and indexw( "%upcase(&Update_vars_compare)", upcase( name ) ) > 0;
-641        
-642          select distinct name into :Update_vars_except_char separated by ' '
-643          from dictionary.columns
-644          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='char'
-645            and indexw( "%upcase(&Update_vars_except)", upcase( name ) ) > 0;
-646        
-647          select distinct name into :Update_vars_except_num separated by ' '
-648          from dictionary.columns
-649          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='num'
-650            and indexw( "%upcase(&Update_vars_except)", upcase( name ) ) > 0;
-651        
-652        quit;
+636            and indexw( "%upcase(&Update_vars_compare)", upcase( name ) ) > 0;
+637        
+638          select distinct name into :Update_vars_compare_num separated by ' '
+639          from dictionary.columns
+640          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='num'
+641            and indexw( "%upcase(&Update_vars_compare)", upcase( name ) ) > 0;
+642        
+643          select distinct name into :Update_vars_except_char separated by ' '
+644          from dictionary.columns
+645          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='char'
+646            and indexw( "%upcase(&Update_vars_except)", upcase( name ) ) > 0;
+647        
+648          select distinct name into :Update_vars_except_num separated by ' '
+649          from dictionary.columns
+650          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='num'
+651            and indexw( "%upcase(&Update_vars_except)", upcase( name ) ) > 0;
+652        
+653        quit;
 NOTE: PROCEDURE SQL used (Total process time):
       real time           0.01 seconds
       cpu time            0.01 seconds
       
 
-653        
-654        %put _user_;
+654        
+655        %put _user_;
 GLOBAL FINALIZE N
 GLOBAL SQLOBS 5
 GLOBAL SEC8MF_UPDATE_DATE 11/25/2014
 GLOBAL DUP_CHECK_COUNT 0
 GLOBAL PROJECT_UPDATE_VARS Hud_Own_Effect_dt Hud_Own_Name Hud_Own_Type Hud_Mgr_Name     Hud_Mgr_Type Update_Dtm
 GLOBAL PROJECT_MISSING_INFO_VARS 
-GLOBAL SQLOOPS 44
-GLOBAL UPDATE_DTM 1752252127.754
+GLOBAL SQLOOPS 46
+GLOBAL UPDATE_DTM 1752254967.099
 GLOBAL _RECURSE 
 GLOBAL UPDATE_VARS_DIF Units_Assist_DIF POA_start_DIF POA_end_DIF Compl_end_DIF rent_to_FMR_description_DIF 
 Subsidy_Active_DIF Program_DIF
@@ -1916,10 +1918,10 @@ GLOBAL UPDATE_VARS_DIF_CHAR Program_DIF rent_to_FMR_description_DIF
 GLOBAL UPDATE_VARS_DIF_NUM Compl_end_DIF POA_end_DIF POA_start_DIF Subsidy_Active_DIF Units_Assist_DIF
 GLOBAL UPDATE_VARS_BASE_CHAR Program_BASE rent_to_FMR_description_BASE
 GLOBAL UPDATE_VARS_BASE_NUM Compl_end_BASE POA_end_BASE POA_start_BASE Subsidy_Active_BASE Units_Assist_BASE
+41 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
 GLOBAL UPDATE_VARS_COMPARE_CHAR Program_COMPARE rent_to_FMR_description_COMPARE
 GLOBAL UPDATE_VARS_COMPARE_NUM Compl_end_COMPARE POA_end_COMPARE POA_start_COMPARE Subsidy_Active_COMPARE 
-41 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
 Units_Assist_COMPARE
 GLOBAL UPDATE_VARS_EXCEPT_CHAR Program_EXCEPT rent_to_FMR_description_EXCEPT
 GLOBAL UPDATE_VARS_EXCEPT_NUM Compl_end_EXCEPT POA_end_EXCEPT POA_start_EXCEPT Subsidy_Active_EXCEPT Units_Assist_EXCEPT
@@ -1939,138 +1941,81 @@ GLOBAL SQLRC 0
 GLOBAL _USERID peter
 GLOBAL _LIBRARY PRESCAT
 GLOBAL _PROGRAM Update_Sec8mf_2014_11_a.sas
+GLOBAL SUBSIDY_INFO_SOURCE "HUD/MFA"
 GLOBAL SUBSIDY_UPDATE_VARS Units_Assist POA_start POA_end Compl_end      rent_to_FMR_description Subsidy_Active Program
-GLOBAL SUBSIDY_TECH_VARS Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm
+GLOBAL SUBSIDY_TECH_VARS Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm
 GLOBAL SUBSIDY_MISSING_INFO_VARS contract_number property_name_text address_line1_text program_type_name
 GLOBAL SQLEXITCODE 0
 GLOBAL _NEWFMS GENERAL PRESCAT
-655        
 656        
-657        data Update_subsidy_history_recs;
-658        
-659          set Update_subsidy_result_except_tr;
-660        
-661          format &Update_vars_dif ;
-662        
-663          array difnum{*} &Update_vars_dif_num;
-664          array difchar{*} &Update_vars_dif_char;
-665          array compchar{*} &Update_vars_compare_char;
-666          array compnum{*} &Update_vars_compare_num;
-667          array basechar{*} &Update_vars_base_char;
-668          array basenum{*} &Update_vars_base_num;
-669          array exceptchar{*} &Update_vars_except_char;
-670          array exceptnum{*} &Update_vars_except_num;
-671        
-672          Write = 0;
-673        
-674          do i = 1 to dim( difnum );
-675            if not( missing( compnum{i} ) or not( abs( difnum{i} ) > 0 ) ) or not( missing( exceptnum{i} ) ) then do;
-676              Write = 1;
-42 The SAS System                                                                              16:42 Saturday, July 11, 2015
+657        
+658        data Update_subsidy_history_recs;
+659        
+660          set Update_subsidy_result_except_tr;
+661        
+662          format &Update_vars_dif ;
+663        
+664          array difnum{*} &Update_vars_dif_num;
+665          array difchar{*} &Update_vars_dif_char;
+666          array compchar{*} &Update_vars_compare_char;
+667          array compnum{*} &Update_vars_compare_num;
+668          array basechar{*} &Update_vars_base_char;
+669          array basenum{*} &Update_vars_base_num;
+670          array exceptchar{*} &Update_vars_except_char;
+671          array exceptnum{*} &Update_vars_except_num;
+672        
+673          Write = 0;
+674        
+42 The SAS System                                                                              17:29 Saturday, July 11, 2015
 
-677            end;
-678            else do;
-679              basenum{i} = .;
-680              compnum{i} = .;
-681              exceptnum{i} = .;
-682            end;
-683          end;
-684        
-685          do i = 1 to dim( difchar );
-686            difchar{i} = compress( difchar{i}, "." );
-687            if not( missing( compchar{i} ) or not( abs( difchar{i} ) > 0 ) ) or not( missing( exceptchar{i} ) ) then do;
-688              Write = 1;
-689            end;
-690            else do;
-691              basechar{i} = "";
-692              compchar{i} = "";
-693              exceptchar{i} = "";
-694            end;
-695          end;
-696        
-697          if Write;
-698        
-699          drop i Category_code Write &Update_vars_dif;
-700        
-701        run;
+675          do i = 1 to dim( difnum );
+676            if not( missing( compnum{i} ) or not( abs( difnum{i} ) > 0 ) ) or not( missing( exceptnum{i} ) ) then do;
+677              Write = 1;
+678            end;
+679            else do;
+680              basenum{i} = .;
+681              compnum{i} = .;
+682              exceptnum{i} = .;
+683            end;
+684          end;
+685        
+686          do i = 1 to dim( difchar );
+687            difchar{i} = compress( difchar{i}, "." );
+688            if not( missing( compchar{i} ) or not( abs( difchar{i} ) > 0 ) ) or not( missing( exceptchar{i} ) ) then do;
+689              Write = 1;
+690            end;
+691            else do;
+692              basechar{i} = "";
+693              compchar{i} = "";
+694              exceptchar{i} = "";
+695            end;
+696          end;
+697        
+698          if Write;
+699        
+700          drop i Category_code Write &Update_vars_dif;
+701        
+702        run;
 
 NOTE: Character values have been converted to numeric values at the places given by: (Line):(Column).
-      687:49   
-NOTE: Invalid numeric data, 'XX' , at line 687 column 49.
-Nlihc_id=NL000065 Subsidy_id=3 Subsidy_Info_Source_ID=800003691/DC39A001003 Units_Assist_BASE=. Units_Assist_COMPARE=.
-Units_Assist_DIF=0 POA_start_BASE=08/01/2005 POA_start_COMPARE=08/01/2014 POA_start_DIF=3287 POA_end_BASE=10/31/2014
-POA_end_COMPARE=07/31/2034 POA_end_DIF=7213 Compl_end_BASE=10/31/2014 Compl_end_COMPARE=07/31/2034 Compl_end_DIF=7213
-rent_to_FMR_description_BASE=  rent_to_FMR_description_COMPARE=  rent_to_FMR_description_DIF=XX Subsidy_Active_BASE=.
-Subsidy_Active_COMPARE=. Subsidy_Active_DIF=0 Program_BASE=  Program_COMPARE=  Program_DIF=  Units_Assist_EXCEPT=.
-POA_start_EXCEPT=. POA_end_EXCEPT=. Compl_end_EXCEPT=. rent_to_FMR_description_EXCEPT=  Subsidy_Active_EXCEPT=.
-Program_EXCEPT=  i=3 Category_code=Other Subsidized Property Write=1 _ERROR_=1 _N_=23
-NOTE: Invalid numeric data, 'XXXXXXXXXXXXXXXXXX' , at line 687 column 49.
-Nlihc_id=NL000084 Subsidy_id=2 Subsidy_Info_Source_ID=800053918/DC39S951003 Units_Assist_BASE=. Units_Assist_COMPARE=.
-Units_Assist_DIF=0 POA_start_BASE=04/01/2004 POA_start_COMPARE=04/01/2014 POA_start_DIF=3652 POA_end_BASE=.
-POA_end_COMPARE=. POA_end_DIF=0 Compl_end_BASE=. Compl_end_COMPARE=. Compl_end_DIF=0 rent_to_FMR_description_BASE= 
-rent_to_FMR_description_COMPARE=  rent_to_FMR_description_DIF=XXXXXXXXXXXXXXXXXX Subsidy_Active_BASE=.
-Subsidy_Active_COMPARE=. Subsidy_Active_DIF=0 Program_BASE=  Program_COMPARE=  Program_DIF=  Units_Assist_EXCEPT=.
-POA_start_EXCEPT=. POA_end_EXCEPT=. Compl_end_EXCEPT=. rent_to_FMR_description_EXCEPT=  Subsidy_Active_EXCEPT=.
-Program_EXCEPT=  i=3 Category_code=Expiring Subsidy Write=1 _ERROR_=1 _N_=31
-NOTE: Invalid numeric data, 'XX' , at line 687 column 49.
-Nlihc_id=NL000103 Subsidy_id=4 Subsidy_Info_Source_ID=800218816/DC39M000022 Units_Assist_BASE=. Units_Assist_COMPARE=.
-43 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
-Units_Assist_DIF=0 POA_start_BASE=. POA_start_COMPARE=. POA_start_DIF=0 POA_end_BASE=. POA_end_COMPARE=. POA_end_DIF=0
-Compl_end_BASE=. Compl_end_COMPARE=. Compl_end_DIF=0 rent_to_FMR_description_BASE=  rent_to_FMR_description_COMPARE= 
-rent_to_FMR_description_DIF=XX Subsidy_Active_BASE=. Subsidy_Active_COMPARE=. Subsidy_Active_DIF=0 Program_BASE= 
-Program_COMPARE=  Program_DIF=  Units_Assist_EXCEPT=. POA_start_EXCEPT=. POA_end_EXCEPT=. Compl_end_EXCEPT=.
-rent_to_FMR_description_EXCEPT=  Subsidy_Active_EXCEPT=. Program_EXCEPT=  i=3 Category_code=Other Subsidized Property
-Write=0 _ERROR_=1 _N_=38
-NOTE: Invalid numeric data, 'XX' , at line 687 column 49.
-Nlihc_id=NL000103 Subsidy_id=5 Subsidy_Info_Source_ID=800218816/DC39M000023 Units_Assist_BASE=. Units_Assist_COMPARE=.
-Units_Assist_DIF=0 POA_start_BASE=. POA_start_COMPARE=. POA_start_DIF=0 POA_end_BASE=. POA_end_COMPARE=. POA_end_DIF=0
-Compl_end_BASE=. Compl_end_COMPARE=. Compl_end_DIF=0 rent_to_FMR_description_BASE=  rent_to_FMR_description_COMPARE= 
-rent_to_FMR_description_DIF=XX Subsidy_Active_BASE=. Subsidy_Active_COMPARE=. Subsidy_Active_DIF=0 Program_BASE= 
-Program_COMPARE=  Program_DIF=  Units_Assist_EXCEPT=. POA_start_EXCEPT=. POA_end_EXCEPT=. Compl_end_EXCEPT=.
-rent_to_FMR_description_EXCEPT=  Subsidy_Active_EXCEPT=. Program_EXCEPT=  i=3 Category_code=Other Subsidized Property
-Write=0 _ERROR_=1 _N_=39
-NOTE: Invalid numeric data, 'XX' , at line 687 column 49.
-Nlihc_id=NL000218 Subsidy_id=2 Subsidy_Info_Source_ID=800003761/DC39A001002 Units_Assist_BASE=. Units_Assist_COMPARE=.
-Units_Assist_DIF=0 POA_start_BASE=11/01/2006 POA_start_COMPARE=09/08/2014 POA_start_DIF=2868 POA_end_BASE=09/07/2014
-POA_end_COMPARE=09/07/2034 POA_end_DIF=7305 Compl_end_BASE=09/07/2014 Compl_end_COMPARE=09/07/2034 Compl_end_DIF=7305
-rent_to_FMR_description_BASE=  rent_to_FMR_description_COMPARE=  rent_to_FMR_description_DIF=XX Subsidy_Active_BASE=.
-Subsidy_Active_COMPARE=. Subsidy_Active_DIF=0 Program_BASE=  Program_COMPARE=  Program_DIF=  Units_Assist_EXCEPT=.
-POA_start_EXCEPT=. POA_end_EXCEPT=. Compl_end_EXCEPT=. rent_to_FMR_description_EXCEPT=  Subsidy_Active_EXCEPT=.
-Program_EXCEPT=  i=3 Category_code=Other Subsidized Property Write=1 _ERROR_=1 _N_=72
-NOTE: Invalid numeric data, 'XXXXXXXXXXXXXXXXXX' , at line 687 column 49.
-Nlihc_id=NL000280 Subsidy_id=4 Subsidy_Info_Source_ID=800003784/DC39M000092 Units_Assist_BASE=. Units_Assist_COMPARE=.
-Units_Assist_DIF=0 POA_start_BASE=10/01/2005 POA_start_COMPARE=04/01/2011 POA_start_DIF=2008 POA_end_BASE=.
-POA_end_COMPARE=. POA_end_DIF=0 Compl_end_BASE=. Compl_end_COMPARE=. Compl_end_DIF=0 rent_to_FMR_description_BASE= 
-rent_to_FMR_description_COMPARE=  rent_to_FMR_description_DIF=XXXXXXXXXXXXXXXXXX Subsidy_Active_BASE=.
-Subsidy_Active_COMPARE=. Subsidy_Active_DIF=0 Program_BASE=  Program_COMPARE=  Program_DIF=  Units_Assist_EXCEPT=.
-POA_start_EXCEPT=. POA_end_EXCEPT=. Compl_end_EXCEPT=. rent_to_FMR_description_EXCEPT=  Subsidy_Active_EXCEPT=.
-Program_EXCEPT=  i=3 Category_code=Other Subsidized Property Write=1 _ERROR_=1 _N_=96
-NOTE: Invalid numeric data, 'XXXXXXXXXXX' , at line 687 column 49.
-Nlihc_id=NL001033 Subsidy_id=1 Subsidy_Info_Source_ID=800219652/DC39Q031002 Units_Assist_BASE=. Units_Assist_COMPARE=.
-Units_Assist_DIF=. POA_start_BASE=. POA_start_COMPARE=. POA_start_DIF=. POA_end_BASE=. POA_end_COMPARE=. POA_end_DIF=.
-Compl_end_BASE=. Compl_end_COMPARE=. Compl_end_DIF=. rent_to_FMR_description_BASE=  rent_to_FMR_description_COMPARE= 
-rent_to_FMR_description_DIF=XXXXXXXXXXX Subsidy_Active_BASE=. Subsidy_Active_COMPARE=. Subsidy_Active_DIF=. Program_BASE= 
-Program_COMPARE=  Program_DIF=  Units_Assist_EXCEPT=. POA_start_EXCEPT=. POA_end_EXCEPT=. Compl_end_EXCEPT=.
-rent_to_FMR_description_EXCEPT=  Subsidy_Active_EXCEPT=. Program_EXCEPT=  i=3 Category_code=Other Subsidized Property
-Write=0 _ERROR_=1 _N_=121
+      688:49   
 NOTE: Missing values were generated as a result of performing an operation on missing values.
       Each place is given by: (Number of times) at (Line):(Column).
-      9 at 675:43     242 at 687:44   
-NOTE: There were 121 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT_EXCEPT_TR.
-NOTE: The data set WORK.UPDATE_SUBSIDY_HISTORY_RECS has 77 observations and 24 variables.
-NOTE: Compressing data set WORK.UPDATE_SUBSIDY_HISTORY_RECS decreased size by 33.33 percent. 
-      Compressed is 2 pages; un-compressed would require 3 pages.
+      1104 at 676:43   462 at 688:44    
+NOTE: There were 231 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT_EXCEPT_TR.
+NOTE: The data set WORK.UPDATE_SUBSIDY_HISTORY_RECS has 10 observations and 27 variables.
+NOTE: Compressing data set WORK.UPDATE_SUBSIDY_HISTORY_RECS increased size by 100.00 percent. 
+      Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: DATA statement used (Total process time):
-44 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
       real time           0.01 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
-702        
-703        %File_info( data=Update_subsidy_history_recs, stats= )
+703        
+704        %File_info( data=Update_subsidy_history_recs, stats= )
 MPRINT(FILE_INFO):   title2 "File = Update_subsidy_history_recs";
+43 The SAS System                                                                              17:29 Saturday, July 11, 2015
+
 MPRINT(FILE_INFO):   proc contents data=Update_subsidy_history_recs;
 MPRINT(FILE_INFO):   run;
 
@@ -2078,14 +2023,14 @@ NOTE: PROCEDURE CONTENTS used (Total process time):
       real time           0.00 seconds
       cpu time            0.00 seconds
       
-NOTE: The PROCEDURE CONTENTS printed pages 48-49.
+NOTE: The PROCEDURE CONTENTS printed pages 66-67.
 
 MPRINT(FILE_INFO):   proc print data=Update_subsidy_history_recs (obs=10);
 MPRINT(FILE_INFO):   title3 "Printing first 10 obs.";
 MPRINT(FILE_INFO):   run;
 
 NOTE: There were 10 observations read from the data set WORK.UPDATE_SUBSIDY_HISTORY_RECS.
-NOTE: The PROCEDURE PRINT printed page 50.
+NOTE: The PROCEDURE PRINT printed pages 68-69.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
       cpu time            0.00 seconds
@@ -2093,315 +2038,14 @@ NOTE: PROCEDURE PRINT used (Total process time):
 
 MPRINT(FILE_INFO):   title3;
 MPRINT(FILE_INFO):   title2;
-704        
 705        
-706        ***** Create update report *****;
+706        ** Update Update_subsidy_history data set **;
 707        
-708        /** Macro Write_var - Start Definition **/
-709        
-710        %macro Write_var( var=, fmt=, lbl=, typ=n );
-711        
-712          %if &lbl = %then %do;
-713            Var = "&var";
-714          %end;
-715          %else %do;
-716            Var = &lbl;
-717          %end;
-718        
-719          Old_value = put( &var._Base, &fmt );
-720        
-45 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
-721          %if %upcase( &typ ) = N %then %do;
-722        
-723            if missing( &var._Compare ) or not( abs( &var._DIF ) > 0 ) then New_value = "-";
-724            else New_value = put( &var._Compare, &fmt );
-725        
-726          %end;
-727          %else %do;
-728        
-729            &var._DIF = compress( &var._DIF, '.' );
-730        
-731            if missing( &var._Compare ) or missing( &var._DIF ) then New_value = "-";
-732            else New_value = put( &var._Compare, &fmt );
-733        
-734          %end;
-735        
-736          if missing( &var._EXCEPT ) then Except_value = "-";
-737          else Except_value = put( &var._EXCEPT, &fmt );
-738        
-739          if New_value ~= "-" or Except_value ~= "-" then output;
-740        
-741        %mend Write_var;
-742        
-743        /** End Macro Definition **/
-744        
-745        proc sort data=Update_subsidy_result_except_tr;
-746          by Category_code nlihc_id subsidy_id;
-747        run;
-
-NOTE: There were 121 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT_EXCEPT_TR.
-NOTE: SAS sort was used.
-NOTE: The data set WORK.UPDATE_SUBSIDY_RESULT_EXCEPT_TR has 121 observations and 33 variables.
-NOTE: Compressing data set WORK.UPDATE_SUBSIDY_RESULT_EXCEPT_TR decreased size by 40.00 percent. 
-      Compressed is 3 pages; un-compressed would require 5 pages.
-NOTE: PROCEDURE SORT used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.00 seconds
-      
-
-748        
-749        data Update_subsidy_result_report;
-750        
-751          set Update_subsidy_result_except_tr;
-752        
-753          length Subsidy_desc $ 400;
-754        
-755          if not missing( Program_Compare ) then Subsidy_desc = put( Program_Compare, $progshrt. );
-46 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
-756          else Subsidy_desc = put( Program_Base, $progshrt. );
-757        
-758          if not missing( Subsidy_Info_Source_ID ) then
-759            Subsidy_desc = trim( Subsidy_desc ) || ' [' || trim( Subsidy_Info_Source_ID ) || ']';
-760        
-761          length Var $ 32 Old_value New_value Except_value $ 80;
-762        
-763          %Write_var( var=Subsidy_active, fmt=dyesno., lbl="Subsidy active" )
-MPRINT(WRITE_VAR):   Var = "Subsidy active";
-MPRINT(WRITE_VAR):   Old_value = put( Subsidy_active_Base, dyesno. );
-MPRINT(WRITE_VAR):   if missing( Subsidy_active_Compare ) or not( abs( Subsidy_active_DIF ) > 0 ) then New_value = "-";
-MPRINT(WRITE_VAR):   else New_value = put( Subsidy_active_Compare, dyesno. );
-MPRINT(WRITE_VAR):   if missing( Subsidy_active_EXCEPT ) then Except_value = "-";
-MPRINT(WRITE_VAR):   else Except_value = put( Subsidy_active_EXCEPT, dyesno. );
-MPRINT(WRITE_VAR):   if New_value ~= "-" or Except_value ~= "-" then output;
-764          %Write_var( var=POA_start, fmt=mmddyy10., lbl="Affordability start" )
-MPRINT(WRITE_VAR):   Var = "Affordability start";
-MPRINT(WRITE_VAR):   Old_value = put( POA_start_Base, mmddyy10. );
-MPRINT(WRITE_VAR):   if missing( POA_start_Compare ) or not( abs( POA_start_DIF ) > 0 ) then New_value = "-";
-MPRINT(WRITE_VAR):   else New_value = put( POA_start_Compare, mmddyy10. );
-MPRINT(WRITE_VAR):   if missing( POA_start_EXCEPT ) then Except_value = "-";
-MPRINT(WRITE_VAR):   else Except_value = put( POA_start_EXCEPT, mmddyy10. );
-MPRINT(WRITE_VAR):   if New_value ~= "-" or Except_value ~= "-" then output;
-765          %Write_var( var=POA_end, fmt=mmddyy10., lbl="Affordability end" )
-MPRINT(WRITE_VAR):   Var = "Affordability end";
-MPRINT(WRITE_VAR):   Old_value = put( POA_end_Base, mmddyy10. );
-MPRINT(WRITE_VAR):   if missing( POA_end_Compare ) or not( abs( POA_end_DIF ) > 0 ) then New_value = "-";
-MPRINT(WRITE_VAR):   else New_value = put( POA_end_Compare, mmddyy10. );
-MPRINT(WRITE_VAR):   if missing( POA_end_EXCEPT ) then Except_value = "-";
-MPRINT(WRITE_VAR):   else Except_value = put( POA_end_EXCEPT, mmddyy10. );
-MPRINT(WRITE_VAR):   if New_value ~= "-" or Except_value ~= "-" then output;
-766          %Write_var( var=Units_assist, fmt=comma10., lbl="Assisted units" )
-MPRINT(WRITE_VAR):   Var = "Assisted units";
-MPRINT(WRITE_VAR):   Old_value = put( Units_assist_Base, comma10. );
-MPRINT(WRITE_VAR):   if missing( Units_assist_Compare ) or not( abs( Units_assist_DIF ) > 0 ) then New_value = "-";
-MPRINT(WRITE_VAR):   else New_value = put( Units_assist_Compare, comma10. );
-MPRINT(WRITE_VAR):   if missing( Units_assist_EXCEPT ) then Except_value = "-";
-MPRINT(WRITE_VAR):   else Except_value = put( Units_assist_EXCEPT, comma10. );
-MPRINT(WRITE_VAR):   if New_value ~= "-" or Except_value ~= "-" then output;
-767          %Write_var( var=rent_to_FMR_description, fmt=$80., lbl="Rent level", typ=c )
-MPRINT(WRITE_VAR):   Var = "Rent level";
-MPRINT(WRITE_VAR):   Old_value = put( rent_to_FMR_description_Base, $80. );
-MPRINT(WRITE_VAR):   rent_to_FMR_description_DIF = compress( rent_to_FMR_description_DIF, '.' );
-MPRINT(WRITE_VAR):   if missing( rent_to_FMR_description_Compare ) or missing( rent_to_FMR_description_DIF ) then New_value 
-= "-";
-MPRINT(WRITE_VAR):   else New_value = put( rent_to_FMR_description_Compare, $80. );
-47 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
-MPRINT(WRITE_VAR):   if missing( rent_to_FMR_description_EXCEPT ) then Except_value = "-";
-MPRINT(WRITE_VAR):   else Except_value = put( rent_to_FMR_description_EXCEPT, $80. );
-MPRINT(WRITE_VAR):   if New_value ~= "-" or Except_value ~= "-" then output;
-768          %Write_var( var=Program, fmt=$80., lbl=, typ=c )
-MPRINT(WRITE_VAR):   Var = "Program";
-MPRINT(WRITE_VAR):   Old_value = put( Program_Base, $80. );
-MPRINT(WRITE_VAR):   Program_DIF = compress( Program_DIF, '.' );
-MPRINT(WRITE_VAR):   if missing( Program_Compare ) or missing( Program_DIF ) then New_value = "-";
-MPRINT(WRITE_VAR):   else New_value = put( Program_Compare, $80. );
-MPRINT(WRITE_VAR):   if missing( Program_EXCEPT ) then Except_value = "-";
-MPRINT(WRITE_VAR):   else Except_value = put( Program_EXCEPT, $80. );
-MPRINT(WRITE_VAR):   if New_value ~= "-" or Except_value ~= "-" then output;
-769        
-770          keep category_code nlihc_id Subsidy_ID Subsidy_desc Program_Compare Subsidy_Info_Source_ID
-771               Var Old_value New_value Except_value;
-772        
-773        run;
-
-NOTE: Missing values were generated as a result of performing an operation on missing values.
-      Each place is given by: (Number of times) at (Line):(Column).
-      1 at 763:45   2 at 764:45   2 at 765:45   2 at 766:45   
-NOTE: There were 121 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT_EXCEPT_TR.
-NOTE: The data set WORK.UPDATE_SUBSIDY_RESULT_REPORT has 93 observations and 10 variables.
-NOTE: Compressing data set WORK.UPDATE_SUBSIDY_RESULT_REPORT decreased size by 60.00 percent. 
-      Compressed is 2 pages; un-compressed would require 5 pages.
-NOTE: DATA statement used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.01 seconds
-      
-
-774        
-775        %Data_to_format(
-776          FmtLib=work,
-777          FmtName=$nlihcid_proj,
-778          Desc=,
-779          Data=PresCat.Project (where=(not(missing(nlihc_id)))),
-780          Value=nlihc_id,
-781          Label=trim(nlihc_id)||' / '||left(proj_name),
-782          OtherLabel='** Unidentified project **',
-783          DefaultLen=.,
-784          MaxLen=.,
-785          MinLen=.,
-786          Print=N,
-787          Contents=N
-788          )
-NOTE: [Data_to_format] Starting macro.
-48 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
-MPRINT(DATA_TO_FORMAT):   data _cntlin (compress=no);
-MPRINT(DATA_TO_FORMAT):   length hlo $ 8;
-MPRINT(DATA_TO_FORMAT):   retain fmtname "$nlihcid_proj" type "C" default . max . min .;
-MPRINT(DATA_TO_FORMAT):   retain hlo " ";
-MPRINT(DATA_TO_FORMAT):   set PresCat.Project (where=(not(missing(nlihc_id)))) end=last;
-MPRINT(DATA_TO_FORMAT):   label = trim(nlihc_id)||' / '||left(proj_name);
-MPRINT(DATA_TO_FORMAT):   start = nlihc_id;
-MPRINT(DATA_TO_FORMAT):   output;
-MPRINT(DATA_TO_FORMAT):   if last then do;
-MPRINT(DATA_TO_FORMAT):   hlo = trim( hlo ) || 'o';
-MPRINT(DATA_TO_FORMAT):   label = '** Unidentified project **';
-MPRINT(DATA_TO_FORMAT):   output;
-MPRINT(DATA_TO_FORMAT):   end;
-MPRINT(DATA_TO_FORMAT):   keep fmtname type hlo label start default max min;
-MPRINT(DATA_TO_FORMAT):   run;
-
-NOTE: There were 362 observations read from the data set PRESCAT.PROJECT.
-      WHERE not MISSING(nlihc_id);
-NOTE: The data set WORK._CNTLIN has 363 observations and 8 variables.
-NOTE: DATA statement used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.01 seconds
-      
-
-MPRINT(DATA_TO_FORMAT):   proc format library=work cntlin=_cntlin;
-NOTE: Format $NLIHCID_PROJ has been output.
-MPRINT(DATA_TO_FORMAT):   run;
-
-NOTE: PROCEDURE FORMAT used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.00 seconds
-      
-NOTE: There were 363 observations read from the data set WORK._CNTLIN.
-
-MPRINT(DATA_TO_FORMAT):   proc datasets library=work memtype=(data) nolist;
-MPRINT(DATA_TO_FORMAT):   delete _cntlin;
-MPRINT(DATA_TO_FORMAT):   quit;
-
-NOTE: Deleting WORK._CNTLIN (memtype=DATA).
-NOTE: PROCEDURE DATASETS used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.00 seconds
-      
-
-NOTE: [Data_to_format] Exiting macro.
-789        
-49 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
-790        proc format;
-791          value $except_tl
-792            "-" = 'white'
-793            other = 'yellow';
-NOTE: Format $EXCEPT_TL has been output.
-794        run;
-
-NOTE: PROCEDURE FORMAT used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.00 seconds
-      
-
-795        
-796        ods listing close;
-797        ods pdf file="&_dcdata_r_path\PresCat\Prog\Updates\Update_&Update_file._subsidy.pdf"
-798          style=Styles.Rtf_arial_9pt pdftoc=2 bookmarklist=hide uniform;
-NOTE: Writing ODS PDF output to DISK destination 
-      "C:\DCData\Libraries\PresCat\Prog\Updates\Update_Sec8mf_2014_11_subsidy.pdf", printer "PDF".
-799        
-800        proc report data=Update_subsidy_result_report nowd;
-801          by category_code ;
-802          column nlihc_id Subsidy_id Subsidy_desc Var Old_value New_value Except_value;
-803          define nlihc_id / order noprint;
-804          define Subsidy_id / display "ID" style=[textalign=center];
-805          define Subsidy_desc / display "Subsidy [source ID]" style=[textalign=left];
-806          define Var / display "Var" style=[textalign=left];
-807          define Old_value / display "Old value" style=[textalign=left];
-808          define New_value / display "New value" style=[textalign=left];
-809          define Except_value / display "Exception" style(column)=[background=$except_tl. textalign=left];
-810          break before nlihc_id / ;
-811          compute before nlihc_id / style=[textalign=left fontweight=bold];
-812            line nlihc_id $nlihcid_proj.;
-813          endcomp;
-814          label category_code = 'Category';
-815          title2 " ";
-816          title3 "PresCat.Subsidy - Updated variables";
-817        run;
-
-NOTE: There were 93 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT_REPORT.
-NOTE: PROCEDURE REPORT used (Total process time):
-      real time           0.08 seconds
-      cpu time            0.07 seconds
-      
-
-818        
-819        /***
-50 The SAS System                                                                              16:42 Saturday, July 11, 2015
-
-820        proc print data=Update_subsidy_result_report label;
-821          by category_code nlihc_id;
-822          id Subsidy_id Subsidy_desc;
-823          var Var Old_value New_value;
-824          var Except_value / style(data) = [background=$except_tl.];
-825          label
-826            category_code = "Category"
-827            nlihc_id = "Project"
-828            Subsidy_ID = "ID"
-829            Subsidy_desc = "Subsidy [source ID]"
-830            Var = "Var"
-831            Old_value = "Old value"
-832            New_value = "Update"
-833            Except_value = "Exception";
-834          format nlihc_id $nlihcid_proj. Program_Compare $progshrt.;
-835          title2 " ";
-836          title3 "PresCat.Subsidy - Updated variables";
-837        run;
-838        ***/
-839        
-840        ** Non-matching records **;
-841        
-842        proc print data=Subsidy_mfa_update_a label;
-843          where missing( nlihc_id );
-844          id Subsidy_Info_Source_ID;
-845          var property_name_text address_line1_text program_type_name Subsidy_active Units_assist poa_start poa_end;
-846          label
-847            address_line1_text = "Address"
-848            program_type_name = "Program";
-849          title3 "PresCat.Subsidy - Unmatched subsidy records in update file";
-850        run;
-
-NOTE: No observations were selected from data set WORK.SUBSIDY_MFA_UPDATE_A.
-NOTE: There were 0 observations read from the data set WORK.SUBSIDY_MFA_UPDATE_A.
-      WHERE MISSING(nlihc_id);
-NOTE: PROCEDURE PRINT used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.00 seconds
-      
-
-851        
-852        title2;
-853        
-854        ods pdf close;
-NOTE: ODS PDF printed 11 pages to C:\DCData\Libraries\PresCat\Prog\Updates\Update_Sec8mf_2014_11_subsidy.pdf.
-855        ods listing;
-51 The SAS System                                                                              16:42 Saturday, July 11, 2015
+708        
+709        ENDSAS;
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
 NOTE: The SAS System used:
-      real time           1.65 seconds
-      cpu time            1.38 seconds
+      real time           1.41 seconds
+      cpu time            1.30 seconds
       

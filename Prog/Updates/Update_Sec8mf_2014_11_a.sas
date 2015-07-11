@@ -22,6 +22,7 @@
 %DCData_lib( PresCat, local=n )
 %DCData_lib( HUD, local=n )
 
+%let Subsidy_info_source = "HUD/MFA";
 %let Update_file = Sec8mf_2014_11;
 %let Finalize = N;
 %let NO_SUBSIDY_ID = 9999999999;
@@ -32,7 +33,7 @@
     rent_to_FMR_description Subsidy_Active Program 
     ;
     
-%let Subsidy_tech_vars = Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm;
+%let Subsidy_tech_vars = Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm;
 
 %let Subsidy_missing_info_vars = 
     contract_number property_name_text address_line1_text program_type_name
@@ -161,7 +162,7 @@ data Sec8MF_subsidy_update;
     Update_Dtm 8
   ;
   
-  retain Subsidy_Info_Source "HUD/MFA";
+  retain Subsidy_Info_Source &Subsidy_Info_Source;
  
   Subsidy_Info_Source_ID = trim( left( put( property_id, 16. ) ) ) || "/" || 
                            left( contract_number );
@@ -240,10 +241,10 @@ title2 'File = Sec8MF_subsidy_update';
   debug=N
 )
 
-title2 'File = PresCat.Subsidy (where=(Subsidy_Info_Source="HUD/MFA"))';
+title2 'File = PresCat.Subsidy (where=(Subsidy_Info_Source=&Subsidy_Info_Source))';
 
 %Dup_check(
-  data=PresCat.Subsidy (where=(Subsidy_Info_Source="HUD/MFA")),
+  data=PresCat.Subsidy (where=(Subsidy_Info_Source=&Subsidy_Info_Source)),
   by=Subsidy_Info_Source_ID,
   id=nlihc_id contract_number Subsidy_Info_Source portfolio,
   out=_dup_check,
@@ -263,7 +264,7 @@ data Subsidy_mfa Subsidy_other;
 
   set PresCat.Subsidy;
   
-  if Subsidy_Info_Source="HUD/MFA" then output Subsidy_mfa;
+  if Subsidy_Info_Source=&Subsidy_Info_Source then output Subsidy_mfa;
   else output Subsidy_other;
   
 run;
@@ -328,7 +329,7 @@ proc sort data=Subsidy_mfa_update_b;
 proc compare base=Subsidy_mfa compare=Subsidy_mfa_update_b 
     listall /*outnoequal*/ outbase outcomp outdif maxprint=(40,32000)
     out=Update_subsidy_result (rename=(_type_=comp_type));
-  id nlihc_id Subsidy_ID Subsidy_Info_Source_ID;
+  id nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_Date Subsidy_Info_Source_ID Update_Dtm;
   var Units_Assist POA_start POA_end Compl_end
     rent_to_FMR_description Subsidy_Active
     Program;
@@ -350,7 +351,7 @@ title2;
     rent_to_FMR_description Subsidy_Active
     Program,
   id=comp_type,
-  by=nlihc_id Subsidy_ID Subsidy_Info_Source_ID,
+  by=nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_Date Subsidy_Info_Source_ID Update_Dtm,
   mprint=N
 )
 
@@ -646,6 +647,10 @@ run;
 
 %File_info( data=Update_subsidy_history_recs, stats= )
 
+** Update Update_subsidy_history data set **;
+
+
+ENDSAS;
 
 ***** Create update report *****;
 
