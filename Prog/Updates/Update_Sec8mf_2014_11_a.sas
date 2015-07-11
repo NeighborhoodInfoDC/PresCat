@@ -670,8 +670,6 @@ run;
 
 
 
-ENDSAS;
-
 ***** Create update report *****;
 
 /** Macro Write_var - Start Definition **/
