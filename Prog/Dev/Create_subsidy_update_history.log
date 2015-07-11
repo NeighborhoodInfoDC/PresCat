@@ -1,4 +1,4 @@
-1                                       The SAS System            17:09 Saturday, July 11, 2015
+1                                       The SAS System            17:33 Saturday, July 11, 2015
 
 NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
 NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
@@ -8,8 +8,8 @@ NOTE: This session is executing on the X64_VSHOME  platform.
 
 
 NOTE: SAS initialization used:
-      real time           0.15 seconds
-      cpu time            0.26 seconds
+      real time           0.16 seconds
+      cpu time            0.15 seconds
       
 
 NOTE: AUTOEXEC processing beginning; file is C:\Users\Peter\Documents\My SAS 
@@ -46,7 +46,7 @@ NOTE: Library _METADAT does not exist.
 69        +** Define General library for local session only **;
 70        +
 71        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
-2 The SAS System                                                                               17:09 Saturday, July 11, 2015
+2 The SAS System                                                                               17:33 Saturday, July 11, 2015
 
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref GENERA_L was successfully assigned as follows: 
@@ -94,7 +94,7 @@ Current Sasautos Option value:
 
 =====================================================================
 
-3 The SAS System                                                                               17:09 Saturday, July 11, 2015
+3 The SAS System                                                                               17:33 Saturday, July 11, 2015
 
 72        +
 73        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
@@ -139,59 +139,61 @@ Current Sasautos Option value:
 78         data PresCat.Update_subsidy_history (label="Preservation Catalog, Subsidy update history");
 79         
 80           length
-81             Update_Dtm 8
-82             Info_Source $ 40
-83             Info_Source_Date 8
-4 The SAS System                                                                               17:09 Saturday, July 11, 2015
+81             Subsidy_Info_Source $ 40
+82             Subsidy_Info_Source_Date 8
+83             Update_Dtm 8
+4 The SAS System                                                                               17:33 Saturday, July 11, 2015
 
 84             Nlihc_id $ 8
 85             Subsidy_id 8
-86             Compl_end_BASE
-87             Compl_end_COMPARE
-88             Compl_end_EXCEPT 8
-89             POA_end_BASE
-90             POA_end_COMPARE
-91             POA_end_EXCEPT 8
-92             POA_start_BASE
-93             POA_start_COMPARE
-94             POA_start_EXCEPT 8
-95             Program_BASE
-96             Program_COMPARE
-97             Program_EXCEPT $ 32
-98             Subsidy_Active_BASE
-99             Subsidy_Active_COMPARE
-100            Subsidy_Active_EXCEPT 3
-101            Units_Assist_BASE
-102            Units_Assist_COMPARE
-103            Units_Assist_EXCEPT 8
-104            rent_to_FMR_description_BASE
-105            rent_to_FMR_description_COMPARE
-106            rent_to_FMR_description_EXCEPT $ 40;
-107        
-108          delete;
-109        
-110          label
-111            Info_Source = "Source for update"
-112            Info_Source_Date = "Date of update source"
-113            Update_Dtm = "Datetime update ran"
-114          ;
-115        
-116          format Info_Source $infosrc. Info_Source_Date mmddyy10. Update_Dtm datetime16.;
-117        
-118        run;
+86             Subsidy_Info_Source_ID $ 40
+87             Compl_end_BASE
+88             Compl_end_COMPARE
+89             Compl_end_EXCEPT 8
+90             POA_end_BASE
+91             POA_end_COMPARE
+92             POA_end_EXCEPT 8
+93             POA_start_BASE
+94             POA_start_COMPARE
+95             POA_start_EXCEPT 8
+96             Program_BASE
+97             Program_COMPARE
+98             Program_EXCEPT $ 32
+99             Subsidy_Active_BASE
+100            Subsidy_Active_COMPARE
+101            Subsidy_Active_EXCEPT 3
+102            Units_Assist_BASE
+103            Units_Assist_COMPARE
+104            Units_Assist_EXCEPT 8
+105            rent_to_FMR_description_BASE
+106            rent_to_FMR_description_COMPARE
+107            rent_to_FMR_description_EXCEPT $ 40;
+108        
+109          delete;
+110        
+111          label
+112            Subsidy_Info_Source = "Source for update"
+113            Subsidy_Info_Source_Date = "Date of update source"
+114            Update_Dtm = "Datetime update ran"
+115          ;
+116        
+117          format Subsidy_Info_Source $infosrc. Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
+118        
+119        run;
 
+NOTE: Variable Subsidy_Info_Source is uninitialized.
+NOTE: Variable Subsidy_Info_Source_Date is uninitialized.
 NOTE: Variable Update_Dtm is uninitialized.
-NOTE: Variable Info_Source is uninitialized.
-NOTE: Variable Info_Source_Date is uninitialized.
 NOTE: Variable Nlihc_id is uninitialized.
 NOTE: Variable Subsidy_id is uninitialized.
+NOTE: Variable Subsidy_Info_Source_ID is uninitialized.
 NOTE: Variable Compl_end_BASE is uninitialized.
 NOTE: Variable Compl_end_COMPARE is uninitialized.
 NOTE: Variable Compl_end_EXCEPT is uninitialized.
+5 The SAS System                                                                               17:33 Saturday, July 11, 2015
+
 NOTE: Variable POA_end_BASE is uninitialized.
 NOTE: Variable POA_end_COMPARE is uninitialized.
-5 The SAS System                                                                               17:09 Saturday, July 11, 2015
-
 NOTE: Variable POA_end_EXCEPT is uninitialized.
 NOTE: Variable POA_start_BASE is uninitialized.
 NOTE: Variable POA_start_COMPARE is uninitialized.
@@ -208,29 +210,29 @@ NOTE: Variable Units_Assist_EXCEPT is uninitialized.
 NOTE: Variable rent_to_FMR_description_BASE is uninitialized.
 NOTE: Variable rent_to_FMR_description_COMPARE is uninitialized.
 NOTE: Variable rent_to_FMR_description_EXCEPT is uninitialized.
-NOTE: The data set PRESCAT.UPDATE_SUBSIDY_HISTORY has 0 observations and 26 variables.
+NOTE: The data set PRESCAT.UPDATE_SUBSIDY_HISTORY has 0 observations and 27 variables.
 NOTE: DATA statement used (Total process time):
-      real time           0.01 seconds
+      real time           0.02 seconds
       cpu time            0.01 seconds
       
 
-119        
-120        %File_info( data=PresCat.Update_subsidy_history, printobs=0, stats= )
+120        
+121        %File_info( data=PresCat.Update_subsidy_history, printobs=0, stats= )
 MPRINT(FILE_INFO):   title2 "File = PresCat.Update_subsidy_history";
 MPRINT(FILE_INFO):   proc contents data=PresCat.Update_subsidy_history;
 MPRINT(FILE_INFO):   run;
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
       real time           0.03 seconds
-      cpu time            0.03 seconds
+      cpu time            0.04 seconds
       
 NOTE: The PROCEDURE CONTENTS printed pages 1-2.
 
 MPRINT(FILE_INFO):   title2;
-121        
+122        
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
 NOTE: The SAS System used:
       real time           0.27 seconds
-      cpu time            0.35 seconds
+      cpu time            0.26 seconds
       

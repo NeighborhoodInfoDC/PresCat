@@ -1,13 +1,13 @@
-PRESCAT/Create_subsidy_update_history.sas:  NeighborhoodInfo DC                            17:09 Saturday, July 11, 2015   1
+PRESCAT/Create_subsidy_update_history.sas:  NeighborhoodInfo DC                            17:33 Saturday, July 11, 2015   1
 File = PresCat.Update_subsidy_history
 
 The CONTENTS Procedure
 
 Data Set Name        PRESCAT.UPDATE_SUBSIDY_HISTORY                  Observations           0   
-Member Type          DATA                                            Variables              26  
+Member Type          DATA                                            Variables              27  
 Engine               V9                                              Indexes                0   
-Created              Saturday, July 11, 2015 05:09:02 PM             Observation Length     393 
-Last Modified        Saturday, July 11, 2015 05:09:02 PM             Deleted Observations   0   
+Created              Saturday, July 11, 2015 05:33:59 PM             Observation Length     433 
+Last Modified        Saturday, July 11, 2015 05:33:59 PM             Deleted Observations   0   
 Protection                                                           Compressed             CHAR
 Data Set Type                                                        Reuse Space            NO  
 Label                Preservation Catalog, Subsidy update history    Point to Observations  YES 
@@ -29,24 +29,24 @@ Host Created                X64_VSHOME
  
  #    Variable                           Type    Len    Format         Label
 
- 6    Compl_end_BASE                     Num       8                                        
- 7    Compl_end_COMPARE                  Num       8                                        
- 8    Compl_end_EXCEPT                   Num       8                                        
- 2    Info_Source                        Char     40    $INFOSRC.      Source for update    
- 3    Info_Source_Date                   Num       8    MMDDYY10.      Date of update source
+ 7    Compl_end_BASE                     Num       8                                        
+ 8    Compl_end_COMPARE                  Num       8                                        
+ 9    Compl_end_EXCEPT                   Num       8                                        
  4    Nlihc_id                           Char      8                                        
- 9    POA_end_BASE                       Num       8                                        
-10    POA_end_COMPARE                    Num       8                                        
-11    POA_end_EXCEPT                     Num       8                                        
-12    POA_start_BASE                     Num       8                                        
-13    POA_start_COMPARE                  Num       8                                        
-14    POA_start_EXCEPT                   Num       8                                        
-15    Program_BASE                       Char     32                                        
-16    Program_COMPARE                    Char     32                                        
-17    Program_EXCEPT                     Char     32                                        
-18    Subsidy_Active_BASE                Num       3                                        
-19    Subsidy_Active_COMPARE             Num       3                                        
-PRESCAT/Create_subsidy_update_history.sas:  NeighborhoodInfo DC                            17:09 Saturday, July 11, 2015   2
+10    POA_end_BASE                       Num       8                                        
+11    POA_end_COMPARE                    Num       8                                        
+12    POA_end_EXCEPT                     Num       8                                        
+13    POA_start_BASE                     Num       8                                        
+14    POA_start_COMPARE                  Num       8                                        
+15    POA_start_EXCEPT                   Num       8                                        
+16    Program_BASE                       Char     32                                        
+17    Program_COMPARE                    Char     32                                        
+18    Program_EXCEPT                     Char     32                                        
+19    Subsidy_Active_BASE                Num       3                                        
+20    Subsidy_Active_COMPARE             Num       3                                        
+21    Subsidy_Active_EXCEPT              Num       3                                        
+ 1    Subsidy_Info_Source                Char     40    $INFOSRC.      Source for update    
+PRESCAT/Create_subsidy_update_history.sas:  NeighborhoodInfo DC                            17:33 Saturday, July 11, 2015   2
 File = PresCat.Update_subsidy_history
 
 The CONTENTS Procedure
@@ -55,12 +55,13 @@ The CONTENTS Procedure
  
  #    Variable                           Type    Len    Format         Label
 
-20    Subsidy_Active_EXCEPT              Num       3                                        
+ 2    Subsidy_Info_Source_Date           Num       8    MMDDYY10.      Date of update source
+ 6    Subsidy_Info_Source_ID             Char     40                                        
  5    Subsidy_id                         Num       8                                        
-21    Units_Assist_BASE                  Num       8                                        
-22    Units_Assist_COMPARE               Num       8                                        
-23    Units_Assist_EXCEPT                Num       8                                        
- 1    Update_Dtm                         Num       8    DATETIME16.    Datetime update ran  
-24    rent_to_FMR_description_BASE       Char     40                                        
-25    rent_to_FMR_description_COMPARE    Char     40                                        
-26    rent_to_FMR_description_EXCEPT     Char     40                                        
+22    Units_Assist_BASE                  Num       8                                        
+23    Units_Assist_COMPARE               Num       8                                        
+24    Units_Assist_EXCEPT                Num       8                                        
+ 3    Update_Dtm                         Num       8    DATETIME16.    Datetime update ran  
+25    rent_to_FMR_description_BASE       Char     40                                        
+26    rent_to_FMR_description_COMPARE    Char     40                                        
+27    rent_to_FMR_description_EXCEPT     Char     40                                        

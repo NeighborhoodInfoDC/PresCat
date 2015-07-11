@@ -22,11 +22,12 @@
 data PresCat.Update_subsidy_history (label="Preservation Catalog, Subsidy update history");
 
   length
+    Subsidy_Info_Source $ 40
+    Subsidy_Info_Source_Date 8
     Update_Dtm 8
-    Info_Source $ 40
-    Info_Source_Date 8
     Nlihc_id $ 8
     Subsidy_id 8
+    Subsidy_Info_Source_ID $ 40
     Compl_end_BASE
     Compl_end_COMPARE
     Compl_end_EXCEPT 8
@@ -52,12 +53,12 @@ data PresCat.Update_subsidy_history (label="Preservation Catalog, Subsidy update
   delete;
   
   label
-    Info_Source = "Source for update"
-    Info_Source_Date = "Date of update source"
+    Subsidy_Info_Source = "Source for update"
+    Subsidy_Info_Source_Date = "Date of update source"
     Update_Dtm = "Datetime update ran"
   ;
   
-  format Info_Source $infosrc. Info_Source_Date mmddyy10. Update_Dtm datetime16.;
+  format Subsidy_Info_Source $infosrc. Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
   
 run;
 
