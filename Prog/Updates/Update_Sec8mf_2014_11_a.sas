@@ -535,21 +535,116 @@ run;
 
 ***** Add record to Update_subsidy_history *****;
 
-data Update_subsidy_history_rec;
+%** Create variable lists **;
+%let Update_vars_dif = %ListChangeDelim( &Subsidy_update_vars, new_delim=%str( ), suffix=_DIF );
+%let Update_vars_base = %ListChangeDelim( &Subsidy_update_vars, new_delim=%str( ), suffix=_BASE );
+%let Update_vars_compare = %ListChangeDelim( &Subsidy_update_vars, new_delim=%str( ), suffix=_COMPARE );
+%let Update_vars_except = %ListChangeDelim( &Subsidy_update_vars, new_delim=%str( ), suffix=_EXCEPT );
+%let Update_vars_dif_char = ;
+%let Update_vars_dif_num = ;
+%let Update_vars_base_char = ;
+%let Update_vars_base_num = ;
+%let Update_vars_compare_char = ;
+%let Update_vars_compare_num = ;
+%let Update_vars_except_char = ;
+%let Update_vars_except_num = ;
+
+** Separate lists of numeric and character vars **;
+
+proc sql noprint;
+
+  select distinct name into :Update_vars_dif_char separated by ' '
+  from dictionary.columns 
+  where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='char' 
+    and indexw( "%upcase(&Update_vars_dif)", upcase( name ) ) > 0;
+
+  select distinct name into :Update_vars_dif_num separated by ' '
+  from dictionary.columns 
+  where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='num' 
+    and indexw( "%upcase(&Update_vars_dif)", upcase( name ) ) > 0;
+
+  select distinct name into :Update_vars_base_char separated by ' '
+  from dictionary.columns 
+  where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='char' 
+    and indexw( "%upcase(&Update_vars_base)", upcase( name ) ) > 0;
+
+  select distinct name into :Update_vars_base_num separated by ' '
+  from dictionary.columns 
+  where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='num' 
+    and indexw( "%upcase(&Update_vars_base)", upcase( name ) ) > 0;
+
+  select distinct name into :Update_vars_compare_char separated by ' '
+  from dictionary.columns 
+  where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='char' 
+    and indexw( "%upcase(&Update_vars_compare)", upcase( name ) ) > 0;
+
+  select distinct name into :Update_vars_compare_num separated by ' '
+  from dictionary.columns 
+  where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='num' 
+    and indexw( "%upcase(&Update_vars_compare)", upcase( name ) ) > 0;
+
+  select distinct name into :Update_vars_except_char separated by ' '
+  from dictionary.columns 
+  where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='char' 
+    and indexw( "%upcase(&Update_vars_except)", upcase( name ) ) > 0;
+
+  select distinct name into :Update_vars_except_num separated by ' '
+  from dictionary.columns 
+  where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='num' 
+    and indexw( "%upcase(&Update_vars_except)", upcase( name ) ) > 0;
+
+quit;
+
+%put _user_;
+
+
+data Update_subsidy_history_recs;
 
   set Update_subsidy_result_except_tr;
   
-  %let Dif_list = %ListChangeDelim( &Subsidy_update_vars, new_delim=%str( ), suffix=_DIF );
+  format &Update_vars_dif ;
   
-  ********* THIS IS NOT RIGHT BECAUSE _DIF FOR NUM VARS = 0 WHEN NO DIFFERENCES ***********;
+  array difnum{*} &Update_vars_dif_num;
+  array difchar{*} &Update_vars_dif_char;
+  array compchar{*} &Update_vars_compare_char;
+  array compnum{*} &Update_vars_compare_num;
+  array basechar{*} &Update_vars_base_char;
+  array basenum{*} &Update_vars_base_num;
+  array exceptchar{*} &Update_vars_except_char;
+  array exceptnum{*} &Update_vars_except_num;
   
-  if cmiss( of &Dif_list ) < %sysfunc( countw( &Dif_list ) );
+  Write = 0;
   
-  drop i Category_code &Dif_list;
+  do i = 1 to dim( difnum );
+    if not( missing( compnum{i} ) or not( abs( difnum{i} ) > 0 ) ) or not( missing( exceptnum{i} ) ) then do;
+      Write = 1;
+    end;
+    else do;
+      basenum{i} = .;
+      compnum{i} = .;
+      exceptnum{i} = .;
+    end;
+  end;
+  
+  do i = 1 to dim( difchar );
+    difchar{i} = compress( difchar{i}, "." );
+    if not( missing( compchar{i} ) or not( abs( difchar{i} ) > 0 ) ) or not( missing( exceptchar{i} ) ) then do;
+      Write = 1;
+    end;
+    else do;
+      basechar{i} = "";
+      compchar{i} = "";
+      exceptchar{i} = "";
+    end;
+  end;
+
+  if Write;
+    
+  drop i Category_code Write &Update_vars_dif;
   
 run;
 
-%File_info( data=Update_subsidy_history_rec, stats= )
+%File_info( data=Update_subsidy_history_recs, stats= )
 
 
 ***** Create update report *****;
