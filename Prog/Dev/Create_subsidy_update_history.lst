@@ -1,4 +1,4 @@
-PRESCAT/Create_subsidy_update_history.sas:  NeighborhoodInfo DC                            17:33 Saturday, July 11, 2015   1
+PRESCAT/Create_subsidy_update_history.sas:  NeighborhoodInfo DC                            17:54 Saturday, July 11, 2015   1
 File = PresCat.Update_subsidy_history
 
 The CONTENTS Procedure
@@ -6,8 +6,8 @@ The CONTENTS Procedure
 Data Set Name        PRESCAT.UPDATE_SUBSIDY_HISTORY                  Observations           0   
 Member Type          DATA                                            Variables              27  
 Engine               V9                                              Indexes                0   
-Created              Saturday, July 11, 2015 05:33:59 PM             Observation Length     433 
-Last Modified        Saturday, July 11, 2015 05:33:59 PM             Deleted Observations   0   
+Created              Saturday, July 11, 2015 05:54:46 PM             Observation Length     433 
+Last Modified        Saturday, July 11, 2015 05:54:46 PM             Deleted Observations   0   
 Protection                                                           Compressed             CHAR
 Data Set Type                                                        Reuse Space            NO  
 Label                Preservation Catalog, Subsidy update history    Point to Observations  YES 
@@ -32,7 +32,7 @@ Host Created                X64_VSHOME
  7    Compl_end_BASE                     Num       8                                        
  8    Compl_end_COMPARE                  Num       8                                        
  9    Compl_end_EXCEPT                   Num       8                                        
- 4    Nlihc_id                           Char      8                                        
+ 1    Nlihc_id                           Char      8                                        
 10    POA_end_BASE                       Num       8                                        
 11    POA_end_COMPARE                    Num       8                                        
 12    POA_end_EXCEPT                     Num       8                                        
@@ -45,8 +45,8 @@ Host Created                X64_VSHOME
 19    Subsidy_Active_BASE                Num       3                                        
 20    Subsidy_Active_COMPARE             Num       3                                        
 21    Subsidy_Active_EXCEPT              Num       3                                        
- 1    Subsidy_Info_Source                Char     40    $INFOSRC.      Source for update    
-PRESCAT/Create_subsidy_update_history.sas:  NeighborhoodInfo DC                            17:33 Saturday, July 11, 2015   2
+ 3    Subsidy_Info_Source                Char     40    $INFOSRC.      Source for update    
+PRESCAT/Create_subsidy_update_history.sas:  NeighborhoodInfo DC                            17:54 Saturday, July 11, 2015   2
 File = PresCat.Update_subsidy_history
 
 The CONTENTS Procedure
@@ -55,13 +55,13 @@ The CONTENTS Procedure
  
  #    Variable                           Type    Len    Format         Label
 
- 2    Subsidy_Info_Source_Date           Num       8    MMDDYY10.      Date of update source
+ 4    Subsidy_Info_Source_Date           Num       8    MMDDYY10.      Date of update source
  6    Subsidy_Info_Source_ID             Char     40                                        
- 5    Subsidy_id                         Num       8                                        
+ 2    Subsidy_id                         Num       8                                        
 22    Units_Assist_BASE                  Num       8                                        
 23    Units_Assist_COMPARE               Num       8                                        
 24    Units_Assist_EXCEPT                Num       8                                        
- 3    Update_Dtm                         Num       8    DATETIME16.    Datetime update ran  
+ 5    Update_Dtm                         Num       8    DATETIME16.    Datetime update ran  
 25    rent_to_FMR_description_BASE       Char     40                                        
 26    rent_to_FMR_description_COMPARE    Char     40                                        
 27    rent_to_FMR_description_EXCEPT     Char     40                                        

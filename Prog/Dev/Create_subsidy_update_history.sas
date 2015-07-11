@@ -22,11 +22,11 @@
 data PresCat.Update_subsidy_history (label="Preservation Catalog, Subsidy update history");
 
   length
+    Nlihc_id $ 8
+    Subsidy_id 8
     Subsidy_Info_Source $ 40
     Subsidy_Info_Source_Date 8
     Update_Dtm 8
-    Nlihc_id $ 8
-    Subsidy_id 8
     Subsidy_Info_Source_ID $ 40
     Compl_end_BASE
     Compl_end_COMPARE

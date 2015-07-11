@@ -1,4 +1,4 @@
-1                                       The SAS System            17:33 Saturday, July 11, 2015
+1                                       The SAS System            17:54 Saturday, July 11, 2015
 
 NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
 NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
@@ -8,8 +8,8 @@ NOTE: This session is executing on the X64_VSHOME  platform.
 
 
 NOTE: SAS initialization used:
-      real time           0.16 seconds
-      cpu time            0.15 seconds
+      real time           0.14 seconds
+      cpu time            0.23 seconds
       
 
 NOTE: AUTOEXEC processing beginning; file is C:\Users\Peter\Documents\My SAS 
@@ -46,7 +46,7 @@ NOTE: Library _METADAT does not exist.
 69        +** Define General library for local session only **;
 70        +
 71        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
-2 The SAS System                                                                               17:33 Saturday, July 11, 2015
+2 The SAS System                                                                               17:54 Saturday, July 11, 2015
 
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref GENERA_L was successfully assigned as follows: 
@@ -94,7 +94,7 @@ Current Sasautos Option value:
 
 =====================================================================
 
-3 The SAS System                                                                               17:33 Saturday, July 11, 2015
+3 The SAS System                                                                               17:54 Saturday, July 11, 2015
 
 72        +
 73        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
@@ -139,13 +139,13 @@ Current Sasautos Option value:
 78         data PresCat.Update_subsidy_history (label="Preservation Catalog, Subsidy update history");
 79         
 80           length
-81             Subsidy_Info_Source $ 40
-82             Subsidy_Info_Source_Date 8
-83             Update_Dtm 8
-4 The SAS System                                                                               17:33 Saturday, July 11, 2015
+81             Nlihc_id $ 8
+82             Subsidy_id 8
+83             Subsidy_Info_Source $ 40
+4 The SAS System                                                                               17:54 Saturday, July 11, 2015
 
-84             Nlihc_id $ 8
-85             Subsidy_id 8
+84             Subsidy_Info_Source_Date 8
+85             Update_Dtm 8
 86             Subsidy_Info_Source_ID $ 40
 87             Compl_end_BASE
 88             Compl_end_COMPARE
@@ -181,16 +181,16 @@ Current Sasautos Option value:
 118        
 119        run;
 
+NOTE: Variable Nlihc_id is uninitialized.
+NOTE: Variable Subsidy_id is uninitialized.
 NOTE: Variable Subsidy_Info_Source is uninitialized.
 NOTE: Variable Subsidy_Info_Source_Date is uninitialized.
 NOTE: Variable Update_Dtm is uninitialized.
-NOTE: Variable Nlihc_id is uninitialized.
-NOTE: Variable Subsidy_id is uninitialized.
 NOTE: Variable Subsidy_Info_Source_ID is uninitialized.
 NOTE: Variable Compl_end_BASE is uninitialized.
 NOTE: Variable Compl_end_COMPARE is uninitialized.
 NOTE: Variable Compl_end_EXCEPT is uninitialized.
-5 The SAS System                                                                               17:33 Saturday, July 11, 2015
+5 The SAS System                                                                               17:54 Saturday, July 11, 2015
 
 NOTE: Variable POA_end_BASE is uninitialized.
 NOTE: Variable POA_end_COMPARE is uninitialized.
@@ -212,8 +212,8 @@ NOTE: Variable rent_to_FMR_description_COMPARE is uninitialized.
 NOTE: Variable rent_to_FMR_description_EXCEPT is uninitialized.
 NOTE: The data set PRESCAT.UPDATE_SUBSIDY_HISTORY has 0 observations and 27 variables.
 NOTE: DATA statement used (Total process time):
-      real time           0.02 seconds
-      cpu time            0.01 seconds
+      real time           0.01 seconds
+      cpu time            0.03 seconds
       
 
 120        
@@ -224,7 +224,7 @@ MPRINT(FILE_INFO):   run;
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
       real time           0.03 seconds
-      cpu time            0.04 seconds
+      cpu time            0.03 seconds
       
 NOTE: The PROCEDURE CONTENTS printed pages 1-2.
 
@@ -233,6 +233,6 @@ MPRINT(FILE_INFO):   title2;
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
 NOTE: The SAS System used:
-      real time           0.27 seconds
-      cpu time            0.26 seconds
+      real time           0.26 seconds
+      cpu time            0.34 seconds
       
