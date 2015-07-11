@@ -1,4 +1,4 @@
-1                                       The SAS System            17:29 Saturday, July 11, 2015
+1                                       The SAS System            17:57 Saturday, July 11, 2015
 
 NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
 NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
@@ -8,7 +8,7 @@ NOTE: This session is executing on the X64_VSHOME  platform.
 
 
 NOTE: SAS initialization used:
-      real time           0.14 seconds
+      real time           0.16 seconds
       cpu time            0.18 seconds
       
 
@@ -46,7 +46,7 @@ NOTE: Library _METADAT does not exist.
 69        +title "&_library/&_program:  NeighborhoodInfo DC";
 70        +
 71        +** Define General library for local session only **;
-2 The SAS System                                                                               17:29 Saturday, July 11, 2015
+2 The SAS System                                                                               17:57 Saturday, July 11, 2015
 
 72        +
 73        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
@@ -94,7 +94,7 @@ Current Sasautos Option value:
 
      GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
 
-3 The SAS System                                                                               17:29 Saturday, July 11, 2015
+3 The SAS System                                                                               17:57 Saturday, July 11, 2015
 
 =====================================================================
 
@@ -142,7 +142,7 @@ MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref HUD_R was successfully assigned as follows: 
       Engine:        V9 
       Physical Name: C:\DCData\Libraries\HUD\Data
-4 The SAS System                                                                               17:29 Saturday, July 11, 2015
+4 The SAS System                                                                               17:57 Saturday, July 11, 2015
 
 NOTE: Libref HUD was successfully assigned as follows: 
       Levels:           1
@@ -190,7 +190,7 @@ Current Sasautos Option value:
 93         
 94         %let Subsidy_missing_info_vars =
 95             contract_number property_name_text address_line1_text program_type_name
-5 The SAS System                                                                               17:29 Saturday, July 11, 2015
+5 The SAS System                                                                               17:57 Saturday, July 11, 2015
 
 96             ;
 97         
@@ -201,22 +201,21 @@ Current Sasautos Option value:
 102        %let Project_missing_info_vars = ;
 103        
 104        proc sql noprint;
-105          select Extract_date into :Sec8MF_update_date from Hud.&Update_file._dc;
+105          select Extract_date into :Subsidy_Info_Source_Date from Hud.&Update_file._dc;
 106        quit;
 NOTE: PROCEDURE SQL used (Total process time):
       real time           0.01 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
 107        
 108        %put _user_;
 GLOBAL FINALIZE N
 GLOBAL SQLOBS 1
-GLOBAL SEC8MF_UPDATE_DATE 11/25/2014
 GLOBAL PROJECT_UPDATE_VARS Hud_Own_Effect_dt Hud_Own_Name Hud_Own_Type Hud_Mgr_Name     Hud_Mgr_Type Update_Dtm
 GLOBAL PROJECT_MISSING_INFO_VARS 
 GLOBAL SQLOOPS 16
-GLOBAL UPDATE_DTM 1752254967.099
+GLOBAL UPDATE_DTM 1752256646.233
 GLOBAL _RECURSE 
 GLOBAL UPDATE_FILE Sec8mf_2014_11
 GLOBAL SYS_SQL_IP_ALL -1
@@ -238,7 +237,8 @@ GLOBAL SUBSIDY_UPDATE_VARS Units_Assist POA_start POA_end Compl_end      rent_to
 GLOBAL SUBSIDY_TECH_VARS Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm
 GLOBAL SUBSIDY_MISSING_INFO_VARS contract_number property_name_text address_line1_text program_type_name
 GLOBAL SQLEXITCODE 0
-6 The SAS System                                                                               17:29 Saturday, July 11, 2015
+GLOBAL SUBSIDY_INFO_SOURCE_DATE 11/25/2014
+6 The SAS System                                                                               17:57 Saturday, July 11, 2015
 
 GLOBAL _NEWFMS GENERAL PRESCAT
 109        
@@ -286,7 +286,7 @@ GLOBAL _NEWFMS GENERAL PRESCAT
 151          output;
 152        
 153          ** Multiple exception records **;
-7 The SAS System                                                                               17:29 Saturday, July 11, 2015
+7 The SAS System                                                                               17:57 Saturday, July 11, 2015
 
 154          nlihc_id = "NL000046";
 155          Subsidy_id = 3;
@@ -312,7 +312,7 @@ NOTE: Compressing data set WORK.SUBSIDY_EXCEPT_TEST increased size by 100.00 per
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: DATA statement used (Total process time):
       real time           0.01 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
 171        
@@ -325,8 +325,8 @@ MPRINT(FILE_INFO):   run;
 NOTE: There were 6 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST.
 NOTE: The PROCEDURE PRINT printed page 1.
 NOTE: PROCEDURE PRINT used (Total process time):
-      real time           0.02 seconds
-      cpu time            0.01 seconds
+      real time           0.04 seconds
+      cpu time            0.03 seconds
       
 
 MPRINT(FILE_INFO):   title3;
@@ -334,7 +334,7 @@ MPRINT(FILE_INFO):   title2;
 173        
 174        
 175        ***** NORMALIZE EXCEPTION FILE *****;
-8 The SAS System                                                                               17:29 Saturday, July 11, 2015
+8 The SAS System                                                                               17:57 Saturday, July 11, 2015
 
 176        
 177        ***options mprint symbolgen mlogic spool;
@@ -382,7 +382,7 @@ EXCEPT_NORM LASTBY subsidy_id
 EXCEPT_NORM BY nlihc_id subsidy_id
 MPRINT(EXCEPT_NORM):   data Subsidy_except_test_norm;
 MPRINT(EXCEPT_NORM):   set _Subsidy_except_test;
-9 The SAS System                                                                               17:29 Saturday, July 11, 2015
+9 The SAS System                                                                               17:57 Saturday, July 11, 2015
 
 MPRINT(EXCEPT_NORM):   by nlihc_id subsidy_id;
 MPRINT(EXCEPT_NORM):   length agency_ret program_ret contract_number_ret rent_to_fmr_description_ret $ 400;
@@ -430,7 +430,7 @@ WARNING: Multiple exceptions specified: Nlihc_id=NL000046 Subsidy_id=3 rent_to_f
 Except_date=02/28/2014
 WARNING: Multiple exceptions specified: Nlihc_id=NL000046 Subsidy_id=3 POA_end=02/28/2025 Except_date=02/28/2014
 NOTE: There were 6 observations read from the data set WORK._SUBSIDY_EXCEPT_TEST.
-10 The SAS System                                                                              17:29 Saturday, July 11, 2015
+10 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 NOTE: The data set WORK.SUBSIDY_EXCEPT_TEST_NORM has 5 observations and 11 variables.
 NOTE: Compressing data set WORK.SUBSIDY_EXCEPT_TEST_NORM increased size by 100.00 percent. 
@@ -450,7 +450,7 @@ NOTE: There were 5 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST_
 NOTE: The PROCEDURE PRINT printed page 2.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 185        
@@ -478,7 +478,7 @@ MPRINT(DATA_TO_FORMAT):   length hlo $ 8;
 MPRINT(DATA_TO_FORMAT):   retain fmtname "$nlihcid2cat" type "C" default 1 max . min .;
 MPRINT(DATA_TO_FORMAT):   retain hlo " ";
 MPRINT(DATA_TO_FORMAT):   set PresCat.Project_category end=last;
-11 The SAS System                                                                              17:29 Saturday, July 11, 2015
+11 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 MPRINT(DATA_TO_FORMAT):   label = category_code;
 MPRINT(DATA_TO_FORMAT):   start = nlihc_id;
@@ -526,7 +526,7 @@ NOTE: [Data_to_format] Exiting macro.
 208          where not( program_type_name = "UnasstPrj SCHAP" and assisted_units_count = 0 );
 209        
 210          ** Create update variables **;
-12 The SAS System                                                                              17:29 Saturday, July 11, 2015
+12 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 211        
 212          length
@@ -574,7 +574,7 @@ program_type_name=;
 251          /********** SKIP FOR NOW ************
 252          length Agency $ 80;
 253        
-13 The SAS System                                                                              17:29 Saturday, July 11, 2015
+13 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 254          if Program = "Low Income Housing Tax Credit" then Agency = "DC Dept of Housing and Community Development; DC
 254      ! Housing Finance Agency";
@@ -621,8 +621,8 @@ NOTE: The data set WORK.SEC8MF_SUBSIDY_UPDATE has 110 observations and 20 variab
 NOTE: Compressing data set WORK.SEC8MF_SUBSIDY_UPDATE decreased size by 40.00 percent. 
       Compressed is 3 pages; un-compressed would require 5 pages.
 NOTE: DATA statement used (Total process time):
-      real time           0.01 seconds
-14 The SAS System                                                                              17:29 Saturday, July 11, 2015
+      real time           0.02 seconds
+14 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
       cpu time            0.03 seconds
       
@@ -670,14 +670,14 @@ MPRINT(FILE_INFO):   options nolabel;
 MPRINT(FILE_INFO):   proc means data=Sec8MF_subsidy_update n sum mean stddev min max;
 MPRINT(FILE_INFO):   run;
 
-15 The SAS System                                                                              17:29 Saturday, July 11, 2015
+15 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 NOTE: Multiple concurrent threads will be used to summarize data.
 NOTE: There were 110 observations read from the data set WORK.SEC8MF_SUBSIDY_UPDATE.
 NOTE: The PROCEDURE MEANS printed page 6.
 NOTE: PROCEDURE MEANS used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.01 seconds
+      real time           0.01 seconds
+      cpu time            0.00 seconds
       
 
 MPRINT(FILE_INFO):   options label;
@@ -689,7 +689,7 @@ NOTE: There were 110 observations read from the data set WORK.SEC8MF_SUBSIDY_UPD
 NOTE: The PROCEDURE FREQ printed page 7.
 NOTE: PROCEDURE FREQ used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 MPRINT(FILE_INFO):   title2;
@@ -711,14 +711,14 @@ NOTE: SAS threaded sort was used.
 NOTE: Table WORK._DUP_CHECK created, with 0 rows and 3 columns.
 
 NOTE: PROCEDURE SQL used (Total process time):
-      real time           0.01 seconds
+      real time           0.02 seconds
       cpu time            0.03 seconds
       
 
 NOTE: PROCEDURE SQL used (Total process time):
       real time           0.00 seconds
       cpu time            0.00 seconds
-16 The SAS System                                                                              17:29 Saturday, July 11, 2015
+16 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
       
 
@@ -756,7 +756,7 @@ NOTE: SAS threaded sort was used.
 NOTE: Table WORK._DUP_CHECK created, with 0 rows and 6 columns.
 
 NOTE: PROCEDURE SQL used (Total process time):
-      real time           0.02 seconds
+      real time           0.03 seconds
       cpu time            0.03 seconds
       
 
@@ -766,7 +766,7 @@ NOTE: PROCEDURE SQL used (Total process time):
       
 
 NOTE: [Dup_check] 0 duplicate observations found in data set PRESCAT.SUBSIDY (WHERE=(SUBSIDY_INFO_SOURCE="HUD/MFA"))
-17 The SAS System                                                                              17:29 Saturday, July 11, 2015
+17 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 NOTE: [Dup_check] for BY variables SUBSIDY_INFO_SOURCE_ID.
 
@@ -814,7 +814,7 @@ NOTE: DATA statement used (Total process time):
 327        
 328        proc sort data=Subsidy_mfa;
 329          by Subsidy_Info_Source_ID;
-18 The SAS System                                                                              17:29 Saturday, July 11, 2015
+18 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 330        run;
 
@@ -825,7 +825,7 @@ NOTE: Compressing data set WORK.SUBSIDY_MFA decreased size by 0.00 percent.
       Compressed is 3 pages; un-compressed would require 3 pages.
 NOTE: PROCEDURE SORT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 331        
@@ -862,7 +862,7 @@ NOTE: SAS sort was used.
 NOTE: The data set WORK.SUBSIDY_MFA_UPDATE_A has 121 observations and 20 variables.
 NOTE: Compressing data set WORK.SUBSIDY_MFA_UPDATE_A decreased size by 25.00 percent. 
       Compressed is 3 pages; un-compressed would require 4 pages.
-19 The SAS System                                                                              17:29 Saturday, July 11, 2015
+19 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 NOTE: PROCEDURE SORT used (Total process time):
       real time           0.00 seconds
@@ -910,7 +910,7 @@ NOTE: DATA statement used (Total process time):
 373        
 374        
 375        ***** Summarize update changes *****;
-20 The SAS System                                                                              17:29 Saturday, July 11, 2015
+20 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 376        
 377        %file_info( data=Subsidy_mfa_update_b, freqvars=Subsidy_Info_Source_Date Update_Dtm )
@@ -958,7 +958,7 @@ NOTE: The PROCEDURE FREQ printed page 11.
 NOTE: PROCEDURE FREQ used (Total process time):
       real time           0.00 seconds
       cpu time            0.01 seconds
-21 The SAS System                                                                              17:29 Saturday, July 11, 2015
+21 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
       
 
@@ -989,7 +989,7 @@ NOTE: Compressing data set WORK.SUBSIDY_MFA_UPDATE_B decreased size by 0.00 perc
       Compressed is 3 pages; un-compressed would require 3 pages.
 NOTE: PROCEDURE SORT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 385        proc compare base=Subsidy_mfa compare=Subsidy_mfa_update_b
@@ -1006,12 +1006,12 @@ NOTE: There were 121 observations read from the data set WORK.SUBSIDY_MFA_UPDATE
 NOTE: The data set WORK.UPDATE_SUBSIDY_RESULT has 253 observations and 15 variables.
 NOTE: Compressing data set WORK.UPDATE_SUBSIDY_RESULT decreased size by 33.33 percent. 
       Compressed is 4 pages; un-compressed would require 6 pages.
-22 The SAS System                                                                              17:29 Saturday, July 11, 2015
+22 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 NOTE: The PROCEDURE COMPARE printed pages 12-35.
 NOTE: PROCEDURE COMPARE used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.01 seconds
+      real time           0.02 seconds
+      cpu time            0.03 seconds
       
 
 393        
@@ -1024,7 +1024,7 @@ NOTE: There were 20 observations read from the data set WORK.UPDATE_SUBSIDY_RESU
 NOTE: The PROCEDURE PRINT printed pages 36-37.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 398        
@@ -1054,7 +1054,7 @@ NOTE: PROCEDURE SUMMARY used (Total process time):
       cpu time            0.01 seconds
       
 
-23 The SAS System                                                                              17:29 Saturday, July 11, 2015
+23 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 
 NOTE: There were 3 observations read from the data set WORK._ST_IDVALS.
@@ -1078,7 +1078,7 @@ NOTE: Compressing data set WORK._ST_UNITS_ASSIST decreased size by 20.00 percent
       Compressed is 4 pages; un-compressed would require 5 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
       real time           0.01 seconds
-      cpu time            0.01 seconds
+      cpu time            0.03 seconds
       
 
 
@@ -1094,15 +1094,15 @@ NOTE: The data set WORK._ST_POA_START has 231 observations and 9 variables.
 NOTE: Compressing data set WORK._ST_POA_START decreased size by 20.00 percent. 
       Compressed is 4 pages; un-compressed would require 5 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.01 seconds
+      real time           0.02 seconds
+      cpu time            0.03 seconds
       
 
 
 NOTE: There were 1 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
 NOTE: DATA statement used (Total process time):
       real time           0.00 seconds
-24 The SAS System                                                                              17:29 Saturday, July 11, 2015
+24 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
       cpu time            0.00 seconds
       
@@ -1121,7 +1121,7 @@ NOTE: PROCEDURE TRANSPOSE used (Total process time):
 NOTE: There were 1 observations read from the data set WORK.UPDATE_SUBSIDY_RESULT.
 NOTE: DATA statement used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 
@@ -1131,7 +1131,7 @@ NOTE: Compressing data set WORK._ST_COMPL_END decreased size by 20.00 percent.
       Compressed is 4 pages; un-compressed would require 5 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
       real time           0.01 seconds
-      cpu time            0.00 seconds
+      cpu time            0.03 seconds
       
 
 
@@ -1150,7 +1150,7 @@ NOTE: PROCEDURE TRANSPOSE used (Total process time):
       real time           0.01 seconds
       cpu time            0.01 seconds
       
-25 The SAS System                                                                              17:29 Saturday, July 11, 2015
+25 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 
 
@@ -1198,11 +1198,11 @@ NOTE: There were 231 observations read from the data set WORK._ST_PROGRAM.
 NOTE: The data set WORK.UPDATE_SUBSIDY_RESULT_TR has 231 observations and 27 variables.
 NOTE: Compressing data set WORK.UPDATE_SUBSIDY_RESULT_TR decreased size by 42.86 percent. 
       Compressed is 4 pages; un-compressed would require 7 pages.
-26 The SAS System                                                                              17:29 Saturday, July 11, 2015
+26 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 NOTE: DATA statement used (Total process time):
-      real time           0.02 seconds
-      cpu time            0.03 seconds
+      real time           0.04 seconds
+      cpu time            0.04 seconds
       
 
 NOTE: [Pop_option] System option MPRINT restored.
@@ -1215,7 +1215,7 @@ MPRINT(FILE_INFO):   run;
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 NOTE: The PROCEDURE CONTENTS printed pages 38-39.
 
@@ -1227,7 +1227,7 @@ NOTE: There were 10 observations read from the data set WORK.UPDATE_SUBSIDY_RESU
 NOTE: The PROCEDURE PRINT printed pages 40-41.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 MPRINT(FILE_INFO):   title3;
@@ -1246,14 +1246,14 @@ MPRINT(FILE_INFO):   title2;
 426        run;
 
 NOTE: There were 121 observations read from the data set WORK.SUBSIDY_MFA_UPDATE_B.
-27 The SAS System                                                                              17:29 Saturday, July 11, 2015
+27 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 NOTE: There were 5 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST_NORM.
 NOTE: The data set WORK.SUBSIDY_MFA_EXCEPT has 121 observations and 17 variables.
 NOTE: Compressing data set WORK.SUBSIDY_MFA_EXCEPT decreased size by 0.00 percent. 
       Compressed is 3 pages; un-compressed would require 3 pages.
 NOTE: DATA statement used (Total process time):
-      real time           0.00 seconds
+      real time           0.01 seconds
       cpu time            0.00 seconds
       
 
@@ -1294,7 +1294,7 @@ MPRINT(FILE_INFO):   title2;
 438        
 439        /*
 440        proc compare base=Subsidy_mfa_update_b compare=Subsidy_mfa_except
-28 The SAS System                                                                              17:29 Saturday, July 11, 2015
+28 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 441            listall outnoequal outbase outcomp outdif maxprint=(40,32000)
 442            out=Update_except (rename=(_type_=comp_type));
@@ -1319,7 +1319,7 @@ NOTE: Compressing data set WORK.SUBSIDY_EXCEPT_TEST_B increased size by 100.00 p
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: DATA statement used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 457        
@@ -1342,7 +1342,7 @@ NOTE: PROCEDURE PRINT used (Total process time):
 466        
 467        %Super_transpose(
 468          data=Subsidy_except_test_b,
-29 The SAS System                                                                              17:29 Saturday, July 11, 2015
+29 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 469          out=Update_except_tr,
 470          var=Units_Assist POA_start POA_end Compl_end
@@ -1361,14 +1361,14 @@ NOTE: There were 5 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST_
 NOTE: The data set WORK._ST_IDVALS has 1 observations and 1 variables.
 NOTE: PROCEDURE SUMMARY used (Total process time):
       real time           0.01 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 
 NOTE: There were 1 observations read from the data set WORK._ST_IDVALS.
 NOTE: DATA statement used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
 idvals=  EXCEPT
@@ -1376,7 +1376,7 @@ idvals=  EXCEPT
 NOTE: There were 1 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST_B.
 NOTE: DATA statement used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 
@@ -1390,7 +1390,7 @@ NOTE: PROCEDURE TRANSPOSE used (Total process time):
       
 
 
-30 The SAS System                                                                              17:29 Saturday, July 11, 2015
+30 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 NOTE: There were 1 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST_B.
 NOTE: DATA statement used (Total process time):
@@ -1404,7 +1404,7 @@ NOTE: The data set WORK._ST_POA_START has 5 observations and 3 variables.
 NOTE: Compressing data set WORK._ST_POA_START increased size by 100.00 percent. 
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
-      real time           0.00 seconds
+      real time           0.01 seconds
       cpu time            0.01 seconds
       
 
@@ -1421,8 +1421,8 @@ NOTE: The data set WORK._ST_POA_END has 5 observations and 3 variables.
 NOTE: Compressing data set WORK._ST_POA_END increased size by 100.00 percent. 
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.01 seconds
+      real time           0.01 seconds
+      cpu time            0.00 seconds
       
 
 
@@ -1438,10 +1438,10 @@ NOTE: The data set WORK._ST_COMPL_END has 5 observations and 3 variables.
 NOTE: Compressing data set WORK._ST_COMPL_END increased size by 100.00 percent. 
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
-31 The SAS System                                                                              17:29 Saturday, July 11, 2015
+31 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
-      real time           0.00 seconds
-      cpu time            0.00 seconds
+      real time           0.01 seconds
+      cpu time            0.01 seconds
       
 
 
@@ -1457,8 +1457,8 @@ NOTE: The data set WORK._ST_RENT_TO_FMR_DESCRIPTION has 5 observations and 3 var
 NOTE: Compressing data set WORK._ST_RENT_TO_FMR_DESCRIPTION increased size by 100.00 percent. 
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.00 seconds
+      real time           0.01 seconds
+      cpu time            0.01 seconds
       
 
 
@@ -1474,27 +1474,27 @@ NOTE: The data set WORK._ST_SUBSIDY_ACTIVE has 5 observations and 3 variables.
 NOTE: Compressing data set WORK._ST_SUBSIDY_ACTIVE increased size by 100.00 percent. 
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.00 seconds
+      real time           0.01 seconds
+      cpu time            0.01 seconds
       
 
 
 NOTE: There were 1 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST_B.
 NOTE: DATA statement used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 
-32 The SAS System                                                                              17:29 Saturday, July 11, 2015
+32 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 NOTE: There were 5 observations read from the data set WORK.SUBSIDY_EXCEPT_TEST_B.
 NOTE: The data set WORK._ST_PROGRAM has 5 observations and 3 variables.
 NOTE: Compressing data set WORK._ST_PROGRAM increased size by 100.00 percent. 
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: PROCEDURE TRANSPOSE used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.00 seconds
+      real time           0.01 seconds
+      cpu time            0.01 seconds
       
 
 
@@ -1523,7 +1523,7 @@ MPRINT(FILE_INFO):   run;
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 NOTE: The PROCEDURE CONTENTS printed page 45.
 
@@ -1534,10 +1534,10 @@ MPRINT(FILE_INFO):   run;
 NOTE: There were 5 observations read from the data set WORK.UPDATE_EXCEPT_TR.
 NOTE: The PROCEDURE PRINT printed page 46.
 NOTE: PROCEDURE PRINT used (Total process time):
-33 The SAS System                                                                              17:29 Saturday, July 11, 2015
+33 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
 MPRINT(FILE_INFO):   title3;
@@ -1574,7 +1574,7 @@ NOTE: The data set WORK.UPDATE_SUBSIDY_RESULT_EXCEPT_TR has 231 observations and
 NOTE: Compressing data set WORK.UPDATE_SUBSIDY_RESULT_EXCEPT_TR decreased size by 44.44 percent. 
       Compressed is 5 pages; un-compressed would require 9 pages.
 NOTE: DATA statement used (Total process time):
-      real time           0.01 seconds
+      real time           0.04 seconds
       cpu time            0.01 seconds
       
 
@@ -1582,7 +1582,7 @@ NOTE: DATA statement used (Total process time):
 505        proc print data=Update_subsidy_result_except_tr;
 506          where nlihc_id in ( 'NL000001' );
 507          id nlihc_id subsidy_id;
-34 The SAS System                                                                              17:29 Saturday, July 11, 2015
+34 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 508          title2 "File = Update_subsidy_result_except_tr";
 509        run;
@@ -1592,7 +1592,7 @@ NOTE: There were 4 observations read from the data set WORK.UPDATE_SUBSIDY_RESUL
 NOTE: The PROCEDURE PRINT printed page 47.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 510        title2;
@@ -1628,9 +1628,9 @@ NOTE: The data set PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11 has 707 observations an
 NOTE: Compressing data set PRESCAT.SUBSIDY_UPDATE_SEC8MF_2014_11 decreased size by 46.67 percent. 
       Compressed is 8 pages; un-compressed would require 15 pages.
 NOTE: DATA statement used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.01 seconds
-35 The SAS System                                                                              17:29 Saturday, July 11, 2015
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+35 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
       
 
@@ -1642,7 +1642,7 @@ MPRINT(FILE_INFO):   run;
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 NOTE: The PROCEDURE CONTENTS printed page 48.
 
@@ -1678,7 +1678,7 @@ MPRINT(FILE_INFO):   title2;
 538          by nlihc_id;
 539          id subsidy_id;
 540          title2 "File = Subsidy_Update_&Update_file";
-36 The SAS System                                                                              17:29 Saturday, July 11, 2015
+36 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 541        run;
 
@@ -1726,7 +1726,7 @@ NOTE: PROCEDURE COMPARE used (Total process time):
 563        ***options mprint nosymbolgen nomlogic;
 564        
 565        /* proc copy */
-37 The SAS System                                                                              17:29 Saturday, July 11, 2015
+37 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 566        
 567        
@@ -1748,7 +1748,7 @@ NOTE: Compressing data set WORK.UPDATE_HISTORY_REC increased size by 100.00 perc
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: DATA statement used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 579        
@@ -1760,12 +1760,12 @@ NOTE: Input data set is empty.
 NOTE: The data set WORK.UPDATE_HISTORY has 0 observations and 3 variables.
 NOTE: PROCEDURE SORT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
 583        data Update_history_new (label="Preservation Catalog, update history");
 584        
-585          update Update_history Update_history_rec;
+585          update updatemode=nomissingcheck Update_history Update_history_rec;
 586          by Info_source Info_source_date;
 587        
 588        run;
@@ -1774,12 +1774,12 @@ NOTE: There were 0 observations read from the data set WORK.UPDATE_HISTORY.
 NOTE: There were 1 observations read from the data set WORK.UPDATE_HISTORY_REC.
 NOTE: The data set WORK.UPDATE_HISTORY_NEW has 1 observations and 3 variables.
 NOTE: Compressing data set WORK.UPDATE_HISTORY_NEW increased size by 100.00 percent. 
-38 The SAS System                                                                              17:29 Saturday, July 11, 2015
+38 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: DATA statement used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 589        
@@ -1822,7 +1822,7 @@ NOTE: [ListChangeDelim] Processing list=Units_Assist POA_start POA_end Compl_end
 Subsidy_Active Program
 NOTE: [ListChangeDelim] New list=Units_Assist_BASE POA_start_BASE POA_end_BASE Compl_end_BASE rent_to_FMR_description_BASE 
 Subsidy_Active_BASE Program_BASE
-39 The SAS System                                                                              17:29 Saturday, July 11, 2015
+39 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 598        %let Update_vars_compare = %ListChangeDelim( &Subsidy_update_vars, new_delim=%str( ), suffix=_COMPARE );
 NOTE: [ListChangeDelim] Processing list=Units_Assist POA_start POA_end Compl_end      rent_to_FMR_description 
@@ -1870,7 +1870,7 @@ rent_to_FMR_description_EXCEPT Subsidy_Active_EXCEPT Program_EXCEPT
 633          select distinct name into :Update_vars_compare_char separated by ' '
 634          from dictionary.columns
 635          where libname="WORK" and memname="UPDATE_SUBSIDY_RESULT_EXCEPT_TR" and type='char'
-40 The SAS System                                                                              17:29 Saturday, July 11, 2015
+40 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 636            and indexw( "%upcase(&Update_vars_compare)", upcase( name ) ) > 0;
 637        
@@ -1899,12 +1899,11 @@ NOTE: PROCEDURE SQL used (Total process time):
 655        %put _user_;
 GLOBAL FINALIZE N
 GLOBAL SQLOBS 5
-GLOBAL SEC8MF_UPDATE_DATE 11/25/2014
 GLOBAL DUP_CHECK_COUNT 0
 GLOBAL PROJECT_UPDATE_VARS Hud_Own_Effect_dt Hud_Own_Name Hud_Own_Type Hud_Mgr_Name     Hud_Mgr_Type Update_Dtm
 GLOBAL PROJECT_MISSING_INFO_VARS 
 GLOBAL SQLOOPS 46
-GLOBAL UPDATE_DTM 1752254967.099
+GLOBAL UPDATE_DTM 1752256646.233
 GLOBAL _RECURSE 
 GLOBAL UPDATE_VARS_DIF Units_Assist_DIF POA_start_DIF POA_end_DIF Compl_end_DIF rent_to_FMR_description_DIF 
 Subsidy_Active_DIF Program_DIF
@@ -1918,9 +1917,9 @@ GLOBAL UPDATE_VARS_DIF_CHAR Program_DIF rent_to_FMR_description_DIF
 GLOBAL UPDATE_VARS_DIF_NUM Compl_end_DIF POA_end_DIF POA_start_DIF Subsidy_Active_DIF Units_Assist_DIF
 GLOBAL UPDATE_VARS_BASE_CHAR Program_BASE rent_to_FMR_description_BASE
 GLOBAL UPDATE_VARS_BASE_NUM Compl_end_BASE POA_end_BASE POA_start_BASE Subsidy_Active_BASE Units_Assist_BASE
-41 The SAS System                                                                              17:29 Saturday, July 11, 2015
-
 GLOBAL UPDATE_VARS_COMPARE_CHAR Program_COMPARE rent_to_FMR_description_COMPARE
+41 The SAS System                                                                              17:57 Saturday, July 11, 2015
+
 GLOBAL UPDATE_VARS_COMPARE_NUM Compl_end_COMPARE POA_end_COMPARE POA_start_COMPARE Subsidy_Active_COMPARE 
 Units_Assist_COMPARE
 GLOBAL UPDATE_VARS_EXCEPT_CHAR Program_EXCEPT rent_to_FMR_description_EXCEPT
@@ -1946,6 +1945,7 @@ GLOBAL SUBSIDY_UPDATE_VARS Units_Assist POA_start POA_end Compl_end      rent_to
 GLOBAL SUBSIDY_TECH_VARS Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm
 GLOBAL SUBSIDY_MISSING_INFO_VARS contract_number property_name_text address_line1_text program_type_name
 GLOBAL SQLEXITCODE 0
+GLOBAL SUBSIDY_INFO_SOURCE_DATE 11/25/2014
 GLOBAL _NEWFMS GENERAL PRESCAT
 656        
 657        
@@ -1966,7 +1966,7 @@ GLOBAL _NEWFMS GENERAL PRESCAT
 672        
 673          Write = 0;
 674        
-42 The SAS System                                                                              17:29 Saturday, July 11, 2015
+42 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 675          do i = 1 to dim( difnum );
 676            if not( missing( compnum{i} ) or not( abs( difnum{i} ) > 0 ) ) or not( missing( exceptnum{i} ) ) then do;
@@ -2014,7 +2014,7 @@ NOTE: DATA statement used (Total process time):
 703        
 704        %File_info( data=Update_subsidy_history_recs, stats= )
 MPRINT(FILE_INFO):   title2 "File = Update_subsidy_history_recs";
-43 The SAS System                                                                              17:29 Saturday, July 11, 2015
+43 The SAS System                                                                              17:57 Saturday, July 11, 2015
 
 MPRINT(FILE_INFO):   proc contents data=Update_subsidy_history_recs;
 MPRINT(FILE_INFO):   run;
@@ -2041,11 +2041,78 @@ MPRINT(FILE_INFO):   title2;
 705        
 706        ** Update Update_subsidy_history data set **;
 707        
-708        
-709        ENDSAS;
+708        data Update_subsidy_history_del;
+709        
+710          set PresCat.Update_subsidy_history;
+711        
+712          if Subsidy_info_source = &Subsidy_info_source and Subsidy_info_source_date = &Subsidy_Info_Source_Date then
+712      ! delete;
+713        
+714        run;
+
+NOTE: There were 0 observations read from the data set PRESCAT.UPDATE_SUBSIDY_HISTORY.
+NOTE: The data set WORK.UPDATE_SUBSIDY_HISTORY_DEL has 0 observations and 27 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+715        
+716        data Update_subsidy_history;
+717        
+718          update updatemode=nomissingcheck
+719            Update_subsidy_history_del
+44 The SAS System                                                                              17:57 Saturday, July 11, 2015
+
+720            Update_subsidy_history_recs;
+721          by Nlihc_id Subsidy_id Subsidy_info_source Subsidy_info_source_date;
+722        
+723        run;
+
+NOTE: There were 0 observations read from the data set WORK.UPDATE_SUBSIDY_HISTORY_DEL.
+NOTE: There were 10 observations read from the data set WORK.UPDATE_SUBSIDY_HISTORY_RECS.
+NOTE: The data set WORK.UPDATE_SUBSIDY_HISTORY has 10 observations and 27 variables.
+NOTE: Compressing data set WORK.UPDATE_SUBSIDY_HISTORY increased size by 100.00 percent. 
+      Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+724        
+725        %File_info( data=Update_subsidy_history, stats= )
+MPRINT(FILE_INFO):   title2 "File = Update_subsidy_history";
+MPRINT(FILE_INFO):   proc contents data=Update_subsidy_history;
+MPRINT(FILE_INFO):   run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+NOTE: The PROCEDURE CONTENTS printed pages 70-71.
+
+MPRINT(FILE_INFO):   proc print data=Update_subsidy_history (obs=10);
+MPRINT(FILE_INFO):   title3 "Printing first 10 obs.";
+MPRINT(FILE_INFO):   run;
+
+NOTE: There were 10 observations read from the data set WORK.UPDATE_SUBSIDY_HISTORY.
+NOTE: The PROCEDURE PRINT printed pages 72-73.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+MPRINT(FILE_INFO):   title3;
+MPRINT(FILE_INFO):   title2;
+726        
+727        
+728        
+729        ENDSAS;
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+45 The SAS System                                                                              17:57 Saturday, July 11, 2015
+
 NOTE: The SAS System used:
-      real time           1.41 seconds
-      cpu time            1.30 seconds
+      real time           1.75 seconds
+      cpu time            1.35 seconds
       

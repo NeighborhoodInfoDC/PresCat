@@ -46,7 +46,7 @@
 %let Project_missing_info_vars = ;
 
 proc sql noprint;
-  select Extract_date into :Sec8MF_update_date from Hud.&Update_file._dc;
+  select Extract_date into :Subsidy_Info_Source_Date from Hud.&Update_file._dc;
 quit;
 
 %put _user_;
@@ -526,7 +526,7 @@ proc sort data=PresCat.Update_history out=Update_history;
   
 data Update_history_new (label="Preservation Catalog, update history");
 
-  update Update_history Update_history_rec;
+  update updatemode=nomissingcheck Update_history Update_history_rec;
   by Info_source Info_source_date;
   
 run;
@@ -648,6 +648,26 @@ run;
 %File_info( data=Update_subsidy_history_recs, stats= )
 
 ** Update Update_subsidy_history data set **;
+
+data Update_subsidy_history_del;
+
+  set PresCat.Update_subsidy_history;
+  
+  if Subsidy_info_source = &Subsidy_info_source and Subsidy_info_source_date = &Subsidy_Info_Source_Date then delete;
+  
+run;
+
+data Update_subsidy_history;
+
+  update updatemode=nomissingcheck
+    Update_subsidy_history_del
+    Update_subsidy_history_recs;
+  by Nlihc_id Subsidy_id Subsidy_info_source Subsidy_info_source_date;
+  
+run;
+
+%File_info( data=Update_subsidy_history, stats= )
+
 
 
 ENDSAS;
