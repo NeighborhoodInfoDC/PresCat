@@ -1,0 +1,59 @@
+PRESCAT/Create_project_update_history.sas:  NeighborhoodInfo DC                            16:56 Saturday, July 18, 2015   1
+File = PresCat.Update_project_history
+
+The CONTENTS Procedure
+
+Data Set Name        PRESCAT.UPDATE_PROJECT_HISTORY                  Observations           0   
+Member Type          DATA                                            Variables              19  
+Engine               V9                                              Indexes                0   
+Created              Saturday, July 18, 2015 04:56:11 PM             Observation Length     580 
+Last Modified        Saturday, July 18, 2015 04:56:11 PM             Deleted Observations   0   
+Protection                                                           Compressed             CHAR
+Data Set Type                                                        Reuse Space            NO  
+Label                Preservation Catalog, Project update history    Point to Observations  YES 
+Data Representation  WINDOWS_64                                      Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                                 
+
+
+                             Engine/Host Dependent Information
+
+Data Set Page Size          16384                                                           
+Number of Data Set Pages    2                                                               
+Number of Data Set Repairs  0                                                               
+Filename                    C:\DCData\Libraries\PresCat\Data\update_project_history.sas7bdat
+Release Created             9.0202M3                                                        
+Host Created                X64_VSHOME                                                      
+
+
+                      Alphabetic List of Variables and Attributes
+ 
+ #    Variable                     Type    Len    Format          Label
+
+14    Hud_Mgr_Name_BASE            Char     80                                         
+15    Hud_Mgr_Name_COMPARE         Char     80                                         
+16    Hud_Mgr_Name_EXCEPT          Char     80                                         
+17    Hud_Mgr_Type_BASE            Char      2    $OWNMGRTYPE.                         
+18    Hud_Mgr_Type_COMPARE         Char      2    $OWNMGRTYPE.                         
+19    Hud_Mgr_Type_EXCEPT          Char      2    $OWNMGRTYPE.                         
+ 5    Hud_Own_Effect_dt_BASE       Num       8                                         
+ 6    Hud_Own_Effect_dt_COMPARE    Num       8                                         
+ 7    Hud_Own_Effect_dt_EXCEPT     Num       8                                         
+ 8    Hud_Own_Name_BASE            Char     80                                         
+ 9    Hud_Own_Name_COMPARE         Char     80                                         
+10    Hud_Own_Name_EXCEPT          Char     80                                         
+11    Hud_Own_Type_BASE            Char      2    $OWNMGRTYPE.                         
+12    Hud_Own_Type_COMPARE         Char      2    $OWNMGRTYPE.                         
+13    Hud_Own_Type_EXCEPT          Char      2    $OWNMGRTYPE.                         
+ 1    Nlihc_id                     Char      8                                         
+ 2    Subsidy_Info_Source          Char     40    $INFOSRC.       Source for update    
+PRESCAT/Create_project_update_history.sas:  NeighborhoodInfo DC                            16:56 Saturday, July 18, 2015   2
+File = PresCat.Update_project_history
+
+The CONTENTS Procedure
+
+                      Alphabetic List of Variables and Attributes
+ 
+ #    Variable                     Type    Len    Format          Label
+
+ 3    Subsidy_Info_Source_Date     Num       8    MMDDYY10.       Date of update source
+ 4    Update_Dtm                   Num       8    DATETIME16.     Datetime update ran  
