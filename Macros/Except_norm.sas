@@ -18,7 +18,7 @@
 /** Macro Except_norm - Start Definition **/
 
 %macro Except_norm( 
-  lib=WORK,   /** Library **/
+  lib=PresCat,   /** Library **/
   data=,      /** Input data set name (no lib) **/
   out=,       /** Output data set name (no lib). If omitted, out=&data._norm **/
   by=         /** BY variable(s) identifying unique obs **/ 
@@ -41,7 +41,7 @@
     where libname="%upcase(&lib)" and memname="%upcase(&data)" and type='num';
   quit;
 
-  proc sort data=&data out=_&data;
+  proc sort data=&lib..&data out=&data._srt;
     by &by descending except_date;
   run;
 
@@ -57,7 +57,7 @@
 
   data &out;
 
-    set _&data;
+    set &data._srt;
     by &by;
 
     length &charvarlistret $ 400;
@@ -71,7 +71,7 @@
     array nvar{*} &numvarlistclean;
     array nret{*} &numvarlistret;
     
-    if first.&lastby/*subsidy_id*/ then do;
+    if first.&lastby then do;
     
       do i = 1 to dim( cret );
         cret{i} = '';
@@ -97,7 +97,7 @@
       end;
     end;
 
-    if last.&lastby/*subsidy_id*/ then do;
+    if last.&lastby then do;
     
       do i = 1 to dim( cret );
         cvar{i} = cret{i};
