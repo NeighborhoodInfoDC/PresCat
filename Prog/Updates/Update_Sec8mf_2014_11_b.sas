@@ -144,7 +144,7 @@ run;
 
 ***options mprint symbolgen mlogic spool;
 
-%Except_norm( data=Project_except_test, by=nlihc_id )
+%Except_norm( lib=work, data=Project_except_test, by=nlihc_id )
 
   proc print data=Project_except_test_norm;
     id nlihc_id;

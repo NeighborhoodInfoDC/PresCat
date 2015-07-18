@@ -120,7 +120,7 @@ run;
 
 ***options mprint symbolgen mlogic spool;
 
-%Except_norm( data=Subsidy_except_test, by=nlihc_id subsidy_id )
+%Except_norm( lib=work, data=Subsidy_except_test, by=nlihc_id subsidy_id )
 
   proc print data=Subsidy_except_test_norm;
     id nlihc_id subsidy_id;
@@ -330,10 +330,10 @@ proc sort data=Subsidy_mfa_update_b;
 proc compare base=Subsidy_mfa compare=Subsidy_mfa_update_b 
     listall /*outnoequal*/ outbase outcomp outdif maxprint=(40,32000)
     out=Update_subsidy_result (rename=(_type_=comp_type));
-  id nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_Date Subsidy_Info_Source_ID Update_Dtm;
-  var Units_Assist POA_start POA_end Compl_end
+  id nlihc_id Subsidy_ID &Subsidy_tech_vars;
+  var &Subsidy_update_vars /*Units_Assist POA_start POA_end Compl_end
     rent_to_FMR_description Subsidy_Active
-    Program;
+    Program*/;
 run;
 
 proc print data=Update_subsidy_result (obs=20) noobs;
@@ -348,9 +348,9 @@ title2;
 %Super_transpose(  
   data=Update_subsidy_result,
   out=Update_subsidy_result_tr,
-  var=Units_Assist POA_start POA_end Compl_end
+  var=&Subsidy_update_vars /*Units_Assist POA_start POA_end Compl_end
     rent_to_FMR_description Subsidy_Active
-    Program,
+    Program*/,
   id=comp_type,
   by=nlihc_id Subsidy_ID &Subsidy_tech_vars /*Subsidy_Info_Source Subsidy_Info_Source_Date Subsidy_Info_Source_ID Update_Dtm*/,
   mprint=N
