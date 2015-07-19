@@ -58,6 +58,7 @@ data Subsidy_except_test;
 
   set PresCat.Subsidy_except_test;
   
+  /***********
   ** Exception for updated var **;
   nlihc_id = "NL000001";
   Subsidy_id = 3;
@@ -110,6 +111,7 @@ data Subsidy_except_test;
   Except_init = 'PAT';
   rent_to_fmr_description = 'New desc';
   output;
+  ************************/
     
 run; 
 

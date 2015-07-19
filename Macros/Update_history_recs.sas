@@ -124,7 +124,7 @@
     
   run;
 
-  %File_info( data=&out, stats= )
+  /***%File_info( data=&out, stats= )***/
 
 %mend Update_history_recs;
 

@@ -10,9 +10,11 @@
  Description:  Create initial subsidy exception data set (blank).
 
  Modifications:
+  07/19/15 PAT Rerun to update variables from latest PresCat.Subsidy.
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+/*%include "L:\SAS\Inc\StdLocal.sas";*/
+%include "C:\DCData\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
