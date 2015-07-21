@@ -143,6 +143,7 @@
   
   title2;
   
+  
   **************************************************************************
   ** Apply update to Catalog data;
   
@@ -213,8 +214,6 @@
     id nlihc_id Subsidy_ID &Subsidy_tech_vars;
     var &Subsidy_update_vars;
   run;
-
-  ** Format compare output **;
 
   %Super_transpose(  
     data=Update_subsidy_result,
@@ -288,7 +287,7 @@
   **************************************************************************
   ** Recombine with other subsidy data **;
 
-  data /**TEMP LIB**/PRESCAT.Subsidy_Update_&Update_file;
+  data Subsidy_Update_&Update_file;
 
     set Subsidy_mfa_except Subsidy_other;
     by nlihc_id Subsidy_id;

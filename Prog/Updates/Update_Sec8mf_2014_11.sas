@@ -21,5 +21,5 @@
 %DCData_lib( HUD, local=n )
 
 
-%Update_Sec8mf( Update_file=Sec8mf_2014_11, Finalize=N, Subsidy_except=Subsidy_except_test )
+%Update_Sec8mf( Update_file=Sec8mf_2014_11, Finalize=N, Subsidy_except=Subsidy_except_test, Project_except=Project_except_test )
 

@@ -22,7 +22,7 @@
   ** Initial setup and checks;
   
   
-  %File_info( data=/**TEMP LIB**/PRESCAT.Subsidy_Update_&Update_file )
+  %File_info( data=Subsidy_Update_&Update_file )
 
   %File_info( data=Update_subsidy_history_new, stats= )
   

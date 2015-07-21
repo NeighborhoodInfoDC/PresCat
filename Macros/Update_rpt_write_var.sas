@@ -14,7 +14,7 @@
 
 /** Macro Update_rpt_write_var - Start Definition **/
 
-%macro Update_rpt_write_var( var=, fmt=, lbl=, typ=n );
+%macro Update_rpt_write_var( var=, fmt=comma8.0, lbl=, typ=n, except=y );
 
   %if &lbl = %then %do;
     Var = "&var";
@@ -40,10 +40,20 @@
     
   %end;
   
-  if missing( &var._EXCEPT ) then Except_value = "-";
-  else Except_value = put( &var._EXCEPT, &fmt );
+  %if %upcase( &except ) = Y %then %do;
   
-  if New_value ~= "-" or Except_value ~= "-" then output;
+    if missing( &var._EXCEPT ) then Except_value = "-";
+    else Except_value = put( &var._EXCEPT, &fmt );
+    
+    if New_value ~= "-" or Except_value ~= "-" then output;
+    
+  %end;
+  %else %do;
+  
+    Except_value = "n/a";
+    if New_value ~= "-" then output;
+    
+  %end;
 
 %mend Update_rpt_write_var;
 
