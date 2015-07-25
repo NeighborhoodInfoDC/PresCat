@@ -116,6 +116,8 @@
     by=Subsidy_Info_Source_ID,
     id=contract_number
   )
+  
+  title2;
 
   ** Create updates from Subsidy file **;
 
@@ -183,9 +185,9 @@
     by nlihc_id;
 
   proc compare base=Project_mfa compare=Project_mfa_update_b 
-      /*listall*/ noprint outbase outcomp outdif maxprint=(40,32000)
+      listall /*noprint*/ outbase outcomp outdif maxprint=(40,32000)
       out=Update_project_result (rename=(_type_=comp_type));
-    id nlihc_id &Subsidy_tech_vars;
+    id nlihc_id Subsidy_Info_Source Subsidy_Info_Source_ID;
     var &Project_mfa_update_vars &Project_subsidy_update_vars;
   run;
 
@@ -194,7 +196,7 @@
     out=Update_project_result_tr,
     var=&Project_mfa_update_vars &Project_subsidy_update_vars,
     id=comp_type,
-    by=nlihc_id &Subsidy_tech_vars,
+    by=nlihc_id Subsidy_Info_Source Subsidy_Info_Source_ID,
     mprint=N
   )
 
@@ -350,6 +352,8 @@
   ods pdf file="&_dcdata_r_path\PresCat\Prog\Updates\Update_&Update_file._project.pdf" 
     style=Styles.Rtf_arial_9pt pdftoc=2 bookmarklist=hide uniform;
 
+  ods proclabel "Updated variables";
+
   proc report data=Update_project_result_report nowd;
     by category_code ;
     column nlihc_id Var Old_value New_value Except_value;
@@ -369,12 +373,14 @@
    
   ** Non-matching records **;
 
+  ods proclabel "Unmatched project records";
+  
   proc print data=Project_mfa_update_b label noobs;
     where missing( nlihc_id );
     var &Project_missing_info_vars;
     label 
       address_line1_text = "Address";
-    title3 "PresCat.Project - Unmatched project records in update file";
+    title3 "PresCat.Project - Unmatched project records in &Update_file";
   run;
 
   title2;

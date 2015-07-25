@@ -25,9 +25,9 @@
   %Update_Sec8mf_init( Update_file=&Update_file )
   
   %Update_Sec8mf_subsidy( Update_file=&Update_file, Subsidy_except=&Subsidy_except )
-  /*
+  
   %Update_Sec8mf_project( Update_file=&Update_file, Project_except=&Project_except )
-  */
+  
   %Update_Sec8mf_finish( Update_file=&Update_file, Finalize=&Finalize )
 
 %mend Update_Sec8mf;

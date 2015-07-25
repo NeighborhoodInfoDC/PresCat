@@ -42,11 +42,6 @@
 
   %Except_norm( data=&Subsidy_except, by=nlihc_id subsidy_id )
 
-  proc print data=&Subsidy_except._norm;
-    id nlihc_id subsidy_id;
-    title2 "File = Subsidy_except_test_norm";
-  run;
-
 
   **************************************************************************
   ** Get data for updating subsidy file;
@@ -57,7 +52,7 @@
     where not( program_type_name = "UnasstPrj SCHAP" and assisted_units_count = 0 );
     
     **** TEMPORARY TEST OF HAVING AN UNMATCHED RECORD ********;
-    
+   
     IF PROPERTY_ID = "800003741" AND CONTRACT_NUMBER = "DC39M000025" THEN CONTRACT_NUMBER = "DCXXXXXXXXX";
 
     ** Create update variables **;
@@ -223,7 +218,7 @@
   proc compare base=Subsidy_mfa compare=Subsidy_mfa_update_b 
       listall /*noprint*/ outbase outcomp outdif maxprint=(40,32000)
       out=Update_subsidy_result (rename=(_type_=comp_type));
-    id nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_ID /*&Subsidy_tech_vars*/;
+    id nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_ID;
     var &Subsidy_update_vars;
   run;
   
@@ -234,7 +229,7 @@
     out=Update_subsidy_result_tr,
     var=&Subsidy_update_vars,
     id=comp_type,
-    by=nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_ID /*&Subsidy_tech_vars*/,
+    by=nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_ID,
     mprint=Y
   )
   
@@ -380,6 +375,7 @@
   ods listing close;
   ods pdf file="&_dcdata_r_path\PresCat\Prog\Updates\Update_&Update_file._subsidy.pdf" 
     style=Styles.Rtf_arial_9pt pdftoc=2 bookmarklist=hide uniform;
+ 
   ods proclabel "Updated variables";
 
   proc report data=Update_subsidy_result_report nowd;
