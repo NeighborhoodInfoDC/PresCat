@@ -82,6 +82,10 @@
 
     set &data;
     
+    retain 
+      Subsidy_Info_Source_Date &Subsidy_Info_Source_Date
+      Update_dtm &Update_dtm;
+    
     format &Update_vars_dif ;
     
     array difnum{*} &Update_vars_dif_num;
@@ -108,7 +112,7 @@
     
     do i = 1 to dim( difchar );
       difchar{i} = compress( difchar{i}, "." );
-      if not( missing( compchar{i} ) or not( abs( difchar{i} ) > 0 ) ) or not( missing( exceptchar{i} ) ) then do;
+      if not( missing( compchar{i} ) /*or not( abs( difchar{i} ) > 0 )*/ ) or not( missing( exceptchar{i} ) ) then do;
         Write = 1;
       end;
       else do;

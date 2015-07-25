@@ -42,6 +42,11 @@
 
   %Except_norm( data=&Subsidy_except, by=nlihc_id subsidy_id )
 
+  proc print data=&Subsidy_except._norm;
+    id nlihc_id subsidy_id;
+    title2 "File = Subsidy_except_test_norm";
+  run;
+
 
   **************************************************************************
   ** Get data for updating subsidy file;
@@ -50,6 +55,10 @@
 
     set Hud.&Update_file._dc;
     where not( program_type_name = "UnasstPrj SCHAP" and assisted_units_count = 0 );
+    
+    **** TEMPORARY TEST OF HAVING AN UNMATCHED RECORD ********;
+    
+    IF PROPERTY_ID = "800003741" AND CONTRACT_NUMBER = "DC39M000025" THEN CONTRACT_NUMBER = "DCXXXXXXXXX";
 
     ** Create update variables **;
 
@@ -147,7 +156,9 @@
   **************************************************************************
   ** Apply update to Catalog data;
   
-  ** Separate Catalog records to be updated **;
+  ** Separate Catalog records to be updated
+  ** Subsidy_mfa = All Catalog subsidy records flagged with Sec8MF as source 
+  ** Subsidy_other = All other Catalog subsidy records;
 
   data Subsidy_mfa Subsidy_other; 
 
@@ -162,7 +173,8 @@
     by Subsidy_Info_Source_ID;
   run;
 
-  ** Apply update **;
+  ** Apply update
+  ** Subsidy_mfa_update_a = Initial application of Sec8mf update to Catalog subsidy records;
 
   data Subsidy_mfa_update_a;
 
@@ -179,7 +191,7 @@
     by Nlihc_id Subsidy_id poa_start poa_end;
   run;
 
-  ** Add unique Subsidy_ID to any new subsidy records **;
+  ** Subsidy_mfa_update_b = Add unique Subsidy_ID to any new subsidy records created by update **;
 
   data Subsidy_mfa_update_b;
 
@@ -200,7 +212,7 @@
     
   run;
   
-  ** Summarize update changes and format output **;
+  ** Use Proc Compare to summarize update changes **;
   
   proc sort data=Subsidy_mfa;
     by nlihc_id Subsidy_ID;
@@ -209,19 +221,21 @@
     by nlihc_id Subsidy_ID;
 
   proc compare base=Subsidy_mfa compare=Subsidy_mfa_update_b 
-      /*listall*/ noprint outbase outcomp outdif maxprint=(40,32000)
+      listall /*noprint*/ outbase outcomp outdif maxprint=(40,32000)
       out=Update_subsidy_result (rename=(_type_=comp_type));
-    id nlihc_id Subsidy_ID &Subsidy_tech_vars;
+    id nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_ID /*&Subsidy_tech_vars*/;
     var &Subsidy_update_vars;
   run;
+  
+  ** Format Proc Compare output file;
 
   %Super_transpose(  
     data=Update_subsidy_result,
     out=Update_subsidy_result_tr,
     var=&Subsidy_update_vars,
     id=comp_type,
-    by=nlihc_id Subsidy_ID &Subsidy_tech_vars,
-    mprint=N
+    by=nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_ID /*&Subsidy_tech_vars*/,
+    mprint=Y
   )
   
   
@@ -366,6 +380,7 @@
   ods listing close;
   ods pdf file="&_dcdata_r_path\PresCat\Prog\Updates\Update_&Update_file._subsidy.pdf" 
     style=Styles.Rtf_arial_9pt pdftoc=2 bookmarklist=hide uniform;
+  ods proclabel "Updated variables";
 
   proc report data=Update_subsidy_result_report nowd;
     by category_code ;
@@ -387,6 +402,8 @@
   run;
    
   ** Non-matching records **;
+  
+  ods proclabel "Unmatched subsidy records";
 
   proc print data=Subsidy_mfa_update_a label;
     where missing( nlihc_id );
@@ -395,7 +412,7 @@
     label 
       address_line1_text = "Address"
       program_type_name = "Program";
-    title3 "PresCat.Subsidy - Unmatched subsidy records in update file";
+    title3 "PresCat.Subsidy - Unmatched subsidy records from &Update_file";
   run;
 
   title2;

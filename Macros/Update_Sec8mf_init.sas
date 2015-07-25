@@ -29,7 +29,7 @@
   %let NO_SUBSIDY_ID = 9999999999;
 
   proc sql noprint;
-    select Extract_date into :Subsidy_Info_Source_Date from Hud.&Update_file._dc;
+    select Extract_date format best32. into :Subsidy_Info_Source_Date from Hud.&Update_file._dc;
   quit;
 
   %let Subsidy_update_vars = 
