@@ -169,10 +169,6 @@ data Sec8MF_subsidy_update;
   Subsidy_Info_Source_ID = trim( left( put( property_id, 16. ) ) ) || "/" || 
                            left( contract_number );
   
-  Subsidy_Info_Source_Date = extract_date;
-
-  Update_Dtm = &Update_Dtm;
-
   if assisted_units_count > 0 then Units_Assist = assisted_units_count;
 
   POA_start = tracs_effective_date;
@@ -183,6 +179,10 @@ data Sec8MF_subsidy_update;
 
   if tracs_status in ( 'T' ) then Subsidy_Active = 0;
   else Subsidy_Active = 1;
+
+  Subsidy_Info_Source_Date = extract_date;
+
+  Update_Dtm = &Update_Dtm;
 
   ** Program code **;
   
@@ -280,8 +280,7 @@ run;
 data Subsidy_mfa_update_a;
 
   update 
-    Subsidy_mfa 
-    Sec8MF_subsidy_update (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars);
+    Subsidy_mfa Sec8MF_subsidy_update (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars);
   by Subsidy_Info_Source_ID;
   
   if missing( Subsidy_id ) then Subsidy_id = &NO_SUBSIDY_ID;
@@ -354,7 +353,7 @@ title2;
     rent_to_FMR_description Subsidy_Active
     Program*/,
   id=comp_type,
-  by=nlihc_id Subsidy_ID &Subsidy_tech_vars /*Subsidy_Info_Source Subsidy_Info_Source_Date Subsidy_Info_Source_ID Update_Dtm*/,
+  by=nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_Date Subsidy_Info_Source_ID Update_Dtm,
   mprint=N
 )
 
