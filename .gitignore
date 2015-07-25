@@ -1,9 +1,9 @@
 *.bak
 
 # DCData subfolders 
-Data/
 Maps/
 Raw/
+Prog/Temp/
 Prog/Images/
 
 # SAS files
