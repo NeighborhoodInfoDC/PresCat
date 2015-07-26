@@ -21,35 +21,9 @@
   **************************************************************************
   ** Initial setup and checks;
   
+  %let Finalize = %upcase( &Finalize );
   
-  %File_info( data=Subsidy_Update_&Update_file, printobs=5 )
   
-  %File_info( data=Update_subsidy_history_new, stats=, printobs=5 )
-  
-  %File_info( data=Project_Update_&Update_file, printobs=5 )
-  
-  %File_info( data=Update_project_history_new, stats=, printobs=5 )
-  
-  title2 'FINAL COMPARE AGAINST ORIGINAL';
-
-  proc compare base=PresCat.Subsidy compare=Subsidy_Update_&Update_file maxprint=(40,32000) listall;
-  id nlihc_id subsidy_id;
-  run;
-
-  proc compare base=PresCat.Project compare=Project_Update_&Update_file maxprint=(40,32000) listall;
-  id nlihc_id;
-  run;
-  
-  title2;
-
-  **************************************************************************
-  ** Archive past Catalog datasets before finalizing;
-
-  /*** SKIP FOR NOW ***%Archive_catalog_data( data=Project Subsidy Update_history, zip_pre=Update_&Update_file, zip_suf= )****/
-
-  /* proc copy */
-
-
   **************************************************************************
   ** Add record to Update_history;
 
@@ -78,6 +52,40 @@
   run;
 
   %File_info( data=Update_history_new, stats= )
+
+  
+  **************************************************************************
+  ** Archive past Catalog datasets before finalizing;
+
+  %if &Finalize = Y %then %do;
+  
+    %Archive_catalog_data( data=Project Subsidy Update_history Update_subsidy_history Update_project_history, zip_pre=Update_&Update_file, zip_suf= )
+    
+  %end;
+
+  
+  %File_info( data=Subsidy_Update_&Update_file, printobs=5 )
+  
+  %File_info( data=Update_subsidy_history_new, stats=, printobs=5 )
+  
+  %File_info( data=Project_Update_&Update_file, printobs=5 )
+  
+  %File_info( data=Update_project_history_new, stats=, printobs=5 )
+  
+  title2 'FINAL COMPARE AGAINST ORIGINAL';
+
+  proc compare base=PresCat.Subsidy compare=Subsidy_Update_&Update_file maxprint=(40,32000) listall;
+  id nlihc_id subsidy_id;
+  run;
+
+  proc compare base=PresCat.Project compare=Project_Update_&Update_file maxprint=(40,32000) listall;
+  id nlihc_id;
+  run;
+  
+  title2;
+
+  /* proc copy */
+
 
 
 %mend Update_Sec8mf_finish;
