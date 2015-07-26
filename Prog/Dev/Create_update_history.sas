@@ -20,7 +20,7 @@
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
 
-data PresCat.Update_history (label="Preservation Catalog, update history");
+data PresCat.Update_history (label="Preservation Catalog, Update history");
 
   length
     Update_Dtm 8

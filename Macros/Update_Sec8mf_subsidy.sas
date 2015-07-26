@@ -17,12 +17,21 @@
 
 /** Macro Update_Sec8mf_subsidy - Start Definition **/
 
-%macro Update_Sec8mf_subsidy( Update_file=, Subsidy_except= );
+%macro Update_Sec8mf_subsidy( Update_file=, Subsidy_except=, Quiet=Y );
 
   
   **************************************************************************
   ** Initial setup and checks;
   
+  %local Compare_opt;
+  
+  %if %upcase( &Quiet ) = N %then %do;
+    %let Compare_opt = listall;
+  %end;
+  %else %do;
+    %let Compare_opt = noprint;
+  %end;
+    
   ** Check for duplicates **;
   
   title2 '***** THERE SHOULD NOT BE ANY DUPLICATES OF SUBSIDY_INFO_SOURCE_ID IN PRESCAT.SUBSIDY *****';
@@ -239,9 +248,9 @@
     by nlihc_id Subsidy_ID;
 
   proc compare base=Subsidy_mfa compare=Subsidy_mfa_update_b 
-      listall /*noprint*/ outbase outcomp outdif maxprint=(40,32000)
+      &Compare_opt outbase outcomp outdif maxprint=(40,32000)
       out=Update_subsidy_result (rename=(_type_=comp_type));
-    id nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_ID;
+    id nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_ID contract_number;
     var &Subsidy_update_vars;
   run;
   
@@ -252,7 +261,7 @@
     out=Update_subsidy_result_tr,
     var=&Subsidy_update_vars,
     id=comp_type,
-    by=nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_ID,
+    by=nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_ID contract_number,
     mprint=Y
   )
   
@@ -319,7 +328,7 @@
   **************************************************************************
   ** Recombine with other subsidy data **;
 
-  data Subsidy_Update_&Update_file;
+  data Subsidy_Update_&Update_file (label="Preservation Catalog, Project subsidies" sortedby=nlihc_id Subsidy_id);
 
     set Subsidy_mfa_except Subsidy_other;
     by nlihc_id Subsidy_id;
@@ -351,14 +360,22 @@
     if Subsidy_info_source = &Subsidy_info_source and Subsidy_info_source_date = &Subsidy_Info_Source_Date then delete;
     
   run;
+  
+  proc sort data=Update_subsidy_history_del;
+    by Nlihc_id Subsidy_id Subsidy_info_source Subsidy_info_source_date;
+  run;
 
-  data Update_subsidy_history_new;
+  data Update_subsidy_history_new (label="Preservation Catalog, Subsidy update history");
 
     update updatemode=nomissingcheck
       Update_subsidy_history_del
       Update_subsidy_history_recs;
     by Nlihc_id Subsidy_id Subsidy_info_source Subsidy_info_source_date;
     
+  run;
+  
+  proc sort data=Update_subsidy_history_new;
+    by Nlihc_id Subsidy_id descending Update_dtm;
   run;
 
 

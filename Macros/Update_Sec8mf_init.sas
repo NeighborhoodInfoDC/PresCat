@@ -37,10 +37,10 @@
       rent_to_FMR_description Subsidy_Active Program 
       ;
       
-  %let Subsidy_tech_vars = Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm;
+  %let Subsidy_tech_vars = Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date contract_number Update_Dtm;
 
   %let Subsidy_missing_info_vars = 
-      contract_number property_name_text address_line1_text program_type_name
+      property_name_text address_line1_text program_type_name
       ;
       
   %let Project_mfa_update_vars = 

@@ -22,13 +22,13 @@
   ** Initial setup and checks;
   
   
-  %File_info( data=Subsidy_Update_&Update_file )
+  %File_info( data=Subsidy_Update_&Update_file, printobs=5 )
   
-  %File_info( data=Update_subsidy_history_new, stats= )
+  %File_info( data=Update_subsidy_history_new, stats=, printobs=5 )
   
-  %File_info( data=Project_Update_&Update_file )
+  %File_info( data=Project_Update_&Update_file, printobs=5 )
   
-  %File_info( data=Update_project_history_new, stats= )
+  %File_info( data=Update_project_history_new, stats=, printobs=5 )
   
   title2 'FINAL COMPARE AGAINST ORIGINAL';
 
@@ -66,11 +66,15 @@
   proc sort data=PresCat.Update_history out=Update_history;
     by Info_source Info_source_date;
     
-  data Update_history_new (label="Preservation Catalog, update history");
+  data Update_history_new (label="Preservation Catalog, Update history");
 
     update updatemode=nomissingcheck Update_history Update_history_rec;
     by Info_source Info_source_date;
     
+  run;
+  
+  proc sort data=Update_history_new;
+    by descending Update_dtm;
   run;
 
   %File_info( data=Update_history_new, stats= )

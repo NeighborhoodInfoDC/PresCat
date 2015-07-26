@@ -15,12 +15,21 @@
 
 /** Macro Update_Sec8mf_project - Start Definition **/
 
-%macro Update_Sec8mf_project( Update_file=, Project_except= );
+%macro Update_Sec8mf_project( Update_file=, Project_except=, Quiet=Y );
 
   
   **************************************************************************
   ** Initial setup and checks;
   
+  %local Compare_opt;
+  
+  %if %upcase( &Quiet ) = N %then %do;
+    %let Compare_opt = listall;
+  %end;
+  %else %do;
+    %let Compare_opt = noprint;
+  %end;
+    
   ** Create Project to update source link with Subsidy file **;
 
   proc sort 
@@ -185,7 +194,7 @@
     by nlihc_id;
 
   proc compare base=Project_mfa compare=Project_mfa_update_b 
-      listall /*noprint*/ outbase outcomp outdif maxprint=(40,32000)
+      &Compare_opt outbase outcomp outdif maxprint=(40,32000)
       out=Update_project_result (rename=(_type_=comp_type));
     id nlihc_id Subsidy_Info_Source Subsidy_Info_Source_ID;
     var &Project_mfa_update_vars &Project_subsidy_update_vars;
@@ -281,7 +290,7 @@
     by nlihc_id;
   run;
 
-  data Project_Update_&Update_file;
+  data Project_Update_&Update_file (label="Preservation Catalog, Projects" sortedby=nlihc_id);
 
     update 
       Project_Update_all (in=in1)
@@ -306,14 +315,22 @@
     if Subsidy_info_source = &Subsidy_info_source and Subsidy_info_source_date = &Subsidy_Info_Source_Date then delete;
     
   run;
+  
+  proc sort data=Update_project_history_del;
+    by Nlihc_id Subsidy_info_source Subsidy_info_source_date;
+  run;
 
-  data Update_project_history_new;
+  data Update_project_history_new (label="Preservation Catalog, Project update history" sortedby=Nlihc_id Subsidy_info_source Subsidy_info_source_date);
 
     update updatemode=nomissingcheck
       Update_project_history_del
       Update_project_history_recs;
     by Nlihc_id Subsidy_info_source Subsidy_info_source_date;
     
+  run;
+  
+  proc sort data=Update_project_history_new;
+    by Nlihc_id descending Update_dtm;
   run;
 
 
