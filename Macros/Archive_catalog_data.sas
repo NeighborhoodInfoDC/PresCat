@@ -8,6 +8,9 @@
  Environment:  -
  
  Description:  Autocall macro to archive Catalog data sets.
+ 
+ Note: Overwrite=N (default) prevents replacement of older files in a 
+ previously existing archive. 
 
  Modifications:
 **************************************************************************/
@@ -18,14 +21,23 @@
   data=,     /** List of data set names **/
   zip_suf=,  /** Suffix for ZIP file name **/
   zip_pre=,  /** Prefix for ZIP file name (if missing current datetime is used) **/
-  path=&_dcdata_r_path\PresCat\Data,   /** ZIP file path **/
-  overwrite=n  /** Overwrite older files in archive **/
+  path=&_dcdata_r_path\PresCat\Data,   /** ZIP file path (don't include \Archive\ subfolder **/
+  overwrite=n,  /** Overwrite older files in archive **/
+  zip_program=&_dcdata_r_drive:\Tools\7-zip\7z  /** Location of 7z program **/
   );
 
   %local i v update_switches;
   
-  %if %upcase( &overwrite ) = Y %then %let update_switches = ;
-  %else %let update_switches = -uy1z1;  /** Copy previously saved older files to new archive **/
+  %if %upcase( &overwrite ) = Y %then %do;
+    %let update_switches = ;
+    %warn_mput( macro=Archive_catalog_data, 
+                msg=Overwrite=%upcase( &overwrite ) specified, older files in existing archive will be replaced. )
+  %end;
+  %else %do;
+    %let update_switches = -uy1z1;  %** Copy previously saved older files to new archive **;
+    %note_mput( macro=Archive_catalog_data, 
+                msg=Overwrite=%upcase( &overwrite ) specified, older files in existing archive will not be replaced. )
+  %end;
   
   %if &zip_pre = %then 
     %let zip_pre = %sysfunc( putn( %sysfunc( datetime() ), b8601dt19.0 ) );
@@ -37,7 +49,7 @@
 
   %do %until ( &v = );
 
-    x "&_dcdata_r_drive:\Tools\7-zip\7z a &update_switches -tzip &path\Archive\&zip_pre.&zip_suf &path\&v..sas7bdat";
+    x "&zip_program a &update_switches -tzip &path\Archive\&zip_pre.&zip_suf &path\&v..sas7bdat";
 
     %let i = %eval( &i + 1 );
     %let v = %scan( &data, &i, %str( ) );
