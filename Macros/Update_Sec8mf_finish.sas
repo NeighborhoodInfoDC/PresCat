@@ -23,9 +23,24 @@
   
   
   %File_info( data=Subsidy_Update_&Update_file )
-
+  
   %File_info( data=Update_subsidy_history_new, stats= )
   
+  %File_info( data=Project_Update_&Update_file )
+  
+  %File_info( data=Update_project_history_new, stats= )
+  
+  title2 'FINAL COMPARE AGAINST ORIGINAL';
+
+  proc compare base=PresCat.Subsidy compare=Subsidy_Update_&Update_file maxprint=(40,32000) listall;
+  id nlihc_id subsidy_id;
+  run;
+
+  proc compare base=PresCat.Project compare=Project_Update_&Update_file maxprint=(40,32000) listall;
+  id nlihc_id;
+  run;
+  
+  title2;
 
   **************************************************************************
   ** Archive past Catalog datasets before finalizing;
@@ -59,6 +74,7 @@
   run;
 
   %File_info( data=Update_history_new, stats= )
+
 
 %mend Update_Sec8mf_finish;
 

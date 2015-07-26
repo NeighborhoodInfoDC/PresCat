@@ -101,7 +101,7 @@
            Hud_Own_Effect_dt Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
     
     keep &Project_mfa_update_vars &Project_missing_info_vars 
-         &Subsidy_tech_vars; 
+         &Subsidy_tech_vars Update_dtm; 
 
   run;
 
@@ -156,7 +156,7 @@
     update 
       Project_mfa (in=in_Project)
       Sec8MF_project_update 
-        (keep=&Project_mfa_update_vars &Project_missing_info_vars &Subsidy_tech_vars);
+        (keep=&Project_mfa_update_vars &Project_missing_info_vars &Subsidy_tech_vars Update_dtm);
     by Subsidy_Info_Source_ID;
     
     if in_Project;
@@ -267,7 +267,7 @@
     
     where not( missing( nlihc_id ) );
     
-    drop Subsidy_Info_Source_ID contract_number
+    drop Subsidy_Info_Source_ID Subsidy_Info_Source contract_number
          program_type_name property_name_text address_line1_text
          Subsidy_Info_Source_Date; 
     
@@ -307,7 +307,7 @@
     
   run;
 
-  data Update_project_history;
+  data Update_project_history_new;
 
     update updatemode=nomissingcheck
       Update_project_history_del
@@ -371,18 +371,6 @@
     title3 "PresCat.Project - Updated variables";
   run;
    
-  ** Non-matching records **;
-
-  ods proclabel "Unmatched project records";
-  
-  proc print data=Project_mfa_update_b label noobs;
-    where missing( nlihc_id );
-    var &Project_missing_info_vars;
-    label 
-      address_line1_text = "Address";
-    title3 "PresCat.Project - Unmatched project records in &Update_file";
-  run;
-
   title2;
     
   ods pdf close;

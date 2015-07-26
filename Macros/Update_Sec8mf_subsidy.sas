@@ -9,6 +9,8 @@
  
  Description:  Autocall macro to update PresCat.Subsidy 
  with Sec8mf data set.
+ 
+ DON'T FORGET TO REMOVE TEMPORARY TEST OF UNMATCHED RECORDS!!!
 
  Modifications:
 **************************************************************************/
@@ -51,10 +53,6 @@
     set Hud.&Update_file._dc;
     where not( program_type_name = "UnasstPrj SCHAP" and assisted_units_count = 0 );
     
-    **** TEMPORARY TEST OF HAVING AN UNMATCHED RECORD ********;
-   
-    IF PROPERTY_ID = "800003741" AND CONTRACT_NUMBER = "DC39M000025" THEN CONTRACT_NUMBER = "DCXXXXXXXXX";
-
     ** Create update variables **;
 
     length 
@@ -108,6 +106,25 @@
     else if Subsidy_Info_Source =: "HUD" then Agency = "US Dept of Housing and Urban Development";
     else Agency = "Other";
     **********************************/
+
+
+    **** TEMPORARY TEST OF HAVING UNMATCHED RECORDS ********;
+   
+    IF PROPERTY_ID = 800003741 AND CONTRACT_NUMBER = "DC39M000025" THEN DO;
+      CONTRACT_NUMBER = "DCXXXXXXXXX";
+      Subsidy_Info_Source_ID = trim( left( put( property_id, 16. ) ) ) || "/" || 
+                               left( contract_number );
+      OUTPUT;
+      property_id = 999999999;
+      Subsidy_Info_Source_ID = trim( left( put( property_id, 16. ) ) ) || "/" || 
+                               left( contract_number );
+      OUTPUT;
+    END;
+    ELSE DO;
+      OUTPUT;
+    END;
+    
+    *****************************************************************;
 
     format POA_start POA_end Compl_end Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
     
@@ -174,9 +191,15 @@
   data Subsidy_mfa_update_a;
 
     update 
-      Subsidy_mfa 
+      Subsidy_mfa (in=in1)
       Sec8MF_subsidy_update (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars);
     by Subsidy_Info_Source_ID;
+    
+    In_subsidy_mfa = in1;
+    
+    if not In_subsidy_mfa then do;
+      nlihc_id = put( scan( subsidy_info_source_id, 1, '/' ), $property_nlihcid. );
+    end;
     
     if missing( Subsidy_id ) then Subsidy_id = &NO_SUBSIDY_ID;
     
@@ -190,7 +213,7 @@
 
   data Subsidy_mfa_update_b;
 
-    set Subsidy_mfa_update_a (in=in1) Subsidy_other;
+    set Subsidy_mfa_update_a (in=in1 where=(not(missing(nlihc_id)))) Subsidy_other;
     by nlihc_id Subsidy_id;
     
     retain Subsidy_id_ret;
@@ -239,7 +262,7 @@
   
   data Subsidy_mfa_except;
 
-    update Subsidy_mfa_update_b (in=in1) &Subsidy_except._norm;
+    update Subsidy_mfa_update_b (in=in1 drop=In_subsidy_mfa) &Subsidy_except._norm;
     by nlihc_id Subsidy_ID;
     
     if in1;
@@ -397,18 +420,30 @@
     title3 "PresCat.Subsidy - Updated variables";
   run;
    
-  ** Non-matching records **;
-  
-  ods proclabel "Unmatched subsidy records";
+  ods proclabel "New subsidy records";
+
+  proc print data=Subsidy_mfa_update_b label;
+    where not In_subsidy_mfa and not( missing( nlihc_id ) );
+    by nlihc_id;
+    id Subsidy_id;
+    var Subsidy_Info_Source_ID &Subsidy_update_vars;
+    label
+      nlihc_id = ' '
+      Subsidy_id = 'ID'
+      Subsidy_Info_Source_ID = 'Source ID';      
+    title3 "PresCat.Subsidy - New subsidy records from &Update_file";
+  run;
+
+  ods proclabel "Nonmatching subsidy records";
 
   proc print data=Subsidy_mfa_update_a label;
-    where missing( nlihc_id );
+    where not In_subsidy_mfa and missing( nlihc_id );
     id Subsidy_Info_Source_ID;
     var property_name_text address_line1_text program_type_name Subsidy_active Units_assist poa_start poa_end;
     label 
       address_line1_text = "Address"
       program_type_name = "Program";
-    title3 "PresCat.Subsidy - Unmatched subsidy records from &Update_file";
+    title3 "PresCat.Subsidy - Nonmatching subsidy records in &Update_file (not added to Catalog)";
   run;
 
   title2;
