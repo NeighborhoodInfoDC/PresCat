@@ -22,5 +22,5 @@
 
 %LET _REMOTE_BATCH_SUBMIT = 1;  %*** TEMPORARY TESTING SETTING ***;
 
-%Update_Sec8mf( Update_file=Sec8mf_2014_11, Finalize=Y, Subsidy_except=Subsidy_except_test, Project_except=Project_except_test, Quiet=Y )
+%Update_Sec8mf( Update_file=Sec8mf_2014_11, Finalize=N, /*Subsidy_except=Subsidy_except_test, Project_except=Project_except_test,*/ Quiet=Y )
 

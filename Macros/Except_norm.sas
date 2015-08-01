@@ -25,95 +25,135 @@
   );
 
   %local charvarlist charvarlistclean charvarlistret numvarlist numvarlistclean numvarlistret
-         lastby;
+         lastby numobs;
 
   %if &out= %then %let out = &data._norm;
   
   %let lastby = %scan( &by, -1, %str( ) );
-
+  
   proc sql noprint;
-    select distinct name into :charvarlist separated by ' '
-    from dictionary.columns
-    where libname="%upcase(&lib)" and memname="%upcase(&data)" and type='char';
-
-    select distinct name into :numvarlist separated by ' '
-    from dictionary.columns
-    where libname="%upcase(&lib)" and memname="%upcase(&data)" and type='num';
+    select count(nlihc_id) into :numobs
+    from &lib..&data;
   quit;
+  
+  %put numobs=&numobs;
+  
+  %if &numobs > 0 %then %do;
 
-  proc sort data=&lib..&data out=&data._srt;
-    by &by descending except_date;
-  run;
+    proc sql noprint;
+      select distinct name into :charvarlist separated by ' '
+      from dictionary.columns
+      where libname="%upcase(&lib)" and memname="%upcase(&data)" and type='char';
 
-  %let charvarlistclean = %ListDelete( %lowcase(&charvarlist), %lowcase( &by ) except_init );
+      select distinct name into :numvarlist separated by ' '
+      from dictionary.columns
+      where libname="%upcase(&lib)" and memname="%upcase(&data)" and type='num';
+    quit;
 
-  %let charvarlistret = %ListChangeDelim( &charvarlistclean, new_delim=%str( ), suffix=_ret );
+    proc sort data=&lib..&data out=&data._srt;
+      by &by descending except_date;
+    run;
 
-  %let numvarlistclean = %ListDelete( %lowcase(&numvarlist), %lowcase( &by ) except_date );
+    %let charvarlistclean = %ListDelete( %lowcase(&charvarlist), %lowcase( &by ) except_init );
 
-  %let numvarlistret = %ListChangeDelim( &numvarlistclean, new_delim=%str( ), suffix=_ret );
+    %let charvarlistret = %ListChangeDelim( &charvarlistclean, new_delim=%str( ), suffix=_ret );
 
-  %put _local_;
+    %let numvarlistclean = %ListDelete( %lowcase(&numvarlist), %lowcase( &by ) except_date );
 
-  data &out;
+    %let numvarlistret = %ListChangeDelim( &numvarlistclean, new_delim=%str( ), suffix=_ret );
 
-    set &data._srt;
-    by &by;
+    %put _local_;
 
-    length &charvarlistret $ 400;
-    length &numvarlistret 8;
-    
-    retain &charvarlistret;
-    retain &numvarlistret;
-    
-    array cvar{*} &charvarlistclean;
-    array cret{*} &charvarlistret;
-    array nvar{*} &numvarlistclean;
-    array nret{*} &numvarlistret;
-    
-    if first.&lastby then do;
-    
+    data &out;
+
+      set &data._srt;
+      by &by;
+
+      length &charvarlistret $ 400;
+      length &numvarlistret 8;
+      
+      retain &charvarlistret;
+      retain &numvarlistret;
+      
+      array cvar{*} &charvarlistclean;
+      array cret{*} &charvarlistret;
+      array nvar{*} &numvarlistclean;
+      array nret{*} &numvarlistret;
+      
+      if first.&lastby then do;
+      
+        do i = 1 to dim( cret );
+          cret{i} = '';
+        end;
+        
+        do i = 1 to dim( nret );
+          nret{i} = .;
+        end;
+        
+      end;
+      
       do i = 1 to dim( cret );
-        cret{i} = '';
+        if cret{i} = '' then cret{i} = cvar{i};
+        else if cvar{i} ~= '' then do;
+          %warn_put( msg="Multiple exceptions specified: " (&by) (=) cvar{i}= except_date= )
+        end;
       end;
       
       do i = 1 to dim( nret );
-        nret{i} = .;
+        if nret{i} = . then nret{i} = nvar{i};
+        else if nvar{i} ~= . then do;
+          %warn_put( msg="Multiple exceptions specified: " (&by) (=) nvar{i}= except_date= )
+        end;
+      end;
+
+      if last.&lastby then do;
+      
+        do i = 1 to dim( cret );
+          cvar{i} = cret{i};
+        end;
+
+        do i = 1 to dim( nret );
+          nvar{i} = nret{i};
+        end;
+
+        output;
+
       end;
       
-    end;
+      drop i &charvarlistret &numvarlistret Except_: ;
+      
+    run;
+      
+  %end;
+  %else %do;
     
-    do i = 1 to dim( cret );
-      if cret{i} = '' then cret{i} = cvar{i};
-      else if cvar{i} ~= '' then do;
-        %warn_put( msg="Multiple exceptions specified: " (&by) (=) cvar{i}= except_date= )
-      end;
-    end;
+    ** Copy empty exception file **;
+      
+    data &out;
     
-    do i = 1 to dim( nret );
-      if nret{i} = . then nret{i} = nvar{i};
-      else if nvar{i} ~= . then do;
-        %warn_put( msg="Multiple exceptions specified: " (&by) (=) nvar{i}= except_date= )
-      end;
-    end;
-
-    if last.&lastby then do;
+      set &lib..&data;
+      
+    run;
     
-      do i = 1 to dim( cret );
-        cvar{i} = cret{i};
-      end;
-
-      do i = 1 to dim( nret );
-        nvar{i} = nret{i};
-      end;
-
-      output;
-
-    end;
+    ** Create blank observation **;
     
-    drop i &charvarlistret &numvarlistret Except_: ;
+    data _Except_norm_blank;
     
-  run;
+      length Nlihc_id $ 8;
+      
+      Nlihc_id = "";
+      
+    run;
+    
+    ** Append blank observation to exception file **;
+    
+    proc datasets library=work memtype=(data) nolist;
+      append base=&out data=_Except_norm_blank force nowarn;
+      delete _Except_norm_blank;
+    quit;
+    run;
+    
+  %end;
 
 %mend Except_norm;
 

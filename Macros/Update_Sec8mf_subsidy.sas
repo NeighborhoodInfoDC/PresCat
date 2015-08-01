@@ -303,8 +303,10 @@
 
   data Update_subsidy_result_except_tr;
 
-    merge Update_subsidy_result_tr &Subsidy_except._tr;
+    merge Update_subsidy_result_tr (in=in1) &Subsidy_except._tr;
     by nlihc_id subsidy_id;
+    
+    if in1;
     
     ** Convert DIF for char vars to missing if no differences **;
     

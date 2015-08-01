@@ -116,7 +116,7 @@
   
   proc format;
     value $except_tl
-      "-" = 'white'
+      "-", "n/a" = 'white'
       other = 'yellow';
   run;
 

@@ -52,7 +52,7 @@
 
   ** Normalize exception file;
 
-  %Except_norm( data=Project_except_test, by=nlihc_id )
+  %Except_norm( data=&Project_except, by=nlihc_id )
   
   
   **************************************************************************
@@ -213,21 +213,21 @@
   **************************************************************************
   ** Apply exception file;
 
-  proc sort data=Project_except_test_norm;
+  proc sort data=&Project_except._norm;
     by nlihc_id;
 
   data Project_mfa_except;
 
-    update Project_mfa_update_b (in=in1) Project_except_test_norm;
+    update Project_mfa_update_b (in=in1) &Project_except._norm;
     by nlihc_id;
     
     if in1;
     
   run;
 
-  data Project_except_test_b;
+  data &Project_except._b;
 
-    set Project_except_test_norm;
+    set &Project_except._norm;
     
     retain comp_type 'EXCEPT';
     
@@ -236,7 +236,7 @@
   ** Format output **;
 
   %Super_transpose(  
-    data=Project_except_test_b,
+    data=&Project_except._b,
     out=Update_project_except_tr,
     var=&Project_mfa_update_vars,
     id=comp_type,
@@ -250,8 +250,10 @@
 
   data Update_project_result_except_tr;
 
-    merge Update_project_result_tr Update_project_except_tr;
+    merge Update_project_result_tr (in=in1) Update_project_except_tr;
     by nlihc_id;
+    
+    if in1;
     
     ** Add category codes for report **;
     
