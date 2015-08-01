@@ -136,7 +136,9 @@
   **************************************************************************
   ** Apply update to Catalog data;
   
-  ** Prepare Catalog file for update **;
+  ** Separate Catalog records to be updated
+  ** Project_mfa = All Catalog project records with subsidies flagged with Sec8MF as source 
+  ** Project_other = All other Catalog project records;
 
   data Project_mfa Project_other; 
 
@@ -158,7 +160,8 @@
     by Subsidy_Info_Source_ID;
   run;
 
-  ** Perform updates **;
+  ** Apply update
+  ** Project_mfa_update_a = Initial application of Sec8mf update to Catalog project records;
 
   data Project_mfa_update_a;
 
@@ -176,6 +179,8 @@
     by Nlihc_id;
   run;
 
+  ** Project_mfa_update_b = Add data from updated subsidy records **;
+
   data Project_mfa_update_b;
 
     update 
@@ -188,7 +193,7 @@
     
   run;
 
-  ** Summarize update changes and format output **;
+  ** Use Proc Compare to summarize update changes **;
 
   proc sort data=Project_mfa;
     by nlihc_id;
@@ -199,6 +204,8 @@
     id nlihc_id Subsidy_Info_Source Subsidy_Info_Source_ID;
     var &Project_mfa_update_vars &Project_subsidy_update_vars;
   run;
+
+  ** Format Proc Compare output file;
 
   %Super_transpose(  
     data=Update_project_result,
@@ -225,6 +232,8 @@
     
   run;
 
+  ** Transpose exception file for change report **;
+
   data &Project_except._b;
 
     set &Project_except._norm;
@@ -233,8 +242,6 @@
     
   run;
   
-  ** Format output **;
-
   %Super_transpose(  
     data=&Project_except._b,
     out=Update_project_except_tr,
@@ -306,7 +313,7 @@
 
 
   **************************************************************************
-  ** Add record to Project_update_history;
+  ** Update Project_update_history data set;
 
   %Update_history_recs( data=Update_project_result_except_tr, out=Project_update_history_recs, Update_vars=&Project_mfa_update_vars )
 
