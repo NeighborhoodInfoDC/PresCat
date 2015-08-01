@@ -10,8 +10,6 @@
  Description:  Autocall macro to update PresCat.Subsidy 
  with Sec8mf data set.
  
- DON'T FORGET TO REMOVE TEMPORARY TEST OF UNMATCHED RECORDS!!!
-
  Modifications:
 **************************************************************************/
 
@@ -115,25 +113,6 @@
     else if Subsidy_Info_Source =: "HUD" then Agency = "US Dept of Housing and Urban Development";
     else Agency = "Other";
     **********************************/
-
-
-    **** TEMPORARY TEST OF HAVING UNMATCHED RECORDS ********;
-   
-    IF PROPERTY_ID = 800003741 AND CONTRACT_NUMBER = "DC39M000025" THEN DO;
-      CONTRACT_NUMBER = "DCXXXXXXXXX";
-      Subsidy_Info_Source_ID = trim( left( put( property_id, 16. ) ) ) || "/" || 
-                               left( contract_number );
-      OUTPUT;
-      property_id = 999999999;
-      Subsidy_Info_Source_ID = trim( left( put( property_id, 16. ) ) ) || "/" || 
-                               left( contract_number );
-      OUTPUT;
-    END;
-    ELSE DO;
-      OUTPUT;
-    END;
-    
-    *****************************************************************;
 
     format POA_start POA_end Compl_end Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
     
