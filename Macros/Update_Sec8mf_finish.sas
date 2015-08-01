@@ -75,7 +75,13 @@
     
     ** Add updates to metadata **;
     
-    ***[[TO BE ADDED]]****;
+    %Dc_update_meta_file(
+      ds_lib=PresCat,
+      ds_name=Subsidy,
+      creator_process=Update_&Update_file..sas,
+      restrictions=None,
+      revisions=%str(Update with &Update_file..)
+    )
 
   %end;
   %else %do;
