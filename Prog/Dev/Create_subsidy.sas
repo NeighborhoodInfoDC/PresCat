@@ -24,7 +24,8 @@
                recorded. (Values need to be verified against older data.)
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+/*%include "L:\SAS\Inc\StdLocal.sas";*/
+%include "C:\DCData\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
@@ -87,6 +88,7 @@ data Subsidy_new;
     Units_Assist  8
     POA_start  8
     POA_end  8
+    POA_end_prev 8 
     contract_number $ 11
     rent_to_FMR_description $ 40
     Subsidy_Active  3
@@ -101,6 +103,7 @@ data Subsidy_new;
   Units_Assist = .;
   POA_start = .;
   POA_end = .;
+  POA_end_prev = .;
   contract_number = "DC39Q031002";
   rent_to_FMR_description = "";
   Subsidy_Active = .;
@@ -115,7 +118,7 @@ data Subsidy_new;
   
 run;
 
-data PresCat.Subsidy (label="Preservation Catalog, project subsidies");
+data PresCat.Subsidy (label="Preservation Catalog, Project subsidies");
 
   length Nlihc_id $ 8 Subsidy_id 8;
 
@@ -140,7 +143,7 @@ data PresCat.Subsidy (label="Preservation Catalog, project subsidies");
   
   POA_start_orig = POA_start;
   
-  format POA_start_orig mmddyy10.;
+  format POA_start_orig POA_end_prev mmddyy10.;
   
   ** Set subsidies to not active if project is in Lost Rental list **;
   ****** NB: NEED TO REVIEW THESE PROJECTS AND FIX SOURCE INFO ******;
@@ -194,6 +197,7 @@ data PresCat.Subsidy (label="Preservation Catalog, project subsidies");
     POA_start_orig = "Period of affordability, original start date"
     Compl_end = "Compliance period, end date"
     POA_end = "Period of affordability, end date"
+    POA_end_prev = "Period of affordability, previous end date"
     Units_Assist = "Subsidy assisted units"
     Subsidy_Active = "Subsidy is active"
     Subsidy_Info_Source = "Source for latest subsidy update"
@@ -225,6 +229,7 @@ run;
 
 title2;
 
+/******
 **** Compare with earlier version ****;
 
 libname comp 'D:\DCData\Libraries\PresCat\Data\Old';
@@ -238,3 +243,4 @@ proc sort data=Comp.Subsidy out=Subsidy_old;
 proc compare base=Subsidy_old compare=Subsidy_new listall maxprint=(40,32000);
   id NLIHC_ID program contract_number;
 run;
+************/
