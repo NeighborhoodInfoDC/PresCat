@@ -15,7 +15,7 @@
 
 /** Macro Update_Sec8mf_finish - Start Definition **/
 
-%macro Update_Sec8mf_finish( Update_file=, Finalize= );
+%macro Update_Sec8mf_finish( Update_file=, Finalize=, Subsidy_except=, Project_except=, Final_compare= );
 
   
   **************************************************************************
@@ -25,67 +25,72 @@
   
   
   **************************************************************************
-  ** Add record to Update_history;
-
-  data Update_history_rec;
-
-    set Sec8MF_subsidy_update (obs=1 keep=Subsidy_Info_Source Subsidy_Info_Source_Date Update_Dtm);
-    
-    rename
-      Subsidy_Info_Source=Info_Source
-      Subsidy_Info_Source_Date=Info_Source_Date;
-    
-  run;
-
-  proc sort data=PresCat.Update_history out=Update_history;
-    by Info_source Info_source_date;
-    
-  data Update_history_new (label="Preservation Catalog, Update history");
-
-    update updatemode=nomissingcheck Update_history Update_history_rec;
-    by Info_source Info_source_date;
-    
-  run;
+  ** Final compare of update against current Catalog data sets;
   
-  proc sort data=Update_history_new;
-    by descending Update_dtm;
-  run;
+  %if %upcase( &Final_compare ) = Y %then %do;
 
-  %File_info( data=Update_history_new, stats= )
+    proc compare base=PresCat.Subsidy compare=Subsidy_Update_&Update_file maxprint=(40,32000) listall;
+    id nlihc_id subsidy_id;
+    run;
 
+    proc compare base=PresCat.Project compare=Project_Update_&Update_file maxprint=(40,32000) listall;
+    id nlihc_id;
+    run;
   
+  %end;
+    
+
   **************************************************************************
   ** Archive past Catalog datasets before finalizing;
 
-  %if &Finalize = Y %then %do;
+  %if %upcase( &Finalize ) = Y %then %do;
   
-    %Archive_catalog_data( data=Project Subsidy Update_history Update_subsidy_history Update_project_history, zip_pre=Update_&Update_file, zip_suf= )
+    ** Copy data sets to final versions **;
+    
+    proc datasets library=Work memtype=(data) nolist;
+      change 
+        Subsidy_Update_&Update_file=Subsidy
+        Project_Update_&Update_file=Project
+        Update_subsidy_history_new=Update_subsidy_history
+        Update_project_history_new=Update_project_history;
+      copy in=Work out=PresCat;
+      select Subsidy Project Update_subsidy_history Update_project_history;
+    quit;
+    run;
+    
+    ** Archive final versions for this update **;
+  
+    %Archive_catalog_data( data=Project Subsidy &Subsidy_except &Project_except, zip_pre=Update_&Update_file, zip_suf=,
+      overwrite=y, quiet=y, zip_program= %str(""C:\Program Files (x86)\7-Zip\7z"") )
+      
+    ** Write file info to output **;
+    
+    %File_info( data=PresCat.Subsidy, printobs=0 )
+    
+    %File_info( data=PresCat.Update_subsidy_history, stats=, printobs=5 )
+    
+    %File_info( data=PresCat.Project, printobs=0 )
+    
+    %File_info( data=PresCat.Update_project_history, stats=, printobs=5 )
+    
+    ** Add updates to metadata **;
+    
+    ***[[TO BE ADDED]]****;
+
+  %end;
+  %else %do;
+  
+    ** Write file info to output **;
+
+    %File_info( data=Subsidy_Update_&Update_file, printobs=0 )
+    
+    %File_info( data=Update_subsidy_history_new, stats=, printobs=5 )
+    
+    %File_info( data=Project_Update_&Update_file, printobs=0 )
+    
+    %File_info( data=Update_project_history_new, stats=, printobs=5 )
     
   %end;
-
-  
-  %File_info( data=Subsidy_Update_&Update_file, printobs=5 )
-  
-  %File_info( data=Update_subsidy_history_new, stats=, printobs=5 )
-  
-  %File_info( data=Project_Update_&Update_file, printobs=5 )
-  
-  %File_info( data=Update_project_history_new, stats=, printobs=5 )
-  
-  title2 'FINAL COMPARE AGAINST ORIGINAL';
-
-  proc compare base=PresCat.Subsidy compare=Subsidy_Update_&Update_file maxprint=(40,32000) listall;
-  id nlihc_id subsidy_id;
-  run;
-
-  proc compare base=PresCat.Project compare=Project_Update_&Update_file maxprint=(40,32000) listall;
-  id nlihc_id;
-  run;
-  
-  title2;
-
-  /* proc copy */
-
 
 
 %mend Update_Sec8mf_finish;

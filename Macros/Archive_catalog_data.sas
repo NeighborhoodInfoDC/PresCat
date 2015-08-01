@@ -23,20 +23,25 @@
   zip_pre=,  /** Prefix for ZIP file name (if missing current datetime is used) **/
   path=&_dcdata_r_path\PresCat\Data,   /** ZIP file path (don't include \Archive\ subfolder **/
   overwrite=n,  /** Overwrite older files in archive **/
-  zip_program=&_dcdata_r_drive:\Tools\7-zip\7z  /** Location of 7z program **/
+  zip_program= %str(""&_dcdata_r_drive:\Tools\7-zip\7z"")  /** Location of 7z program **/,
+  quiet=n  /** Suppress warning messages **/
   );
 
   %local i v update_switches;
   
   %if %upcase( &overwrite ) = Y %then %do;
     %let update_switches = ;
-    %warn_mput( macro=Archive_catalog_data, 
-                msg=Overwrite=%upcase( &overwrite ) specified, older files in existing archive will be replaced. )
+    %if %upcase( &quiet ) ~= Y %then %do;
+      %warn_mput( macro=Archive_catalog_data, 
+                  msg=%str(Overwrite=%upcase( &overwrite ) specified, older files in existing archive will be replaced.) )
+    %end;
   %end;
   %else %do;
     %let update_switches = -uy1z1;  %** Copy previously saved older files to new archive **;
-    %note_mput( macro=Archive_catalog_data, 
-                msg=Overwrite=%upcase( &overwrite ) specified, older files in existing archive will not be replaced. )
+    %if %upcase( &quiet ) ~= Y %then %do;
+      %note_mput( macro=Archive_catalog_data, 
+                  msg=%str(Overwrite=%upcase( &overwrite ) specified, older files in existing archive will not be replaced.) )
+    %end;
   %end;
   
   %if &zip_pre = %then 
