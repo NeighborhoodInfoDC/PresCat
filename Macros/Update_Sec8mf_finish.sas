@@ -61,7 +61,7 @@
     ** Archive final versions for this update **;
   
     %Archive_catalog_data( data=Project Subsidy &Subsidy_except &Project_except, zip_pre=Update_&Update_file, zip_suf=,
-      overwrite=y, quiet=y, zip_program= %str(""C:\Program Files (x86)\7-Zip\7z"") )
+      overwrite=y, quiet=y )
       
     ** Write file info to output **;
     
