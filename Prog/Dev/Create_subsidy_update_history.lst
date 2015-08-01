@@ -1,13 +1,13 @@
-PRESCAT/Create_subsidy_update_history.sas:  NeighborhoodInfo DC                            17:54 Saturday, July 11, 2015   1
-File = PresCat.Update_subsidy_history
+PRESCAT/Create_subsidy_update_history.sas:  NeighborhoodInfo DC                           16:58 Saturday, August 1, 2015   1
+File = PresCat.Subsidy_update_history
 
 The CONTENTS Procedure
 
-Data Set Name        PRESCAT.UPDATE_SUBSIDY_HISTORY                  Observations           0   
+Data Set Name        PRESCAT.SUBSIDY_UPDATE_HISTORY                  Observations           0   
 Member Type          DATA                                            Variables              27  
 Engine               V9                                              Indexes                0   
-Created              Saturday, July 11, 2015 05:54:46 PM             Observation Length     433 
-Last Modified        Saturday, July 11, 2015 05:54:46 PM             Deleted Observations   0   
+Created              Saturday, August 01, 2015 04:58:31 PM           Observation Length     433 
+Last Modified        Saturday, August 01, 2015 04:58:31 PM           Deleted Observations   0   
 Protection                                                           Compressed             CHAR
 Data Set Type                                                        Reuse Space            NO  
 Label                Preservation Catalog, Subsidy update history    Point to Observations  YES 
@@ -20,7 +20,7 @@ Encoding             wlatin1  Western (Windows)
 Data Set Page Size          16384                                                           
 Number of Data Set Pages    2                                                               
 Number of Data Set Repairs  0                                                               
-Filename                    C:\DCData\Libraries\PresCat\Data\update_subsidy_history.sas7bdat
+Filename                    C:\DCData\Libraries\PresCat\Data\subsidy_update_history.sas7bdat
 Release Created             9.0202M3                                                        
 Host Created                X64_VSHOME                                                      
 
@@ -46,8 +46,8 @@ Host Created                X64_VSHOME
 20    Subsidy_Active_COMPARE             Num       3                                        
 21    Subsidy_Active_EXCEPT              Num       3                                        
  3    Subsidy_Info_Source                Char     40    $INFOSRC.      Source for update    
-PRESCAT/Create_subsidy_update_history.sas:  NeighborhoodInfo DC                            17:54 Saturday, July 11, 2015   2
-File = PresCat.Update_subsidy_history
+PRESCAT/Create_subsidy_update_history.sas:  NeighborhoodInfo DC                           16:58 Saturday, August 1, 2015   2
+File = PresCat.Subsidy_update_history
 
 The CONTENTS Procedure
 

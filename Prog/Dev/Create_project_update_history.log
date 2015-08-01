@@ -1,4 +1,4 @@
-1                                       The SAS System            16:56 Saturday, July 18, 2015
+1                                       The SAS System           16:57 Saturday, August 1, 2015
 
 NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
 NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
@@ -8,8 +8,8 @@ NOTE: This session is executing on the X64_VSHOME  platform.
 
 
 NOTE: SAS initialization used:
-      real time           0.11 seconds
-      cpu time            0.18 seconds
+      real time           0.17 seconds
+      cpu time            0.23 seconds
       
 
 NOTE: AUTOEXEC processing beginning; file is C:\Users\Peter\Documents\My SAS 
@@ -19,7 +19,7 @@ NOTE: AUTOEXEC processing beginning; file is C:\Users\Peter\Documents\My SAS
 NOTE: AUTOEXEC processing completed.
 
 1          /**************************************************************************
-2           Program:  Create_subsidy_update_history.sas
+2           Program:  Create_project_update_history.sas
 3           Library:  PresCat
 4           Project:  NeighborhoodInfo DC
 5           Author:   P. Tatian
@@ -27,7 +27,7 @@ NOTE: AUTOEXEC processing completed.
 7           Version:  SAS 9.2
 8           Environment:  Local Windows session (desktop)
 9          
-10          Description:  Create initial Update_project_history file for
+10          Description:  Create initial Project_update_history file for
 11          Preservation Catalog (empty file).
 12         
 13          Modifications:
@@ -36,17 +36,17 @@ NOTE: AUTOEXEC processing completed.
 16         /*%include "L:\SAS\Inc\StdLocal.sas";*/
 17         %include "C:\DCData\SAS\Inc\StdLocal.sas";
 NOTE: Library _METADAT does not exist.
-62        +
-63        +options ls=124 ps=48;    ** Landscape **;
-64        +
-65        +** Output title **;
-66        +
-67        +title "&_library/&_program:  NeighborhoodInfo DC";
-68        +
-69        +** Define General library for local session only **;
-70        +
-71        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
-2 The SAS System                                                                               16:56 Saturday, July 18, 2015
+63        +
+64        +options ls=124 ps=48;    ** Landscape **;
+65        +
+66        +** Output title **;
+67        +
+68        +title "&_library/&_program:  NeighborhoodInfo DC";
+69        +
+70        +** Define General library for local session only **;
+71        +
+72        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+2 The SAS System                                                                              16:57 Saturday, August 1, 2015
 
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref GENERA_L was successfully assigned as follows: 
@@ -94,14 +94,14 @@ Current Sasautos Option value:
 
 =====================================================================
 
-3 The SAS System                                                                               16:56 Saturday, July 18, 2015
+3 The SAS System                                                                              16:57 Saturday, August 1, 2015
 
-72        +
-73        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+73        +
+74        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
 NOTE: %INCLUDE (level 1) ending.
-74         
-75         ** Define libraries **;
-76         %DCData_lib( PresCat, local=n )
+75         
+76         ** Define libraries **;
+77         %DCData_lib( PresCat, local=n )
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref PRESCA_R was successfully assigned as follows: 
       Engine:        V9 
@@ -135,47 +135,47 @@ Current Sasautos Option value:
 
 =====================================================================
 
-77         
-78         data PresCat.Update_project_history (label="Preservation Catalog, Project update history");
-79         
-80           length
-81             Nlihc_id $ 8
-82             Subsidy_Info_Source $ 40
-83             Subsidy_Info_Source_Date 8
-4 The SAS System                                                                               16:56 Saturday, July 18, 2015
+78         
+79         data PresCat.Project_update_history (label="Preservation Catalog, Project update history");
+80         
+81           length
+82             Nlihc_id $ 8
+83             Subsidy_Info_Source $ 40
+84             Subsidy_Info_Source_Date 8
+4 The SAS System                                                                              16:57 Saturday, August 1, 2015
 
-84             Update_Dtm 8
-85             Hud_Own_Effect_dt_BASE
-86             Hud_Own_Effect_dt_COMPARE
-87             Hud_Own_Effect_dt_EXCEPT 8
-88             Hud_Own_Name_BASE
-89             Hud_Own_Name_COMPARE
-90             Hud_Own_Name_EXCEPT $ 80
-91             Hud_Own_Type_BASE
-92             Hud_Own_Type_COMPARE
-93             Hud_Own_Type_EXCEPT $ 2
-94             Hud_Mgr_Name_BASE
-95             Hud_Mgr_Name_COMPARE
-96             Hud_Mgr_Name_EXCEPT $ 80
-97             Hud_Mgr_Type_BASE
-98             Hud_Mgr_Type_COMPARE
-99             Hud_Mgr_Type_EXCEPT $ 2;
-100        
-101          delete;
-102        
-103          label
-104            Subsidy_Info_Source = "Source for update"
-105            Subsidy_Info_Source_Date = "Date of update source"
-106            Update_Dtm = "Datetime update ran"
-107          ;
-108        
-109          format
-110            Subsidy_Info_Source $infosrc. Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.
-111            Hud_Own_Type_BASE Hud_Own_Type_COMPARE Hud_Own_Type_EXCEPT
-112            Hud_Mgr_Type_BASE Hud_Mgr_Type_COMPARE Hud_Mgr_Type_EXCEPT
-113            $ownmgrtype.;
-114        
-115        run;
+85             Update_Dtm 8
+86             Hud_Own_Effect_dt_BASE
+87             Hud_Own_Effect_dt_COMPARE
+88             Hud_Own_Effect_dt_EXCEPT 8
+89             Hud_Own_Name_BASE
+90             Hud_Own_Name_COMPARE
+91             Hud_Own_Name_EXCEPT $ 80
+92             Hud_Own_Type_BASE
+93             Hud_Own_Type_COMPARE
+94             Hud_Own_Type_EXCEPT $ 2
+95             Hud_Mgr_Name_BASE
+96             Hud_Mgr_Name_COMPARE
+97             Hud_Mgr_Name_EXCEPT $ 80
+98             Hud_Mgr_Type_BASE
+99             Hud_Mgr_Type_COMPARE
+100            Hud_Mgr_Type_EXCEPT $ 2;
+101        
+102          delete;
+103        
+104          label
+105            Subsidy_Info_Source = "Source for update"
+106            Subsidy_Info_Source_Date = "Date of update source"
+107            Update_Dtm = "Datetime update ran"
+108          ;
+109        
+110          format
+111            Subsidy_Info_Source $infosrc. Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.
+112            Hud_Own_Type_BASE Hud_Own_Type_COMPARE Hud_Own_Type_EXCEPT
+113            Hud_Mgr_Type_BASE Hud_Mgr_Type_COMPARE Hud_Mgr_Type_EXCEPT
+114            $ownmgrtype.;
+115        
+116        run;
 
 NOTE: Variable Nlihc_id is uninitialized.
 NOTE: Variable Subsidy_Info_Source is uninitialized.
@@ -190,7 +190,7 @@ NOTE: Variable Hud_Own_Name_EXCEPT is uninitialized.
 NOTE: Variable Hud_Own_Type_BASE is uninitialized.
 NOTE: Variable Hud_Own_Type_COMPARE is uninitialized.
 NOTE: Variable Hud_Own_Type_EXCEPT is uninitialized.
-5 The SAS System                                                                               16:56 Saturday, July 18, 2015
+5 The SAS System                                                                              16:57 Saturday, August 1, 2015
 
 NOTE: Variable Hud_Mgr_Name_BASE is uninitialized.
 NOTE: Variable Hud_Mgr_Name_COMPARE is uninitialized.
@@ -198,29 +198,29 @@ NOTE: Variable Hud_Mgr_Name_EXCEPT is uninitialized.
 NOTE: Variable Hud_Mgr_Type_BASE is uninitialized.
 NOTE: Variable Hud_Mgr_Type_COMPARE is uninitialized.
 NOTE: Variable Hud_Mgr_Type_EXCEPT is uninitialized.
-NOTE: The data set PRESCAT.UPDATE_PROJECT_HISTORY has 0 observations and 19 variables.
+NOTE: The data set PRESCAT.PROJECT_UPDATE_HISTORY has 0 observations and 19 variables.
 NOTE: DATA statement used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.03 seconds
+      real time           0.02 seconds
+      cpu time            0.01 seconds
       
 
-116        
-117        %File_info( data=PresCat.Update_project_history, printobs=0, stats= )
-MPRINT(FILE_INFO):   title2 "File = PresCat.Update_project_history";
-MPRINT(FILE_INFO):   proc contents data=PresCat.Update_project_history;
+117        
+118        %File_info( data=PresCat.Project_update_history, printobs=0, stats= )
+MPRINT(FILE_INFO):   title2 "File = PresCat.Project_update_history";
+MPRINT(FILE_INFO):   proc contents data=PresCat.Project_update_history;
 MPRINT(FILE_INFO):   run;
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
-      real time           0.03 seconds
-      cpu time            0.03 seconds
+      real time           0.04 seconds
+      cpu time            0.04 seconds
       
 NOTE: The PROCEDURE CONTENTS printed pages 1-2.
 
 MPRINT(FILE_INFO):   title2;
-118        
+119        
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
 NOTE: The SAS System used:
-      real time           0.22 seconds
-      cpu time            0.29 seconds
+      real time           0.30 seconds
+      cpu time            0.37 seconds
       

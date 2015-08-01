@@ -351,32 +351,32 @@
 
 
   **************************************************************************
-  ** Update Update_subsidy_history data set;
+  ** Update Subsidy_update_history data set;
 
-  %Update_history_recs( data=Update_subsidy_result_except_tr, out=Update_subsidy_history_recs, Update_vars=&Subsidy_update_vars )
+  %Update_history_recs( data=Update_subsidy_result_except_tr, out=Subsidy_update_history_recs, Update_vars=&Subsidy_update_vars )
 
-  data Update_subsidy_history_del;
+  data Subsidy_update_history_del;
 
-    set PresCat.Update_subsidy_history;
+    set PresCat.Subsidy_update_history;
     
     if Subsidy_info_source = &Subsidy_info_source and Subsidy_info_source_date = &Subsidy_Info_Source_Date then delete;
     
   run;
   
-  proc sort data=Update_subsidy_history_del;
+  proc sort data=Subsidy_update_history_del;
     by Nlihc_id Subsidy_id Subsidy_info_source Subsidy_info_source_date;
   run;
 
-  data Update_subsidy_history_new (label="Preservation Catalog, Subsidy update history");
+  data Subsidy_update_history_new (label="Preservation Catalog, Subsidy update history");
 
     update updatemode=nomissingcheck
-      Update_subsidy_history_del
-      Update_subsidy_history_recs;
+      Subsidy_update_history_del
+      Subsidy_update_history_recs;
     by Nlihc_id Subsidy_id Subsidy_info_source Subsidy_info_source_date;
     
   run;
   
-  proc sort data=Update_subsidy_history_new;
+  proc sort data=Subsidy_update_history_new;
     by Nlihc_id Subsidy_id descending Update_dtm;
   run;
 

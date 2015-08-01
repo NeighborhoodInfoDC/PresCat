@@ -51,10 +51,10 @@
       change 
         Subsidy_Update_&Update_file=Subsidy
         Project_Update_&Update_file=Project
-        Update_subsidy_history_new=Update_subsidy_history
-        Update_project_history_new=Update_project_history;
+        Subsidy_update_history_new=Subsidy_update_history
+        Project_update_history_new=Project_update_history;
       copy in=Work out=PresCat;
-      select Subsidy Project Update_subsidy_history Update_project_history;
+      select Subsidy Project Subsidy_update_history Project_update_history;
     quit;
     run;
     
@@ -67,11 +67,11 @@
     
     %File_info( data=PresCat.Subsidy, printobs=0 )
     
-    %File_info( data=PresCat.Update_subsidy_history, stats=, printobs=5 )
+    %File_info( data=PresCat.Subsidy_update_history, stats=, printobs=5 )
     
     %File_info( data=PresCat.Project, printobs=0 )
     
-    %File_info( data=PresCat.Update_project_history, stats=, printobs=5 )
+    %File_info( data=PresCat.Project_update_history, stats=, printobs=5 )
     
     ** Add updates to metadata **;
     
@@ -84,11 +84,11 @@
 
     %File_info( data=Subsidy_Update_&Update_file, printobs=0 )
     
-    %File_info( data=Update_subsidy_history_new, stats=, printobs=5 )
+    %File_info( data=Subsidy_update_history_new, stats=, printobs=5 )
     
     %File_info( data=Project_Update_&Update_file, printobs=0 )
     
-    %File_info( data=Update_project_history_new, stats=, printobs=5 )
+    %File_info( data=Project_update_history_new, stats=, printobs=5 )
     
   %end;
 

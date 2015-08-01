@@ -1,5 +1,5 @@
 /**************************************************************************
- Program:  Create_subsidy_update_history.sas
+ Program:  Create_project_update_history.sas
  Library:  PresCat
  Project:  NeighborhoodInfo DC
  Author:   P. Tatian
@@ -7,7 +7,7 @@
  Version:  SAS 9.2
  Environment:  Local Windows session (desktop)
  
- Description:  Create initial Update_project_history file for 
+ Description:  Create initial Project_update_history file for 
  Preservation Catalog (empty file).
 
  Modifications:
@@ -19,7 +19,7 @@
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
 
-data PresCat.Update_project_history (label="Preservation Catalog, Project update history");
+data PresCat.Project_update_history (label="Preservation Catalog, Project update history");
 
   length
     Nlihc_id $ 8
@@ -58,5 +58,5 @@ data PresCat.Update_project_history (label="Preservation Catalog, Project update
   
 run;
 
-%File_info( data=PresCat.Update_project_history, printobs=0, stats= )
+%File_info( data=PresCat.Project_update_history, printobs=0, stats= )
 

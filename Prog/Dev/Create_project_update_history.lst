@@ -1,13 +1,13 @@
-PRESCAT/Create_project_update_history.sas:  NeighborhoodInfo DC                            16:56 Saturday, July 18, 2015   1
-File = PresCat.Update_project_history
+PRESCAT/Create_project_update_history.sas:  NeighborhoodInfo DC                           16:57 Saturday, August 1, 2015   1
+File = PresCat.Project_update_history
 
 The CONTENTS Procedure
 
-Data Set Name        PRESCAT.UPDATE_PROJECT_HISTORY                  Observations           0   
+Data Set Name        PRESCAT.PROJECT_UPDATE_HISTORY                  Observations           0   
 Member Type          DATA                                            Variables              19  
 Engine               V9                                              Indexes                0   
-Created              Saturday, July 18, 2015 04:56:11 PM             Observation Length     580 
-Last Modified        Saturday, July 18, 2015 04:56:11 PM             Deleted Observations   0   
+Created              Saturday, August 01, 2015 04:57:26 PM           Observation Length     580 
+Last Modified        Saturday, August 01, 2015 04:57:26 PM           Deleted Observations   0   
 Protection                                                           Compressed             CHAR
 Data Set Type                                                        Reuse Space            NO  
 Label                Preservation Catalog, Project update history    Point to Observations  YES 
@@ -20,7 +20,7 @@ Encoding             wlatin1  Western (Windows)
 Data Set Page Size          16384                                                           
 Number of Data Set Pages    2                                                               
 Number of Data Set Repairs  0                                                               
-Filename                    C:\DCData\Libraries\PresCat\Data\update_project_history.sas7bdat
+Filename                    C:\DCData\Libraries\PresCat\Data\project_update_history.sas7bdat
 Release Created             9.0202M3                                                        
 Host Created                X64_VSHOME                                                      
 
@@ -46,8 +46,8 @@ Host Created                X64_VSHOME
 13    Hud_Own_Type_EXCEPT          Char      2    $OWNMGRTYPE.                         
  1    Nlihc_id                     Char      8                                         
  2    Subsidy_Info_Source          Char     40    $INFOSRC.       Source for update    
-PRESCAT/Create_project_update_history.sas:  NeighborhoodInfo DC                            16:56 Saturday, July 18, 2015   2
-File = PresCat.Update_project_history
+PRESCAT/Create_project_update_history.sas:  NeighborhoodInfo DC                           16:57 Saturday, August 1, 2015   2
+File = PresCat.Project_update_history
 
 The CONTENTS Procedure
 

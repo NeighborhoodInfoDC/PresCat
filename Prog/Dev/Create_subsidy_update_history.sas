@@ -7,7 +7,7 @@
  Version:  SAS 9.2
  Environment:  Local Windows session (desktop)
  
- Description:  Create initial Update_subsidy_history file for 
+ Description:  Create initial Subsidy_update_history file for 
  Preservation Catalog (empty file).
 
  Modifications:
@@ -19,7 +19,7 @@
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
 
-data PresCat.Update_subsidy_history (label="Preservation Catalog, Subsidy update history");
+data PresCat.Subsidy_update_history (label="Preservation Catalog, Subsidy update history");
 
   length
     Nlihc_id $ 8
@@ -62,5 +62,5 @@ data PresCat.Update_subsidy_history (label="Preservation Catalog, Subsidy update
   
 run;
 
-%File_info( data=PresCat.Update_subsidy_history, printobs=0, stats= )
+%File_info( data=PresCat.Subsidy_update_history, printobs=0, stats= )
 

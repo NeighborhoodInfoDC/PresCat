@@ -34,7 +34,7 @@
 
   proc sql noprint;
     select max( Subsidy_Info_Source_Date ) format best32. into :Last_update_date 
-      from PresCat.Update_subsidy_history (where=(Subsidy_Info_Source=&Subsidy_Info_Source));
+      from PresCat.Subsidy_update_history (where=(Subsidy_Info_Source=&Subsidy_Info_Source));
   quit;
   
   %let Subsidy_update_vars = 
