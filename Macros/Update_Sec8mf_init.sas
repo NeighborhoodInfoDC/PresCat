@@ -20,8 +20,8 @@
   %global 
     Update_dtm Subsidy_info_source NO_SUBSIDY_ID Subsidy_Info_Source_Date
     Subsidy_update_vars Subsidy_tech_vars Subsidy_missing_info_vars
-    Project_mfa_update_vars Project_subsidy_update_vars Project_missing_info_vars;
-
+    Project_mfa_update_vars Project_subsidy_update_vars Project_missing_info_vars Last_update_date;
+    
   %let Update_dtm = %sysfunc( datetime() );
 
   %let Subsidy_info_source = "HUD/MFA";
@@ -32,6 +32,11 @@
     select Extract_date format best32. into :Subsidy_Info_Source_Date from Hud.&Update_file._dc;
   quit;
 
+  proc sql noprint;
+    select max( Subsidy_Info_Source_Date ) format best32. into :Last_update_date 
+      from PresCat.Update_subsidy_history (where=(Subsidy_Info_Source=&Subsidy_Info_Source));
+  quit;
+  
   %let Subsidy_update_vars = 
       Units_Assist POA_start POA_end Compl_end 
       rent_to_FMR_description Subsidy_Active Program 

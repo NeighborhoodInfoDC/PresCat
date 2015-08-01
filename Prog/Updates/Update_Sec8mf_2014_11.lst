@@ -1,4 +1,4 @@
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015   1
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015   1
 
 The COMPARE Procedure
 Comparison of PRESCAT.SUBSIDY with WORK.SUBSIDY_UPDATE_SEC8MF_2014_11
@@ -9,7 +9,7 @@ Data Set Summary
 Dataset                                      Created          Modified  NVar    NObs
 
 PRESCAT.SUBSIDY                     04JUL15:16:49:44  04JUL15:16:49:44    17     707
-WORK.SUBSIDY_UPDATE_SEC8MF_2014_11  01AUG15:16:14:57  01AUG15:16:14:57    19     708
+WORK.SUBSIDY_UPDATE_SEC8MF_2014_11  01AUG15:16:35:13  01AUG15:16:35:13    19     708
 
 
 Variables Summary
@@ -46,7 +46,7 @@ Number of Observations in WORK.SUBSIDY_UPDATE_SEC8MF_2014_11 but not in PRESCAT.
 Total Number of Observations Read from PRESCAT.SUBSIDY: 707.
 Total Number of Observations Read from WORK.SUBSIDY_UPDATE_SEC8MF_2014_11: 708.
 
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015   2
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015   2
 
 The COMPARE Procedure
 Comparison of PRESCAT.SUBSIDY with WORK.SUBSIDY_UPDATE_SEC8MF_2014_11
@@ -62,7 +62,7 @@ Number of Variables Compared with All Observations Equal: 7.
 Number of Variables Compared with Some Observations Unequal: 8.
 Number of Variables with Missing Value Differences: 8.
 Total Number of Values which Compare Unequal: 319.
-Maximum Difference: 15918140.
+Maximum Difference: 15919356.
 
 
 Variables with Unequal Values
@@ -91,7 +91,7 @@ ______________________________________________________________________
                        ||
  NL001033           1  ||          .     8.0000          .          .
 ______________________________________________________________________
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015   3
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015   3
 
 The COMPARE Procedure
 Comparison of PRESCAT.SUBSIDY with WORK.SUBSIDY_UPDATE_SEC8MF_2014_11
@@ -138,7 +138,7 @@ ______________________________________________________________________
  NL000152           2  ||   10/01/05   01/01/11       1918    11.4782
  NL000164           3  ||   11/01/01   12/01/12       4048    26.4921
  NL000170           1  ||   12/14/83   11/01/06       8358    95.5418
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015   4
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015   4
 
 The COMPARE Procedure
 Comparison of PRESCAT.SUBSIDY with WORK.SUBSIDY_UPDATE_SEC8MF_2014_11
@@ -181,7 +181,7 @@ ______________________________________________________________________
  NL000251           3  ||   06/30/12   06/30/15       1095     5.7109
  NL001033           1  ||          .   11/30/14          .          .
 ______________________________________________________________________
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015   5
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015   5
 
 The COMPARE Procedure
 Comparison of PRESCAT.SUBSIDY with WORK.SUBSIDY_UPDATE_SEC8MF_2014_11
@@ -228,7 +228,7 @@ ______________________________________________________________________
  NL000001           3  ||   10/02/14   11/25/14    54.0000     0.2700
  NL000021           2  ||   10/02/14   11/25/14    54.0000     0.2700
  NL000023           2  ||   10/02/14   11/25/14    54.0000     0.2700
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015   6
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015   6
 
 The COMPARE Procedure
 Comparison of PRESCAT.SUBSIDY with WORK.SUBSIDY_UPDATE_SEC8MF_2014_11
@@ -275,7 +275,7 @@ ______________________________________________________________________
  NL000096           5  ||   10/02/14   11/25/14    54.0000     0.2700
  NL000101           2  ||   10/02/14   11/25/14    54.0000     0.2700
  NL000102           3  ||   10/02/14   11/25/14    54.0000     0.2700
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015   7
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015   7
 
 The COMPARE Procedure
 Comparison of PRESCAT.SUBSIDY with WORK.SUBSIDY_UPDATE_SEC8MF_2014_11
@@ -310,19 +310,19 @@ ______________________________________________________________________
                        ||          m          m
  ________  __________  ||  _________  _________  _________  _________
                        ||
- NL000001           3  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000021           2  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000023           2  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000026           2  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000028           1  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000029           2  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000031           3  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000036           1  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000038           1  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000039           1  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000040           1  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000041           1  ||  29JAN2015  01AUG2015   15918140     0.9158
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015   8
+ NL000001           3  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000021           2  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000023           2  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000026           2  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000028           1  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000029           2  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000031           3  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000036           1  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000038           1  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000039           1  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000040           1  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000041           1  ||  29JAN2015  01AUG2015   15919356     0.9159
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015   8
 
 The COMPARE Procedure
 Comparison of PRESCAT.SUBSIDY with WORK.SUBSIDY_UPDATE_SEC8MF_2014_11
@@ -337,39 +337,39 @@ ______________________________________________________________________
                        ||          m          m
  ________  __________  ||  _________  _________  _________  _________
                        ||
- NL000046           2  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000046           3  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000047           1  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000048           2  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000052           2  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000057           1  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000060           1  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000064           2  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000065           3  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000069           2  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000070           1  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000074           2  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000077           2  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000080           1  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000081           1  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000082           2  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000084           2  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000091           1  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000092           2  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000096           5  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000101           2  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000102           3  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000103           4  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000103           5  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000111           1  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000112           1  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000113           1  ||  29JAN2015  01AUG2015   15918140     0.9158
- NL000114           2  ||  29JAN2015  01AUG2015   15918140     0.9158
+ NL000046           2  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000046           3  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000047           1  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000048           2  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000052           2  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000057           1  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000060           1  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000064           2  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000065           3  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000069           2  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000070           1  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000074           2  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000077           2  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000080           1  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000081           1  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000082           2  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000084           2  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000091           1  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000092           2  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000096           5  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000101           2  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000102           3  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000103           4  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000103           5  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000111           1  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000112           1  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000113           1  ||  29JAN2015  01AUG2015   15919356     0.9159
+ NL000114           2  ||  29JAN2015  01AUG2015   15919356     0.9159
 
 NOTE: The MAXPRINT=40 printing limit has been reached for the variable Update_Dtm. No more values will be printed for this
       comparison.
 ______________________________________________________________________
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015   9
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015   9
 
 The COMPARE Procedure
 Comparison of PRESCAT.SUBSIDY with WORK.SUBSIDY_UPDATE_SEC8MF_2014_11
@@ -392,7 +392,7 @@ ______________________________________________________________________
  NL000251           3  ||   06/30/12   06/30/15       1095     5.7109
  NL001033           1  ||          .   11/30/14          .          .
 ______________________________________________________________________
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  10
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  10
 
 The COMPARE Procedure
 Comparison of PRESCAT.PROJECT with WORK.PROJECT_UPDATE_SEC8MF_2014_11
@@ -403,7 +403,7 @@ Data Set Summary
 Dataset                                      Created          Modified  NVar    NObs  Label
 
 PRESCAT.PROJECT                     04JUL15:16:48:47  04JUL15:16:48:47    45     362  Preservation Catalog, projects
-WORK.PROJECT_UPDATE_SEC8MF_2014_11  01AUG15:16:14:58  01AUG15:16:14:58    47     362  Preservation Catalog, Projects
+WORK.PROJECT_UPDATE_SEC8MF_2014_11  01AUG15:16:35:14  01AUG15:16:35:14    47     362  Preservation Catalog, Projects
 
 
 Variables Summary
@@ -436,7 +436,7 @@ Total Number of Observations Read from WORK.PROJECT_UPDATE_SEC8MF_2014_11: 362.
 
 Number of Observations with Some Compared Variables Unequal: 106.
 Number of Observations with All Compared Variables Equal: 256.
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  11
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  11
 
 The COMPARE Procedure
 Comparison of PRESCAT.PROJECT with WORK.PROJECT_UPDATE_SEC8MF_2014_11
@@ -448,7 +448,7 @@ Number of Variables Compared with All Observations Equal: 34.
 Number of Variables Compared with Some Observations Unequal: 10.
 Number of Variables with Missing Value Differences: 9.
 Total Number of Values which Compare Unequal: 243.
-Maximum Difference: 2417169.
+Maximum Difference: 2418385.
 
 
 Variables with Unequal Values
@@ -464,7 +464,7 @@ Hud_Mgr_Name           CHAR   80   Current property manager name (from HUD)     
 Hud_Mgr_Type           CHAR    2   Current property manager type (from HUD)              8                 4
 Subsidy_End_First      NUM     8   First subsidy end date                                7     3654        1
 Subsidy_End_Last       NUM     8   Last subsidy end date                                 3     4451        1
-Update_Dtm             NUM     8   Datetime of last project update                     102  2417169        0
+Update_Dtm             NUM     8   Datetime of last project update                     102  2418385        0
 
 
 
@@ -481,7 +481,7 @@ __________________________________________________________
            ||
  NL001033  ||          .     8.0000          .          .
 __________________________________________________________
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  12
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  12
 
 The COMPARE Procedure
 Comparison of PRESCAT.PROJECT with WORK.PROJECT_UPDATE_SEC8MF_2014_11
@@ -528,7 +528,7 @@ __________________________________________________________
  NL000298  ||          .   11/24/08          .          .
  NL000329  ||          .   11/20/07          .          .
  NL000334  ||          .   09/23/83          .          .
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  13
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  13
 
 The COMPARE Procedure
 Comparison of PRESCAT.PROJECT with WORK.PROJECT_UPDATE_SEC8MF_2014_11
@@ -575,7 +575,7 @@ __________________________________________________________
  NL000113  ||  Fort Lincoln Senior   Fort Lincoln Senior
  NL000126  ||  Galen Terrace, L.P.   Galen Terrace, LP
  NL000127  ||  Garfield Hills Prese  Garfield Hills Prese
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  14
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  14
 
 The COMPARE Procedure
 Comparison of PRESCAT.PROJECT with WORK.PROJECT_UPDATE_SEC8MF_2014_11
@@ -613,7 +613,7 @@ __________________________________________________________
 NOTE: The MAXPRINT=40 printing limit has been reached for the variable Hud_Own_Name. No more values will be printed for
       this comparison.
 __________________________________________________________
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  15
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  15
 
 The COMPARE Procedure
 Comparison of PRESCAT.PROJECT with WORK.PROJECT_UPDATE_SEC8MF_2014_11
@@ -660,7 +660,7 @@ __________________________________________________________
  NL000084  ||  DELS Management Serv  Dels Management Serv
  NL000094  ||  S&H Associates Ltd.   S&h Associates Ltd.
  NL000096  ||  Neighborhood Partner  Sanford Capital, LLC
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  16
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  16
 
 The COMPARE Procedure
 Comparison of PRESCAT.PROJECT with WORK.PROJECT_UPDATE_SEC8MF_2014_11
@@ -700,7 +700,7 @@ __________________________________________________________
  NL000298  ||  Stoneridge II LP/Hor  Stoneridge II LP
  NL001033  ||                        Weil Enterprises
 __________________________________________________________
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  17
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  17
 
 The COMPARE Procedure
 Comparison of PRESCAT.PROJECT with WORK.PROJECT_UPDATE_SEC8MF_2014_11
@@ -740,7 +740,7 @@ __________________________________________________________
  NL000251  ||   06/30/12   06/30/15       1095     5.7109
  NL001033  ||          .   11/30/14          .          .
 __________________________________________________________
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  18
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  18
 
 The COMPARE Procedure
 Comparison of PRESCAT.PROJECT with WORK.PROJECT_UPDATE_SEC8MF_2014_11
@@ -768,26 +768,26 @@ __________________________________________________________
            ||          m          m
  ________  ||  _________  _________  _________  _________
            ||
- NL000021  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000023  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000026  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000028  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000029  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000031  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000036  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000038  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000039  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000040  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000041  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000046  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000047  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000048  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000052  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000057  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000060  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000064  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000065  ||  04JUL2015  01AUG2015    2417169     0.1380
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  19
+ NL000021  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000023  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000026  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000028  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000029  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000031  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000036  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000038  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000039  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000040  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000041  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000046  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000047  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000048  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000052  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000057  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000060  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000064  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000065  ||  04JUL2015  01AUG2015    2418385     0.1381
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  19
 
 The COMPARE Procedure
 Comparison of PRESCAT.PROJECT with WORK.PROJECT_UPDATE_SEC8MF_2014_11
@@ -802,32 +802,32 @@ __________________________________________________________
            ||          m          m
  ________  ||  _________  _________  _________  _________
            ||
- NL000069  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000070  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000074  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000077  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000080  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000081  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000082  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000084  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000091  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000092  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000096  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000101  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000102  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000103  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000111  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000112  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000113  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000114  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000116  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000117  ||  04JUL2015  01AUG2015    2417169     0.1380
- NL000120  ||  04JUL2015  01AUG2015    2417169     0.1380
+ NL000069  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000070  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000074  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000077  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000080  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000081  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000082  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000084  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000091  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000092  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000096  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000101  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000102  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000103  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000111  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000112  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000113  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000114  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000116  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000117  ||  04JUL2015  01AUG2015    2418385     0.1381
+ NL000120  ||  04JUL2015  01AUG2015    2418385     0.1381
 
 NOTE: The MAXPRINT=40 printing limit has been reached for the variable Update_Dtm. No more values will be printed for this
       comparison.
 __________________________________________________________
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  20
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  20
 File = Subsidy_Update_Sec8mf_2014_11
 
 The CONTENTS Procedure
@@ -835,8 +835,8 @@ The CONTENTS Procedure
 Data Set Name        WORK.SUBSIDY_UPDATE_SEC8MF_2014_11         Observations           708 
 Member Type          DATA                                       Variables              19  
 Engine               V9                                         Indexes                0   
-Created              Saturday, August 01, 2015 04:14:57 PM      Observation Length     350 
-Last Modified        Saturday, August 01, 2015 04:14:57 PM      Deleted Observations   0   
+Created              Saturday, August 01, 2015 04:35:12 PM      Observation Length     350 
+Last Modified        Saturday, August 01, 2015 04:35:12 PM      Deleted Observations   0   
 Protection                                                      Compressed             CHAR
 Data Set Type                                                   Reuse Space            NO  
 Label                Preservation Catalog, Project subsidies    Point to Observations  YES 
@@ -850,7 +850,7 @@ Data Set Page Size          16384
 Number of Data Set Pages    8                                                                                               
 Number of Data Set Repairs  0                                                                                               
 Filename                    C:\Users\Peter\AppData\Local\Temp\SAS Temporary                                                 
-                            Files\_TD9176\subsidy_update_sec8mf_2014_11.sas7bdat                                            
+                            Files\_TD8656\subsidy_update_sec8mf_2014_11.sas7bdat                                            
 Release Created             9.0202M3                                                                                        
 Host Created                X64_VSHOME                                                                                      
 
@@ -875,7 +875,7 @@ Host Created                X64_VSHOME
  9    Subsidy_Info_Source_ID      Char     40                   Project ID number for subsidy info source   
  2    Subsidy_id                  Num       8                   Preservation Catalog subsidy ID             
  3    Units_Assist                Num       8                   Subsidy assisted units                      
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  21
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  21
 File = Subsidy_Update_Sec8mf_2014_11
 
 The CONTENTS Procedure
@@ -894,7 +894,7 @@ The CONTENTS Procedure
 Sortedby       Nlihc_id Subsidy_id
 Validated      NO                 
 Character Set  ANSI               
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  22
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  22
 File = Subsidy_Update_Sec8mf_2014_11
 
 The MEANS Procedure
@@ -907,12 +907,12 @@ POA_start                   469      7411754.00        15803.31         3234.67 
 POA_end                     465     11528906.00        24793.35         4353.98        -7336.00        34515.00
 Subsidy_Active              708     676.0000000       0.9548023       0.2078844               0       1.0000000
 Subsidy_Info_Source_Date    588     10735001.00        18256.80         2863.02       -14428.00        20052.00
-Update_Dtm                  708    1.2318029E12      1739834667      6108741.05      1737198028      1754064896
+Update_Dtm                  708    1.2318031E12      1739834855      6109181.71      1737198028      1754066112
 Compl_end                   465     10959118.00        23568.00         4467.44        -7336.00        34515.00
 POA_start_orig              467      7077064.00        15154.31         3146.98         2677.00        19936.00
 Except_date                   0               .               .               .               .               .
 ---------------------------------------------------------------------------------------------------------------
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  23
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  23
 File = Update_subsidy_history_new
 
 The CONTENTS Procedure
@@ -920,8 +920,8 @@ The CONTENTS Procedure
 Data Set Name        WORK.UPDATE_SUBSIDY_HISTORY_NEW                 Observations           122 
 Member Type          DATA                                            Variables              28  
 Engine               V9                                              Indexes                0   
-Created              Saturday, August 01, 2015 04:14:57 PM           Observation Length     444 
-Last Modified        Saturday, August 01, 2015 04:14:57 PM           Deleted Observations   0   
+Created              Saturday, August 01, 2015 04:35:12 PM           Observation Length     444 
+Last Modified        Saturday, August 01, 2015 04:35:12 PM           Deleted Observations   0   
 Protection                                                           Compressed             CHAR
 Data Set Type                                                        Reuse Space            NO  
 Label                Preservation Catalog, Subsidy update history    Point to Observations  YES 
@@ -935,7 +935,7 @@ Data Set Page Size          16384
 Number of Data Set Pages    3                                                                                               
 Number of Data Set Repairs  0                                                                                               
 Filename                    C:\Users\Peter\AppData\Local\Temp\SAS Temporary                                                 
-                            Files\_TD9176\update_subsidy_history_new.sas7bdat                                               
+                            Files\_TD8656\update_subsidy_history_new.sas7bdat                                               
 Release Created             9.0202M3                                                                                        
 Host Created                X64_VSHOME                                                                                      
 
@@ -960,7 +960,7 @@ Host Created                X64_VSHOME
 19    Subsidy_Active_BASE                Num       3    DYESNO.        Subsidy is active, BASE                             
 20    Subsidy_Active_COMPARE             Num       3    DYESNO.        Subsidy is active, COMPARE                          
 21    Subsidy_Active_EXCEPT              Num       3    DYESNO.        Subsidy is active, EXCEPT                           
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  24
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  24
 File = Update_subsidy_history_new
 
 The CONTENTS Procedure
@@ -988,7 +988,7 @@ The CONTENTS Procedure
 Sortedby       Nlihc_id Subsidy_id DESCENDING Update_Dtm
 Validated      YES                                      
 Character Set  ANSI                                     
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  25
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  25
 File = Update_subsidy_history_new
 Printing first 5 obs.
 
@@ -996,11 +996,11 @@ Printing first 5 obs.
                  Subsidy_                                                            Info_Source_
 Obs  Nlihc_id       id                       Subsidy_Info_Source                         Date              Update_Dtm
 
-  1  NL000001        2       HUD - Multifamily Assistance and Section 8 Contracts     11/25/2014     01AUG15:16:14:56
-  2  NL000001        3       HUD - Multifamily Assistance and Section 8 Contracts     11/25/2014     01AUG15:16:14:56
-  3  NL000001        7       HUD - Multifamily Assistance and Section 8 Contracts     11/25/2014     01AUG15:16:14:56
-  4  NL000021        2       HUD - Multifamily Assistance and Section 8 Contracts     11/25/2014     01AUG15:16:14:56
-  5  NL000023        2       HUD - Multifamily Assistance and Section 8 Contracts     11/25/2014     01AUG15:16:14:56
+  1  NL000001        2       HUD - Multifamily Assistance and Section 8 Contracts     11/25/2014     01AUG15:16:35:12
+  2  NL000001        3       HUD - Multifamily Assistance and Section 8 Contracts     11/25/2014     01AUG15:16:35:12
+  3  NL000001        7       HUD - Multifamily Assistance and Section 8 Contracts     11/25/2014     01AUG15:16:35:12
+  4  NL000021        2       HUD - Multifamily Assistance and Section 8 Contracts     11/25/2014     01AUG15:16:35:12
+  5  NL000023        2       HUD - Multifamily Assistance and Section 8 Contracts     11/25/2014     01AUG15:16:35:12
 
  
          Subsidy_Info_      Compl_end_  Compl_end_  Compl_end_    POA_end_    POA_end_    POA_end_  POA_start_  POA_start_
@@ -1031,7 +1031,7 @@ Obs   EXCEPT     BASE   COMPARE   EXCEPT     description_BASE        description
   3     .         .        .        .                              Between 101% & 120% FMR                DCXXXXXXXXX
   4     .         .        .        .     Between 101% & 120% FMR  Between 101% & 120% FMR                DC39T871003
   5     .         .        .        .     Between 101% & 120% FMR  Between 101% & 120% FMR                DC39T792003
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  26
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  26
 File = Project_Update_Sec8mf_2014_11
 
 The CONTENTS Procedure
@@ -1039,8 +1039,8 @@ The CONTENTS Procedure
 Data Set Name        WORK.PROJECT_UPDATE_SEC8MF_2014_11       Observations           362 
 Member Type          DATA                                     Variables              47  
 Engine               V9                                       Indexes                0   
-Created              Saturday, August 01, 2015 04:14:58 PM    Observation Length     1440
-Last Modified        Saturday, August 01, 2015 04:14:58 PM    Deleted Observations   0   
+Created              Saturday, August 01, 2015 04:35:13 PM    Observation Length     1440
+Last Modified        Saturday, August 01, 2015 04:35:13 PM    Deleted Observations   0   
 Protection                                                    Compressed             CHAR
 Data Set Type                                                 Reuse Space            NO  
 Label                Preservation Catalog, Projects           Point to Observations  YES 
@@ -1054,7 +1054,7 @@ Data Set Page Size          16384
 Number of Data Set Pages    13                                                                                              
 Number of Data Set Repairs  0                                                                                               
 Filename                    C:\Users\Peter\AppData\Local\Temp\SAS Temporary                                                 
-                            Files\_TD9176\project_update_sec8mf_2014_11.sas7bdat                                            
+                            Files\_TD8656\project_update_sec8mf_2014_11.sas7bdat                                            
 Release Created             9.0202M3                                                                                        
 Host Created                X64_VSHOME                                                                                      
 
@@ -1079,7 +1079,7 @@ Host Created                X64_VSHOME
 33    Geo2010                  Char     11    $GEO10A.        Full census tract ID (2010): ssccctttttt                  
 22    Hud_Mgr_Name             Char     80                    Current property manager name (from HUD)                  
 23    Hud_Mgr_Type             Char      2    $OWNMGRTYPE.    Current property manager type (from HUD)                  
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  27
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  27
 File = Project_Update_Sec8mf_2014_11
 
 The CONTENTS Procedure
@@ -1126,7 +1126,7 @@ The CONTENTS Procedure
 Sortedby       Nlihc_id
 Validated      NO      
 Character Set  ANSI    
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  28
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  28
 File = Project_Update_Sec8mf_2014_11
 
 The MEANS Procedure
@@ -1154,10 +1154,10 @@ Proj_y                   362     49369020.15       136378.51         3843.01    
 Proj_lat                 362        14080.08      38.8952501       0.0346181      38.8224804      38.9720913
 Proj_lon                 362       -27873.56     -76.9987786       0.0327934     -77.0952556     -76.9158902
 Bldg_count               362     608.0000000       1.6795580       5.1079290       1.0000000      82.0000000
-Update_Dtm               362    634343028514      1752328808      1088894.72      1751647727      1754064896
+Update_Dtm               362    634343152528      1752329151      1089442.43      1751647727      1754066112
 Except_date                0               .               .               .               .               .
 ------------------------------------------------------------------------------------------------------------
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  29
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  29
 File = Update_project_history_new
 
 The CONTENTS Procedure
@@ -1165,8 +1165,8 @@ The CONTENTS Procedure
 Data Set Name        WORK.UPDATE_PROJECT_HISTORY_NEW                 Observations           114 
 Member Type          DATA                                            Variables              41  
 Engine               V9                                              Indexes                0   
-Created              Saturday, August 01, 2015 04:14:58 PM           Observation Length     773 
-Last Modified        Saturday, August 01, 2015 04:14:58 PM           Deleted Observations   0   
+Created              Saturday, August 01, 2015 04:35:13 PM           Observation Length     773 
+Last Modified        Saturday, August 01, 2015 04:35:13 PM           Deleted Observations   0   
 Protection                                                           Compressed             CHAR
 Data Set Type                                                        Reuse Space            NO  
 Label                Preservation Catalog, Project update history    Point to Observations  YES 
@@ -1180,7 +1180,7 @@ Data Set Page Size          16384
 Number of Data Set Pages    4                                                                                               
 Number of Data Set Repairs  0                                                                                               
 Filename                    C:\Users\Peter\AppData\Local\Temp\SAS Temporary                                                 
-                            Files\_TD9176\update_project_history_new.sas7bdat                                               
+                            Files\_TD8656\update_project_history_new.sas7bdat                                               
 Release Created             9.0202M3                                                                                        
 Host Created                X64_VSHOME                                                                                      
 
@@ -1205,7 +1205,7 @@ Host Created                X64_VSHOME
 12   Hud_Own_Type_COMPARE            Char     2   $OWNMGRTYPE.   Current property owner type (from HUD), COMPARE           
 13   Hud_Own_Type_EXCEPT             Char     2   $OWNMGRTYPE.   Current property owner type (from HUD), EXCEPT            
  1   Nlihc_id                        Char     8                  Preservation Catalog project ID                           
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  30
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  30
 File = Update_project_history_new
 
 The CONTENTS Procedure
@@ -1246,7 +1246,7 @@ The CONTENTS Procedure
 Sortedby       Nlihc_id DESCENDING Update_Dtm
 Validated      YES                           
 Character Set  ANSI                          
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  31
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  31
 File = Update_project_history_new
 Printing first 5 obs.
 
@@ -1254,11 +1254,11 @@ Printing first 5 obs.
                                                                     Info_Source_                       Effect_  Effect_dt_
 Obs Nlihc_id                  Subsidy_Info_Source                       Date            Update_Dtm     dt_BASE   COMPARE
 
-  1 NL000001  HUD - Multifamily Assistance and Section 8 Contracts   11/25/2014   01AUG15:16:14:56           .           .
-  2 NL000021  HUD - Multifamily Assistance and Section 8 Contracts   11/25/2014   01AUG15:16:14:56           .           .
-  3 NL000023  HUD - Multifamily Assistance and Section 8 Contracts   11/25/2014   01AUG15:16:14:56           .           .
-  4 NL000026  HUD - Multifamily Assistance and Section 8 Contracts   11/25/2014   01AUG15:16:14:56           .           .
-  5 NL000028  HUD - Multifamily Assistance and Section 8 Contracts   11/25/2014   01AUG15:16:14:56           .           .
+  1 NL000001  HUD - Multifamily Assistance and Section 8 Contracts   11/25/2014   01AUG15:16:35:12           .           .
+  2 NL000021  HUD - Multifamily Assistance and Section 8 Contracts   11/25/2014   01AUG15:16:35:12           .           .
+  3 NL000023  HUD - Multifamily Assistance and Section 8 Contracts   11/25/2014   01AUG15:16:35:12           .           .
+  4 NL000026  HUD - Multifamily Assistance and Section 8 Contracts   11/25/2014   01AUG15:16:35:12           .           .
+  5 NL000028  HUD - Multifamily Assistance and Section 8 Contracts   11/25/2014   01AUG15:16:35:12           .           .
 
      Hud_Own_
     Effect_dt_                                                                               Hud_Own_    Hud_Own_Type_
@@ -1289,7 +1289,7 @@ Obs Name_EXCEPT       BASE           COMPARE      Type_EXCEPT       Source_ID   
   3             Profit motivated Profit motivated             800003671/DC39T792003     Yes         Yes         No     
   4             Profit motivated Profit motivated             800003672/DC392764201     Yes         Yes         No     
   5             Profit motivated Profit motivated             800003673/DC390007006     Yes         Yes         No     
-PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:14 Saturday, August 1, 2015  32
+PRESCAT/Update_Sec8mf_2014_11.sas:  NeighborhoodInfo DC                                   16:35 Saturday, August 1, 2015  32
 File = Update_project_history_new
 Printing first 5 obs.
 
