@@ -160,9 +160,11 @@
   ** Subsidy_mfa = All Catalog subsidy records flagged with Sec8MF as source 
   ** Subsidy_other = All other Catalog subsidy records;
 
-  data Subsidy_mfa Subsidy_other; 
+  data Subsidy_mfa Subsidy_other (drop=_POA_end_hold); 
 
     set PresCat.Subsidy;
+    
+    _POA_end_hold = POA_end;
     
     if Subsidy_Info_Source=&Subsidy_Info_Source then output Subsidy_mfa;
     else output Subsidy_other;
@@ -190,6 +192,12 @@
     end;
     
     if missing( Subsidy_id ) then Subsidy_id = &NO_SUBSIDY_ID;
+    
+    ** Update POA_end_prev if POA_end changed **;
+    
+    if POA_end ~= _POA_end_hold then POA_end_prev = _POA_end_hold;
+    
+    drop _POA_end_hold;
     
   run;
 
