@@ -42,7 +42,7 @@
   %end;
   %else %do;
   
-    %err_mput( macro=Update_Sec8mf, msg=%str(Update file &Update_file is earlier than last update for this data source.) )
+    %err_mput( macro=Update_Sec8mf, msg=%str(Update file &Update_file is not after last update for this data source (&Last_update_date_fmt).) )
     %err_mput( macro=Update_Sec8mf, msg=%str(Update will NOT be applied to Catalog.) )
 
   %end;

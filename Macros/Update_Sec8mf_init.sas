@@ -20,7 +20,8 @@
   %global 
     Update_dtm Subsidy_info_source NO_SUBSIDY_ID Subsidy_Info_Source_Date
     Subsidy_update_vars Subsidy_tech_vars Subsidy_missing_info_vars
-    Project_mfa_update_vars Project_subsidy_update_vars Project_missing_info_vars Last_update_date;
+    Project_mfa_update_vars Project_subsidy_update_vars Project_missing_info_vars 
+    Last_update_date Last_update_date_fmt;
     
   %let Update_dtm = %sysfunc( datetime() );
 
@@ -36,6 +37,8 @@
     select max( Subsidy_Info_Source_Date ) format best32. into :Last_update_date 
       from PresCat.Subsidy_update_history (where=(Subsidy_Info_Source=&Subsidy_Info_Source));
   quit;
+  
+  %let Last_update_date_fmt = %sysfunc( putn( &Last_update_date, mmddyy10. ) );
   
   %let Subsidy_update_vars = 
       Units_Assist POA_start POA_end Compl_end 
