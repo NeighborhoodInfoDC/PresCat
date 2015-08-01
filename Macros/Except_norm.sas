@@ -133,6 +133,8 @@
     
       set &lib..&data;
       
+      drop Except_: ;
+      
     run;
     
     ** Create blank observation **;
