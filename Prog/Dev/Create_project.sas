@@ -23,6 +23,7 @@
   01/29/15 PAT Assigning NLIHC_IDs to 1919 Calvert Street NW (NL001031), 
                Congress Heights PUD (NL001032).
   06/18/15 PAT Change category for Wah Luck to 2 (expiring).
+  08/31/15 PAT Replace PresCat.DC_Info_10_19_14 with PresCat.DC_Info_07_08_15.
 **************************************************************************/
 
 %include "L:\SAS\Inc\StdLocal.sas";
@@ -53,7 +54,7 @@ run;
 
 data DC_Info;
 
-  set PresCat.DC_Info_10_19_14;
+  set PresCat.DC_Info_07_08_15;
   
   ** Apply standard corrections **;
   

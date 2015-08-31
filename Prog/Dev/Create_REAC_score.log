@@ -1,4 +1,4 @@
-1                                         The SAS System           15:40 Friday, December 19, 2014
+1                                         The SAS System             18:29 Monday, August 31, 2015
 
 NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
 NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
@@ -8,8 +8,8 @@ NOTE: This session is executing on the X64_VSPRO  platform.
 
 
 NOTE: SAS initialization used:
-      real time           0.91 seconds
-      cpu time            0.15 seconds
+      real time           0.65 seconds
+      cpu time            0.12 seconds
       
 
 NOTE: AUTOEXEC processing beginning; file is D:\Users\ptatian\Documents\My SAS 
@@ -31,24 +31,25 @@ NOTE: AUTOEXEC processing completed.
 11         
 12          Modifications:
 13           12/19/14 PAT Updated for SAS1. Added variable labels.
-14         **************************************************************************/
-15         
-16         %include "L:\SAS\Inc\StdLocal.sas";
+14           08/31/15 PAT Replace PresCat.DC_Info with PresCat.DC_Info_07_08_15.
+15         **************************************************************************/
+16         
+17         %include "L:\SAS\Inc\StdLocal.sas";
 NOTE: Libref _METADAT was successfully assigned as follows: 
       Engine:        V9 
       Physical Name: L:\Libraries\Metadata\Data
-59        +
-60        +options ls=124 ps=48;    ** Landscape **;
-61        +
-62        +** Output title **;
 63        +
-64        +title "&_library/&_program:  NeighborhoodInfo DC";
+64        +options ls=124 ps=48;    ** Landscape **;
 65        +
-66        +** Define General library for local session only **;
+66        +** Output title **;
 67        +
-2 The SAS System                                                                             15:40 Friday, December 19, 2014
+68        +title "&_library/&_program:  NeighborhoodInfo DC";
+69        +
+70        +** Define General library for local session only **;
+2 The SAS System                                                                               18:29 Monday, August 31, 2015
 
-68        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+71        +
+72        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref GENERA_L was successfully assigned as follows: 
       Engine:        V9 
@@ -82,7 +83,7 @@ NOTE:    GENERAL.FORMATS EXISTS
 =====================================================================
 Current Sasautos Option value:
 
-     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+     TTAUTOS  GENERA_L DCAUTOS UIAUTOS SASAUTOS
 
 =====================================================================
 
@@ -90,18 +91,18 @@ Current Sasautos Option value:
 =====================================================================
 Current Sasautos Option value:
 
-     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+     TTAUTOS GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
 
 =====================================================================
+3 The SAS System                                                                               18:29 Monday, August 31, 2015
 
-3 The SAS System                                                                             15:40 Friday, December 19, 2014
 
-69        +
-70        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+73        +
+74        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
 NOTE: %INCLUDE (level 1) ending.
-71         
-72         ** Define libraries **;
-73         %DCData_lib( PresCat, local=n )
+75         
+76         ** Define libraries **;
+77         %DCData_lib( PresCat, local=n )
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref PRESCA_R was successfully assigned as follows: 
       Engine:        V9 
@@ -131,104 +132,114 @@ NOTE:    PRESCAT.FORMATS EXISTS
 =====================================================================
 Current Sasautos Option value:
 
-     PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+     TTAUTOS  PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
 
 =====================================================================
 
-74         
-75         proc print data=PresCat.DC_info (obs=100);
-76           id nlihc_id;
-77           var pass: ;
-78         run;
+78         
+79         proc print data=PresCat.DC_info_07_08_15 (obs=100);
+INFO: Data file PRESCAT.DC_INFO_07_08_15.DATA is in a format that is native to another host, or the file encoding does not 
+match the session encoding. Cross Environment Data Access will be used, which might require additional CPU resources and 
+might reduce performance.
+80           id nlihc_id;
+4 The SAS System                                                                               18:29 Monday, August 31, 2015
 
-NOTE: There were 100 observations read from the data set PRESCAT.DC_INFO.
-4 The SAS System                                                                             15:40 Friday, December 19, 2014
+81           var pass: ;
+82         run;
 
+NOTE: There were 100 observations read from the data set PRESCAT.DC_INFO_07_08_15.
 NOTE: The PROCEDURE PRINT printed pages 1-3.
 NOTE: PROCEDURE PRINT used (Total process time):
-      real time           0.10 seconds
+      real time           0.05 seconds
       cpu time            0.01 seconds
       
 
-79         
-80         data PresCat.REAC_score (label="Preservation Catalog, REAC scores");
-81         
-82           length Nlihc_id $ 8;
 83         
-84           set PresCat.DC_info (keep=nlihc_id pass:);
+84         data PresCat.REAC_score (label="Preservation Catalog, REAC scores");
 85         
-86           array scores{*} pass1_score pass2_score pass3_score;
-87           array dates{*} pass1_date pass2_date pass3_date;
-88         
-89           length REAC_date 8 REAC_score $ 8 REAC_score_num 8 REAC_score_letter $ 2;
-90         
-91           do i = 1 to dim( scores );
+86           length Nlihc_id $ 8;
+87         
+88           set PresCat.DC_Info_07_08_15 (keep=nlihc_id pass:);
+INFO: Data file PRESCAT.DC_INFO_07_08_15.DATA is in a format that is native to another host, or the file encoding does not 
+match the session encoding. Cross Environment Data Access will be used, which might require additional CPU resources and 
+might reduce performance.
+89         
+90           array scores{*} pass1_score pass2_score pass3_score;
+91           array dates{*} pass1_date pass2_date pass3_date;
 92         
-93             if not( missing ( scores{i} ) ) then do;
+93           length REAC_date 8 REAC_score $ 8 REAC_score_num 8 REAC_score_letter $ 1 REAC_score_star $ 1;
 94         
-95               REAC_date = dates{i};
-96               REAC_score = left( lowcase( scores{i} ) );
-97         
-98               j = indexc( REAC_score, 'abcdefghijklmnopqrstuvwxyz' );
-99         
-100              REAC_score_num = input( substr( REAC_score, 1, j - 1 ), 3. );
-101              REAC_score_letter = substr( REAC_score, j );
-102        
-103              output;
-104        
-105            end;
-106        
-107          end;
-108        
-109          label
-110            Nlihc_id = "Preservation Catalog project ID"
-111            REAC_date = "Date of REAC inspection"
-112            REAC_score = "REAC inspection score"
-113            REAC_score_num = "REAC inspection score, number part"
-114            REAC_score_letter = "REAC inspection score, letter part";
-115        
-116          keep nlihc_id REAC_: ;
-117        
-118          format REAC_date mmddyy10.;
-5 The SAS System                                                                             15:40 Friday, December 19, 2014
+95           do i = 1 to dim( scores );
+96         
+97             if not( missing ( scores{i} ) ) then do;
+98         
+99               REAC_date = datepart( dates{i} );
+100              REAC_score = left( lowcase( scores{i} ) );
+101        
+102              j = indexc( REAC_score, 'abcdefghijklmnopqrstuvwxyz' );
+103        
+104              REAC_score_num = input( substr( REAC_score, 1, j - 1 ), 3. );
+105              REAC_score_letter = substr( REAC_score, j, 1 );
+106              REAC_score_star = substr( REAC_score, j + 1, 1 );
+107        
+108              output;
+109        
+110            end;
+111        
+112          end;
+113        
+114          label
+115            Nlihc_id = "Preservation Catalog project ID"
+5 The SAS System                                                                               18:29 Monday, August 31, 2015
 
-119        
-120        run;
+116            REAC_date = "Date of REAC inspection"
+117            REAC_score = "REAC inspection score"
+118            REAC_score_num = "REAC inspection score, number part"
+119            REAC_score_letter = "REAC inspection score, letter part"
+120            REAC_score_star = "REAC inspection score, star (*) part";
+121        
+122          keep nlihc_id REAC_: ;
+123        
+124          format REAC_date mmddyy10.;
+125        
+126        run;
 
-NOTE: There were 359 observations read from the data set PRESCAT.DC_INFO.
-NOTE: The data set PRESCAT.REAC_SCORE has 366 observations and 5 variables.
-NOTE: Compressing data set PRESCAT.REAC_SCORE increased size by 20.00 percent. 
-      Compressed is 6 pages; un-compressed would require 5 pages.
+NOTE: There were 361 observations read from the data set PRESCAT.DC_INFO_07_08_15.
+NOTE: The data set PRESCAT.REAC_SCORE has 354 observations and 6 variables.
+NOTE: Compressing data set PRESCAT.REAC_SCORE increased size by 25.00 percent. 
+      Compressed is 5 pages; un-compressed would require 4 pages.
 NOTE: DATA statement used (Total process time):
-      real time           0.09 seconds
-      cpu time            0.03 seconds
+      real time           0.08 seconds
+      cpu time            0.01 seconds
       
 
-121        
-122        proc sort data=PresCat.REAC_score;
-123          by nlihc_id descending REAC_date;
-124        
-125        %File_info( data=PresCat.REAC_score, printobs=100 )
+127        
+128        proc sort data=PresCat.REAC_score;
+129          by nlihc_id descending REAC_date;
+130        
+131        %File_info( data=PresCat.REAC_score, printobs=100, freqvars=REAC_score_letter REAC_score_star )
 MPRINT(FILE_INFO):   title2 "File = PresCat.REAC_score";
 
-NOTE: There were 366 observations read from the data set PRESCAT.REAC_SCORE.
+NOTE: There were 354 observations read from the data set PRESCAT.REAC_SCORE.
 NOTE: SAS sort was used.
-NOTE: The data set PRESCAT.REAC_SCORE has 366 observations and 5 variables.
-NOTE: Compressing data set PRESCAT.REAC_SCORE increased size by 20.00 percent. 
-      Compressed is 6 pages; un-compressed would require 5 pages.
+NOTE: The data set PRESCAT.REAC_SCORE has 354 observations and 6 variables.
+NOTE: Compressing data set PRESCAT.REAC_SCORE increased size by 25.00 percent. 
+      Compressed is 5 pages; un-compressed would require 4 pages.
 NOTE: PROCEDURE SORT used (Total process time):
-      real time           0.05 seconds
-      cpu time            0.03 seconds
+      real time           0.03 seconds
+      cpu time            0.01 seconds
       
 
 MPRINT(FILE_INFO):   proc contents data=PresCat.REAC_score;
 MPRINT(FILE_INFO):   run;
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.01 seconds
+      real time           0.00 seconds
+      cpu time            0.00 seconds
       
 NOTE: The PROCEDURE CONTENTS printed page 4.
+6 The SAS System                                                                               18:29 Monday, August 31, 2015
+
 
 MPRINT(FILE_INFO):   proc print data=PresCat.REAC_score (obs=100);
 MPRINT(FILE_INFO):   title3 "Printing first 100 obs.";
@@ -238,8 +249,6 @@ NOTE: There were 100 observations read from the data set PRESCAT.REAC_SCORE.
 NOTE: The PROCEDURE PRINT printed pages 5-7.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
-6 The SAS System                                                                             15:40 Friday, December 19, 2014
-
       cpu time            0.00 seconds
       
 
@@ -249,7 +258,7 @@ MPRINT(FILE_INFO):   proc means data=PresCat.REAC_score n sum mean stddev min ma
 MPRINT(FILE_INFO):   run;
 
 NOTE: Multiple concurrent threads will be used to summarize data.
-NOTE: There were 366 observations read from the data set PRESCAT.REAC_SCORE.
+NOTE: There were 354 observations read from the data set PRESCAT.REAC_SCORE.
 NOTE: The PROCEDURE MEANS printed page 8.
 NOTE: PROCEDURE MEANS used (Total process time):
       real time           0.00 seconds
@@ -257,13 +266,43 @@ NOTE: PROCEDURE MEANS used (Total process time):
       
 
 MPRINT(FILE_INFO):   options label;
+MPRINT(FILE_INFO):   proc freq data=PresCat.REAC_score;
+MPRINT(FILE_INFO):   tables REAC_score_letter REAC_score_star / missing;
+MPRINT(FILE_INFO):   run;
+
+NOTE: There were 354 observations read from the data set PRESCAT.REAC_SCORE.
+NOTE: The PROCEDURE FREQ printed page 9.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
 MPRINT(FILE_INFO):   title2;
-126        
-127        
-128        run;
+132        
+133        
+134        **** Compare with earlier version ****;
+135        
+136        libname comp 'D:\DCData\Libraries\PresCat\Data\Old';
+NOTE: Libref COMP was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\PresCat\Data\Old
+7 The SAS System                                                                               18:29 Monday, August 31, 2015
+
+137        
+138        proc compare base=Comp.Reac_score compare=PresCat.Reac_score listall maxprint=(40,32000);
+139          id nlihc_id descending REAC_date;
+140        run;
+
+NOTE: There were 366 observations read from the data set COMP.REAC_SCORE.
+NOTE: There were 354 observations read from the data set PRESCAT.REAC_SCORE.
+NOTE: The PROCEDURE COMPARE printed pages 10-67.
+NOTE: PROCEDURE COMPARE used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
 NOTE: The SAS System used:
-      real time           1.68 seconds
-      cpu time            0.26 seconds
+      real time           1.39 seconds
+      cpu time            0.21 seconds
       

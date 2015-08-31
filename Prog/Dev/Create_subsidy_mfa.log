@@ -1,4 +1,4 @@
-1                                         The SAS System          10:32 Thursday, January 29, 2015
+1                                         The SAS System             18:10 Monday, August 31, 2015
 
 NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
 NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
@@ -8,8 +8,8 @@ NOTE: This session is executing on the X64_VSPRO  platform.
 
 
 NOTE: SAS initialization used:
-      real time           0.79 seconds
-      cpu time            0.21 seconds
+      real time           0.84 seconds
+      cpu time            0.18 seconds
       
 
 NOTE: AUTOEXEC processing beginning; file is D:\Users\ptatian\Documents\My SAS 
@@ -42,24 +42,26 @@ NOTE: AUTOEXEC processing completed.
 22           01/08/15 PAT Changed Update_date to Update_dtm (datetime).
 23           01/18/15 PAT Added Compl_end.
 24           01/29/15 PAT Added property_id for Sayles Place/NL000262.
-25         **************************************************************************/
-26         
-27         %include "L:\SAS\Inc\StdLocal.sas";
+25           08/31/15 PAT Replace PresCat.DC_Info_10_19_14 with PresCat.DC_Info_07_08_15.
+26                        Do not replace MFA_END dates if not missing.
+27         **************************************************************************/
+28         
+29         %include "L:\SAS\Inc\StdLocal.sas";
 NOTE: Libref _METADAT was successfully assigned as follows: 
       Engine:        V9 
       Physical Name: L:\Libraries\Metadata\Data
-70        +
-71        +options ls=124 ps=48;    ** Landscape **;
-2 The SAS System                                                                            10:32 Thursday, January 29, 2015
+2 The SAS System                                                     18:10 Monday, August 31, 2015
 
-72        +
-73        +** Output title **;
-74        +
-75        +title "&_library/&_program:  NeighborhoodInfo DC";
-76        +
-77        +** Define General library for local session only **;
-78        +
-79        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+75        +
+76        +options ls=124 ps=48;    ** Landscape **;
+77        +
+78        +** Output title **;
+79        +
+80        +title "&_library/&_program:  NeighborhoodInfo DC";
+81        +
+82        +** Define General library for local session only **;
+83        +
+84        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref GENERA_L was successfully assigned as follows: 
       Engine:        V9 
@@ -93,26 +95,26 @@ NOTE:    GENERAL.FORMATS EXISTS
 =====================================================================
 Current Sasautos Option value:
 
-     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+     TTAUTOS  GENERA_L DCAUTOS UIAUTOS SASAUTOS
 
 =====================================================================
+3 The SAS System                                                                               18:10 Monday, August 31, 2015
 
 
-3 The SAS System                                                                            10:32 Thursday, January 29, 2015
 
 =====================================================================
 Current Sasautos Option value:
 
-     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+     TTAUTOS GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
 
 =====================================================================
 
-80        +
-81        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+85        +
+86        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
 NOTE: %INCLUDE (level 1) ending.
-82         
-83         ** Define libraries **;
-84         %DCData_lib( PresCat, local=n )
+87         
+88         ** Define libraries **;
+89         %DCData_lib( PresCat, local=n )
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref PRESCA_R was successfully assigned as follows: 
       Engine:        V9 
@@ -142,13 +144,13 @@ NOTE:    PRESCAT.FORMATS EXISTS
 =====================================================================
 Current Sasautos Option value:
 
-     PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+     TTAUTOS  PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+4 The SAS System                                                                               18:10 Monday, August 31, 2015
 
 =====================================================================
 
-4 The SAS System                                                                            10:32 Thursday, January 29, 2015
-
-85         %DCData_lib( HUD, local=n )
+90         %DCData_lib( HUD, local=n )
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref HUD_R was successfully assigned as follows: 
       Engine:        V9 
@@ -179,131 +181,134 @@ NOTE:    HUD.FORMATS EXISTS
 =====================================================================
 Current Sasautos Option value:
 
-     PRESCA_R  HUD_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+     TTAUTOS PRESCA_R  HUD_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
 
 =====================================================================
 
-86         
-87         /*
-88         %File_info( data=HUD.sec8mf_2014_10_dc, printobs=5 )
-89         
-90         title2 'HUD.sec8mf_2014_10_dc';
 91         
-92         data _null_;
-93           set HUD.sec8mf_2014_10_dc;
-94           where property_id = 800003675;
-95           file print;
-96           put / '--------------------';
-5 The SAS System                                                                            10:32 Thursday, January 29, 2015
+92         /*
+93         %File_info( data=HUD.sec8mf_2014_10_dc, printobs=5 )
+94         
+95         title2 'HUD.sec8mf_2014_10_dc';
+96         
+97         data _null_;
+98           set HUD.sec8mf_2014_10_dc;
+99           where property_id = 800003675;
+5 The SAS System                                                                               18:10 Monday, August 31, 2015
 
-97           put (_all_) (= /);
-98         run;
-99         */
-100        
-101        proc freq data=HUD.sec8mf_2014_10_dc;
-102          tables program_type_group_code * program_type_name / list missing nocum nopercent;
+100          file print;
+101          put / '--------------------';
+102          put (_all_) (= /);
 103        run;
+104        */
+105        
+106        proc freq data=HUD.sec8mf_2014_10_dc;
+107          tables program_type_group_code * program_type_name / list missing nocum nopercent;
+108        run;
 
 NOTE: There were 113 observations read from the data set HUD.SEC8MF_2014_10_DC.
 NOTE: The PROCEDURE FREQ printed page 1.
 NOTE: PROCEDURE FREQ used (Total process time):
-      real time           0.35 seconds
+      real time           0.02 seconds
       cpu time            0.03 seconds
       
 
-104        
-105        title2;
-106        
-107        data DC_Info;
-108        
-109          set PresCat.DC_Info_10_19_14;
-110        
-111          property_id = 1 * ID_MFA;
-112        
-113          ** Apply standard corrections **;
-114        
-115          %DCInfo_corrections()
+109        
+110        title2;
+111        
+112        data DC_Info;
+113        
+114          set PresCat.DC_Info_07_08_15;
+INFO: Data file PRESCAT.DC_INFO_07_08_15.DATA is in a format that is native to another host, or the file encoding does not 
+match the session encoding. Cross Environment Data Access will be used, which might require additional CPU resources and 
+might reduce performance.
+115        
+116          property_id = 1 * ID_MFA;
+117        
+118          ** Apply standard corrections **;
+119        
+120          %DCInfo_corrections()
 MPRINT(DCINFO_CORRECTIONS):   ** Assign new NLIHC_ID to St. Dennis (duplicate ID with CEMI - Bethune House) **;
 MPRINT(DCINFO_CORRECTIONS):   if NLIHC_ID = "NL001007" and upcase( Proj_Name ) = "ST. DENNIS" then NLIHC_ID = "NL001030";
 MPRINT(DCINFO_CORRECTIONS):   if NLIHC_ID = "NL000046" then do;
 MPRINT(DCINFO_CORRECTIONS):   units = 535;
 MPRINT(DCINFO_CORRECTIONS):   Category = "1";
 MPRINT(DCINFO_CORRECTIONS):   end;
-116        
-117          ** Tentative fixes for property_id - to be confirmed with Pres Network **;
-118        
-119          select ( NLIHC_ID );
-120            when ( 'NL000137' )  /** 21 K TER NW **/
-121              property_id = 800003730;
-122            when ( 'NL000303' )  /** 222 W ST NW **/
-123              property_id = 800003805;
-124            when ( 'NL000098' )  /** 1312 EUCLID ST NW **/
-125              property_id = 800003808;
-126            when ( 'NL000999' )  /** 1350 Clifton St NW **/
-127              property_id = 800003695;
-128            when ( 'NL000234' )  /** 2701 ROBINSON PLACE SE **/
-6 The SAS System                                                                            10:32 Thursday, January 29, 2015
+121        
+122          ** Tentative fixes for property_id - to be confirmed with Pres Network **;
+123        
+124          select ( NLIHC_ID );
+125            when ( 'NL000137' )  /** 21 K TER NW **/
+126              property_id = 800003730;
+127            when ( 'NL000303' )  /** 222 W ST NW **/
+128              property_id = 800003805;
+6 The SAS System                                                                               18:10 Monday, August 31, 2015
 
-129              property_id = 800214527;
-130            when ( 'NL000262' )  /** Sayles Place **/
-131              property_id = 800003779;
-132            otherwise
-133              /** Do nothing **/;
-134          end;
-135        
-136          if not missing( property_id );
-137        
-138        run;
+129            when ( 'NL000098' )  /** 1312 EUCLID ST NW **/
+130              property_id = 800003808;
+131            when ( 'NL000999' )  /** 1350 Clifton St NW **/
+132              property_id = 800003695;
+133            when ( 'NL000234' )  /** 2701 ROBINSON PLACE SE **/
+134              property_id = 800214527;
+135            when ( 'NL000262' )  /** Sayles Place **/
+136              property_id = 800003779;
+137            otherwise
+138              /** Do nothing **/;
+139          end;
+140        
+141          if not missing( property_id );
+142        
+143        run;
 
 NOTE: Character values have been converted to numeric values at the places given by: (Line):(Column).
-      111:21   
+      116:21   
 NOTE: Missing values were generated as a result of performing an operation on missing values.
       Each place is given by: (Number of times) at (Line):(Column).
-      251 at 111:19   
-NOTE: There were 361 observations read from the data set PRESCAT.DC_INFO_10_19_14.
+      251 at 116:19   
+NOTE: There were 361 observations read from the data set PRESCAT.DC_INFO_07_08_15.
 NOTE: The data set WORK.DC_INFO has 116 observations and 103 variables.
 NOTE: Compressing data set WORK.DC_INFO decreased size by 81.03 percent. 
       Compressed is 11 pages; un-compressed would require 58 pages.
 NOTE: DATA statement used (Total process time):
-      real time           0.29 seconds
-      cpu time            0.03 seconds
+      real time           0.05 seconds
+      cpu time            0.01 seconds
       
 
-139        
-140        proc sort data=DC_Info;
-141          by property_id;
-142        
+144        
+145        proc sort data=DC_Info;
+146          by property_id;
+147        
 
 NOTE: There were 116 observations read from the data set WORK.DC_INFO.
 NOTE: SAS sort was used.
 NOTE: The data set WORK.DC_INFO has 116 observations and 103 variables.
-NOTE: Compressing data set WORK.DC_INFO decreased size by 81.03 percent. 
-      Compressed is 11 pages; un-compressed would require 58 pages.
+NOTE: Compressing data set WORK.DC_INFO decreased size by 79.31 percent. 
+      Compressed is 12 pages; un-compressed would require 58 pages.
 NOTE: PROCEDURE SORT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
-143        proc sort data=HUD.sec8mf_2014_10_dc out=sec8mf_dc_a;
-144          by property_id;
-145        
-146        ** Need data for two older projects no longer in current HUD database **;
+148        proc sort data=HUD.sec8mf_2014_10_dc out=sec8mf_dc_a;
+7 The SAS System                                                                               18:10 Monday, August 31, 2015
+
+149          by property_id;
+150        
+151        ** Need data for two older projects no longer in current HUD database **;
 
 NOTE: There were 113 observations read from the data set HUD.SEC8MF_2014_10_DC.
-7 The SAS System                                                                            10:32 Thursday, January 29, 2015
-
 NOTE: SAS sort was used.
 NOTE: The data set WORK.SEC8MF_DC_A has 113 observations and 103 variables.
 NOTE: Compressing data set WORK.SEC8MF_DC_A decreased size by 50.00 percent. 
       Compressed is 7 pages; un-compressed would require 14 pages.
 NOTE: PROCEDURE SORT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
-147        proc sort data=Hud.Sec8mf_2007_12_dc (where=(property_id in ( 800003695, 800003708 ))) out=sec8mf_dc_b;
-148          by property_id;
-149        
+152        proc sort data=Hud.Sec8mf_2007_12_dc (where=(property_id in ( 800003695, 800003708 ))) out=sec8mf_dc_b;
+153          by property_id;
+154        
 
 NOTE: There were 2 observations read from the data set HUD.SEC8MF_2007_12_DC.
       WHERE property_id in (800003695, 800003708);
@@ -312,18 +317,18 @@ NOTE: The data set WORK.SEC8MF_DC_B has 2 observations and 120 variables.
 NOTE: Compressing data set WORK.SEC8MF_DC_B increased size by 50.00 percent. 
       Compressed is 3 pages; un-compressed would require 2 pages.
 NOTE: PROCEDURE SORT used (Total process time):
-      real time           0.00 seconds
+      real time           0.01 seconds
       cpu time            0.00 seconds
       
 
-150        data Sec8mf_dc;
-151        
-152          set sec8mf_dc_a sec8mf_dc_b (in=inb);
-153          by property_id;
-154        
-155          if inb then tracs_status = 'T';
+155        data Sec8mf_dc;
 156        
-157        run;
+157          set sec8mf_dc_a sec8mf_dc_b (in=inb);
+158          by property_id;
+159        
+160          if inb then tracs_status = 'T';
+161        
+162        run;
 
 NOTE: Format $UIPRTYP was not found or could not be loaded.
 WARNING: Multiple lengths were specified for the variable rent_to_fmr_description by input data set(s). This may cause 
@@ -333,25 +338,25 @@ NOTE: There were 2 observations read from the data set WORK.SEC8MF_DC_B.
 NOTE: The data set WORK.SEC8MF_DC has 115 observations and 122 variables.
 NOTE: Compressing data set WORK.SEC8MF_DC decreased size by 61.90 percent. 
       Compressed is 8 pages; un-compressed would require 21 pages.
+8 The SAS System                                                                               18:10 Monday, August 31, 2015
+
 NOTE: DATA statement used (Total process time):
       real time           0.01 seconds
       cpu time            0.01 seconds
       
 
-8 The SAS System                                                                            10:32 Thursday, January 29, 2015
-
-158        
-159        %Dup_check(
-160          data=Sec8mf_dc,
-161          by=property_id contract_number,
-162          id=
-163        )
+163        
+164        %Dup_check(
+165          data=Sec8mf_dc,
+166          by=property_id contract_number,
+167          id=
+168        )
 MPRINT(DUP_CHECK):   options nomprint;
 NOTE: SAS threaded sort was used.
 NOTE: Table WORK._DUP_CHECK created, with 0 rows and 3 columns.
 
 NOTE: PROCEDURE SQL used (Total process time):
-      real time           0.04 seconds
+      real time           0.01 seconds
       cpu time            0.01 seconds
       
 
@@ -365,8 +370,8 @@ NOTE: [Dup_check] for BY variables PROPERTY_ID CONTRACT_NUMBER.
 
 NOTE: No observations in data set WORK._DUP_CHECK.
 NOTE: PROCEDURE PRINT used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.01 seconds
+      real time           0.00 seconds
+      cpu time            0.00 seconds
       
 
 
@@ -376,44 +381,44 @@ NOTE: PROCEDURE DATASETS used (Total process time):
       cpu time            0.00 seconds
       
 
-164        
-165        proc format;
-166          value $progfl
-167            "Other S8 New" = "Sec 8 new construction"
-168            "Other S8 Rehab" = "Sec 8 rehabilitation"
-169            "PRAC 202/811" = "PRAC 202/811"
-170            "S8 Loan Mgmt" = "Sec 8 loan management"
-171            "S8 Prop. Disp." = "Sec 8 property disposition"
-172            "S8 State Agency" = "Sec 8 state agency"
-173            "Sec. 202" = "Sec 202";
-9 The SAS System                                                                            10:32 Thursday, January 29, 2015
+169        
+170        proc format;
+171          value $progfl
+172            "Other S8 New" = "Sec 8 new construction"
+173            "Other S8 Rehab" = "Sec 8 rehabilitation"
+9 The SAS System                                                                               18:10 Monday, August 31, 2015
 
+174            "PRAC 202/811" = "PRAC 202/811"
+175            "S8 Loan Mgmt" = "Sec 8 loan management"
+176            "S8 Prop. Disp." = "Sec 8 property disposition"
+177            "S8 State Agency" = "Sec 8 state agency"
+178            "Sec. 202" = "Sec 202";
 NOTE: Format $PROGFL has been output.
-174          value $oldcattoprog
-175            'Sec. 202' = '202/8'
-176            'S8 State Agency' = 'HFDA/8'
-177            'S8 Loan Mgmt' = 'LMSA'
-178            'S8 Prop. Disp.' = 'PD/8'
-179            'PRAC 202/811' = 'PRAC/202/811'
-180            'Other S8 New' = 'S8-NC'
-181            'Other S8 Rehab' = 'S8-SR'
-182            other = ' ';
+179          value $oldcattoprog
+180            'Sec. 202' = '202/8'
+181            'S8 State Agency' = 'HFDA/8'
+182            'S8 Loan Mgmt' = 'LMSA'
+183            'S8 Prop. Disp.' = 'PD/8'
+184            'PRAC 202/811' = 'PRAC/202/811'
+185            'Other S8 New' = 'S8-NC'
+186            'Other S8 Rehab' = 'S8-SR'
+187            other = ' ';
 NOTE: Format $OLDCATTOPROG has been output.
-183        run;
+188        run;
 
 NOTE: PROCEDURE FORMAT used (Total process time):
-      real time           0.04 seconds
+      real time           0.02 seconds
       cpu time            0.01 seconds
       
 
-184        
-185        title2 'Dup_check: DC_Info';
-186        
-187        %Dup_check(
-188          data=DC_Info,
-189          by=property_id,
-190          id=nlihc_id id_mfa
-191        )
+189        
+190        title2 'Dup_check: DC_Info';
+191        
+192        %Dup_check(
+193          data=DC_Info,
+194          by=property_id,
+195          id=nlihc_id id_mfa
+196        )
 MPRINT(DUP_CHECK):   options nomprint;
 NOTE: SAS threaded sort was used.
 NOTE: Table WORK._DUP_CHECK created, with 0 rows and 4 columns.
@@ -429,13 +434,13 @@ NOTE: PROCEDURE SQL used (Total process time):
       
 
 NOTE: [Dup_check] 0 duplicate observations found in data set DC_INFO
+10 The SAS System                                                                              18:10 Monday, August 31, 2015
+
 NOTE: [Dup_check] for BY variables PROPERTY_ID.
 
 NOTE: No observations in data set WORK._DUP_CHECK.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
-10 The SAS System                                                                           10:32 Thursday, January 29, 2015
-
       cpu time            0.00 seconds
       
 
@@ -446,14 +451,14 @@ NOTE: PROCEDURE DATASETS used (Total process time):
       cpu time            0.00 seconds
       
 
-192        
-193        title2 'Dup_check: Sec8mf_dc';
-194        
-195        %Dup_check(
-196          data=Sec8mf_dc,
-197          by=property_id,
-198          id=contract_number
-199        )
+197        
+198        title2 'Dup_check: Sec8mf_dc';
+199        
+200        %Dup_check(
+201          data=Sec8mf_dc,
+202          by=property_id,
+203          id=contract_number
+204        )
 MPRINT(DUP_CHECK):   options nomprint;
 NOTE: SAS threaded sort was used.
 NOTE: Compressing data set WORK._DUP_CHECK increased size by 100.00 percent. 
@@ -461,8 +466,8 @@ NOTE: Compressing data set WORK._DUP_CHECK increased size by 100.00 percent.
 NOTE: Table WORK._DUP_CHECK created, with 16 rows and 3 columns.
 
 NOTE: PROCEDURE SQL used (Total process time):
-      real time           0.02 seconds
-      cpu time            0.00 seconds
+      real time           0.00 seconds
+      cpu time            0.01 seconds
       
 
 NOTE: PROCEDURE SQL used (Total process time):
@@ -477,188 +482,165 @@ NOTE: There were 16 observations read from the data set WORK._DUP_CHECK.
 NOTE: The PROCEDURE PRINT printed pages 2-3.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
+11 The SAS System                                                                              18:10 Monday, August 31, 2015
+
       cpu time            0.00 seconds
       
 
 
 NOTE: Deleting WORK._DUP_CHECK (memtype=DATA).
-11 The SAS System                                                                           10:32 Thursday, January 29, 2015
-
 NOTE: PROCEDURE DATASETS used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
-200        
-201        title2;
-202        
-203        data PresCat.Subsidy_mfa;
-204        
-205          length MFA_ASSUNITS 8;
-206        
-207          merge
-208            DC_Info
-209              (keep=NLIHC_ID Category ID_MFA MFA_SOURCE MFA_PROG MFA_START MFA_END MFA_ASSUNITS MFA_NOTES
-210                    property_id Proj_name Proj_Addre
-211               in=in1)
-212            sec8mf_dc
-213              (keep=contract_number property_id tracs_effective_date tracs_current_expiration_date
-214                    tracs_overall_expiration_date tracs_status program_type_name assisted_units_count
-215                    address_line1_text rent_to_FMR_description extract_date
-216               where=(not(program_type_name = "UnasstPrj SCHAP" and assisted_units_count = 0))
-217               in=in2);
-218          by property_id;
-219        
-220          in_DC_Info = in1;
-221          in_MFA = in2;
-222        
-223          ** Clean project names **;
+205        
+206        title2;
+207        
+208        data PresCat.Subsidy_mfa;
+209        
+210          length MFA_ASSUNITS 8;
+211        
+212          merge
+213            DC_Info
+214              (keep=NLIHC_ID Category ID_MFA MFA_SOURCE MFA_PROG MFA_START MFA_END MFA_ASSUNITS MFA_NOTES
+215                    property_id Proj_name Proj_Addre
+216               in=in1)
+217            sec8mf_dc
+218              (keep=contract_number property_id tracs_effective_date tracs_current_expiration_date
+219                    tracs_overall_expiration_date tracs_status program_type_name assisted_units_count
+220                    address_line1_text rent_to_FMR_description extract_date
+221               where=(not(program_type_name = "UnasstPrj SCHAP" and assisted_units_count = 0))
+222               in=in2);
+223          by property_id;
 224        
-225          %Project_name_clean( Proj_name, Proj_name )
+225          in_DC_Info = in1;
+226          in_MFA = in2;
+227        
+228          ** Clean project names **;
+229        
+230          %Project_name_clean( Proj_name, Proj_name )
 MPRINT(PROJECT_NAME_CLEAN):   Proj_name = propcase( left( compbl( Proj_name ) ) );
 MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Iii', 'III' );
 MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Ii', 'II' );
 MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Iv', 'IV' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'IVy', 'Ivy' );
 MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Ne', 'NE' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'NEw', 'New' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'NEighborhood', 'Neighborhood' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'NEighbors', 'Neighbors' );
 MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Nw', 'NW' );
+12 The SAS System                                                                              18:10 Monday, August 31, 2015
+
 MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Se', 'SE' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'SEnior', 'Senior' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'SEcond', 'Second' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'SErvices', 'Services' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'SEnate', 'Senate' );
 MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Sw', 'SW' );
 MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'At', 'at' );
-MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Pud', 'PUD' );
-MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'IVy', 'Ivy' );
-MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'NEw', 'New' );
 MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'atlantic', 'Atlantic' );
-MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'SEnior', 'Senior' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Pud', 'PUD' );
 MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Chhi', 'CHHI' );
-12 The SAS System                                                                           10:32 Thursday, January 29, 2015
-
 MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Ncba', 'NCBA' );
-226        
-227          ** Fix data problem **;
-228        
-229          if mfa_source  =: "HUD - Multifamily AssisHUD" then
-230            mfa_source = substr( mfa_source, 24 );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Cemi', 'CEMI' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Idi', 'IDI' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Wdc', 'WDC' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Mlk', 'MLK' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Ufas', 'UFAS' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Dmh', 'DMH' );
+MPRINT(PROJECT_NAME_CLEAN):   Proj_name = tranwrd( Proj_name, 'Tcb', 'TCB' );
 231        
-232          ** Create standardized variables **;
+232          ** Fix data problem **;
 233        
-234          length
-235            Subsidy_Active 3
-236            Subsidy_Info_Source_ID $ 40
-237            Subsidy_Info_Source_Var $ 32
-238            Subsidy_Info_Source $ /*16*/ 40
-239            Subsidy_Info_Source_Date 8
-240            Update_Dtm 8
-241          ;
-242        
-243          if tracs_status in ( 'T' ) or not in_MFA then Subsidy_Active = 0;
-244          else Subsidy_Active = 1;
-245        
-246          Subsidy_Info_Source = "HUD/MFA";
+234          if mfa_source  =: "HUD - Multifamily AssisHUD" then
+235            mfa_source = substr( mfa_source, 24 );
+236        
+237          ** Create standardized variables **;
+238        
+239          length
+240            Subsidy_Active 3
+241            Subsidy_Info_Source_ID $ 40
+242            Subsidy_Info_Source_Var $ 32
+243            Subsidy_Info_Source $ /*16*/ 40
+244            Subsidy_Info_Source_Date 8
+245            Update_Dtm 8
+246          ;
 247        
-248          Subsidy_Info_Source_ID = trim( left( put( property_id, 16. ) ) ) || "/" ||
-249                                   left( contract_number );
+248          if tracs_status in ( 'T' ) or not in_MFA then Subsidy_Active = 0;
+249          else Subsidy_Active = 1;
 250        
-251          Subsidy_Info_Source_Var = "property_id/contract_number";
+251          Subsidy_Info_Source = "HUD/MFA";
 252        
-253          if in_MFA then do;
-254        
-255            Subsidy_Info_Source_Date = extract_date;
-256        
-257          end;
-258          else if mfa_source  =: "HUD - Multifamily Assistance and Section 8 Contracts" then do;
-259        
-260              Subsidy_Info_Source_Date =
-261                input(
-262                  substr( mfa_source,
-263                          indexc( mfa_source, '(' ) + 1,
-264                          indexc( mfa_source, ')' ) - ( indexc( mfa_source, '(' ) + 1 ) ),
-265                  mmddyy8. );
-266        
-267          end;
-268          else do;
-269        
-270            Subsidy_Info_Source_Date = .u;
-13 The SAS System                                                                           10:32 Thursday, January 29, 2015
+253          Subsidy_Info_Source_ID = trim( left( put( property_id, 16. ) ) ) || "/" ||
+254                                   left( contract_number );
+255        
+256          Subsidy_Info_Source_Var = "property_id/contract_number";
+257        
+258          if in_MFA then do;
+13 The SAS System                                                                              18:10 Monday, August 31, 2015
 
+259        
+260            Subsidy_Info_Source_Date = extract_date;
+261        
+262          end;
+263          else if mfa_source  =: "HUD - Multifamily Assistance and Section 8 Contracts" then do;
+264        
+265              Subsidy_Info_Source_Date =
+266                input(
+267                  substr( mfa_source,
+268                          indexc( mfa_source, '(' ) + 1,
+269                          indexc( mfa_source, ')' ) - ( indexc( mfa_source, '(' ) + 1 ) ),
+270                  mmddyy8. );
 271        
 272          end;
-273        
-274          ** Program code **;
-275        
-276          length Program $ 32;
-277        
-278          Program = put( program_type_name, $mfatoprog. );
-279        
-280          if Program = "" then Program = put( mfa_prog, $oldcattoprog. );
-281        
-282          /*
-283          if mfa_prog ~= "" then Program = mfa_prog;
-284          else do;
-285        
-286            select ( program_type_name );
-287              when ( "HFDA/8 SR" ) Program = "Other S8 Rehab";
-288              when ( "LMSA" ) Program = "S8 Loan Mgmt";
-289              when ( "PD/8 MR" ) Program = "S8 Prop. Disp.";
-290              when ( "Sec 8 SR" ) Program = "S8 Prop. Disp.";
-291              when ( "PRAC/811" ) Program = "PRAC 202/811";
-292              otherwise do;
-293                %warn_put( msg="Unknown program type: " nlihc_id= property_id= program_type_name= mfa_source= )
-294              end;
-295            end;
-296        
-297          end;
+273          else do;
+274        
+275            Subsidy_Info_Source_Date = .u;
+276        
+277          end;
+278        
+279          ** Program code **;
+280        
+281          length Program $ 32;
+282        
+283          Program = put( program_type_name, $mfatoprog. );
+284        
+285          if Program = "" then Program = put( mfa_prog, $oldcattoprog. );
+286        
+287          ** Update subsidy info **;
+288        
+289          ID_MFA = property_id;
+290          if not missing( tracs_effective_date ) and missing( MFA_START ) then MFA_START = tracs_effective_date;
+291          if not missing( tracs_overall_expiration_date ) and missing( MFA_END ) then MFA_END =
+291      ! tracs_overall_expiration_date;
+292          if missing( MFA_ASSUNITS ) and assisted_units_count > 0 then MFA_ASSUNITS = assisted_units_count;
+293        
+294          ** Eliminate entries not in MFA database and with no subsidy info in Catalog **;
+295        
+296          if not in_MFA and missing( mfa_assunits) and missing( mfa_source ) and missing( mfa_prog )
+297          and missing( mfa_start ) and missing( mfa_end ) and missing( mfa_notes ) then delete;
 298        
-299          Program = put( Program, $progfl. );
-300          */
-301        
-302          ** Update subsidy info **;
-303        
-304          ID_MFA = property_id;
-305          if not missing( tracs_effective_date ) and missing( MFA_START ) then MFA_START = tracs_effective_date;
-306          if not missing( tracs_overall_expiration_date ) then MFA_END = tracs_overall_expiration_date;
-307          if assisted_units_count > 0 then MFA_ASSUNITS = assisted_units_count;
-308        
-309          **** TEMPORARY CORRECTIONS TO SUBSIDY INFO ****;
-310          /*
-311          if Nlihc_id = "NL000046" then do;
-312            if contract_number = "DC39L000069" then do;
-313              mfa_start = '01oct2010'd;
-314              mfa_end = '30sep2015'd;
-315              mfa_assunits = 40;
-316            end;
-14 The SAS System                                                                           10:32 Thursday, January 29, 2015
+299          ** Compliance period end date (same as subsidy end date for MFA programs) **;
+300        
+301          Compl_end = mfa_end;
+302        
+303          ** Stamp with today's datetime **;
+14 The SAS System                                                                              18:10 Monday, August 31, 2015
 
-317            else if contract_number = "DC39M000051" then do;
-318              mfa_start = '01nov2012'd;
-319              mfa_end = '31oct2015'd;
-320              mfa_assunits = 333;
-321            end;
-322          end;
-323          */
-324        
-325          ** Eliminate entries not in MFA database and with no subsidy info in Catalog **;
-326        
-327          if not in_MFA and missing( mfa_assunits) and missing( mfa_source ) and missing( mfa_prog )
-328          and missing( mfa_start ) and missing( mfa_end ) and missing( mfa_notes ) then delete;
-329        
-330          ** Compliance period end date (same as subsidy end date) **;
-331        
-332          Compl_end = mfa_end;
-333        
-334          ** Stamp with today's datetime **;
-335        
-336          Update_dtm = datetime();
-337        
-338          format
-339            Subsidy_Active dyesno.
-340            Subsidy_Info_Source $infosrc.
-341            Subsidy_Info_Source_Date mmddyy10.
-342            Update_Dtm datetime16.;
-343        
-344        run;
+304        
+305          Update_dtm = datetime();
+306        
+307          format
+308            Subsidy_Active dyesno.
+309            Subsidy_Info_Source $infosrc.
+310            Subsidy_Info_Source_Date mmddyy10.
+311            Update_Dtm datetime16.;
+312        
+313        run;
 
 NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
-      304:12   
+      289:12   
 NOTE: There were 116 observations read from the data set WORK.DC_INFO.
 NOTE: There were 113 observations read from the data set WORK.SEC8MF_DC.
       WHERE (program_type_name not = 'UnasstPrj SCHAP') or (assisted_units_count not = 0);
@@ -666,16 +648,14 @@ NOTE: The data set PRESCAT.SUBSIDY_MFA has 121 observations and 32 variables.
 NOTE: Compressing data set PRESCAT.SUBSIDY_MFA decreased size by 37.50 percent. 
       Compressed is 5 pages; un-compressed would require 8 pages.
 NOTE: DATA statement used (Total process time):
-      real time           0.04 seconds
-      cpu time            0.00 seconds
+      real time           0.03 seconds
+      cpu time            0.03 seconds
       
 
-345        
-346        proc sort data=PresCat.Subsidy_mfa;
-347          by property_id contract_number;
-348        run;
-15 The SAS System                                                                           10:32 Thursday, January 29, 2015
-
+314        
+315        proc sort data=PresCat.Subsidy_mfa;
+316          by property_id contract_number;
+317        run;
 
 NOTE: There were 121 observations read from the data set PRESCAT.SUBSIDY_MFA.
 NOTE: SAS sort was used.
@@ -683,21 +663,23 @@ NOTE: The data set PRESCAT.SUBSIDY_MFA has 121 observations and 32 variables.
 NOTE: Compressing data set PRESCAT.SUBSIDY_MFA decreased size by 37.50 percent. 
       Compressed is 5 pages; un-compressed would require 8 pages.
 NOTE: PROCEDURE SORT used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.00 seconds
+      real time           0.02 seconds
+      cpu time            0.01 seconds
       
 
-349        
-350        %File_info( data=PresCat.Subsidy_mfa, printobs=10,
-351                    freqvars=tracs_status mfa_prog mfa_source
-352                             Subsidy_Active Subsidy_Info_Source_Var Subsidy_Info_Source subsidy_info_source_date program
-353                             rent_to_FMR_description )
+318        
+319        %File_info( data=PresCat.Subsidy_mfa, printobs=10,
+320                    freqvars=tracs_status mfa_prog mfa_source
+321                             Subsidy_Active Subsidy_Info_Source_Var Subsidy_Info_Source subsidy_info_source_date program
+322                             rent_to_FMR_description )
 MPRINT(FILE_INFO):   title2 "File = PresCat.Subsidy_mfa";
 MPRINT(FILE_INFO):   proc contents data=PresCat.Subsidy_mfa;
+15 The SAS System                                                                              18:10 Monday, August 31, 2015
+
 MPRINT(FILE_INFO):   run;
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
-      real time           0.00 seconds
+      real time           0.01 seconds
       cpu time            0.00 seconds
       
 NOTE: The PROCEDURE CONTENTS printed pages 4-5.
@@ -722,11 +704,9 @@ MPRINT(FILE_INFO):   run;
 NOTE: Multiple concurrent threads will be used to summarize data.
 NOTE: There were 121 observations read from the data set PRESCAT.SUBSIDY_MFA.
 NOTE: The PROCEDURE MEANS printed page 10.
-16 The SAS System                                                                           10:32 Thursday, January 29, 2015
-
 NOTE: PROCEDURE MEANS used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
 MPRINT(FILE_INFO):   options label;
@@ -742,63 +722,65 @@ NOTE: PROCEDURE FREQ used (Total process time):
       cpu time            0.00 seconds
       
 
+16 The SAS System                                                                              18:10 Monday, August 31, 2015
+
 MPRINT(FILE_INFO):   title2;
-354        
-355        proc freq data=PresCat.Subsidy_mfa;
-356          tables in_DC_Info * in_MFA / list missing;
-357          tables program_type_name * mfa_prog * program / list missing nocum nopercent;
-358          format program_type_name mfa_prog program ;
-359        run;
+323        
+324        proc freq data=PresCat.Subsidy_mfa;
+325          tables in_DC_Info * in_MFA / list missing;
+326          tables program_type_name * mfa_prog * program / list missing nocum nopercent;
+327          format program_type_name mfa_prog program ;
+328        run;
 
 NOTE: There were 121 observations read from the data set PRESCAT.SUBSIDY_MFA.
 NOTE: The PROCEDURE FREQ printed page 15.
 NOTE: PROCEDURE FREQ used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
-360        
-361        proc print data=PresCat.Subsidy_mfa;
-362          where program = "";
-363          id Nlihc_id;
-364          var in_mfa in_dc_info property_id Proj_Addre mfa_: ;
-365          title2 'No program info';
-366        run;
+329        
+330        proc print data=PresCat.Subsidy_mfa;
+331          where program = "";
+332          id Nlihc_id;
+333          var in_mfa in_dc_info property_id Proj_Addre mfa_: ;
+334          title2 'No program info';
+335        run;
 
 NOTE: No observations were selected from data set PRESCAT.SUBSIDY_MFA.
 NOTE: There were 0 observations read from the data set PRESCAT.SUBSIDY_MFA.
       WHERE program=' ';
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
-17 The SAS System                                                                           10:32 Thursday, January 29, 2015
-
       cpu time            0.00 seconds
       
 
-367        
-368        proc print data=PresCat.Subsidy_mfa;
-369          where in_MFA and not in_DC_Info;
-370          id property_id;
-371          var in_mfa in_dc_info NLIHC_ID address_line1_text contract_number program_type_name assisted_units_count
-371      ! tracs_: ;
-372          title2 'Not in DC_Info';
-373        run;
+336        
+337        proc print data=PresCat.Subsidy_mfa;
+338          where in_MFA and not in_DC_Info;
+339          id property_id;
+340          var in_mfa in_dc_info NLIHC_ID address_line1_text contract_number program_type_name assisted_units_count
+340      ! tracs_: ;
+341          title2 'Not in DC_Info';
+342        run;
 
 NOTE: There were 1 observations read from the data set PRESCAT.SUBSIDY_MFA.
       WHERE in_MFA and (not in_DC_Info);
 NOTE: The PROCEDURE PRINT printed page 16.
 NOTE: PROCEDURE PRINT used (Total process time):
-      real time           0.02 seconds
-      cpu time            0.00 seconds
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+17 The SAS System                                                                              18:10 Monday, August 31, 2015
+
       
 
-374        
-375        proc print data=PresCat.Subsidy_mfa;
-376          where not in_MFA and in_DC_Info;
-377          id property_id;
-378          var in_mfa in_dc_info NLIHC_ID Proj_Addre mfa_: ;
-379          title2 'Not in HUD MFA';
-380        run;
+343        
+344        proc print data=PresCat.Subsidy_mfa;
+345          where not in_MFA and in_DC_Info;
+346          id property_id;
+347          var in_mfa in_dc_info NLIHC_ID Proj_Addre mfa_: ;
+348          title2 'Not in HUD MFA';
+349        run;
 
 NOTE: There were 8 observations read from the data set PRESCAT.SUBSIDY_MFA.
       WHERE (not in_MFA) and in_DC_Info;
@@ -808,27 +790,25 @@ NOTE: PROCEDURE PRINT used (Total process time):
       cpu time            0.00 seconds
       
 
-381        
-382        title2 'PresCat.Subsidy_mfa: Duplicates for Subsidy_Info_Source_ID';
-383        
-384        %Dup_check(
-385          data=PresCat.Subsidy_mfa,
-386          by=Subsidy_Info_Source_ID,
-387          id=NLIHC_ID property_id contract_number mfa_prog program_type_name assisted_units_count tracs_status,
-388          out=_dup_check,
-389          listdups=Y,
-390          count=dup_check_count,
-18 The SAS System                                                                           10:32 Thursday, January 29, 2015
-
-391          quiet=N,
-392          debug=N
-393        )
+350        
+351        title2 'PresCat.Subsidy_mfa: Duplicates for Subsidy_Info_Source_ID';
+352        
+353        %Dup_check(
+354          data=PresCat.Subsidy_mfa,
+355          by=Subsidy_Info_Source_ID,
+356          id=NLIHC_ID property_id contract_number mfa_prog program_type_name assisted_units_count tracs_status,
+357          out=_dup_check,
+358          listdups=Y,
+359          count=dup_check_count,
+360          quiet=N,
+361          debug=N
+362        )
 MPRINT(DUP_CHECK):   options nomprint;
 NOTE: SAS threaded sort was used.
 NOTE: Table WORK._DUP_CHECK created, with 0 rows and 9 columns.
 
 NOTE: PROCEDURE SQL used (Total process time):
-      real time           0.00 seconds
+      real time           0.01 seconds
       cpu time            0.01 seconds
       
 
@@ -838,6 +818,8 @@ NOTE: PROCEDURE SQL used (Total process time):
       
 
 NOTE: [Dup_check] 0 duplicate observations found in data set PRESCAT.SUBSIDY_MFA
+18 The SAS System                                                                              18:10 Monday, August 31, 2015
+
 NOTE: [Dup_check] for BY variables SUBSIDY_INFO_SOURCE_ID.
 
 NOTE: No observations in data set WORK._DUP_CHECK.
@@ -850,122 +832,121 @@ NOTE: PROCEDURE PRINT used (Total process time):
 NOTE: Deleting WORK._DUP_CHECK (memtype=DATA).
 NOTE: PROCEDURE DATASETS used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
-394        
-395        run;
-396        
-397        title2;
-398        
-399        /*
-400        proc freq data=PresCat.Subsidy_mfa;
-401          where property_id not in ( 800003675, 800003741, 800003784, 800218816 );
-402          tables mfa_prog * program_type_name / list missing;
-403        run;
-404        */
-405        
-406        ** Export all records for review **;
-19 The SAS System                                                                           10:32 Thursday, January 29, 2015
-
-407        
-408        ods listing close;
-409        
-410        ods tagsets.excelxp file="&_dcdata_r_path\PresCat\Data\Subsidy.xls" style=/*Minimal*/Normal
-411            options( sheet_interval='Proc' orientation='landscape' );
+363        
+364        run;
+365        
+366        title2;
+367        
+368        /*
+369        proc freq data=PresCat.Subsidy_mfa;
+370          where property_id not in ( 800003675, 800003741, 800003784, 800218816 );
+371          tables mfa_prog * program_type_name / list missing;
+372        run;
+373        */
+374        
+375        ** Export all records for review **;
+376        
+377        ods listing close;
+378        
+379        ods tagsets.excelxp file="&_dcdata_r_path\PresCat\Data\Subsidy.xls" style=/*Minimal*/Normal
+380            options( sheet_interval='Proc' orientation='landscape' );
 NOTE: Writing TAGSETS.EXCELXP Body file: L:\Libraries\PresCat\Data\Subsidy.xls
 NOTE: This is the Excel XP tagset (Compatible with SAS 9.1.3 and above, v1.94, 09/09/12). Add options(doc='help') to the 
 ods statement for more information.
-412        
-413        proc print data=PresCat.Subsidy_mfa;
-414          id property_id;
-415          var NLIHC_ID proj_name in_: contract_number
-416              Proj_Addre address_line1_text
-417              mfa_prog program_type_name
-418              MFA_ASSUNITS assisted_units_count
-419              mfa_start tracs_effective_date
-420              mfa_end tracs_current_expiration_date tracs_overall_expiration_date tracs_status
-421              mfa_source mfa_notes
-422              ;
-423        run;
+381        
+382        proc print data=PresCat.Subsidy_mfa;
+383          id property_id;
+384          var NLIHC_ID proj_name in_: contract_number
+385              Proj_Addre address_line1_text
+386              mfa_prog program_type_name
+387              MFA_ASSUNITS assisted_units_count
+388              mfa_start tracs_effective_date
+389              mfa_end tracs_current_expiration_date tracs_overall_expiration_date tracs_status
+390              mfa_source mfa_notes
+19 The SAS System                                                                              18:10 Monday, August 31, 2015
+
+391              ;
+392        run;
 
 NOTE: There were 121 observations read from the data set PRESCAT.SUBSIDY_MFA.
 NOTE: PROCEDURE PRINT used (Total process time):
-      real time           0.21 seconds
-      cpu time            0.21 seconds
+      real time           0.22 seconds
+      cpu time            0.23 seconds
       
 
-424        
-425        ods tagsets.excelxp close;
-426        ods listing;
-427        
-428        ** Print differences in MFA and Catalog info **;
-429        
-430        proc print data=PresCat.Subsidy_mfa;
-431          where mfa_prog ~= put( program_type_name, $prgh2oc. );
-432          id property_id;
-433          by property_id;
-434          var NLIHC_ID proj_name contract_number
-435              mfa_prog program_type_name
-436              ;
-437          title2 'Program mismatch';
-438        run;
+393        
+394        ods tagsets.excelxp close;
+395        ods listing;
+396        
+397        ** Print differences in MFA and Catalog info **;
+398        
+399        proc print data=PresCat.Subsidy_mfa;
+400          where mfa_prog ~= put( program_type_name, $prgh2oc. );
+401          id property_id;
+402          by property_id;
+403          var NLIHC_ID proj_name contract_number
+404              mfa_prog program_type_name
+405              ;
+406          title2 'Program mismatch';
+407        run;
 
 NOTE: There were 15 observations read from the data set PRESCAT.SUBSIDY_MFA.
       WHERE mfa_prog not = PUT(program_type_name, $PRGH2OC15.);
 NOTE: The PROCEDURE PRINT printed pages 18-21.
-20 The SAS System                                                                           10:32 Thursday, January 29, 2015
-
-NOTE: PROCEDURE PRINT used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.01 seconds
-      
-
-439        
-440        proc print data=PresCat.Subsidy_mfa;
-441          where mfa_assunits ~= assisted_units_count;
-442          id property_id;
-443          by property_id;
-444          var NLIHC_ID proj_name contract_number
-445              MFA_ASSUNITS assisted_units_count
-446              ;
-447          title2 'Assisted units mismatch';
-448        run;
-
-NOTE: There were 9 observations read from the data set PRESCAT.SUBSIDY_MFA.
-      WHERE mfa_assunits not = assisted_units_count;
-NOTE: The PROCEDURE PRINT printed page 22.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
       cpu time            0.00 seconds
       
 
-449        
-450        title2;
-451        
-452        **** Compare with earlier version ****;
-453        
-454        libname comp 'D:\DCData\Libraries\PresCat\Data\Old';
+408        
+409        proc print data=PresCat.Subsidy_mfa;
+410          where mfa_assunits ~= assisted_units_count;
+411          id property_id;
+412          by property_id;
+413          var NLIHC_ID proj_name contract_number
+414              MFA_ASSUNITS assisted_units_count
+415              ;
+416          title2 'Assisted units mismatch';
+417        run;
+
+NOTE: There were 21 observations read from the data set PRESCAT.SUBSIDY_MFA.
+      WHERE mfa_assunits not = assisted_units_count;
+20 The SAS System                                                                              18:10 Monday, August 31, 2015
+
+NOTE: The PROCEDURE PRINT printed page 22.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+418        
+419        title2;
+420        
+421        **** Compare with earlier version ****;
+422        
+423        libname comp 'D:\DCData\Libraries\PresCat\Data\Old';
 NOTE: Libref COMP was successfully assigned as follows: 
       Engine:        V9 
       Physical Name: D:\DCData\Libraries\PresCat\Data\Old
-455        
-456        proc compare base=Comp.Subsidy_mfa compare=PresCat.Subsidy_mfa maxprint=(40,32000);
-457          id property_id contract_number;
-458        run;
+424        
+425        proc compare base=Comp.Subsidy_mfa compare=PresCat.Subsidy_mfa maxprint=(40,32000);
+426          id property_id contract_number;
+427        run;
 
 NOTE: There were 121 observations read from the data set COMP.SUBSIDY_MFA.
 NOTE: There were 121 observations read from the data set PRESCAT.SUBSIDY_MFA.
-NOTE: The PROCEDURE COMPARE printed pages 23-27.
+NOTE: At least one W.D format was too small for the number to be printed. The decimal may be shifted by the "BEST" format.
+NOTE: The PROCEDURE COMPARE printed pages 23-31.
 NOTE: PROCEDURE COMPARE used (Total process time):
       real time           0.00 seconds
       cpu time            0.00 seconds
       
 
-21 The SAS System                                                                           10:32 Thursday, January 29, 2015
-
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
 NOTE: The SAS System used:
-      real time           5.04 seconds
-      cpu time            1.20 seconds
+      real time           4.59 seconds
+      cpu time            1.27 seconds
       

@@ -1,4 +1,4 @@
-1                                         The SAS System            11:00 Sunday, January 18, 2015
+1                                         The SAS System             17:56 Monday, August 31, 2015
 
 NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
 NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
@@ -8,8 +8,8 @@ NOTE: This session is executing on the X64_VSPRO  platform.
 
 
 NOTE: SAS initialization used:
-      real time           0.62 seconds
-      cpu time            0.09 seconds
+      real time           0.75 seconds
+      cpu time            0.10 seconds
       
 
 NOTE: AUTOEXEC processing beginning; file is D:\Users\ptatian\Documents\My SAS 
@@ -37,24 +37,25 @@ NOTE: AUTOEXEC processing completed.
 17           12/31/14 PAT Updated Program var to use new codes.
 18           01/08/15 PAT Changed Update_date to Update_dtm (datetime).
 19           01/18/15 PAT Added calculated Compl_end and Poa_end for LIHTC projects.
-20         **************************************************************************/
-21         
-22         %include "L:\SAS\Inc\StdLocal.sas";
+20           08/31/15 PAT Replace PresCat.DC_Info_10_19_14 with PresCat.DC_Info_07_08_15.
+21         **************************************************************************/
+22         
+23         %include "L:\SAS\Inc\StdLocal.sas";
 NOTE: Libref _METADAT was successfully assigned as follows: 
       Engine:        V9 
       Physical Name: L:\Libraries\Metadata\Data
-65        +
-66        +options ls=124 ps=48;    ** Landscape **;
-67        +
-2 The SAS System                                                                              11:00 Sunday, January 18, 2015
-
-68        +** Output title **;
 69        +
-70        +title "&_library/&_program:  NeighborhoodInfo DC";
+70        +options ls=124 ps=48;    ** Landscape **;
+2 The SAS System                                                                               17:56 Monday, August 31, 2015
+
 71        +
-72        +** Define General library for local session only **;
+72        +** Output title **;
 73        +
-74        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+74        +title "&_library/&_program:  NeighborhoodInfo DC";
+75        +
+76        +** Define General library for local session only **;
+77        +
+78        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref GENERA_L was successfully assigned as follows: 
       Engine:        V9 
@@ -88,26 +89,26 @@ NOTE:    GENERAL.FORMATS EXISTS
 =====================================================================
 Current Sasautos Option value:
 
-     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+     TTAUTOS  GENERA_L DCAUTOS UIAUTOS SASAUTOS
 
 =====================================================================
 
 
-=====================================================================
-3 The SAS System                                                                              11:00 Sunday, January 18, 2015
+3 The SAS System                                                                               17:56 Monday, August 31, 2015
 
+=====================================================================
 Current Sasautos Option value:
 
-     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+     TTAUTOS GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
 
 =====================================================================
 
-75        +
-76        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+79        +
+80        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
 NOTE: %INCLUDE (level 1) ending.
-77         
-78         ** Define libraries **;
-79         %DCData_lib( PresCat, local=n )
+81         
+82         ** Define libraries **;
+83         %DCData_lib( PresCat, local=n )
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref PRESCA_R was successfully assigned as follows: 
       Engine:        V9 
@@ -137,263 +138,266 @@ NOTE:    PRESCAT.FORMATS EXISTS
 =====================================================================
 Current Sasautos Option value:
 
-     PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+     TTAUTOS  PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
 
 =====================================================================
 
-80         
-4 The SAS System                                                                              11:00 Sunday, January 18, 2015
+4 The SAS System                                                                               17:56 Monday, August 31, 2015
 
-81         ** Format for translating old program descriptions to new codes **;
-82         
-83         proc format;
-84           value $oldcattoprog
-85             '202 Direct Loan/ Elderly/ Pre - 1974' = '202-DL-E74'
-86             '202/8 Direct Loan/ Elderly-Handicapped' = '202-DL-EH'
-87             '202/811 Capital Advance' = '202/811-CA'
-88             '207/ 223(f) Pur/ Refin Hsg.' = '207/223-PR'
-89             '220 Urban Renewal Hsg.' = '220-URH'
-90             '221(d)(3) BMIR Urban Renewal/ Coop Hsg' = '221-3-BMIR-URC'
-91             '221(d)(3) Mkt. Rate Moderate Inc/ Disp Fams' = '221-3-MRMI'
-92             '221(d)(4) Mkt. Rate Mod Inc/ Disp Fams' = '221-4-MRMI'
-93             '223(a)(7)/207/223(f) Refinanced Insurance' = '223/207/223-RI'
-94             '223(a)(7)/220 Refi/ Urban Renewal' = '223/220-RUR'
-95             '223(a)(7)/221(d)(3) MKT Refi/ Moderate Income' = '223/221-3-MRMI'
-96             '223(a)(7)/221(d)(4) MKT  Refi/ Moderate Income' = '223/221-4-MRMI'
-97             '223(a)(7)/221(d)(4) MKT/244 Refi/Mod Income Co-In' = '223/221/244-MRMI'
-98             '223(a)(7)/232 Refi/ Nursing Home' = '223/232-RNH'
-99             '232 Nursing Homes' = '232-NH'
-100            '232/ 223(f)/Pur/Refin/ Nursing Hms' = '232/223-PRNH'
-101            '236(j)(1)/ Lower Income Families' = '236-LIF'
-102            '241(a)/ 221-BMIR Improvements & Additions' = '241/221-BMIRIA'
-103            '542(b) QPE Risk Sharing-Recent Comp' = '542-QPE-RC'
-104            '542(b)QPE Risk Sharing-Existing' = '542-QPE-E'
-105            '542(c) HFA Risk Sharing-Existing' = '542-HFA-E'
-106            '542(c) HFA Risk Sharing-Recent Comp' = '542-HFA-RC'
-107            'CDBG' = 'CDBG'
-108            'DC Housing Production Trust Fund' = 'DC-HPTF'
-109            'HOME' = 'HOME'
-110            'Low Income Housing Tax Credit' = 'LIHTC'
-111            'McKinney Vento Act loan' = 'MCKINNEY'
-112            'Public housing' = 'PUBHSNG'
-113            'Tax exempt bond' = 'TEBOND'
-114            other = ' ';
+84         
+85         ** Format for translating old program descriptions to new codes **;
+86         
+87         proc format;
+88           value $oldcattoprog
+89             '202 Direct Loan/ Elderly/ Pre - 1974' = '202-DL-E74'
+90             '202/8 Direct Loan/ Elderly-Handicapped' = '202-DL-EH'
+91             '202/811 Capital Advance' = '202/811-CA'
+92             '207/ 223(f) Pur/ Refin Hsg.' = '207/223-PR'
+93             '220 Urban Renewal Hsg.' = '220-URH'
+94             '221(d)(3) BMIR Urban Renewal/ Coop Hsg' = '221-3-BMIR-URC'
+95             '221(d)(3) Mkt. Rate Moderate Inc/ Disp Fams' = '221-3-MRMI'
+96             '221(d)(4) Mkt. Rate Mod Inc/ Disp Fams' = '221-4-MRMI'
+97             '223(a)(7)/207/223(f) Refinanced Insurance' = '223/207/223-RI'
+98             '223(a)(7)/220 Refi/ Urban Renewal' = '223/220-RUR'
+99             '223(a)(7)/221(d)(3) MKT Refi/ Moderate Income' = '223/221-3-MRMI'
+100            '223(a)(7)/221(d)(4) MKT  Refi/ Moderate Income' = '223/221-4-MRMI'
+101            '223(a)(7)/221(d)(4) MKT/244 Refi/Mod Income Co-In' = '223/221/244-MRMI'
+102            '223(a)(7)/232 Refi/ Nursing Home' = '223/232-RNH'
+103            '232 Nursing Homes' = '232-NH'
+104            '232/ 223(f)/Pur/Refin/ Nursing Hms' = '232/223-PRNH'
+105            '236(j)(1)/ Lower Income Families' = '236-LIF'
+106            '241(a)/ 221-BMIR Improvements & Additions' = '241/221-BMIRIA'
+107            '542(b) QPE Risk Sharing-Recent Comp' = '542-QPE-RC'
+108            '542(b)QPE Risk Sharing-Existing' = '542-QPE-E'
+109            '542(c) HFA Risk Sharing-Existing' = '542-HFA-E'
+110            '542(c) HFA Risk Sharing-Recent Comp' = '542-HFA-RC'
+111            'CDBG' = 'CDBG'
+112            'DC Housing Production Trust Fund' = 'DC-HPTF'
+113            'HOME' = 'HOME'
+114            'Low Income Housing Tax Credit' = 'LIHTC'
+115            'McKinney Vento Act loan' = 'MCKINNEY'
+116            'Public housing' = 'PUBHSNG'
+117            'Tax exempt bond' = 'TEBOND'
+118            other = ' ';
 NOTE: Format $OLDCATTOPROG has been output.
-115        
-116        ** Fix problem with date for V202 **;
-117        
+119        
+120        ** Fix problem with date for V202 **;
+121        
 
 NOTE: PROCEDURE FORMAT used (Total process time):
-      real time           0.09 seconds
+      real time           0.05 seconds
       cpu time            0.01 seconds
       
 
-118        data DC_Info;
-119        
-5 The SAS System                                                                              11:00 Sunday, January 18, 2015
+122        data DC_Info;
+5 The SAS System                                                                               17:56 Monday, August 31, 2015
 
-120          set PresCat.DC_Info_10_19_14;
-121        
-122          ** Apply standard corrections **;
 123        
-124          %DCInfo_corrections()
+124          set PresCat.DC_Info_07_08_15;
+INFO: Data file PRESCAT.DC_INFO_07_08_15.DATA is in a format that is native to another host, or the file encoding does not 
+match the session encoding. Cross Environment Data Access will be used, which might require additional CPU resources and 
+might reduce performance.
+125        
+126          ** Apply standard corrections **;
+127        
+128          %DCInfo_corrections()
 MPRINT(DCINFO_CORRECTIONS):   ** Assign new NLIHC_ID to St. Dennis (duplicate ID with CEMI - Bethune House) **;
 MPRINT(DCINFO_CORRECTIONS):   if NLIHC_ID = "NL001007" and upcase( Proj_Name ) = "ST. DENNIS" then NLIHC_ID = "NL001030";
 MPRINT(DCINFO_CORRECTIONS):   if NLIHC_ID = "NL000046" then do;
 MPRINT(DCINFO_CORRECTIONS):   units = 535;
 MPRINT(DCINFO_CORRECTIONS):   Category = "1";
 MPRINT(DCINFO_CORRECTIONS):   end;
-125        
-126          v202_start_n = input( v202_start, mmddyy12. );
-127        
-128          format v202_start_n mmddyy10.;
 129        
-130          rename v202_start_n=v202_start v202_start=v202_start_xxx;
+130          v202_start_n = input( v202_start, mmddyy12. );
 131        
-132        run;
+132          format v202_start_n mmddyy10.;
+133        
+134          rename v202_start_n=v202_start v202_start=v202_start_xxx;
+135        
+136        run;
 
-NOTE: There were 361 observations read from the data set PRESCAT.DC_INFO_10_19_14.
+NOTE: There were 361 observations read from the data set PRESCAT.DC_INFO_07_08_15.
 NOTE: The data set WORK.DC_INFO has 361 observations and 103 variables.
 NOTE: Compressing data set WORK.DC_INFO decreased size by 87.85 percent. 
       Compressed is 22 pages; un-compressed would require 181 pages.
 NOTE: DATA statement used (Total process time):
-      real time           0.04 seconds
-      cpu time            0.01 seconds
+      real time           0.09 seconds
+      cpu time            0.03 seconds
       
 
-133        
-134        /** Macro print_subsidy - Start Definition **/
-135        
-136        %macro print_subsidy( subsidy );
 137        
-138          proc print data=DC_Info;
-139            where &subsidy._source ~= "";
-140            var &subsidy._: ;
-141          run;
-142        
-143        %mend print_subsidy;
-144        
-145        /** End Macro Definition **/
+138        /** Macro print_subsidy - Start Definition **/
+139        
+140        %macro print_subsidy( subsidy );
+141        
+142          proc print data=DC_Info;
+143            where &subsidy._source ~= "";
+144            var &subsidy._: ;
+145          run;
 146        
-147        
-148        /*
-149        %print_subsidy( cdbg )
-6 The SAS System                                                                              11:00 Sunday, January 18, 2015
+147        %mend print_subsidy;
+148        
+149        /** End Macro Definition **/
+6 The SAS System                                                                               17:56 Monday, August 31, 2015
 
-150        %print_subsidy( dcha )
-151        %print_subsidy( fha )
-152        %print_subsidy( home )
-153        %print_subsidy( hptf )
-154        %print_subsidy( lihtc )
-155        %print_subsidy( mckin )
-156        %print_subsidy( tebond )
-157        %print_subsidy( v202 )
-158        %print_subsidy( v236 )
-159        */
-160        
-161        %global sub_list;
-162        
-163        %let sub_list = ;
+150        
+151        
+152        /*
+153        %print_subsidy( cdbg )
+154        %print_subsidy( dcha )
+155        %print_subsidy( fha )
+156        %print_subsidy( home )
+157        %print_subsidy( hptf )
+158        %print_subsidy( lihtc )
+159        %print_subsidy( mckin )
+160        %print_subsidy( tebond )
+161        %print_subsidy( v202 )
+162        %print_subsidy( v236 )
+163        */
 164        
-165        /** Macro compile_subsidy - Start Definition **/
+165        %global sub_list;
 166        
-167        %macro compile_subsidy( sub, units=_assunits, poa=y );
+167        %let sub_list = ;
 168        
-169          %local program;
+169        /** Macro compile_subsidy - Start Definition **/
 170        
-171          %let sub = %lowcase( &sub );
-172          %let poa = %lowcase( &poa );
-173        
-174          %let sub_list = &sub_list Subsidy_&sub;
-175        
-176          /*
-177          proc freq data=PresCat.DC_Info_10_19_14;
-178            tables &sub._source;
-179          run;
-180        
-181          proc freq data=PresCat.DC_Info_10_19_14;
-182            tables &sub._prog;
+171        %macro compile_subsidy( sub, units=_assunits, poa=y );
+172        
+173          %local program;
+174        
+175          %let sub = %lowcase( &sub );
+176          %let poa = %lowcase( &poa );
+177        
+178          %let sub_list = &sub_list Subsidy_&sub;
+179        
+180          /*
+181          proc freq data=PresCat.DC_Info_07_08_15;
+182            tables &sub._source;
 183          run;
-184          */
-185        
-186          data Subsidy_&sub;
-187        
-188            set DC_Info;
-189            where &sub._source ~= "";
-190        
-191            length Program $ 32;
-192        
-193            %if &sub = cdbg %then %do;
-194               program = "CDBG";
-195            %end;
-7 The SAS System                                                                              11:00 Sunday, January 18, 2015
+184        
+185          proc freq data=PresCat.DC_Info_07_08_15;
+186            tables &sub._prog;
+187          run;
+188          */
+189        
+190          data Subsidy_&sub;
+191        
+192            set DC_Info;
+193            where &sub._source ~= "";
+194        
+195            length Program $ 32;
+7 The SAS System                                                                               17:56 Monday, August 31, 2015
 
-196            %else %if &sub = dcha %then %do;
-197               program = "PUBHSNG";
-198            %end;
-199            %else %if &sub = home %then %do;
-200               program = "HOME";
-201            %end;
-202            %else %if &sub = mckin %then %do;
-203               program = "MCKINNEY";
-204            %end;
-205            %else %if &sub = hptf %then %do;
-206               program = "DC-HPTF";
-207            %end;
-208            %else %if &sub = lihtc %then %do;
-209               program = "LIHTC";
-210            %end;
-211            %else %if &sub = tebond %then %do;
-212               program = "TEBOND";
-213            %end;
-214            %else %do;
-215               program = put( &sub._prog, $oldcattoprog. );
-216            %end;
-217        
-218            Units_assist = &sub.&units;
-219        
-220            %if &poa = y %then %do;
+196        
+197            %if &sub = cdbg %then %do;
+198               program = "CDBG";
+199            %end;
+200            %else %if &sub = dcha %then %do;
+201               program = "PUBHSNG";
+202            %end;
+203            %else %if &sub = home %then %do;
+204               program = "HOME";
+205            %end;
+206            %else %if &sub = mckin %then %do;
+207               program = "MCKINNEY";
+208            %end;
+209            %else %if &sub = hptf %then %do;
+210               program = "DC-HPTF";
+211            %end;
+212            %else %if &sub = lihtc %then %do;
+213               program = "LIHTC";
+214            %end;
+215            %else %if &sub = tebond %then %do;
+216               program = "TEBOND";
+217            %end;
+218            %else %do;
+219               program = put( &sub._prog, $oldcattoprog. );
+220            %end;
 221        
-222              POA_start = &sub._start;
-223              POA_end = &sub._end;
-224        
-225              format POA_start POA_end mmddyy10.;
-226        
-227            %end;
-228            %else %do;
-229        
-230              POA_start = .;
-231              POA_end = .;
-232        
-233            %end;
-234        
-235            length
-236              Subsidy_Active 3
-237              Subsidy_Info_Source_ID $ 40
-238              Subsidy_Info_Source_Var $ 32
-239              Subsidy_Info_Source $ /*16*/ 40
-240              Subsidy_Info_Source_Date 8
-241              Update_Dtm 8
-8 The SAS System                                                                              11:00 Sunday, January 18, 2015
+222            Units_assist = &sub.&units;
+223        
+224            %if &poa = y %then %do;
+225        
+226              POA_start = &sub._start;
+227              POA_end = &sub._end;
+228        
+229              format POA_start POA_end mmddyy10.;
+230        
+231            %end;
+232            %else %do;
+233        
+234              POA_start = .;
+235              POA_end = .;
+236        
+237            %end;
+238        
+239            length
+240              Subsidy_Active 3
+241              Subsidy_Info_Source_ID $ 40
+8 The SAS System                                                                               17:56 Monday, August 31, 2015
 
-242            ;
-243        
-244            Subsidy_Active = 1;
-245        
-246            if &sub._source =: "Housing Data Report" then Subsidy_Info_Source = "DC/HSNGDAT";
-247            else if &sub._source =: "Affordable Housing Pipeline" then Subsidy_Info_Source = "DC/AFFPIPELINE";
-248            else if &sub._source =: "DCHFA Pipeline" then Subsidy_Info_Source = "DC/HFAPIPELINE";
-249            else if &sub._source =: "HUD - Office of Community Planning and Development" then Subsidy_Info_Source =
-249      ! "HUD/OCPD";
-250            else if &sub._source =: "HUD - LIHTC Database" then Subsidy_Info_Source = "HUD/LIHTC";
-251            else if &sub._source =: "HUD LIHTC Database" then Subsidy_Info_Source = "HUD/LIHTC";
-252            else do;
-253              ** TEMPORARY CODING **;
-254              Subsidy_Info_Source = scan( &sub._source, 1, '(' );
-255            end;
-256            /*
-257            else do;
-258              %err_put( msg="Data source not recognized. " _n_= nlihc_id= &sub._source= )
+242              Subsidy_Info_Source_Var $ 32
+243              Subsidy_Info_Source $ /*16*/ 40
+244              Subsidy_Info_Source_Date 8
+245              Update_Dtm 8
+246            ;
+247        
+248            Subsidy_Active = 1;
+249        
+250            if &sub._source =: "Housing Data Report" then Subsidy_Info_Source = "DC/HSNGDAT";
+251            else if &sub._source =: "Affordable Housing Pipeline" then Subsidy_Info_Source = "DC/AFFPIPELINE";
+252            else if &sub._source =: "DCHFA Pipeline" then Subsidy_Info_Source = "DC/HFAPIPELINE";
+253            else if &sub._source =: "HUD - Office of Community Planning and Development" then Subsidy_Info_Source =
+253      ! "HUD/OCPD";
+254            else if &sub._source =: "HUD - LIHTC Database" then Subsidy_Info_Source = "HUD/LIHTC";
+255            else if &sub._source =: "HUD LIHTC Database" then Subsidy_Info_Source = "HUD/LIHTC";
+256            else do;
+257              ** TEMPORARY CODING **;
+258              Subsidy_Info_Source = scan( &sub._source, 1, '(' );
 259            end;
-260            */
-261        
-262          if indexc( &sub._source, '(' ) > 0 then do;
-263        
-264            Subsidy_Info_Source_Date =
-265              input(
-266                substr( &sub._source,
-267                        indexc( &sub._source, '(' ) + 1,
-268                        indexc( &sub._source, ')' ) - ( indexc( &sub._source, '(' ) + 1 ) ),
-269                anydtdte12. );
-270        
-271          end;
-272          else do;
-273        
-274            Subsidy_Info_Source_Date = .u;
-275        
-276          end;
+260            /*
+261            else do;
+262              %err_put( msg="Data source not recognized. " _n_= nlihc_id= &sub._source= )
+263            end;
+264            */
+265        
+266          if indexc( &sub._source, '(' ) > 0 then do;
+267        
+268            Subsidy_Info_Source_Date =
+269              input(
+270                substr( &sub._source,
+271                        indexc( &sub._source, '(' ) + 1,
+272                        indexc( &sub._source, ')' ) - ( indexc( &sub._source, '(' ) + 1 ) ),
+273                anydtdte12. );
+274        
+275          end;
+276          else do;
 277        
-278        
-279            Subsidy_Info_Source_ID = "";
-280            Subsidy_Info_Source_Var = "";
+278            Subsidy_Info_Source_Date = .u;
+279        
+280          end;
 281        
-282            Update_Dtm = datetime();
-283        
-284            format Subsidy_Active dyesno. Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
+282        
+283            Subsidy_Info_Source_ID = "";
+284            Subsidy_Info_Source_Var = "";
 285        
-286            keep NLIHC_ID Program Units_assist POA_start POA_end Subsidy_: Update_Dtm;
-9 The SAS System                                                                              11:00 Sunday, January 18, 2015
+286            Update_Dtm = datetime();
+9 The SAS System                                                                               17:56 Monday, August 31, 2015
 
 287        
-288          run;
+288            format Subsidy_Active dyesno. Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
 289        
-290          /*%File_info( data=Subsidy_&sub., freqvars=Program Subsidy_Info_Source, printobs=0 )*/
+290            keep NLIHC_ID Program Units_assist POA_start POA_end Subsidy_: Update_Dtm;
 291        
-292        %mend compile_subsidy;
+292          run;
 293        
-294        /** End Macro Definition **/
+294          /*%File_info( data=Subsidy_&sub., freqvars=Program Subsidy_Info_Source, printobs=0 )*/
 295        
-296        %compile_subsidy( cdbg )
+296        %mend compile_subsidy;
+297        
+298        /** End Macro Definition **/
+299        
+300        %compile_subsidy( cdbg )
 MPRINT(COMPILE_SUBSIDY):   data Subsidy_cdbg;
 MPRINT(COMPILE_SUBSIDY):   set DC_Info;
 MPRINT(COMPILE_SUBSIDY):   where cdbg_source ~= "";
@@ -426,12 +430,12 @@ MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_Date = .u;
 MPRINT(COMPILE_SUBSIDY):   end;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_ID = "";
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_Var = "";
+10 The SAS System                                                                              17:56 Monday, August 31, 2015
+
 MPRINT(COMPILE_SUBSIDY):   Update_Dtm = datetime();
 MPRINT(COMPILE_SUBSIDY):   format Subsidy_Active dyesno. Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
 MPRINT(COMPILE_SUBSIDY):   keep NLIHC_ID Program Units_assist POA_start POA_end Subsidy_: Update_Dtm;
 MPRINT(COMPILE_SUBSIDY):   run;
-10 The SAS System                                                                             11:00 Sunday, January 18, 2015
-
 
 NOTE: There were 52 observations read from the data set WORK.DC_INFO.
       WHERE cdbg_source not = ' ';
@@ -439,11 +443,11 @@ NOTE: The data set WORK.SUBSIDY_CDBG has 52 observations and 11 variables.
 NOTE: Compressing data set WORK.SUBSIDY_CDBG decreased size by 0.00 percent. 
       Compressed is 2 pages; un-compressed would require 2 pages.
 NOTE: DATA statement used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.01 seconds
+      real time           0.03 seconds
+      cpu time            0.00 seconds
       
 
-297        %compile_subsidy( dcha, units=_units, poa=n )
+301        %compile_subsidy( dcha, units=_units, poa=n )
 MPRINT(COMPILE_SUBSIDY):   data Subsidy_dcha;
 MPRINT(COMPILE_SUBSIDY):   set DC_Info;
 MPRINT(COMPILE_SUBSIDY):   where dcha_source ~= "";
@@ -474,12 +478,12 @@ MPRINT(COMPILE_SUBSIDY):   else do;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_Date = .u;
 MPRINT(COMPILE_SUBSIDY):   end;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_ID = "";
+11 The SAS System                                                                              17:56 Monday, August 31, 2015
+
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_Var = "";
 MPRINT(COMPILE_SUBSIDY):   Update_Dtm = datetime();
 MPRINT(COMPILE_SUBSIDY):   format Subsidy_Active dyesno. Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
 MPRINT(COMPILE_SUBSIDY):   keep NLIHC_ID Program Units_assist POA_start POA_end Subsidy_: Update_Dtm;
-11 The SAS System                                                                             11:00 Sunday, January 18, 2015
-
 MPRINT(COMPILE_SUBSIDY):   run;
 
 NOTE: There were 106 observations read from the data set WORK.DC_INFO.
@@ -488,11 +492,11 @@ NOTE: The data set WORK.SUBSIDY_DCHA has 106 observations and 11 variables.
 NOTE: Compressing data set WORK.SUBSIDY_DCHA decreased size by 0.00 percent. 
       Compressed is 2 pages; un-compressed would require 2 pages.
 NOTE: DATA statement used (Total process time):
-      real time           0.00 seconds
+      real time           0.01 seconds
       cpu time            0.00 seconds
       
 
-298        %compile_subsidy( fha, units=_units )
+302        %compile_subsidy( fha, units=_units )
 MPRINT(COMPILE_SUBSIDY):   data Subsidy_fha;
 MPRINT(COMPILE_SUBSIDY):   set DC_Info;
 MPRINT(COMPILE_SUBSIDY):   where fha_source ~= "";
@@ -522,12 +526,12 @@ fha_source, ')' ) - ( indexc( fha_source, '(' ) + 1 ) ), anydtdte12. );
 MPRINT(COMPILE_SUBSIDY):   end;
 MPRINT(COMPILE_SUBSIDY):   else do;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_Date = .u;
+12 The SAS System                                                                              17:56 Monday, August 31, 2015
+
 MPRINT(COMPILE_SUBSIDY):   end;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_ID = "";
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_Var = "";
 MPRINT(COMPILE_SUBSIDY):   Update_Dtm = datetime();
-12 The SAS System                                                                             11:00 Sunday, January 18, 2015
-
 MPRINT(COMPILE_SUBSIDY):   format Subsidy_Active dyesno. Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
 MPRINT(COMPILE_SUBSIDY):   keep NLIHC_ID Program Units_assist POA_start POA_end Subsidy_: Update_Dtm;
 MPRINT(COMPILE_SUBSIDY):   run;
@@ -538,11 +542,11 @@ NOTE: The data set WORK.SUBSIDY_FHA has 91 observations and 11 variables.
 NOTE: Compressing data set WORK.SUBSIDY_FHA decreased size by 0.00 percent. 
       Compressed is 2 pages; un-compressed would require 2 pages.
 NOTE: DATA statement used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.01 seconds
+      real time           0.00 seconds
+      cpu time            0.00 seconds
       
 
-299        %compile_subsidy( home )
+303        %compile_subsidy( home )
 MPRINT(COMPILE_SUBSIDY):   data Subsidy_home;
 MPRINT(COMPILE_SUBSIDY):   set DC_Info;
 MPRINT(COMPILE_SUBSIDY):   where home_source ~= "";
@@ -570,12 +574,12 @@ MPRINT(COMPILE_SUBSIDY):   if indexc( home_source, '(' ) > 0 then do;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_Date = input( substr( home_source, indexc( home_source, '(' ) + 1, indexc( 
 home_source, ')' ) - ( indexc( home_source, '(' ) + 1 ) ), anydtdte12. );
 MPRINT(COMPILE_SUBSIDY):   end;
+13 The SAS System                                                                              17:56 Monday, August 31, 2015
+
 MPRINT(COMPILE_SUBSIDY):   else do;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_Date = .u;
 MPRINT(COMPILE_SUBSIDY):   end;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_ID = "";
-13 The SAS System                                                                             11:00 Sunday, January 18, 2015
-
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_Var = "";
 MPRINT(COMPILE_SUBSIDY):   Update_Dtm = datetime();
 MPRINT(COMPILE_SUBSIDY):   format Subsidy_Active dyesno. Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
@@ -592,7 +596,7 @@ NOTE: DATA statement used (Total process time):
       cpu time            0.00 seconds
       
 
-300        %compile_subsidy( hptf )
+304        %compile_subsidy( hptf )
 MPRINT(COMPILE_SUBSIDY):   data Subsidy_hptf;
 MPRINT(COMPILE_SUBSIDY):   set DC_Info;
 MPRINT(COMPILE_SUBSIDY):   where hptf_source ~= "";
@@ -618,12 +622,12 @@ MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source = scan( hptf_source, 1, '(' );
 MPRINT(COMPILE_SUBSIDY):   end;
 MPRINT(COMPILE_SUBSIDY):   if indexc( hptf_source, '(' ) > 0 then do;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_Date = input( substr( hptf_source, indexc( hptf_source, '(' ) + 1, indexc( 
+14 The SAS System                                                                              17:56 Monday, August 31, 2015
+
 hptf_source, ')' ) - ( indexc( hptf_source, '(' ) + 1 ) ), anydtdte12. );
 MPRINT(COMPILE_SUBSIDY):   end;
 MPRINT(COMPILE_SUBSIDY):   else do;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_Date = .u;
-14 The SAS System                                                                             11:00 Sunday, January 18, 2015
-
 MPRINT(COMPILE_SUBSIDY):   end;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_ID = "";
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_Var = "";
@@ -642,7 +646,7 @@ NOTE: DATA statement used (Total process time):
       cpu time            0.00 seconds
       
 
-301        %compile_subsidy( lihtc )
+305        %compile_subsidy( lihtc )
 MPRINT(COMPILE_SUBSIDY):   data Subsidy_lihtc;
 MPRINT(COMPILE_SUBSIDY):   set DC_Info;
 MPRINT(COMPILE_SUBSIDY):   where lihtc_source ~= "";
@@ -666,12 +670,12 @@ MPRINT(COMPILE_SUBSIDY):   else if lihtc_source =: "HUD LIHTC Database" then Sub
 MPRINT(COMPILE_SUBSIDY):   else do;
 MPRINT(COMPILE_SUBSIDY):   ** TEMPORARY CODING **;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source = scan( lihtc_source, 1, '(' );
+15 The SAS System                                                                              17:56 Monday, August 31, 2015
+
 MPRINT(COMPILE_SUBSIDY):   end;
 MPRINT(COMPILE_SUBSIDY):   if indexc( lihtc_source, '(' ) > 0 then do;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_Date = input( substr( lihtc_source, indexc( lihtc_source, '(' ) + 1, indexc( 
 lihtc_source, ')' ) - ( indexc( lihtc_source, '(' ) + 1 ) ), anydtdte12. );
-15 The SAS System                                                                             11:00 Sunday, January 18, 2015
-
 MPRINT(COMPILE_SUBSIDY):   end;
 MPRINT(COMPILE_SUBSIDY):   else do;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_Date = .u;
@@ -689,11 +693,11 @@ NOTE: The data set WORK.SUBSIDY_LIHTC has 123 observations and 11 variables.
 NOTE: Compressing data set WORK.SUBSIDY_LIHTC decreased size by 33.33 percent. 
       Compressed is 2 pages; un-compressed would require 3 pages.
 NOTE: DATA statement used (Total process time):
-      real time           0.01 seconds
+      real time           0.00 seconds
       cpu time            0.01 seconds
       
 
-302        %compile_subsidy( mckin )
+306        %compile_subsidy( mckin )
 MPRINT(COMPILE_SUBSIDY):   data Subsidy_mckin;
 MPRINT(COMPILE_SUBSIDY):   set DC_Info;
 MPRINT(COMPILE_SUBSIDY):   where mckin_source ~= "";
@@ -714,12 +718,12 @@ MPRINT(COMPILE_SUBSIDY):   else if mckin_source =: "HUD - Office of Community Pl
 Subsidy_Info_Source = "HUD/OCPD";
 MPRINT(COMPILE_SUBSIDY):   else if mckin_source =: "HUD - LIHTC Database" then Subsidy_Info_Source = "HUD/LIHTC";
 MPRINT(COMPILE_SUBSIDY):   else if mckin_source =: "HUD LIHTC Database" then Subsidy_Info_Source = "HUD/LIHTC";
+16 The SAS System                                                                              17:56 Monday, August 31, 2015
+
 MPRINT(COMPILE_SUBSIDY):   else do;
 MPRINT(COMPILE_SUBSIDY):   ** TEMPORARY CODING **;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source = scan( mckin_source, 1, '(' );
 MPRINT(COMPILE_SUBSIDY):   end;
-16 The SAS System                                                                             11:00 Sunday, January 18, 2015
-
 MPRINT(COMPILE_SUBSIDY):   if indexc( mckin_source, '(' ) > 0 then do;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source_Date = input( substr( mckin_source, indexc( mckin_source, '(' ) + 1, indexc( 
 mckin_source, ')' ) - ( indexc( mckin_source, '(' ) + 1 ) ), anydtdte12. );
@@ -744,7 +748,7 @@ NOTE: DATA statement used (Total process time):
       cpu time            0.00 seconds
       
 
-303        %compile_subsidy( tebond )
+307        %compile_subsidy( tebond )
 MPRINT(COMPILE_SUBSIDY):   data Subsidy_tebond;
 MPRINT(COMPILE_SUBSIDY):   set DC_Info;
 MPRINT(COMPILE_SUBSIDY):   where tebond_source ~= "";
@@ -762,12 +766,12 @@ MPRINT(COMPILE_SUBSIDY):   else if tebond_source =: "Affordable Housing Pipeline
 "DC/AFFPIPELINE";
 MPRINT(COMPILE_SUBSIDY):   else if tebond_source =: "DCHFA Pipeline" then Subsidy_Info_Source = "DC/HFAPIPELINE";
 MPRINT(COMPILE_SUBSIDY):   else if tebond_source =: "HUD - Office of Community Planning and Development" then 
+17 The SAS System                                                                              17:56 Monday, August 31, 2015
+
 Subsidy_Info_Source = "HUD/OCPD";
 MPRINT(COMPILE_SUBSIDY):   else if tebond_source =: "HUD - LIHTC Database" then Subsidy_Info_Source = "HUD/LIHTC";
 MPRINT(COMPILE_SUBSIDY):   else if tebond_source =: "HUD LIHTC Database" then Subsidy_Info_Source = "HUD/LIHTC";
 MPRINT(COMPILE_SUBSIDY):   else do;
-17 The SAS System                                                                             11:00 Sunday, January 18, 2015
-
 MPRINT(COMPILE_SUBSIDY):   ** TEMPORARY CODING **;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Info_Source = scan( tebond_source, 1, '(' );
 MPRINT(COMPILE_SUBSIDY):   end;
@@ -795,7 +799,7 @@ NOTE: DATA statement used (Total process time):
       cpu time            0.00 seconds
       
 
-304        %compile_subsidy( v202, units=_units )
+308        %compile_subsidy( v202, units=_units )
 MPRINT(COMPILE_SUBSIDY):   data Subsidy_v202;
 MPRINT(COMPILE_SUBSIDY):   set DC_Info;
 MPRINT(COMPILE_SUBSIDY):   where v202_source ~= "";
@@ -810,12 +814,12 @@ Subsidy_Info_Source $ 40 Subsidy_Info_Source_Date 8 Update_Dtm 8 ;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Active = 1;
 MPRINT(COMPILE_SUBSIDY):   if v202_source =: "Housing Data Report" then Subsidy_Info_Source = "DC/HSNGDAT";
 MPRINT(COMPILE_SUBSIDY):   else if v202_source =: "Affordable Housing Pipeline" then Subsidy_Info_Source = "DC/AFFPIPELINE";
+18 The SAS System                                                                              17:56 Monday, August 31, 2015
+
 MPRINT(COMPILE_SUBSIDY):   else if v202_source =: "DCHFA Pipeline" then Subsidy_Info_Source = "DC/HFAPIPELINE";
 MPRINT(COMPILE_SUBSIDY):   else if v202_source =: "HUD - Office of Community Planning and Development" then 
 Subsidy_Info_Source = "HUD/OCPD";
 MPRINT(COMPILE_SUBSIDY):   else if v202_source =: "HUD - LIHTC Database" then Subsidy_Info_Source = "HUD/LIHTC";
-18 The SAS System                                                                             11:00 Sunday, January 18, 2015
-
 MPRINT(COMPILE_SUBSIDY):   else if v202_source =: "HUD LIHTC Database" then Subsidy_Info_Source = "HUD/LIHTC";
 MPRINT(COMPILE_SUBSIDY):   else do;
 MPRINT(COMPILE_SUBSIDY):   ** TEMPORARY CODING **;
@@ -845,7 +849,7 @@ NOTE: DATA statement used (Total process time):
       cpu time            0.00 seconds
       
 
-305        %compile_subsidy( v236, units=_units )
+309        %compile_subsidy( v236, units=_units )
 MPRINT(COMPILE_SUBSIDY):   data Subsidy_v236;
 MPRINT(COMPILE_SUBSIDY):   set DC_Info;
 MPRINT(COMPILE_SUBSIDY):   where v236_source ~= "";
@@ -858,12 +862,12 @@ MPRINT(COMPILE_SUBSIDY):   format POA_start POA_end mmddyy10.;
 MPRINT(COMPILE_SUBSIDY):   length Subsidy_Active 3 Subsidy_Info_Source_ID $ 40 Subsidy_Info_Source_Var $ 32 
 Subsidy_Info_Source $ 40 Subsidy_Info_Source_Date 8 Update_Dtm 8 ;
 MPRINT(COMPILE_SUBSIDY):   Subsidy_Active = 1;
+19 The SAS System                                                                              17:56 Monday, August 31, 2015
+
 MPRINT(COMPILE_SUBSIDY):   if v236_source =: "Housing Data Report" then Subsidy_Info_Source = "DC/HSNGDAT";
 MPRINT(COMPILE_SUBSIDY):   else if v236_source =: "Affordable Housing Pipeline" then Subsidy_Info_Source = "DC/AFFPIPELINE";
 MPRINT(COMPILE_SUBSIDY):   else if v236_source =: "DCHFA Pipeline" then Subsidy_Info_Source = "DC/HFAPIPELINE";
 MPRINT(COMPILE_SUBSIDY):   else if v236_source =: "HUD - Office of Community Planning and Development" then 
-19 The SAS System                                                                             11:00 Sunday, January 18, 2015
-
 Subsidy_Info_Source = "HUD/OCPD";
 MPRINT(COMPILE_SUBSIDY):   else if v236_source =: "HUD - LIHTC Database" then Subsidy_Info_Source = "HUD/LIHTC";
 MPRINT(COMPILE_SUBSIDY):   else if v236_source =: "HUD LIHTC Database" then Subsidy_Info_Source = "HUD/LIHTC";
@@ -892,29 +896,29 @@ NOTE: Compressing data set WORK.SUBSIDY_V236 increased size by 100.00 percent.
       Compressed is 2 pages; un-compressed would require 1 pages.
 NOTE: DATA statement used (Total process time):
       real time           0.00 seconds
-      cpu time            0.00 seconds
+      cpu time            0.01 seconds
       
 
-306        
-307        data PresCat.Subsidy_other;
-308        
-309          set &sub_list;
 310        
-311          ** Correct compliance and affordability end dates for LIHTC projects **;
+311        data PresCat.Subsidy_other;
 312        
-313          if program = "LIHTC" and not( missing( poa_start ) ) then do;
-314            Compl_end = intnx( 'year', poa_start, 15, 'same' );
-315            Poa_end = intnx( 'year', poa_start, 30, 'same' );
-316          end;
-317          else if program ~= "LIHTC" then do;
-318            Compl_end = poa_end;
-319          end;
-320        
-20 The SAS System                                                                             11:00 Sunday, January 18, 2015
+313          set &sub_list;
+314        
+315          ** Correct compliance and affordability end dates for LIHTC projects **;
+316        
+317          if program = "LIHTC" and not( missing( poa_start ) ) then do;
+318            Compl_end = intnx( 'year', poa_start, 15, 'same' );
+319            Poa_end = intnx( 'year', poa_start, 30, 'same' );
+320          end;
+20 The SAS System                                                                              17:56 Monday, August 31, 2015
 
-321          format Compl_end mmddyy10.;
-322        
-323        run;
+321          else if program ~= "LIHTC" then do;
+322            Compl_end = poa_end;
+323          end;
+324        
+325          format Compl_end mmddyy10.;
+326        
+327        run;
 
 NOTE: There were 52 observations read from the data set WORK.SUBSIDY_CDBG.
 NOTE: There were 106 observations read from the data set WORK.SUBSIDY_DCHA.
@@ -930,14 +934,14 @@ NOTE: The data set PRESCAT.SUBSIDY_OTHER has 586 observations and 12 variables.
 NOTE: Compressing data set PRESCAT.SUBSIDY_OTHER decreased size by 45.45 percent. 
       Compressed is 6 pages; un-compressed would require 11 pages.
 NOTE: DATA statement used (Total process time):
-      real time           0.06 seconds
+      real time           0.03 seconds
       cpu time            0.01 seconds
       
 
-324        
-325        proc sort data=PresCat.Subsidy_other;
-326          by nlihc_id program;
-327        run;
+328        
+329        proc sort data=PresCat.Subsidy_other;
+330          by nlihc_id program;
+331        run;
 
 NOTE: There were 586 observations read from the data set PRESCAT.SUBSIDY_OTHER.
 NOTE: SAS sort was used.
@@ -945,21 +949,21 @@ NOTE: The data set PRESCAT.SUBSIDY_OTHER has 586 observations and 12 variables.
 NOTE: Compressing data set PRESCAT.SUBSIDY_OTHER decreased size by 45.45 percent. 
       Compressed is 6 pages; un-compressed would require 11 pages.
 NOTE: PROCEDURE SORT used (Total process time):
-      real time           0.03 seconds
+      real time           0.01 seconds
       cpu time            0.01 seconds
       
 
-328        
-329        %File_info( data=PresCat.Subsidy_other, freqvars=Program Subsidy_Info_Source, printobs=10 )
+332        
+333        %File_info( data=PresCat.Subsidy_other, freqvars=Program Subsidy_Info_Source, printobs=10 )
 MPRINT(FILE_INFO):   title2 "File = PresCat.Subsidy_other";
 MPRINT(FILE_INFO):   proc contents data=PresCat.Subsidy_other;
 MPRINT(FILE_INFO):   run;
+21 The SAS System                                                                              17:56 Monday, August 31, 2015
+
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
       real time           0.01 seconds
-      cpu time            0.01 seconds
-21 The SAS System                                                                             11:00 Sunday, January 18, 2015
-
+      cpu time            0.03 seconds
       
 NOTE: The PROCEDURE CONTENTS printed pages 1-2.
 
@@ -995,50 +999,51 @@ MPRINT(FILE_INFO):   run;
 NOTE: There were 586 observations read from the data set PRESCAT.SUBSIDY_OTHER.
 NOTE: The PROCEDURE FREQ printed pages 5-6.
 NOTE: PROCEDURE FREQ used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.01 seconds
+      real time           0.00 seconds
+      cpu time            0.00 seconds
       
 
 MPRINT(FILE_INFO):   title2;
-330        
-331        **** Compare with earlier version ****;
-332        
-333        libname comp 'D:\DCData\Libraries\PresCat\Data\Old';
+334        
+335        **** Compare with earlier version ****;
+22 The SAS System                                                                              17:56 Monday, August 31, 2015
+
+336        
+337        libname comp 'D:\DCData\Libraries\PresCat\Data\Old';
 NOTE: Libref COMP was successfully assigned as follows: 
       Engine:        V9 
-22 The SAS System                                                                             11:00 Sunday, January 18, 2015
-
       Physical Name: D:\DCData\Libraries\PresCat\Data\Old
-334        
-335        proc sort data=Comp.Subsidy_other out=Subsidy_other;
-336          by nlihc_id program;
-337        run;
+338        
+339        proc sort data=Comp.Subsidy_other out=Subsidy_other;
+340          by nlihc_id program;
+341        run;
 
 NOTE: Input data set is already sorted; it has been copied to the output data set.
 NOTE: There were 586 observations read from the data set COMP.SUBSIDY_OTHER.
-NOTE: The data set WORK.SUBSIDY_OTHER has 586 observations and 11 variables.
-NOTE: Compressing data set WORK.SUBSIDY_OTHER decreased size by 50.00 percent. 
-      Compressed is 5 pages; un-compressed would require 10 pages.
+NOTE: The data set WORK.SUBSIDY_OTHER has 586 observations and 12 variables.
+NOTE: Compressing data set WORK.SUBSIDY_OTHER decreased size by 45.45 percent. 
+      Compressed is 6 pages; un-compressed would require 11 pages.
 NOTE: PROCEDURE SORT used (Total process time):
       real time           0.00 seconds
       cpu time            0.00 seconds
       
 
-338        
-339        proc compare base=Subsidy_other compare=PresCat.Subsidy_other maxprint=(40,32000);
-340          id nlihc_id program;
-341        run;
+342        
+343        proc compare base=Subsidy_other compare=PresCat.Subsidy_other maxprint=(40,32000);
+344          id nlihc_id program;
+345        run;
 
 NOTE: There were 586 observations read from the data set WORK.SUBSIDY_OTHER.
 NOTE: There were 586 observations read from the data set PRESCAT.SUBSIDY_OTHER.
+NOTE: At least one W.D format was too small for the number to be printed. The decimal may be shifted by the "BEST" format.
 NOTE: The PROCEDURE COMPARE printed pages 7-9.
 NOTE: PROCEDURE COMPARE used (Total process time):
-      real time           0.01 seconds
+      real time           0.00 seconds
       cpu time            0.01 seconds
       
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
 NOTE: The SAS System used:
-      real time           1.09 seconds
-      cpu time            0.31 seconds
+      real time           1.62 seconds
+      cpu time            0.32 seconds
       

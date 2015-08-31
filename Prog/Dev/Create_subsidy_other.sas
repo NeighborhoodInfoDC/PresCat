@@ -17,6 +17,7 @@
   12/31/14 PAT Updated Program var to use new codes.
   01/08/15 PAT Changed Update_date to Update_dtm (datetime).
   01/18/15 PAT Added calculated Compl_end and Poa_end for LIHTC projects.
+  08/31/15 PAT Replace PresCat.DC_Info_10_19_14 with PresCat.DC_Info_07_08_15.
 **************************************************************************/
 
 %include "L:\SAS\Inc\StdLocal.sas";
@@ -63,7 +64,7 @@ proc format;
 
 data DC_Info;
 
-  set PresCat.DC_Info_10_19_14;
+  set PresCat.DC_Info_07_08_15;
   
   ** Apply standard corrections **;
   
@@ -120,11 +121,11 @@ run;
   %let sub_list = &sub_list Subsidy_&sub;
 
   /*
-  proc freq data=PresCat.DC_Info_10_19_14;
+  proc freq data=PresCat.DC_Info_07_08_15;
     tables &sub._source;
   run;
 
-  proc freq data=PresCat.DC_Info_10_19_14;
+  proc freq data=PresCat.DC_Info_07_08_15;
     tables &sub._prog;
   run;
   */
