@@ -1,18 +1,18 @@
-1                                         The SAS System             11:25 Friday, January 9, 2015
+1                                       The SAS System              12:52 Sunday, July 19, 2015
 
 NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
 NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
       Licensed to THE URBAN INSTITUTE, Site 70097024.
-NOTE: This session is executing on the X64_VSPRO  platform.
+NOTE: This session is executing on the X64_VSHOME  platform.
 
 
 
 NOTE: SAS initialization used:
-      real time           0.61 seconds
-      cpu time            0.13 seconds
+      real time           0.15 seconds
+      cpu time            0.14 seconds
       
 
-NOTE: AUTOEXEC processing beginning; file is D:\Users\ptatian\Documents\My SAS 
+NOTE: AUTOEXEC processing beginning; file is C:\Users\Peter\Documents\My SAS 
       Files\9.2\Autoexnt.sas.
 
 
@@ -30,37 +30,38 @@ NOTE: AUTOEXEC processing completed.
 10          Description:  Create initial subsidy exception data set (blank).
 11         
 12          Modifications:
-13         **************************************************************************/
-14         
-15         %include "L:\SAS\Inc\StdLocal.sas";
-NOTE: Libref _METADAT was successfully assigned as follows: 
-      Engine:        V9 
-      Physical Name: L:\Libraries\Metadata\Data
-58        +
-59        +options ls=124 ps=48;    ** Landscape **;
-60        +
-61        +** Output title **;
+13           07/19/15 PAT Rerun to update variables from latest PresCat.Subsidy.
+14         **************************************************************************/
+15         
+16         /*%include "L:\SAS\Inc\StdLocal.sas";*/
+17         %include "C:\DCData\SAS\Inc\StdLocal.sas";
+NOTE: Library _METADAT does not exist.
 62        +
-63        +title "&_library/&_program:  NeighborhoodInfo DC";
+63        +options ls=124 ps=48;    ** Landscape **;
 64        +
-65        +** Define General library for local session only **;
+65        +** Output title **;
 66        +
-67        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
-2 The SAS System                                                                               11:25 Friday, January 9, 2015
+67        +title "&_library/&_program:  NeighborhoodInfo DC";
+68        +
+69        +** Define General library for local session only **;
+70        +
+71        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+2 The SAS System                                                                                 12:52 Sunday, July 19, 2015
 
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref GENERA_L was successfully assigned as follows: 
       Engine:        V9 
-      Physical Name: D:\DCData\Libraries\General\Data
+      Physical Name: C:\DCData\Libraries\General\Data
+NOTE: Libname GENERA_R refers to the same physical library as GENERA_L.
 NOTE: Libref GENERA_R was successfully assigned as follows: 
       Engine:        V9 
-      Physical Name: L:\Libraries\General\Data
+      Physical Name: C:\DCData\Libraries\General\Data
 NOTE: Libref GENERAL was successfully assigned as follows: 
       Levels:           2
       Engine(1):        V9 
-      Physical Name(1): D:\DCData\Libraries\General\Data
+      Physical Name(1): C:\DCData\Libraries\General\Data
       Engine(2):        V9 
-      Physical Name(2): L:\Libraries\General\Data
+      Physical Name(2): C:\DCData\Libraries\General\Data
 
 =====================================================================
 Current FmtSearch Option value:
@@ -93,22 +94,22 @@ Current Sasautos Option value:
 
 =====================================================================
 
-68        +
-3 The SAS System                                                                               11:25 Friday, January 9, 2015
+3 The SAS System                                                                                 12:52 Sunday, July 19, 2015
 
-69        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+72        +
+73        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
 NOTE: %INCLUDE (level 1) ending.
-70         
-71         ** Define libraries **;
-72         %DCData_lib( PresCat, local=n )
+74         
+75         ** Define libraries **;
+76         %DCData_lib( PresCat, local=n )
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref PRESCA_R was successfully assigned as follows: 
       Engine:        V9 
-      Physical Name: L:\Libraries\PresCat\Data
+      Physical Name: C:\DCData\Libraries\PresCat\Data
 NOTE: Libref PRESCAT was successfully assigned as follows: 
       Levels:           1
       Engine(1):        V9 
-      Physical Name(1): L:\Libraries\PresCat\Data
+      Physical Name(1): C:\DCData\Libraries\PresCat\Data
 
 =====================================================================
 Current FmtSearch Option value:
@@ -134,45 +135,43 @@ Current Sasautos Option value:
 
 =====================================================================
 
-73         
-74         data PresCat.Subsidy_except (label="Preservation Catalog, project subsidies exception file");
-75         
-76           set PresCat.Subsidy (obs=0);
 77         
-78           length Except_date 8 Except_init $ 8;
+78         data PresCat.Subsidy_except (label="Preservation Catalog, project subsidies exception file");
 79         
-80           output;
-4 The SAS System                                                                               11:25 Friday, January 9, 2015
-
+80           set PresCat.Subsidy (obs=0);
 81         
-82           label
-83             Except_date = "Date exception added"
-84             Except_init = "Initials of person entering exception";
-85         
-86           format Except_date mmddyy10.;
+82           length Except_date 8 Except_init $ 8;
+83         
+4 The SAS System                                                                                 12:52 Sunday, July 19, 2015
+
+84           label
+85             Except_date = "Date exception added"
+86             Except_init = "Initials of person entering exception";
 87         
-88           drop Subsidy_Info_Source Subsidy_Info_Source_Date Subsidy_Info_Source_ID Portfolio Update_dtm;
+88           format Except_date mmddyy10.;
 89         
-90         run;
+90           drop Subsidy_Info_Source Subsidy_Info_Source_Date Subsidy_Info_Source_ID Portfolio Update_dtm;
+91         
+92         run;
 
 NOTE: Variable Except_date is uninitialized.
 NOTE: Variable Except_init is uninitialized.
 NOTE: There were 0 observations read from the data set PRESCAT.SUBSIDY.
-NOTE: The data set PRESCAT.SUBSIDY_EXCEPT has 0 observations and 12 variables.
+NOTE: The data set PRESCAT.SUBSIDY_EXCEPT has 0 observations and 14 variables.
 NOTE: DATA statement used (Total process time):
-      real time           0.02 seconds
+      real time           0.06 seconds
       cpu time            0.01 seconds
       
 
-91         
-92         %File_info( data=PresCat.Subsidy_except, stats= )
+93         
+94         %File_info( data=PresCat.Subsidy_except, stats= )
 MPRINT(FILE_INFO):   title2 "File = PresCat.Subsidy_except";
 MPRINT(FILE_INFO):   proc contents data=PresCat.Subsidy_except;
 MPRINT(FILE_INFO):   run;
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
-      real time           0.02 seconds
-      cpu time            0.00 seconds
+      real time           0.03 seconds
+      cpu time            0.04 seconds
       
 NOTE: The PROCEDURE CONTENTS printed page 1.
 
@@ -188,12 +187,12 @@ NOTE: PROCEDURE PRINT used (Total process time):
 
 MPRINT(FILE_INFO):   title3;
 MPRINT(FILE_INFO):   title2;
-93         
-
-5 The SAS System                                                                               11:25 Friday, January 9, 2015
+95         
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+5 The SAS System                                                                                 12:52 Sunday, July 19, 2015
+
 NOTE: The SAS System used:
-      real time           0.85 seconds
-      cpu time            0.18 seconds
+      real time           0.34 seconds
+      cpu time            0.28 seconds
       

@@ -1,0 +1,300 @@
+1                                       The SAS System              12:53 Sunday, July 19, 2015
+
+NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
+      Licensed to THE URBAN INSTITUTE, Site 70097024.
+NOTE: This session is executing on the X64_VSHOME  platform.
+
+
+
+NOTE: SAS initialization used:
+      real time           0.11 seconds
+      cpu time            0.12 seconds
+      
+
+NOTE: AUTOEXEC processing beginning; file is C:\Users\Peter\Documents\My SAS 
+      Files\9.2\Autoexnt.sas.
+
+
+NOTE: AUTOEXEC processing completed.
+
+1          /**************************************************************************
+2           Program:  Create_subsidy_except_test.sas
+3           Library:  PresCat
+4           Project:  NeighborhoodInfo DC
+5           Author:   P. Tatian
+6           Created:  07/19/15
+7           Version:  SAS 9.2
+8           Environment:  Local Windows session (desktop)
+9          
+10          Description:  Create testing version of Subsidy_except.
+11         
+12          Modifications:
+13         **************************************************************************/
+14         
+15         /*%include "L:\SAS\Inc\StdLocal.sas";*/
+16         %include "C:\DCData\SAS\Inc\StdLocal.sas";
+NOTE: Library _METADAT does not exist.
+61        +
+62        +options ls=124 ps=48;    ** Landscape **;
+63        +
+64        +** Output title **;
+65        +
+66        +title "&_library/&_program:  NeighborhoodInfo DC";
+67        +
+68        +** Define General library for local session only **;
+69        +
+70        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+MPRINT(DCDATA_LIB):   options nomprint;
+2 The SAS System                                                                                 12:53 Sunday, July 19, 2015
+
+NOTE: Libref GENERA_L was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\DCData\Libraries\General\Data
+NOTE: Libname GENERA_R refers to the same physical library as GENERA_L.
+NOTE: Libref GENERA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\DCData\Libraries\General\Data
+NOTE: Libref GENERAL was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V9 
+      Physical Name(1): C:\DCData\Libraries\General\Data
+      Engine(2):        V9 
+      Physical Name(2): C:\DCData\Libraries\General\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+71        +
+3 The SAS System                                                                                 12:53 Sunday, July 19, 2015
+
+72        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+NOTE: %INCLUDE (level 1) ending.
+73         
+74         ** Define libraries **;
+75         %DCData_lib( PresCat )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref PRESCA_L was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\DCData\Libraries\PresCat\Data
+NOTE: Libname PRESCA_R refers to the same physical library as PRESCA_L.
+NOTE: Libref PRESCA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\DCData\Libraries\PresCat\Data
+NOTE: Libref PRESCAT was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V9 
+      Physical Name(1): C:\DCData\Libraries\PresCat\Data
+      Engine(2):        V9 
+      Physical Name(2): C:\DCData\Libraries\PresCat\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_L GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+
+=====================================================================
+4 The SAS System                                                                                 12:53 Sunday, July 19, 2015
+
+Current Sasautos Option value:
+
+     PRESCA_L  PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+76         
+77         data Subsidy_except_recs;
+78         
+79           length Nlihc_id $ 8 Except_init $ 8 rent_to_fmr_description $ 40;
+80         
+81           ** Exception for updated var **;
+82           nlihc_id = "NL000001";
+83           Subsidy_id = 3;
+84           POA_start = '01oct2004'd;
+85           Except_date = date();
+86           Except_init = 'PAT';
+87           output;
+88         
+89           ** Exception for nonupdated var **;
+90           nlihc_id = "NL000021";
+91           Subsidy_id = 2;
+92           POA_start = .;
+93           POA_end = '30nov2024'd;
+94           Compl_end = .;
+95           Except_date = date();
+96           Except_init = 'PAT';
+97           output;
+98         
+99           ** Exception same as updated var **;
+100          nlihc_id = "NL000023";
+101          Subsidy_id = 2;
+102          POA_start = '21dec2011'd;
+103          POA_end = .;
+104          Except_date = date();
+105          Except_init = 'PAT';
+106          output;
+107        
+108          ** Exception for nonupdated obs **;
+109          nlihc_id = "NL000029";
+110          Subsidy_id = 2;
+111          POA_start = .;
+112          POA_end = '31oct2044'd;
+113          Except_date = date();
+114          Except_init = 'PAT';
+115          output;
+5 The SAS System                                                                                 12:53 Sunday, July 19, 2015
+
+116        
+117          ** Multiple exception records **;
+118          nlihc_id = "NL000046";
+119          Subsidy_id = 3;
+120          POA_start = '28feb2014'd;
+121          POA_end = '28feb2025'd;
+122          rent_to_fmr_description = 'Old desc';
+123          Except_date = '28feb2014'd;
+124          Except_init = 'PAT';
+125          output;
+126          POA_start = .;
+127          POA_end = '28feb2030'd;
+128          Units_assist = .u;
+129          Except_date = date();
+130          Except_init = 'PAT';
+131          rent_to_fmr_description = 'New desc';
+132          output;
+133        
+134        run;
+
+NOTE: The data set WORK.SUBSIDY_EXCEPT_RECS has 6 observations and 9 variables.
+NOTE: Compressing data set WORK.SUBSIDY_EXCEPT_RECS increased size by 100.00 percent. 
+      Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+135        
+136        data PresCat.Subsidy_except_test;
+137        
+138          set PresCat.Subsidy_except;
+139        
+140        run;
+
+NOTE: There were 0 observations read from the data set PRESCAT.SUBSIDY_EXCEPT.
+NOTE: The data set PRESCAT.SUBSIDY_EXCEPT_TEST has 0 observations and 14 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+141        
+142        proc append base=PresCat.Subsidy_except_test data=Subsidy_except_recs force;
+143        run;
+
+6 The SAS System                                                                                 12:53 Sunday, July 19, 2015
+
+NOTE: Appending WORK.SUBSIDY_EXCEPT_RECS to PRESCAT.SUBSIDY_EXCEPT_TEST.
+WARNING: Variable contract_number was not found on DATA file.
+WARNING: Variable Subsidy_Active was not found on DATA file.
+WARNING: Variable Program was not found on DATA file.
+WARNING: Variable Agency was not found on DATA file.
+WARNING: Variable POA_start_orig was not found on DATA file.
+ 
+INFO: Engine's fast-append process in use.
+INFO: 12:53:23 Reading DATA file, updating BASE file
+INFO: Starting data set size is 2 pages
+INFO: Ending data set size is 2 pages, 0 added.
+INFO: 00:00:00 Elapsed time
+INFO: 12:53:23 Finished updating BASE file
+ 
+NOTE: There were 6 observations read from the data set WORK.SUBSIDY_EXCEPT_RECS.
+NOTE: 6 observations added.
+NOTE: The data set PRESCAT.SUBSIDY_EXCEPT_TEST has 6 observations and 14 variables.
+NOTE: PROCEDURE APPEND used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+      
+
+144        
+145        %File_info( data=PresCat.Subsidy_except_test, contents=y, stats= )
+MPRINT(FILE_INFO):   title2 "File = PresCat.Subsidy_except_test";
+MPRINT(FILE_INFO):   proc contents data=PresCat.Subsidy_except_test;
+MPRINT(FILE_INFO):   run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+NOTE: The PROCEDURE CONTENTS printed page 1.
+
+MPRINT(FILE_INFO):   proc print data=PresCat.Subsidy_except_test (obs=10);
+MPRINT(FILE_INFO):   title3 "Printing first 10 obs.";
+MPRINT(FILE_INFO):   run;
+
+NOTE: There were 6 observations read from the data set PRESCAT.SUBSIDY_EXCEPT_TEST.
+NOTE: The PROCEDURE PRINT printed page 2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(FILE_INFO):   title3;
+7 The SAS System                                                                                 12:53 Sunday, July 19, 2015
+
+MPRINT(FILE_INFO):   title2;
+146        
+147        run;
+148        
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           0.32 seconds
+      cpu time            0.23 seconds
+      

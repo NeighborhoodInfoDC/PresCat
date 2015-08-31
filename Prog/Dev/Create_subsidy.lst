@@ -1,41 +1,42 @@
-PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   1
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                          17:56 Saturday, August 1, 2015   1
 File = PresCat.Subsidy
 
 The CONTENTS Procedure
 
 Data Set Name        PRESCAT.SUBSIDY                            Observations           707 
-Member Type          DATA                                       Variables              17  
+Member Type          DATA                                       Variables              18  
 Engine               V9                                         Indexes                0   
-Created              Saturday, July 04, 2015 04:49:43 PM        Observation Length     334 
-Last Modified        Saturday, July 04, 2015 04:49:43 PM        Deleted Observations   0   
+Created              Saturday, August 01, 2015 05:56:52 PM      Observation Length     342 
+Last Modified        Saturday, August 01, 2015 05:56:52 PM      Deleted Observations   0   
 Protection                                                      Compressed             CHAR
 Data Set Type                                                   Reuse Space            NO  
-Label                Preservation Catalog, project subsidies    Point to Observations  YES 
+Label                Preservation Catalog, Project subsidies    Point to Observations  YES 
 Data Representation  WINDOWS_64                                 Sorted                 NO  
 Encoding             wlatin1  Western (Windows)                                            
 
 
-                  Engine/Host Dependent Information
+                      Engine/Host Dependent Information
 
-Data Set Page Size          16384                                     
-Number of Data Set Pages    8                                         
-Number of Data Set Repairs  0                                         
-Filename                    L:\Libraries\PresCat\Data\subsidy.sas7bdat
-Release Created             9.0202M3                                  
-Host Created                X64_VSPRO                                 
+Data Set Page Size          16384                                            
+Number of Data Set Pages    8                                                
+Number of Data Set Repairs  0                                                
+Filename                    C:\DCData\Libraries\PresCat\Data\subsidy.sas7bdat
+Release Created             9.0202M3                                         
+Host Created                X64_VSHOME                                       
 
 
                                  Alphabetic List of Variables and Attributes
  
  #    Variable                    Type    Len    Format         Label
 
-15    Agency                      Char     80                   Agency responsible for managing subsidy     
+16    Agency                      Char     80                   Agency responsible for managing subsidy     
 14    Compl_end                   Num       8    MMDDYY10.      Compliance period, end date                 
  1    Nlihc_id                    Char      8                   Preservation Catalog project ID             
  5    POA_end                     Num       8    MMDDYY10.      Period of affordability, end date           
+15    POA_end_prev                Num       8    MMDDYY10.      Period of affordability, previous end date  
  4    POA_start                   Num       8    MMDDYY10.      Period of affordability, current start date 
-16    POA_start_orig              Num       8    MMDDYY10.      Period of affordability, original start date
-17    Portfolio                   Char     16    $PORTFOLIO.    Subsidy portfolio                           
+17    POA_start_orig              Num       8    MMDDYY10.      Period of affordability, original start date
+18    Portfolio                   Char     16    $PORTFOLIO.    Subsidy portfolio                           
 13    Program                     Char     32    $PROGFULL.     Subsidy program                             
  8    Subsidy_Active              Num       3    DYESNO.        Subsidy is active                           
 10    Subsidy_Info_Source         Char     40    $INFOSRC.      Source for latest subsidy update            
@@ -45,8 +46,17 @@ Host Created                X64_VSPRO
  3    Units_Assist                Num       8                   Subsidy assisted units                      
 12    Update_Dtm                  Num       8    DATETIME16.    Datetime of last subsidy update             
  6    contract_number             Char     11                   TRACS-assigned contract number              
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                          17:56 Saturday, August 1, 2015   2
+File = PresCat.Subsidy
+
+The CONTENTS Procedure
+
+                                 Alphabetic List of Variables and Attributes
+ 
+ #    Variable                    Type    Len    Format         Label
+
  7    rent_to_fmr_description     Char     40                   Rent to FMR ratio for assisted units        
-PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   2
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                          17:56 Saturday, August 1, 2015   3
 File = PresCat.Subsidy
 Printing first 10 obs.
 
@@ -73,15 +83,15 @@ Obs Subsidy_Info_Source                                         Date            
   6 HUD-Insured Mulitfamily Mortgages                        03/31/2010     18JAN15:11:00:28
 
  
- 
-Obs Program                                                               Compl_end
+                                                                                         POA_end_
+Obs Program                                                               Compl_end          prev
 
-  1 Low income housing tax credit                                        01/01/2019
-  2 Sec 8 loan management set-aside                                      09/30/2024
-  3 Sec 8 loan management set-aside                                      10/31/2024
-  4 Tax exempt bond                                                      03/01/2020
-  5 DC housing production trust fund                                     03/01/2045
-  6 Sec 542(c) housing finance agency risk sharing recent completions    05/01/2045
+  1 Low income housing tax credit                                        01/01/2019             .
+  2 Sec 8 loan management set-aside                                      09/30/2024             .
+  3 Sec 8 loan management set-aside                                      10/31/2024             .
+  4 Tax exempt bond                                                      03/01/2020             .
+  5 DC housing production trust fund                                     03/01/2045             .
+  6 Sec 542(c) housing finance agency risk sharing recent completions    05/01/2045             .
 
  
                                                                              POA_start_
@@ -93,7 +103,7 @@ Obs Agency                                                                      
   4 DC                                                                       03/01/2005  Tax exempt bond                 
   5 DC                                                                       03/01/2005  DC housing production trust fund
   6 US Dept of Housing and Urban Development                                 07/01/2005  Section 542(b)&(c)              
-PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   3
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                          17:56 Saturday, August 1, 2015   4
 File = PresCat.Subsidy
 Printing first 10 obs.
 
@@ -116,13 +126,13 @@ Obs Subsidy_Info_Source                                         Date            
  10 DC/AFFPIPELINE                                                    .     18JAN15:11:00:28
 
  
- 
-Obs Program                                                               Compl_end
+                                                                                         POA_end_
+Obs Program                                                               Compl_end          prev
 
-  7 HOME                                                                 05/06/2020
-  8 McKinney Vento Act loan                                                       .
-  9 Low income housing tax credit                                        01/01/2019
- 10 DC housing production trust fund                                              .
+  7 HOME                                                                 05/06/2020             .
+  8 McKinney Vento Act loan                                                       .             .
+  9 Low income housing tax credit                                        01/01/2019             .
+ 10 DC housing production trust fund                                              .             .
 
  
                                                                              POA_start_
@@ -132,7 +142,7 @@ Obs Agency                                                                      
   8 DC                                                                                .  McKinney Vento                  
   9 DC Dept of Housing and Community Development; DC Housing Finance Agency  01/01/2004  LIHTC                           
  10 DC                                                                                .  DC housing production trust fund
-PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   4
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                          17:56 Saturday, August 1, 2015   5
 File = PresCat.Subsidy
 
 The MEANS Procedure
@@ -147,9 +157,10 @@ Subsidy_Active              706     674.0000000       0.9546742       0.2081652 
 Subsidy_Info_Source_Date    586     10689065.00        18240.73         2859.79       -14428.00        19998.00
 Update_Dtm                  706    1.2265757E12      1737359285       356602.59      1737198028      1738146756
 Compl_end                   463     10889938.00        23520.38         4478.95        -7336.00        34515.00
+POA_end_prev                  0               .               .               .               .               .
 POA_start_orig              467      7077064.00        15154.31         3146.98         2677.00        19936.00
 ---------------------------------------------------------------------------------------------------------------
-PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   5
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                          17:56 Saturday, August 1, 2015   6
 File = PresCat.Subsidy
 
 The FREQ Procedure
@@ -197,7 +208,7 @@ Sec 8 property disposition existing                                             
 Sec 8 property disposition moderate rehabilitation                                   5       0.71          477       67.47  
 Sec 8 property disposition substantial rehabilitation                                4       0.57          481       68.03  
 Sec 202 project rental assistance contract                                           7       0.99          488       69.02  
-PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   6
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                          17:56 Saturday, August 1, 2015   7
 File = PresCat.Subsidy
 
 The FREQ Procedure
@@ -236,7 +247,7 @@ Project-based section 8                     93       13.15           513        
 Project rental assistance contract          15        2.12           528        74.68  
 Public housing                             106       14.99           634        89.67  
 Tax exempt bond                             73       10.33           707       100.00  
-PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   7
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                          17:56 Saturday, August 1, 2015   8
 File = PresCat.Subsidy
 
 The FREQ Procedure
@@ -275,7 +286,7 @@ Preservation Network Meeting                                   4        0.57    
 Washington Business Journal                                    2        0.28           707       100.00  
 
 
-PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   8
+PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                          17:56 Saturday, August 1, 2015   9
 File = PresCat.Subsidy
 
 The FREQ Procedure
@@ -305,39 +316,3 @@ Between 131% & 140% FMR           6        0.85           668        94.48
 Between 141% & 160% FMR           7        0.99           675        95.47  
 Between 80% & 100% FMR           31        4.38           706        99.86  
 Over 160% FMR                     1        0.14           707       100.00  
-PRESCAT/Create_subsidy.sas:  NeighborhoodInfo DC                                            16:49 Saturday, July 4, 2015   9
-
-The COMPARE Procedure
-Comparison of WORK.SUBSIDY_OLD with WORK.SUBSIDY_NEW
-(Method=EXACT)
-
-Data Set Summary
-
-Dataset                    Created          Modified  NVar    NObs  Label
-
-WORK.SUBSIDY_OLD  04JUL15:16:49:44  04JUL15:16:49:44    17     707  Preservation Catalog, project subsidies
-WORK.SUBSIDY_NEW  04JUL15:16:49:44  04JUL15:16:49:44    17     707  Preservation Catalog, project subsidies
-
-
-Variables Summary
-
-Number of Variables in Common: 17.
-Number of ID Variables: 3.
-
-
-Observation Summary
-
-Observation      Base  Compare  ID
-
-First Obs           1        1  Nlihc_id=NL000001 Program=542-HFA-RC contract_number=
-Last  Obs         707      707  Nlihc_id=NL001033 Program=PRAC/811 contract_number=DC39Q031002
-
-Number of Observations in Common: 707.
-Total Number of Observations Read from WORK.SUBSIDY_OLD: 707.
-Total Number of Observations Read from WORK.SUBSIDY_NEW: 707.
-
-Number of Observations with Some Compared Variables Unequal: 0.
-Number of Observations with All Compared Variables Equal: 707.
-
-NOTE: No unequal values were found. All values compared are exactly equal.
-

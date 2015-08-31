@@ -1,0 +1,94 @@
+PRESCAT/Create_project_except_test.sas:  NeighborhoodInfo DC                                 22:36 Monday, July 20, 2015   1
+File = PresCat.Project_except_test
+
+The CONTENTS Procedure
+
+Data Set Name        PRESCAT.PROJECT_EXCEPT_TEST          Observations           4   
+Member Type          DATA                                 Variables              24  
+Engine               V9                                   Indexes                0   
+Created              Monday, July 20, 2015 10:36:20 PM    Observation Length     569 
+Last Modified        Monday, July 20, 2015 10:36:20 PM    Deleted Observations   0   
+Protection                                                Compressed             CHAR
+Data Set Type                                             Reuse Space            NO  
+Label                                                     Point to Observations  YES 
+Data Representation  WINDOWS_64                           Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                      
+
+
+                            Engine/Host Dependent Information
+
+Data Set Page Size          16384                                                        
+Number of Data Set Pages    2                                                            
+Number of Data Set Repairs  0                                                            
+Filename                    C:\DCData\Libraries\PresCat\Data\project_except_test.sas7bdat
+Release Created             9.0202M3                                                     
+Host Created                X64_VSHOME                                                   
+
+
+                                  Alphabetic List of Variables and Attributes
+ 
+ #    Variable                 Type    Len    Format          Label
+
+ 4    Cat_At_Risk              Num       3    DYESNO.         Project at risk                                  
+ 5    Cat_Expiring             Num       3    DYESNO.         Project has upcoming expiring subsidy            
+ 6    Cat_Failing_Insp         Num       3    DYESNO.         Project has failed recent REAC inspection        
+ 8    Cat_Lost                 Num       3    DYESNO.         Lost affordable housing                          
+ 7    Cat_More_Info            Num       3    DYESNO.         Project flagged for gathering more information   
+ 9    Cat_Replaced             Num       3    DYESNO.         Replaced affordable housing                      
+23    Except_date              Num       8    MMDDYY10.       Date exception added                             
+24    Except_init              Char      8                    Initials of person entering exception            
+21    Hud_Mgr_Name             Char     80                    Current property manager name (from HUD)         
+22    Hud_Mgr_Type             Char      2    $OWNMGRTYPE.    Current property manager type (from HUD)         
+18    Hud_Own_Effect_dt        Num       8    MMDDYY10.       Date current owner acquired property (from HUD)  
+19    Hud_Own_Name             Char     80                    Current property owner name (from HUD)           
+20    Hud_Own_Type             Char      2    $OWNMGRTYPE.    Current property owner type (from HUD)           
+ 1    Nlihc_id                 Char      8                    Preservation Catalog project ID                  
+11    Proj_Addre               Char    160                    Project main address                             
+12    Proj_City                Char     80                    Project city                                     
+10    Proj_Name                Char     80                    Project name                                     
+PRESCAT/Create_project_except_test.sas:  NeighborhoodInfo DC                                 22:36 Monday, July 20, 2015   2
+File = PresCat.Project_except_test
+
+The CONTENTS Procedure
+
+                                  Alphabetic List of Variables and Attributes
+ 
+ #    Variable                 Type    Len    Format          Label
+
+13    Proj_ST                  Char      2                    Project state                                    
+17    Proj_Units_Assist_Max    Num       8                    Total assisted housing units in project (maximum)
+16    Proj_Units_Assist_Min    Num       8                    Total assisted housing units in project (minimum)
+15    Proj_Units_Tot           Num       8                    Total housing units in project                   
+14    Proj_Zip                 Char      5                    Project ZIP code                                 
+ 2    Status                   Char      1    $STATUS.        Project is active                                
+ 3    Subsidized               Num       3    DYESNO.         Project is subsidized                            
+PRESCAT/Create_project_except_test.sas:  NeighborhoodInfo DC                                 22:36 Monday, July 20, 2015   3
+File = PresCat.Project_except_test
+Printing first 10 obs.
+
+                                       P P
+                                       r r
+                                       o o
+                                       j j
+                                       _ _          H
+                   C                   U U          u
+                   a                   n n          d
+                   t                 P i i          _
+                   _ C               r t t          O
+                 C F a   C           o s s          w     H      H         H          H
+               C a a t   a           j _ _          n     u      u         u          u          E  E
+             S a t i _   t   P       _ A A          _     d      d         d          d          x  x
+             u t _ l M   _ P r P     U s s          E     _      _         _          _          c  c
+     N       b _ E i o C R r o r   P n s s          f     O      O         M          M          e  e
+     l       s A x n r a e o j o P r i i i          f     w      w         g          g          p  p
+     i     S i t p g e t p j _ j r o t s s          e     n      n         r          r          t  t
+     h     t d _ i _ _ _ l _ A _ o j s t t          c     _      _         _          _          _  _
+     c     a i R r I I L a N d C j _ _ _ _          t     N      T         N          T          d  i
+O    _     t z i i n n o c a d i _ Z T M M          _     a      y         a          y          a  n
+b    i     u e s n s f s e m r t S i o i a          d     m      p         m          p          t  i
+s    d     s d k g p o t d e e y T p t n x          t     e      e         e          e          e  t
+
+1 NL000047   . . . . . . .           . . .          . NEW OWNER!                        07/20/2015 PAT
+2 NL000001   . . . . . . .           . . . 01/01/2015                                   07/20/2015 PAT
+3 NL000102   . . . . . . .           . . .          . Fpw, LP                           07/20/2015 PAT
+4 NL000035   . . . . . . .           . . .          .              Who's the manager?   07/20/2015 PAT

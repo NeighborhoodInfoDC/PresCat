@@ -1,0 +1,79 @@
+PRESCAT/Create_subsidy_except_test.sas:  NeighborhoodInfo DC                                 12:53 Sunday, July 19, 2015   1
+File = PresCat.Subsidy_except_test
+
+The CONTENTS Procedure
+
+Data Set Name        PRESCAT.SUBSIDY_EXCEPT_TEST          Observations           6   
+Member Type          DATA                                 Variables              14  
+Engine               V9                                   Indexes                0   
+Created              Sunday, July 19, 2015 12:53:23 PM    Observation Length     238 
+Last Modified        Sunday, July 19, 2015 12:53:23 PM    Deleted Observations   0   
+Protection                                                Compressed             CHAR
+Data Set Type                                             Reuse Space            NO  
+Label                                                     Point to Observations  YES 
+Data Representation  WINDOWS_64                           Sorted                 NO  
+Encoding             wlatin1  Western (Windows)                                      
+
+
+                            Engine/Host Dependent Information
+
+Data Set Page Size          12288                                                        
+Number of Data Set Pages    2                                                            
+Number of Data Set Repairs  0                                                            
+Filename                    C:\DCData\Libraries\PresCat\Data\subsidy_except_test.sas7bdat
+Release Created             9.0202M3                                                     
+Host Created                X64_VSHOME                                                   
+
+
+                                Alphabetic List of Variables and Attributes
+ 
+ #    Variable                   Type    Len    Format        Label
+
+11    Agency                     Char     80                  Agency responsible for managing subsidy     
+10    Compl_end                  Num       8    MMDDYY10.     Compliance period, end date                 
+13    Except_date                Num       8    MMDDYY10.     Date exception added                        
+14    Except_init                Char      8                  Initials of person entering exception       
+ 1    Nlihc_id                   Char      8                  Preservation Catalog project ID             
+ 5    POA_end                    Num       8    MMDDYY10.     Period of affordability, end date           
+ 4    POA_start                  Num       8    MMDDYY10.     Period of affordability, current start date 
+12    POA_start_orig             Num       8    MMDDYY10.     Period of affordability, original start date
+ 9    Program                    Char     32    $PROGFULL.    Subsidy program                             
+ 8    Subsidy_Active             Num       3    DYESNO.       Subsidy is active                           
+ 2    Subsidy_id                 Num       8                  Preservation Catalog subsidy ID             
+ 3    Units_Assist               Num       8                  Subsidy assisted units                      
+ 6    contract_number            Char     11                  TRACS-assigned contract number              
+ 7    rent_to_fmr_description    Char     40                  Rent to FMR ratio for assisted units        
+PRESCAT/Create_subsidy_except_test.sas:  NeighborhoodInfo DC                                 12:53 Sunday, July 19, 2015   2
+File = PresCat.Subsidy_except_test
+Printing first 10 obs.
+
+                                                        r
+                                                        e
+                                                        n
+                                                        t
+                                                        _
+                                                        t
+                                                        o
+                                                        _
+                                                 c      f
+                                                 o      m       S                                 P
+                                                 n      r       u                                 O
+                   U                             t      _       b                                 A
+                   n                             r      d       s                                 _            E    E
+               S   i                             a      e       i                                 s            x    x
+               u   t            P                c      s       d                C                t            c    c
+       N       b   s            O                t      c       y                o                a            e    e
+       l       s   _            A            P   _      r       _   P            m                r            p    p
+       i       i   A            _            O   n      i       A   r            p   A            t            t    t
+       h       d   s            s            A   u      p       c   o            l   g            _            _    _
+       c       y   s            t            _   m      t       t   g            _   e            o            d    i
+O      _       _   i            a            e   b      i       i   r            e   n            r            a    n
+b      i       i   s            r            n   e      o       v   a            n   c            i            t    i
+s      d       d   t            t            d   r      n       e   m            d   y            g            e    t
+
+1   NL000001   3   .   10/01/2004            .                  .                .                .   07/19/2015   PAT
+2   NL000021   2   .            .   11/30/2024                  .                .                .   07/19/2015   PAT
+3   NL000023   2   .   12/21/2011            .                  .                .                .   07/19/2015   PAT
+4   NL000029   2   .            .   10/31/2044                  .                .                .   07/19/2015   PAT
+5   NL000046   3   .   02/28/2014   02/28/2025       Old desc   .                .                .   02/28/2014   PAT
+6   NL000046   3   U            .   02/28/2030       New desc   .                .                .   07/19/2015   PAT

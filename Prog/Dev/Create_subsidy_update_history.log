@@ -1,0 +1,238 @@
+1                                       The SAS System           17:16 Saturday, August 1, 2015
+
+NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
+      Licensed to THE URBAN INSTITUTE, Site 70097024.
+NOTE: This session is executing on the X64_VSHOME  platform.
+
+
+
+NOTE: SAS initialization used:
+      real time           0.13 seconds
+      cpu time            0.17 seconds
+      
+
+NOTE: AUTOEXEC processing beginning; file is C:\Users\Peter\Documents\My SAS 
+      Files\9.2\Autoexnt.sas.
+
+
+NOTE: AUTOEXEC processing completed.
+
+1          /**************************************************************************
+2           Program:  Create_subsidy_update_history.sas
+3           Library:  PresCat
+4           Project:  NeighborhoodInfo DC
+5           Author:   P. Tatian
+6           Created:  07/11/15
+7           Version:  SAS 9.2
+8           Environment:  Local Windows session (desktop)
+9          
+10          Description:  Create initial Subsidy_update_history file for
+11          Preservation Catalog (empty file).
+12         
+13          Modifications:
+14         **************************************************************************/
+15         
+16         /*%include "L:\SAS\Inc\StdLocal.sas";*/
+17         %include "C:\DCData\SAS\Inc\StdLocal.sas";
+NOTE: Library _METADAT does not exist.
+63        +
+64        +options ls=124 ps=48;    ** Landscape **;
+65        +
+66        +** Output title **;
+67        +
+68        +title "&_library/&_program:  NeighborhoodInfo DC";
+69        +
+70        +** Define General library for local session only **;
+71        +
+72        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+2 The SAS System                                                                              17:16 Saturday, August 1, 2015
+
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref GENERA_L was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\DCData\Libraries\General\Data
+NOTE: Libname GENERA_R refers to the same physical library as GENERA_L.
+NOTE: Libref GENERA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\DCData\Libraries\General\Data
+NOTE: Libref GENERAL was successfully assigned as follows: 
+      Levels:           2
+      Engine(1):        V9 
+      Physical Name(1): C:\DCData\Libraries\General\Data
+      Engine(2):        V9 
+      Physical Name(2): C:\DCData\Libraries\General\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+3 The SAS System                                                                              17:16 Saturday, August 1, 2015
+
+73        +
+74        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+NOTE: %INCLUDE (level 1) ending.
+75         
+76         ** Define libraries **;
+77         %DCData_lib( PresCat, local=n )
+MPRINT(DCDATA_LIB):   options nomprint;
+NOTE: Libref PRESCA_R was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\DCData\Libraries\PresCat\Data
+NOTE: Libref PRESCAT was successfully assigned as follows: 
+      Levels:           1
+      Engine(1):        V9 
+      Physical Name(1): C:\DCData\Libraries\PresCat\Data
+
+=====================================================================
+Current FmtSearch Option value:
+
+     WORK* LIBRARY* GENERAL PRESCAT
+
+   *implicitly included by default.
+
+=====================================================================
+Status of current catalogs:
+
+NOTE:    WORK.FORMATS DOES NOT EXIST
+NOTE:    LIBRARY.FORMATS DOES NOT EXIST
+NOTE:    GENERAL.FORMATS EXISTS
+NOTE:    PRESCAT.FORMATS EXISTS
+=====================================================================
+
+
+=====================================================================
+Current Sasautos Option value:
+
+     PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+
+=====================================================================
+
+78         
+79         data PresCat.Subsidy_update_history (label="Preservation Catalog, Subsidy update history");
+80         
+81           length
+82             Nlihc_id $ 8
+83             Subsidy_id 8
+84             Subsidy_Info_Source $ 40
+4 The SAS System                                                                              17:16 Saturday, August 1, 2015
+
+85             Subsidy_Info_Source_Date 8
+86             Update_Dtm 8
+87             Subsidy_Info_Source_ID $ 40
+88             Compl_end_BASE
+89             Compl_end_COMPARE
+90             Compl_end_EXCEPT 8
+91             POA_end_BASE
+92             POA_end_COMPARE
+93             POA_end_EXCEPT 8
+94             POA_start_BASE
+95             POA_start_COMPARE
+96             POA_start_EXCEPT 8
+97             Program_BASE
+98             Program_COMPARE
+99             Program_EXCEPT $ 32
+100            Subsidy_Active_BASE
+101            Subsidy_Active_COMPARE
+102            Subsidy_Active_EXCEPT 3
+103            Units_Assist_BASE
+104            Units_Assist_COMPARE
+105            Units_Assist_EXCEPT 8
+106            rent_to_FMR_description_BASE
+107            rent_to_FMR_description_COMPARE
+108            rent_to_FMR_description_EXCEPT $ 40;
+109        
+110          delete;
+111        
+112          label
+113            Subsidy_Info_Source = "Source for update"
+114            Subsidy_Info_Source_Date = "Date of update source"
+115            Update_Dtm = "Datetime update ran"
+116          ;
+117        
+118          format Subsidy_Info_Source $infosrc. Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
+119        
+120        run;
+
+NOTE: Variable Nlihc_id is uninitialized.
+NOTE: Variable Subsidy_id is uninitialized.
+NOTE: Variable Subsidy_Info_Source is uninitialized.
+NOTE: Variable Subsidy_Info_Source_Date is uninitialized.
+NOTE: Variable Update_Dtm is uninitialized.
+NOTE: Variable Subsidy_Info_Source_ID is uninitialized.
+NOTE: Variable Compl_end_BASE is uninitialized.
+NOTE: Variable Compl_end_COMPARE is uninitialized.
+NOTE: Variable Compl_end_EXCEPT is uninitialized.
+5 The SAS System                                                                              17:16 Saturday, August 1, 2015
+
+NOTE: Variable POA_end_BASE is uninitialized.
+NOTE: Variable POA_end_COMPARE is uninitialized.
+NOTE: Variable POA_end_EXCEPT is uninitialized.
+NOTE: Variable POA_start_BASE is uninitialized.
+NOTE: Variable POA_start_COMPARE is uninitialized.
+NOTE: Variable POA_start_EXCEPT is uninitialized.
+NOTE: Variable Program_BASE is uninitialized.
+NOTE: Variable Program_COMPARE is uninitialized.
+NOTE: Variable Program_EXCEPT is uninitialized.
+NOTE: Variable Subsidy_Active_BASE is uninitialized.
+NOTE: Variable Subsidy_Active_COMPARE is uninitialized.
+NOTE: Variable Subsidy_Active_EXCEPT is uninitialized.
+NOTE: Variable Units_Assist_BASE is uninitialized.
+NOTE: Variable Units_Assist_COMPARE is uninitialized.
+NOTE: Variable Units_Assist_EXCEPT is uninitialized.
+NOTE: Variable rent_to_FMR_description_BASE is uninitialized.
+NOTE: Variable rent_to_FMR_description_COMPARE is uninitialized.
+NOTE: Variable rent_to_FMR_description_EXCEPT is uninitialized.
+NOTE: The data set PRESCAT.SUBSIDY_UPDATE_HISTORY has 0 observations and 27 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+121        
+122        %File_info( data=PresCat.Subsidy_update_history, printobs=0, stats= )
+MPRINT(FILE_INFO):   title2 "File = PresCat.Subsidy_update_history";
+MPRINT(FILE_INFO):   proc contents data=PresCat.Subsidy_update_history;
+MPRINT(FILE_INFO):   run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+      
+NOTE: The PROCEDURE CONTENTS printed pages 1-2.
+
+MPRINT(FILE_INFO):   title2;
+123        
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           0.25 seconds
+      cpu time            0.29 seconds
+      
