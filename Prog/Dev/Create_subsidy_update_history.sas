@@ -61,5 +61,5 @@ data PresCat.Subsidy_update_history (label="Preservation Catalog, Subsidy update
   
 run;
 
-%File_info( data=PresCat.Subsidy_update_history, printobs=0, stats= )
+%File_info( data=PresCat.Subsidy_update_history, printobs=10, stats= )
 

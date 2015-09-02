@@ -1,18 +1,18 @@
-1                                       The SAS System           17:16 Saturday, August 1, 2015
+1                                         The SAS System        18:30 Wednesday, September 2, 2015
 
 NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
 NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
       Licensed to THE URBAN INSTITUTE, Site 70097024.
-NOTE: This session is executing on the X64_VSHOME  platform.
+NOTE: This session is executing on the X64_VSPRO  platform.
 
 
 
 NOTE: SAS initialization used:
-      real time           0.13 seconds
-      cpu time            0.17 seconds
+      real time           0.65 seconds
+      cpu time            0.14 seconds
       
 
-NOTE: AUTOEXEC processing beginning; file is C:\Users\Peter\Documents\My SAS 
+NOTE: AUTOEXEC processing beginning; file is D:\Users\ptatian\Documents\My SAS 
       Files\9.2\Autoexnt.sas.
 
 
@@ -33,35 +33,35 @@ NOTE: AUTOEXEC processing completed.
 13          Modifications:
 14         **************************************************************************/
 15         
-16         /*%include "L:\SAS\Inc\StdLocal.sas";*/
-17         %include "C:\DCData\SAS\Inc\StdLocal.sas";
-NOTE: Library _METADAT does not exist.
-63        +
-64        +options ls=124 ps=48;    ** Landscape **;
-65        +
-66        +** Output title **;
-67        +
-68        +title "&_library/&_program:  NeighborhoodInfo DC";
-69        +
-70        +** Define General library for local session only **;
-71        +
-72        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
-2 The SAS System                                                                              17:16 Saturday, August 1, 2015
+16         %include "L:\SAS\Inc\StdLocal.sas";
+NOTE: Libref _METADAT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\Metadata\Data
+62        +
+63        +options ls=124 ps=48;    ** Landscape **;
+64        +
+65        +** Output title **;
+66        +
+67        +title "&_library/&_program:  NeighborhoodInfo DC";
+68        +
+69        +** Define General library for local session only **;
+70        +
+2 The SAS System                                                                          18:30 Wednesday, September 2, 2015
 
+71        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref GENERA_L was successfully assigned as follows: 
       Engine:        V9 
-      Physical Name: C:\DCData\Libraries\General\Data
-NOTE: Libname GENERA_R refers to the same physical library as GENERA_L.
+      Physical Name: D:\DCData\Libraries\General\Data
 NOTE: Libref GENERA_R was successfully assigned as follows: 
       Engine:        V9 
-      Physical Name: C:\DCData\Libraries\General\Data
+      Physical Name: L:\Libraries\General\Data
 NOTE: Libref GENERAL was successfully assigned as follows: 
       Levels:           2
       Engine(1):        V9 
-      Physical Name(1): C:\DCData\Libraries\General\Data
+      Physical Name(1): D:\DCData\Libraries\General\Data
       Engine(2):        V9 
-      Physical Name(2): C:\DCData\Libraries\General\Data
+      Physical Name(2): L:\Libraries\General\Data
 
 =====================================================================
 Current FmtSearch Option value:
@@ -82,7 +82,7 @@ NOTE:    GENERAL.FORMATS EXISTS
 =====================================================================
 Current Sasautos Option value:
 
-     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+     TTAUTOS  GENERA_L DCAUTOS UIAUTOS SASAUTOS
 
 =====================================================================
 
@@ -90,26 +90,26 @@ Current Sasautos Option value:
 =====================================================================
 Current Sasautos Option value:
 
-     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+     TTAUTOS GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
 
 =====================================================================
 
-3 The SAS System                                                                              17:16 Saturday, August 1, 2015
+3 The SAS System                                                                          18:30 Wednesday, September 2, 2015
 
-73        +
-74        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+72        +
+73        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
 NOTE: %INCLUDE (level 1) ending.
-75         
-76         ** Define libraries **;
-77         %DCData_lib( PresCat, local=n )
+74         
+75         ** Define libraries **;
+76         %DCData_lib( PresCat, local=n )
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref PRESCA_R was successfully assigned as follows: 
       Engine:        V9 
-      Physical Name: C:\DCData\Libraries\PresCat\Data
+      Physical Name: L:\Libraries\PresCat\Data
 NOTE: Libref PRESCAT was successfully assigned as follows: 
       Levels:           1
       Engine(1):        V9 
-      Physical Name(1): C:\DCData\Libraries\PresCat\Data
+      Physical Name(1): L:\Libraries\PresCat\Data
 
 =====================================================================
 Current FmtSearch Option value:
@@ -131,55 +131,55 @@ NOTE:    PRESCAT.FORMATS EXISTS
 =====================================================================
 Current Sasautos Option value:
 
-     PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+     TTAUTOS  PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
 
 =====================================================================
 
-78         
-79         data PresCat.Subsidy_update_history (label="Preservation Catalog, Subsidy update history");
-80         
-81           length
-82             Nlihc_id $ 8
-83             Subsidy_id 8
-84             Subsidy_Info_Source $ 40
-4 The SAS System                                                                              17:16 Saturday, August 1, 2015
+77         
+78         data PresCat.Subsidy_update_history (label="Preservation Catalog, Subsidy update history");
+79         
+80           length
+81             Nlihc_id $ 8
+82             Subsidy_id 8
+83             Subsidy_Info_Source $ 40
+4 The SAS System                                                                          18:30 Wednesday, September 2, 2015
 
-85             Subsidy_Info_Source_Date 8
-86             Update_Dtm 8
-87             Subsidy_Info_Source_ID $ 40
-88             Compl_end_BASE
-89             Compl_end_COMPARE
-90             Compl_end_EXCEPT 8
-91             POA_end_BASE
-92             POA_end_COMPARE
-93             POA_end_EXCEPT 8
-94             POA_start_BASE
-95             POA_start_COMPARE
-96             POA_start_EXCEPT 8
-97             Program_BASE
-98             Program_COMPARE
-99             Program_EXCEPT $ 32
-100            Subsidy_Active_BASE
-101            Subsidy_Active_COMPARE
-102            Subsidy_Active_EXCEPT 3
-103            Units_Assist_BASE
-104            Units_Assist_COMPARE
-105            Units_Assist_EXCEPT 8
-106            rent_to_FMR_description_BASE
-107            rent_to_FMR_description_COMPARE
-108            rent_to_FMR_description_EXCEPT $ 40;
-109        
-110          delete;
-111        
-112          label
-113            Subsidy_Info_Source = "Source for update"
-114            Subsidy_Info_Source_Date = "Date of update source"
-115            Update_Dtm = "Datetime update ran"
-116          ;
-117        
-118          format Subsidy_Info_Source $infosrc. Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
-119        
-120        run;
+84             Subsidy_Info_Source_Date 8
+85             Update_Dtm 8
+86             Subsidy_Info_Source_ID $ 40
+87             Compl_end_BASE
+88             Compl_end_COMPARE
+89             Compl_end_EXCEPT 8
+90             POA_end_BASE
+91             POA_end_COMPARE
+92             POA_end_EXCEPT 8
+93             POA_start_BASE
+94             POA_start_COMPARE
+95             POA_start_EXCEPT 8
+96             Program_BASE
+97             Program_COMPARE
+98             Program_EXCEPT $ 32
+99             Subsidy_Active_BASE
+100            Subsidy_Active_COMPARE
+101            Subsidy_Active_EXCEPT 3
+102            Units_Assist_BASE
+103            Units_Assist_COMPARE
+104            Units_Assist_EXCEPT 8
+105            rent_to_FMR_description_BASE
+106            rent_to_FMR_description_COMPARE
+107            rent_to_FMR_description_EXCEPT $ 40;
+108        
+109          delete;
+110        
+111          label
+112            Subsidy_Info_Source = "Source for update"
+113            Subsidy_Info_Source_Date = "Date of update source"
+114            Update_Dtm = "Datetime update ran"
+115          ;
+116        
+117          format Subsidy_Info_Source $infosrc. Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
+118        
+119        run;
 
 NOTE: Variable Nlihc_id is uninitialized.
 NOTE: Variable Subsidy_id is uninitialized.
@@ -190,7 +190,7 @@ NOTE: Variable Subsidy_Info_Source_ID is uninitialized.
 NOTE: Variable Compl_end_BASE is uninitialized.
 NOTE: Variable Compl_end_COMPARE is uninitialized.
 NOTE: Variable Compl_end_EXCEPT is uninitialized.
-5 The SAS System                                                                              17:16 Saturday, August 1, 2015
+5 The SAS System                                                                          18:30 Wednesday, September 2, 2015
 
 NOTE: Variable POA_end_BASE is uninitialized.
 NOTE: Variable POA_end_COMPARE is uninitialized.
@@ -213,26 +213,39 @@ NOTE: Variable rent_to_FMR_description_EXCEPT is uninitialized.
 NOTE: The data set PRESCAT.SUBSIDY_UPDATE_HISTORY has 0 observations and 27 variables.
 NOTE: DATA statement used (Total process time):
       real time           0.03 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
-121        
-122        %File_info( data=PresCat.Subsidy_update_history, printobs=0, stats= )
+120        
+121        %File_info( data=PresCat.Subsidy_update_history, printobs=10, stats= )
 MPRINT(FILE_INFO):   title2 "File = PresCat.Subsidy_update_history";
 MPRINT(FILE_INFO):   proc contents data=PresCat.Subsidy_update_history;
 MPRINT(FILE_INFO):   run;
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
-      real time           0.03 seconds
-      cpu time            0.03 seconds
+      real time           0.01 seconds
+      cpu time            0.01 seconds
       
 NOTE: The PROCEDURE CONTENTS printed pages 1-2.
 
+MPRINT(FILE_INFO):   proc print data=PresCat.Subsidy_update_history (obs=10);
+MPRINT(FILE_INFO):   title3 "Printing first 10 obs.";
+MPRINT(FILE_INFO):   run;
+
+NOTE: No observations in data set PRESCAT.SUBSIDY_UPDATE_HISTORY.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+6 The SAS System                                                                          18:30 Wednesday, September 2, 2015
+
+MPRINT(FILE_INFO):   title3;
 MPRINT(FILE_INFO):   title2;
-123        
+122        
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
 NOTE: The SAS System used:
-      real time           0.25 seconds
-      cpu time            0.29 seconds
+      real time           1.03 seconds
+      cpu time            0.20 seconds
       
