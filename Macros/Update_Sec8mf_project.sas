@@ -130,7 +130,7 @@
 
   ** Create updates from Subsidy file **;
 
-  %Create_project_subsidy_update( data=Subsidy_update_sec8mf_2014_11 )
+  %Create_project_subsidy_update( data=Subsidy_update_&Update_file )
   
 
   **************************************************************************

@@ -83,6 +83,30 @@
       revisions=%str(Update with &Update_file..)
     )
 
+    %Dc_update_meta_file(
+      ds_lib=PresCat,
+      ds_name=Subsidy_update_history,
+      creator_process=Update_&Update_file..sas,
+      restrictions=None,
+      revisions=%str(Update with &Update_file..)
+    )
+
+    %Dc_update_meta_file(
+      ds_lib=PresCat,
+      ds_name=Project,
+      creator_process=Update_&Update_file..sas,
+      restrictions=None,
+      revisions=%str(Update with &Update_file..)
+    )
+
+    %Dc_update_meta_file(
+      ds_lib=PresCat,
+      ds_name=Project_update_history,
+      creator_process=Update_&Update_file..sas,
+      restrictions=None,
+      revisions=%str(Update with &Update_file..)
+    )
+
   %end;
   %else %do;
   
