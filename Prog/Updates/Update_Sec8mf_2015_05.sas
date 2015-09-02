@@ -20,5 +20,5 @@
 %DCData_lib( HUD, local=n )
 
 
-%Update_Sec8mf( Update_file=Sec8mf_2015_05, Finalize=N )
+%Update_Sec8mf( Update_file=Sec8mf_2015_05, Finalize=Y )
 
