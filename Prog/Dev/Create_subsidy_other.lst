@@ -1,18 +1,18 @@
-PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                    11:00 Sunday, January 18, 2015   1
+PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                     17:56 Monday, August 31, 2015   1
 File = PresCat.Subsidy_other
 
 The CONTENTS Procedure
 
-Data Set Name        PRESCAT.SUBSIDY_OTHER                   Observations           586 
-Member Type          DATA                                    Variables              12  
-Engine               V9                                      Indexes                0   
-Created              Sunday, January 18, 2015 11:00:27 AM    Observation Length     203 
-Last Modified        Sunday, January 18, 2015 11:00:27 AM    Deleted Observations   0   
-Protection                                                   Compressed             CHAR
-Data Set Type                                                Reuse Space            NO  
-Label                                                        Point to Observations  YES 
-Data Representation  WINDOWS_64                              Sorted                 YES 
-Encoding             wlatin1  Western (Windows)                                         
+Data Set Name        PRESCAT.SUBSIDY_OTHER                  Observations           586 
+Member Type          DATA                                   Variables              12  
+Engine               V9                                     Indexes                0   
+Created              Monday, August 31, 2015 05:56:10 PM    Observation Length     203 
+Last Modified        Monday, August 31, 2015 05:56:10 PM    Deleted Observations   0   
+Protection                                                  Compressed             CHAR
+Data Set Type                                               Reuse Space            NO  
+Label                                                       Point to Observations  YES 
+Data Representation  WINDOWS_64                             Sorted                 YES 
+Encoding             wlatin1  Western (Windows)                                        
 
 
                      Engine/Host Dependent Information
@@ -25,25 +25,25 @@ Release Created             9.0202M3
 Host Created                X64_VSPRO                                       
 
 
-         Alphabetic List of Variables and Attributes
+               Alphabetic List of Variables and Attributes
  
- #    Variable                    Type    Len    Format
+ #    Variable                    Type    Len    Format         Label
 
-12    Compl_end                   Num       8    MMDDYY10.  
- 1    NLIHC_ID                    Char      8               
- 5    POA_end                     Num       8    MMDDYY10.  
- 4    POA_start                   Num       8    MMDDYY10.  
- 2    Program                     Char     32               
- 6    Subsidy_Active              Num       3    DYESNO.    
- 9    Subsidy_Info_Source         Char     40               
-10    Subsidy_Info_Source_Date    Num       8    MMDDYY10.  
- 7    Subsidy_Info_Source_ID      Char     40               
- 8    Subsidy_Info_Source_Var     Char     32               
- 3    Units_assist                Num       8               
-11    Update_Dtm                  Num       8    DATETIME16.
+12    Compl_end                   Num       8    MMDDYY10.              
+ 1    NLIHC_ID                    Char      8                   NLIHC_ID
+ 5    POA_end                     Num       8    MMDDYY10.              
+ 4    POA_start                   Num       8    MMDDYY10.              
+ 2    Program                     Char     32                           
+ 6    Subsidy_Active              Num       3    DYESNO.                
+ 9    Subsidy_Info_Source         Char     40                           
+10    Subsidy_Info_Source_Date    Num       8    MMDDYY10.              
+ 7    Subsidy_Info_Source_ID      Char     40                           
+ 8    Subsidy_Info_Source_Var     Char     32                           
+ 3    Units_assist                Num       8                           
+11    Update_Dtm                  Num       8    DATETIME16.            
 
 
-PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                    11:00 Sunday, January 18, 2015   2
+PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                     17:56 Monday, August 31, 2015   2
 File = PresCat.Subsidy_other
 
 The CONTENTS Procedure
@@ -53,7 +53,7 @@ The CONTENTS Procedure
 Sortedby       NLIHC_ID Program
 Validated      YES             
 Character Set  ANSI            
-PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                    11:00 Sunday, January 18, 2015   3
+PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                     17:56 Monday, August 31, 2015   3
 File = PresCat.Subsidy_other
 Printing first 10 obs.
 
@@ -76,17 +76,17 @@ Obs    NLIHC_ID    Program       assist     POA_start       POA_end     Active  
                                             Info_Source_
 Obs    Subsidy_Info_Source                      Date              Update_Dtm     Compl_end
 
-  1    HUD-Insured Mulitfamily Mortgages     03/31/2010     18JAN15:11:00:28    05/01/2045
-  2    DC/AFFPIPELINE                                 .     18JAN15:11:00:28    03/01/2045
-  3    HUD/LIHTC                             09/22/2011     18JAN15:11:00:28    01/01/2019
-  4    DC/AFFPIPELINE                                 .     18JAN15:11:00:28    03/01/2020
-  5    HUD/OCPD                              03/31/2007     18JAN15:11:00:28    05/06/2020
-  6    HUD/LIHTC                             01/15/2008     18JAN15:11:00:28    01/01/2019
-  7    DC/HFAPIPELINE                        01/02/2008     18JAN15:11:00:28             .
-  8    DC/AFFPIPELINE                                 .     18JAN15:11:00:28             .
-  9    DC/AFFPIPELINE                                 .     18JAN15:11:00:28    09/01/2044
- 10    DCHA Document                         02/01/2011     18JAN15:11:00:28             .
-PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                    11:00 Sunday, January 18, 2015   4
+  1    HUD-Insured Mulitfamily Mortgages     03/31/2010     31AUG15:17:56:10    05/01/2045
+  2    DC/AFFPIPELINE                                 .     31AUG15:17:56:10    03/01/2045
+  3    HUD/LIHTC                             09/22/2011     31AUG15:17:56:10    01/01/2019
+  4    DC/AFFPIPELINE                                 .     31AUG15:17:56:10    03/01/2020
+  5    HUD/OCPD                              03/31/2007     31AUG15:17:56:10    05/06/2020
+  6    HUD/LIHTC                             01/15/2008     31AUG15:17:56:10    01/01/2019
+  7    DC/HFAPIPELINE                        01/02/2008     31AUG15:17:56:10             .
+  8    DC/AFFPIPELINE                                 .     31AUG15:17:56:10             .
+  9    DC/AFFPIPELINE                                 .     31AUG15:17:56:10    09/01/2044
+ 10    DCHA Document                         02/01/2011     31AUG15:17:56:10             .
+PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                     17:56 Monday, August 31, 2015   4
 File = PresCat.Subsidy_other
 
 The MEANS Procedure
@@ -98,10 +98,10 @@ POA_start                   348      5257952.00        15109.06         3213.11 
 POA_end                     344      8843797.00        25708.71         4456.72        -7336.00        34515.00
 Subsidy_Active              586     586.0000000       1.0000000               0       1.0000000       1.0000000
 Subsidy_Info_Source_Date    466      8310669.00        17834.05         3063.32       -14428.00        19174.00
-Update_Dtm                  586     1.017998E12      1737198028       0.0117670      1737198028      1737198028
+Update_Dtm                  586    1.0294045E12      1756662970       0.0167250      1756662970      1756662970
 Compl_end                   344      8274009.00        24052.35         4851.96        -7336.00        34515.00
 ---------------------------------------------------------------------------------------------------------------
-PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                    11:00 Sunday, January 18, 2015   5
+PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                     17:56 Monday, August 31, 2015   5
 File = PresCat.Subsidy_other
 
 The FREQ Procedure
@@ -138,7 +138,7 @@ LIHTC                    123       20.99           393        67.06
 MCKINNEY                  14        2.39           407        69.45  
 PUBHSNG                  106       18.09           513        87.54  
 TEBOND                    73       12.46           586       100.00  
-PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                    11:00 Sunday, January 18, 2015   6
+PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                     17:56 Monday, August 31, 2015   6
 File = PresCat.Subsidy_other
 
 The FREQ Procedure
@@ -172,7 +172,7 @@ NLIHC Value-Added                               14        2.39           579    
 Open Arms/Affordable Housing Pipeline            1        0.17           580        98.98  
 Preservation Network Meeting                     4        0.68           584        99.66  
 Washington Business Journal                      2        0.34           586       100.00  
-PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                    11:00 Sunday, January 18, 2015   7
+PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                     17:56 Monday, August 31, 2015   7
 
 The COMPARE Procedure
 Comparison of WORK.SUBSIDY_OTHER with PRESCAT.SUBSIDY_OTHER
@@ -182,16 +182,23 @@ Data Set Summary
 
 Dataset                         Created          Modified  NVar    NObs
 
-WORK.SUBSIDY_OTHER     18JAN15:11:00:28  18JAN15:11:00:28    11     586
-PRESCAT.SUBSIDY_OTHER  18JAN15:11:00:28  18JAN15:11:00:28    12     586
+WORK.SUBSIDY_OTHER     31AUG15:17:56:10  31AUG15:17:56:10    12     586
+PRESCAT.SUBSIDY_OTHER  31AUG15:17:56:10  31AUG15:17:56:10    12     586
 
 
 Variables Summary
 
-Number of Variables in Common: 10.
-Number of Variables in WORK.SUBSIDY_OTHER but not in PRESCAT.SUBSIDY_OTHER: 1.
-Number of Variables in PRESCAT.SUBSIDY_OTHER but not in WORK.SUBSIDY_OTHER: 2.
+Number of Variables in Common: 12.
+Number of Variables with Differing Attributes: 1.
 Number of ID Variables: 2.
+
+
+Listing of Common Variables with Differing Attributes
+
+Variable  Dataset                Type  Length  Label
+
+NLIHC_ID  WORK.SUBSIDY_OTHER     Char       8
+          PRESCAT.SUBSIDY_OTHER  Char       8  NLIHC_ID
 
 
 Observation Summary
@@ -199,36 +206,35 @@ Observation Summary
 Observation      Base  Compare  ID
 
 First Obs           1        1  NLIHC_ID=NL000001 Program=542-HFA-RC
-First Unequal       3        3  NLIHC_ID=NL000001 Program=LIHTC
-Last  Unequal     583      583  NLIHC_ID=NL001020 Program=LIHTC
+First Unequal       1        1  NLIHC_ID=NL000001 Program=542-HFA-RC
+Last  Unequal     586      586  NLIHC_ID=NL001023 Program=207/223-PR
 Last  Obs         586      586  NLIHC_ID=NL001023 Program=207/223-PR
 
 Number of Observations in Common: 586.
 Total Number of Observations Read from WORK.SUBSIDY_OTHER: 586.
 Total Number of Observations Read from PRESCAT.SUBSIDY_OTHER: 586.
 
-Number of Observations with Some Compared Variables Unequal: 93.
-Number of Observations with All Compared Variables Equal: 493.
-
-
-Values Comparison Summary
-
-Number of Variables Compared with All Observations Equal: 7.
-Number of Variables Compared with Some Observations Unequal: 1.
-Total Number of Values which Compare Unequal: 93.
-Maximum Difference: 7305.
-
-PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                    11:00 Sunday, January 18, 2015   8
+Number of Observations with Some Compared Variables Unequal: 586.
+Number of Observations with All Compared Variables Equal: 0.
+PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                     17:56 Monday, August 31, 2015   8
 
 The COMPARE Procedure
 Comparison of WORK.SUBSIDY_OTHER with PRESCAT.SUBSIDY_OTHER
 (Method=EXACT)
+
+Values Comparison Summary
+
+Number of Variables Compared with All Observations Equal: 9.
+Number of Variables Compared with Some Observations Unequal: 1.
+Total Number of Values which Compare Unequal: 586.
+Maximum Difference: 19464942.
+
 
 Variables with Unequal Values
 
 Variable                  Type  Len  Ndif   MaxDif
 
-POA_end                   NUM     8    93     7305
+Update_Dtm                NUM     8   586  1.946E7
 
 
 
@@ -236,36 +242,28 @@ Value Comparison Results for Variables
 
 ________________________________________________________________________________
                                  ||       Base    Compare
- NLIHC_ID  Program               ||    POA_end    POA_end      Diff.     % Diff
+ NLIHC_ID  Program               ||  Update_Dt  Update_Dt      Diff.     % Diff
+                                 ||          m          m
  ________  ____________________  ||  _________  _________  _________  _________
                                  ||
- NL000001  LIHTC                 ||   01/01/19   01/01/34       5479    25.4246
- NL000006  LIHTC                 ||   01/01/19   01/01/34       5479    25.4246
- NL000027  LIHTC                 ||   01/01/16   01/01/31       5479    26.7869
- NL000029  LIHTC                 ||   01/01/04   01/01/19       5479    34.0925
- NL000031  LIHTC                 ||   01/01/22   01/01/37       5479    24.1941
- NL000033  LIHTC                 ||   01/01/16   01/01/31       5479    26.7869
- NL000037  LIHTC                 ||   01/17/17   01/17/32       5478    26.2910
- NL000044  LIHTC                 ||   01/01/19   01/01/34       5479    25.4246
- NL000045  LIHTC                 ||   01/01/20   01/01/35       5479    25.0011
- NL000050  LIHTC                 ||   01/01/21   01/01/36       5478    24.5860
- NL000054  LIHTC                 ||   08/01/18   08/01/33       5479    25.6064
- NL000061  LIHTC                 ||   01/01/18   01/01/33       5479    25.8626
- NL000065  LIHTC                 ||   01/01/22   01/01/37       5479    24.1941
- NL000066  LIHTC                 ||   01/01/19   01/01/34       5479    25.4246
- NL000077  LIHTC                 ||   01/01/17   01/01/32       5478    26.3112
- NL000080  LIHTC                 ||   03/01/15   03/01/30       5479    27.1938
- NL000081  LIHTC                 ||   01/01/20   01/01/35       5479    25.0011
- NL000083  LIHTC                 ||   01/01/17   01/01/32       5478    26.3112
- NL000087  LIHTC                 ||   01/01/10   01/01/25       5479    30.0005
- NL000089  LIHTC                 ||   01/01/14   01/01/29       5479    27.7783
- NL000092  LIHTC                 ||   01/01/17   01/01/32       5478    26.3112
- NL000096  LIHTC                 ||   01/01/19   01/01/34       5479    25.4246
- NL000099  LIHTC                 ||   01/01/19   01/01/34       5479    25.4246
- NL000101  LIHTC                 ||   03/08/17   03/08/32       5479    26.2329
- NL000102  LIHTC                 ||   03/18/20   03/18/35       5478    24.9091
- NL000103  LIHTC                 ||   01/01/22   01/01/37       5479    24.1941
-PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                    11:00 Sunday, January 18, 2015   9
+ NL000001  542-HFA-RC            ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000001  DC-HPTF               ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000001  LIHTC                 ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000001  TEBOND                ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000004  HOME                  ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000006  LIHTC                 ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000006  MCKINNEY              ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000008  DC-HPTF               ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000010  DC-HPTF               ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000010  PUBHSNG               ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000014  CDBG                  ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000015  CDBG                  ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000016  542-HFA-E             ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000016  CDBG                  ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000016  TEBOND                ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000017  DC-HPTF               ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000020  HOME                  ||  18JAN2015  31AUG2015   19464942     1.1205
+PRESCAT/Create_subsidy_other.sas:  NeighborhoodInfo DC                                     17:56 Monday, August 31, 2015   9
 
 The COMPARE Procedure
 Comparison of WORK.SUBSIDY_OTHER with PRESCAT.SUBSIDY_OTHER
@@ -275,24 +273,34 @@ Value Comparison Results for Variables
 
 ________________________________________________________________________________
                                  ||       Base    Compare
- NLIHC_ID  Program               ||    POA_end    POA_end      Diff.     % Diff
+ NLIHC_ID  Program               ||  Update_Dt  Update_Dt      Diff.     % Diff
+                                 ||          m          m
  ________  ____________________  ||  _________  _________  _________  _________
                                  ||
- NL000106  LIHTC                 ||   01/01/21   01/01/36       5478    24.5860
- NL000109  LIHTC                 ||   01/01/15   01/01/30       5479    27.2736
- NL000119  LIHTC                 ||   01/01/16   01/01/31       5479    26.7869
- NL000126  LIHTC                 ||   01/01/21   01/01/36       5478    24.5860
- NL000127  LIHTC                 ||   01/01/22   01/01/37       5479    24.1941
- NL000128  LIHTC                 ||   01/01/15   01/01/30       5479    27.2736
- NL000136  LIHTC                 ||   01/01/22   01/01/37       5479    24.1941
- NL000138  LIHTC                 ||   01/01/18   01/01/33       5479    25.8626
- NL000147  LIHTC                 ||   05/01/27   01/01/27  -120.0000    -0.4880
- NL000148  LIHTC                 ||   01/01/22   01/01/37       5479    24.1941
- NL000151  LIHTC                 ||   01/01/23   01/01/38       5479    23.8104
- NL000153  LIHTC                 ||   01/01/22   01/01/37       5479    24.1941
- NL000154  LIHTC                 ||   01/01/19   01/01/34       5479    25.4246
- NL000163  LIHTC                 ||   11/01/20   11/01/35       5478    24.6535
+ NL000021  202-DL-EH             ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000021  207/223-PR            ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000021  DC-HPTF               ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000023  202-DL-EH             ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000026  202-DL-EH             ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000026  207/223-PR            ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000027  LIHTC                 ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000027  TEBOND                ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000028  223/221-3-MRMI        ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000029  223/221/244-MRMI      ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000029  LIHTC                 ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000031  236-LIF               ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000031  LIHTC                 ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000031  TEBOND                ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000032  CDBG                  ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000033  DC-HPTF               ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000033  LIHTC                 ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000033  PUBHSNG               ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000033  TEBOND                ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000034  PUBHSNG               ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000037  221-4-MRMI            ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000037  LIHTC                 ||  18JAN2015  31AUG2015   19464942     1.1205
+ NL000037  TEBOND                ||  18JAN2015  31AUG2015   19464942     1.1205
 
-NOTE: The MAXPRINT=40 printing limit has been reached for the variable POA_end. No more values will be printed for this
+NOTE: The MAXPRINT=40 printing limit has been reached for the variable Update_Dtm. No more values will be printed for this
       comparison.
 ________________________________________________________________________________

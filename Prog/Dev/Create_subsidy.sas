@@ -228,18 +228,12 @@ run;
 
 title2;
 
-/******
 **** Compare with earlier version ****;
 
 libname comp 'D:\DCData\Libraries\PresCat\Data\Old';
 
-proc sort data=PresCat.Subsidy out=Subsidy_new;
-  by NLIHC_ID program contract_number;
-
-proc sort data=Comp.Subsidy out=Subsidy_old;
-  by NLIHC_ID program contract_number;
-
-proc compare base=Subsidy_old compare=Subsidy_new listall maxprint=(40,32000);
-  id NLIHC_ID program contract_number;
+proc compare base=Comp.Subsidy compare=PresCat.Subsidy listall maxprint=(40,32000);
+  id NLIHC_ID subsidy_id;
 run;
-************/
+
+

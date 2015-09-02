@@ -1,4 +1,4 @@
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015   1
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015   1
 
 The FREQ Procedure
 
@@ -17,7 +17,7 @@ PRAC 202/811                          PRAC/811                                  
 Other S8 New Construction             Sec 8 New Construction                    15 
 Other S8 Rehabilitation               Sec 8 Substantial Rehabilitation          15 
 Service Coordinator                   UnasstPrj SCHAP                            2 
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015   2
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015   2
 Dup_check: Sec8mf_dc
 
 property_     contract_
@@ -59,7 +59,7 @@ Number of duplicates = 2
              DC39M000092
 
 Number of duplicates = 4
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015   3
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015   3
 Dup_check: Sec8mf_dc
 
 property_     contract_
@@ -69,21 +69,21 @@ property_     contract_
              DC39M000023
 
 Number of duplicates = 2
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015   4
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015   4
 File = PresCat.Subsidy_mfa
 
 The CONTENTS Procedure
 
-Data Set Name        PRESCAT.SUBSIDY_MFA                       Observations           121 
-Member Type          DATA                                      Variables              32  
-Engine               V9                                        Indexes                0   
-Created              Thursday, January 29, 2015 10:32:36 AM    Observation Length     964 
-Last Modified        Thursday, January 29, 2015 10:32:36 AM    Deleted Observations   0   
-Protection                                                     Compressed             CHAR
-Data Set Type                                                  Reuse Space            NO  
-Label                                                          Point to Observations  YES 
-Data Representation  WINDOWS_64                                Sorted                 YES 
-Encoding             wlatin1  Western (Windows)                                           
+Data Set Name        PRESCAT.SUBSIDY_MFA                    Observations           121 
+Member Type          DATA                                   Variables              32  
+Engine               V9                                     Indexes                0   
+Created              Monday, August 31, 2015 06:10:28 PM    Observation Length     964 
+Last Modified        Monday, August 31, 2015 06:10:28 PM    Deleted Observations   0   
+Protection                                                  Compressed             CHAR
+Data Set Type                                               Reuse Space            NO  
+Label                                                       Point to Observations  YES 
+Data Representation  WINDOWS_64                             Sorted                 YES 
+Encoding             wlatin1  Western (Windows)                                        
 
 
                     Engine/Host Dependent Information
@@ -100,24 +100,24 @@ Host Created                X64_VSPRO
  
  #  Variable                       Type  Len  Format       Label
 
- 2  CATEGORY                       Char   50                                                                               
+ 2  CATEGORY                       Char   50               CATEGORY                                                        
 32  Compl_end                      Num     8                                                                               
- 6  ID_MFA                         Char    9                                                                               
- 1  MFA_ASSUNITS                   Num     8                                                                               
-10  MFA_END                        Num     8  MMDDYY10.                                                                    
-11  MFA_NOTES                      Char  254                                                                               
- 8  MFA_PROG                       Char   15                                                                               
- 7  MFA_SOURCE                     Char   84                                                                               
- 9  MFA_START                      Num     8  MMDDYY10.                                                                    
- 4  NLIHC_ID                       Char    8                                                                               
+ 6  ID_MFA                         Char    9               ID_MFA                                                          
+ 1  MFA_ASSUNITS                   Num     8               MFA_ASSUNITS                                                    
+10  MFA_END                        Num     8  MMDDYY8.     MFA_END                                                         
+11  MFA_NOTES                      Char  254               MFA_NOTES                                                       
+ 8  MFA_PROG                       Char   15               MFA_PROG                                                        
+ 7  MFA_SOURCE                     Char   84               MFA_SOURCE                                                      
+ 9  MFA_START                      Num     8  MMDDYY8.     MFA_START                                                       
+ 4  NLIHC_ID                       Char    8               NLIHC_ID                                                        
 31  Program                        Char   32                                                                               
- 5  Proj_Addre                     Char  108                                                                               
- 3  Proj_Name                      Char   60                                                                               
+ 5  Proj_Addre                     Char  108               Proj_Addre                                                      
+ 3  Proj_Name                      Char   60               Proj_Name                                                       
 25  Subsidy_Active                 Num     3  DYESNO.                                                                      
 28  Subsidy_Info_Source            Char   40  $INFOSRC.                                                                    
 29  Subsidy_Info_Source_Date       Num     8  MMDDYY10.                                                                    
 26  Subsidy_Info_Source_ID         Char   40                                                                               
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015   5
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015   5
 File = PresCat.Subsidy_mfa
 
 The CONTENTS Procedure
@@ -148,40 +148,40 @@ The CONTENTS Procedure
 Sortedby       property_id contract_number
 Validated      YES                        
 Character Set  ANSI                       
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015   6
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015   6
 File = PresCat.Subsidy_mfa
 Printing first 10 obs.
 
  
       MFA_
-Obs ASSUNITS   CATEGORY                        Proj_Name                                  NLIHC_ID   Proj_Addre
+Obs ASSUNITS CATEGORY                      Proj_Name                                NLIHC_ID Proj_Addre
 
-  1     40     3 - Recent Failing REAC Score   Casa Iris                                  NL000064   2201 TWELVETH ST NW 
-  2     80     5 - Other Subsidized Property   Faircliff Plaza East                       NL000101   1356 Fairmont ST NW 
-  3     48     5 - Other Subsidized Property   Portner Place                              NL000243   1449 U ST NW        
-  4    122     5 - Other Subsidized Property   Trinity Towers                             NL000309   3023 14TH ST NW     
-  5     95     5 - Other Subsidized Property   Allen House                                NL000021   3760 MINN AVE NE    
-  6      9     2 - Expiring Subsidy            Anchor Housing                             NL000023   1609 LAWRENCE ST NE 
-  7    146     5 - Other Subsidized Property   Asbury Dwellings                           NL000026   1616 MARION ST NW   
-  8    108     5 - Other Subsidized Property   Atlantic Gardens                           NL000028   4216 4TH ST SE      
-  9     18     5 - Other Subsidized Property   Azeeze Bates                               NL000031   1521 F ST NE        
- 10     40     1                               Brookland Manor (Brentwood Village Apts)   NL000046   2400 14th Street, NE
+  1     40   5 - Other Subsidized Property Casa Iris                                NL000064 2201 TWELVETH ST NW           
+  2     80   5 - Other Subsidized Property Faircliff Plaza East                     NL000101 1356 Fairmont ST NW           
+  3     48   2 - Expiring Subsidy          Portner Place                            NL000243 1449 U ST NW                  
+  4    122   5 - Other Subsidized Property Trinity Towers                           NL000309 3023 14TH ST NW               
+  5     95   5 - Other Subsidized Property Allen House                              NL000021 3760 MINN AVE NE              
+  6      9   5 - Other Subsidized Property Anchor Housing                           NL000023 1609 LAWRENCE ST NE           
+  7    146   5 - Other Subsidized Property Asbury Dwellings                         NL000026 1616 MARION ST NW             
+  8    108   5 - Other Subsidized Property Atlantic Gardens                         NL000028 4216 4TH ST SE                
+  9     18   5 - Other Subsidized Property Azeeze Bates                             NL000031 1521 F ST NE                  
+ 10    373   1                             Brookland Manor (Brentwood Village Apts) NL000046 2420 - 2428 14th ST NE; others
 
  
- 
-Obs  ID_MFA                               MFA_SOURCE                             MFA_PROG          MFA_START      MFA_END
+                                                                                                         MFA_
+Obs  ID_MFA                                MFA_SOURCE                              MFA_PROG             START     MFA_END
 
-  1 800000023   HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)    PRAC 202/811     04/01/1997   03/31/2017
-  2 800000032   HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)    Other S8 New     04/02/2002   03/31/2022
-  3 800000063   HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)    Other S8 New     08/21/2000   02/28/2015
-  4 800000073   HUD - Multifamily Assistance and Section 8 Contracts (2/10/12)   Other S8 Rehab   11/08/2002   11/07/2022
-  5 800003669   HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)    Sec. 202         10/21/1991   10/20/2031
-  6 800003671   HUD - Multifamily Assistance and Section 8 Contracts (2/10/12)   Sec. 202         12/21/2001   12/20/2014
-  7 800003672   HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)    Sec. 202         09/01/2008   10/31/2033
-  8 800003673   HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)    Other S8 Rehab   04/06/1983   06/30/2024
-  9 800003674   HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)    S8 Loan Mgmt     12/01/2006   11/30/2026
- 10 800003675   HUD - Multifamily Assistance and Section 8 Contracts (2/1/11)    S8 Loan Mgmt     10/01/2010   09/30/2015
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015   7
+  1 800000023    HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)     PRAC 202/811      04/01/97    03/31/17
+  2 800000032    HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)     Other S8 New      04/02/02    03/31/22
+  3 800000063    HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)     Other S8 New      08/21/00    09/30/15
+  4 800000073    HUD - Multifamily Assistance and Section 8 Contracts (2/10/12)    Other S8 Rehab    11/08/02    11/07/22
+  5 800003669    HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)     Sec. 202          10/21/91    10/20/31
+  6 800003671    HUD - Multifamily Assistance and Section 8 Contracts (2/10/12)    Sec. 202          12/21/01    12/20/19
+  7 800003672    HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)     Sec. 202          09/01/08    10/31/33
+  8 800003673    HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)     Other S8 Rehab    04/06/83    06/30/24
+  9 800003674    HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)     S8 Loan Mgmt      12/01/06    11/30/26
+ 10 800003675    HUD - Multifamily Assistance and Section 8 Contracts (2/1/11)     S8 Loan Mgmt      10/01/10    10/31/15
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015   7
 File = PresCat.Subsidy_mfa
 Printing first 10 obs.
 
@@ -191,14 +191,14 @@ Obs MFA_NOTES
 
   1                                                                                                                         
   2 Exp. Date updated from 4/1/22 to 3/31/22 in MFA DB (6/23/14).                                                           
-  3 Exp. Date updated from 2/28/13 to 2/28/15 in MFA DB (6/23/14).                                                          
+  3 02/15 Exp. Date updated from 2/28/15 to 9/30/15. Exp. Date updated from 2/28/13 to 2/28/15 in MFA DB (6/23/14).         
   4 No. Assist Units Changed from 121 to 122 (MFA DB 8/4/10), Exp. Date updated from 11/7/12 to 11/7/22 in MFA DB (6/23/14).
   5 Exp date updated from 10/20/2011 to 10/20/2031 in MFA DB (2/10/12).                                                     
-  6 10/14 - Expected to be funded FY 2015 Q1 (from HUD FO), 3/12 - Exp updated from 12/20/11 to 12/20/14 in MFA DB          
+  6 5/15 Sec 202 exp date updated.10/14 - Expected to be funded FY 2015 Q1 (from HUD FO), 3/12 - Exp updated from 12/20/11 t
   7 Has a 20-year HAP contract that will be renewed annually (1/13/09 meeting). Updated to 10/31/33 as of DB (9/3/14)       
   8                                                                                                                         
   9                                                                                                                         
- 10 The 373 units are covered under two separate contracts - 40 expire on 9/30/15 and 333 expire on 10/31/15 (prev. 10/31/10
+ 10 The 373 units are covered under two separate contracts - 40 expire on 9/30/15 and 333 expire on 10/31/15. Earliest start
 
                                 tracs_     tracs_overall_   tracs_current_   assisted_
     property_    contract_    effective_    expiration_      expiration_       units_
@@ -214,7 +214,7 @@ Obs     id        number         date           date             date          c
   8 800003673   DC390007006   07/01/2004     06/30/2024       06/30/2015        108      Sec 8 Substantial Rehabilitation
   9 800003674   DC39M000060   12/01/2006     11/30/2026       11/30/2014         18      LMSA                            
  10 800003675   DC39L000069   10/01/2010     09/30/2015       09/30/2014         40      LMSA                            
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015   8
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015   8
 File = PresCat.Subsidy_mfa
 Printing first 10 obs.
 
@@ -237,17 +237,17 @@ Obs rent_to_fmr_description        date  address_line1_text    status   Info   i
                                                                                          Info_Source_
 Obs   Subsidy_Info_Source_Var                     Subsidy_Info_Source                        Date             Update_Dtm
 
-  1 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    29JAN15:10:32:36
-  2 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    29JAN15:10:32:36
-  3 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    29JAN15:10:32:36
-  4 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    29JAN15:10:32:36
-  5 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    29JAN15:10:32:36
-  6 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    29JAN15:10:32:36
-  7 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    29JAN15:10:32:36
-  8 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    29JAN15:10:32:36
-  9 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    29JAN15:10:32:36
- 10 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    29JAN15:10:32:36
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015   9
+  1 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    31AUG15:18:10:28
+  2 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    31AUG15:18:10:28
+  3 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    31AUG15:18:10:28
+  4 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    31AUG15:18:10:28
+  5 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    31AUG15:18:10:28
+  6 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    31AUG15:18:10:28
+  7 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    31AUG15:18:10:28
+  8 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    31AUG15:18:10:28
+  9 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    31AUG15:18:10:28
+ 10 property_id/contract_number   HUD - Multifamily Assistance and Section 8 Contracts    10/02/2014    31AUG15:18:10:28
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015   9
 File = PresCat.Subsidy_mfa
 Printing first 10 obs.
 
@@ -257,24 +257,24 @@ Obs Program       end
 
   1 PRAC/202     20909
   2 S8-NC        22735
-  3 S8-NC        20147
+  3 S8-NC        20361
   4 S8-SR        22956
   5 202/8-NC     26225
-  6 202/8-SR     20077
+  6 202/8-SR     21903
   7 202/8-SR     26967
   8 S8-SR        23557
   9 LMSA         24440
- 10 LMSA         20361
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  10
+ 10 LMSA         20392
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  10
 File = PresCat.Subsidy_mfa
 
 The MEANS Procedure
 
 Variable                           N             Sum            Mean         Std Dev         Minimum         Maximum
 --------------------------------------------------------------------------------------------------------------------
-MFA_ASSUNITS                     120        12074.00     100.6166667      82.5379142       6.0000000     406.0000000
+MFA_ASSUNITS                     120        14146.00     117.8833333     103.5340388       6.0000000     406.0000000
 MFA_START                        120      1838805.00        15323.38         2969.06         6982.00        19693.00
-MFA_END                          120      2643597.00        22029.98         2640.33        16344.00        27240.00
+MFA_END                          120      2695363.00        22461.36         2728.80        16344.00        27474.00
 property_id                      121     96802480189       800020497        51062.03       800000023       800219652
 tracs_effective_date             112      2016583.00        18005.21         2091.05         7640.00        19997.00
 tracs_overall_expiration_date    112      2501548.00        22335.25         2446.11        17197.00        27240.00
@@ -285,10 +285,10 @@ in_DC_Info                       121     120.0000000       0.9917355       0.090
 in_MFA                           121     113.0000000       0.9338843       0.2495174               0       1.0000000
 Subsidy_Active                   121     110.0000000       0.9090909       0.2886751               0       1.0000000
 Subsidy_Info_Source_Date         121      2398394.00        19821.44     609.0485872        17287.00        19998.00
-Update_Dtm                       121    210315757513      1738146756       0.0042348      1738146756      1738146756
-Compl_end                        120      2643597.00        22029.98         2640.33        16344.00        27240.00
+Update_Dtm                       121    212556323221      1756663828       0.0010662      1756663828      1756663828
+Compl_end                        120      2695363.00        22461.36         2728.80        16344.00        27474.00
 --------------------------------------------------------------------------------------------------------------------
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  11
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  11
 File = PresCat.Subsidy_mfa
 
 The FREQ Procedure
@@ -304,6 +304,8 @@ Terminated           3        2.48           116        95.87
 Expired              5        4.13           121       100.00  
 
 
+                              MFA_PROG
+ 
                                             Cumulative    Cumulative
 MFA_PROG           Frequency     Percent     Frequency      Percent
 --------------------------------------------------------------------
@@ -317,11 +319,13 @@ S8 State Agency           7        5.79           108        89.26
 Sec. 202                 13       10.74           121       100.00  
 
 
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  12
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  12
 File = PresCat.Subsidy_mfa
 
 The FREQ Procedure
 
+                                                     MFA_SOURCE
+ 
                                                                                             Cumulative    Cumulative
 MFA_SOURCE                                                         Frequency     Percent     Frequency      Percent
 --------------------------------------------------------------------------------------------------------------------
@@ -360,7 +364,7 @@ property_id/contract_number         121      100.00           121       100.00
 Subsidy_Info_Source                                     Frequency     Percent     Frequency      Percent
 ---------------------------------------------------------------------------------------------------------
 HUD - Multifamily Assistance and Section 8 Contracts         121      100.00           121       100.00  
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  13
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  13
 File = PresCat.Subsidy_mfa
 
 The FREQ Procedure
@@ -395,7 +399,7 @@ S8-NC               15       12.40           104        85.95
 S8-SR               17       14.05           121       100.00  
 
 
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  14
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  14
 File = PresCat.Subsidy_mfa
 
 The FREQ Procedure
@@ -413,7 +417,7 @@ Between 131% & 140% FMR           6        4.96            82        67.77
 Between 141% & 160% FMR           7        5.79            89        73.55  
 Between 80% & 100% FMR           31       25.62           120        99.17  
 Over 160% FMR                     1        0.83           121       100.00  
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  15
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  15
 
 The FREQ Procedure
 
@@ -449,7 +453,7 @@ PRAC/811            PRAC 202/811       PRAC/811             7
 Sec 8 NC            Other S8 New       S8-NC               15 
 Sec 8 SR            Other S8 Rehab     S8-SR               14 
 Sec 8 SR            S8 Loan Mgmt       S8-SR                1 
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  16
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  16
 Not in DC_Info
 
                                                                                    program_
@@ -463,7 +467,7 @@ property_      units_     effective_     expiration_       expiration_      trac
     id         count         date            date              date         status
 
 800219652        8        12/01/2013      11/30/2014        11/30/2014      Active
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  17
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  17
 Not in HUD MFA
 
 property_             in_DC_                                                        MFA_
@@ -478,30 +482,30 @@ property_             in_DC_                                                    
 800003793      0         1      NL000307    950 MISSISSIPPI AVE SE                   208  
 800003803      0         1      NL000324    1204 5TH ST NW                           105  
 
+property_                                                                                             MFA_
+    id                                MFA_SOURCE                                  MFA_PROG           START
+
+800003703   HUD - Multifamily Assistance and Section 8 Contracts (5/1/07)      Other S8 Rehab     08/02/84
+800003714   HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)      Other S8 Rehab     03/09/06
+800003727   HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)      S8 Loan Mgmt       02/01/05
+800003756   HUD - Multifamily Assistance and Section 8 Contracts (2/10/12)     S8 Prop. Disp.     07/01/92
+800003781   HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)      S8 State Agency    05/01/07
+800003789   HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)      S8 Loan Mgmt       09/01/07
+800003793   HUD - Multifamily Assistance and Section 8 Contracts (5/1/07)      S8 Loan Mgmt       08/01/91
+800003803   HUD - Multifamily Assistance and Section 8 Contracts (11/27/07)    S8 Loan Mgmt       06/01/02
+
 property_
-    id                                MFA_SOURCE                                  MFA_PROG         MFA_START
+    id       MFA_END    MFA_NOTES
 
-800003703   HUD - Multifamily Assistance and Section 8 Contracts (5/1/07)      Other S8 Rehab     08/02/1984
-800003714   HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)      Other S8 Rehab     03/09/2006
-800003727   HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)      S8 Loan Mgmt       02/01/2005
-800003756   HUD - Multifamily Assistance and Section 8 Contracts (2/10/12)     S8 Prop. Disp.     07/01/1992
-800003781   HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)      S8 State Agency    05/01/2007
-800003789   HUD - Multifamily Assistance and Section 8 Contracts (8/5/09)      S8 Loan Mgmt       09/01/2007
-800003793   HUD - Multifamily Assistance and Section 8 Contracts (5/1/07)      S8 Loan Mgmt       08/01/1991
-800003803   HUD - Multifamily Assistance and Section 8 Contracts (11/27/07)    S8 Loan Mgmt       06/01/2002
-
-property_
-    id         MFA_END    MFA_NOTES
-
-800003703   08/31/2006    Status listed as 'expired' in Section 8 database (2/6/07). No longer in HUD's database.      
-800003714   09/08/2006    Status updated to 'expired' in Section 8 database (since 3/3/08).                            
-800003727   01/31/2008    Removed from Section 8 database (5/20/08).                                                   
-800003756   01/28/2013    Exp date updated from 6/30/2012 to 1/28/2013 in MFA DB (2/10/12)                             
-800003781   04/30/2013                                                                                                 
-800003789   11/30/2008    Status listed as 'expired' in HUD database (12/4/08).                                        
-800003793   09/30/2004    Status listed as 'expired' in Section 8 database (since 2/6/07). No longer in HUD's database.
-800003803   05/31/2007    Dropped from Section 8 database (since 11/27/07).                                            
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  18
+800003703   08/31/06    Status listed as 'expired' in Section 8 database (2/6/07). No longer in HUD's database.       
+800003714   09/08/06    Status updated to 'expired' in Section 8 database (since 3/3/08).                             
+800003727   01/31/08    Removed from Section 8 database (5/20/08).                                                    
+800003756   01/28/13    Not in HUD database (11/6/14) Exp date updated from 6/30/2012 to 1/28/2013 in MFA DB (2/10/12)
+800003781   04/30/13    Not in HUD databbase (11/6/14)                                                                
+800003789   11/30/08    Status listed as 'expired' in HUD database (12/4/08).                                         
+800003793   09/30/04    Status listed as 'expired' in Section 8 database (since 2/6/07). No longer in HUD's database. 
+800003803   05/31/07    Dropped from Section 8 database (since 11/27/07).                                             
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  18
 Program mismatch
 
 property_
@@ -543,7 +547,7 @@ property_     contract_
     id         number          MFA_PROG        program_type_name
 
 800003714                   Other S8 Rehab                                     
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  19
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  19
 Program mismatch
 
 property_
@@ -585,7 +589,7 @@ property_     contract_
     id         number          MFA_PROG        program_type_name
 
 800003780    DC39H001005    Other S8 Rehab     HFDA/8 SR                       
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  20
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  20
 Program mismatch
 
 property_
@@ -627,7 +631,7 @@ property_     contract_
     id         number          MFA_PROG        program_type_name
 
 800003793                   S8 Loan Mgmt                                       
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  21
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  21
 Program mismatch
 
 property_
@@ -659,31 +663,49 @@ property_     contract_
     id         number          MFA_PROG        program_type_name
 
 800219652    DC39Q031002                       PRAC/811                        
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  22
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  22
 Assisted units mismatch
 
-                                                                                                  assisted_
-property_                                                               contract_       MFA_        units_
-    id       NLIHC_ID    Proj_Name                                       number       ASSUNITS      count
+                                                                                                               assisted_
+property_                                                                              contract_      MFA_       units_
+    id      NLIHC_ID   Proj_Name                                                        number      ASSUNITS     count
 
-800003695    NL000999    Clifton Terrace (Wardman Court Apts)          DC39K100002         .          0    
+800003675   NL000046   Brookland Manor (Brentwood Village Apts)                       DC39L000069      373         40   
+            NL000046   Brookland Manor (Brentwood Village Apts)                       DC39M000051      373        333   
 
-800003703    NL000035    Barry Homes                                                      24          .    
+800003695   NL000999   Clifton Terrace (Wardman Court Apts)                           DC39K100002        .          0   
 
-800003714    NL000105    Fifteenth Street Cooperative                                     24          .    
+800003703   NL000035   Barry Homes                                                                      24          .   
 
-800003727    NL000134    Glendale Gardens                                                 45          .    
+800003706   NL000092   Edgewood Terrace IV (The Vista)                                DC39M000031      382        103   
 
-800003756    NL000229    Parkchester Housing Coop (New Parkchester)                      128          .    
+800003714   NL000105   Fifteenth Street Cooperative                                                     24          .   
 
-800003781    NL000274    Orchard Park (Formerly Southview Apts II)                       159          .    
+800003727   NL000134   Glendale Gardens                                                                 45          .   
 
-800003789    NL000291    Temple Courts                                                   212          .    
+800003741   NL000001   1330 7th St Apts (Immaculate Conception)                       DC39L000008      134         50   
+            NL000001   1330 7th St Apts (Immaculate Conception)                       DC39M000025      134         84   
 
-800003793    NL000307    Trenton Terrace                                                 208          .    
+800003756   NL000229   Parkchester Housing Coop (New Parkchester)                                      128          .   
 
-800003803    NL000324    Washington Apts                                                 105          .    
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  23
+800003780   NL000273   Orchard Park (Southview Apts I)                                DC39H001005       97        159   
+
+800003781   NL000274   Orchard Park (Formerly Southview Apts II)                                       159          .   
+
+800003784   NL000280   Forest Ridge & The Vistas (Formerly Stanton-Wellington Apts)   DC390005003      381         80   
+            NL000280   Forest Ridge & The Vistas (Formerly Stanton-Wellington Apts)   DC39L000067      381         79   
+            NL000280   Forest Ridge & The Vistas (Formerly Stanton-Wellington Apts)   DC39L000081      381        100   
+            NL000280   Forest Ridge & The Vistas (Formerly Stanton-Wellington Apts)   DC39M000092      381        122   
+
+800003789   NL000291   Temple Courts                                                                   212          .   
+
+800003793   NL000307   Trenton Terrace                                                                 208          .   
+
+800003803   NL000324   Washington Apts                                                                 105          .   
+
+800218816   NL000103   Fairmont I & II Apts                                           DC39M000022      205        109   
+            NL000103   Fairmont I & II Apts                                           DC39M000023      205         96   
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  23
 
 The COMPARE Procedure
 Comparison of COMP.SUBSIDY_MFA with PRESCAT.SUBSIDY_MFA
@@ -693,15 +715,48 @@ Data Set Summary
 
 Dataset                       Created          Modified  NVar    NObs
 
-COMP.SUBSIDY_MFA     18JAN15:10:59:36  18JAN15:10:59:36    32     121
-PRESCAT.SUBSIDY_MFA  29JAN15:10:32:36  29JAN15:10:32:36    32     121
+COMP.SUBSIDY_MFA     29JAN15:10:32:36  29JAN15:10:32:36    32     121
+PRESCAT.SUBSIDY_MFA  31AUG15:18:10:28  31AUG15:18:10:28    32     121
 
 
 Variables Summary
 
 Number of Variables in Common: 32.
+Number of Variables with Differing Attributes: 11.
 Number of ID Variables: 2.
 
+
+Listing of Common Variables with Differing Attributes
+
+Variable      Dataset              Type  Length  Format     Label
+
+MFA_ASSUNITS  COMP.SUBSIDY_MFA     Num        8
+              PRESCAT.SUBSIDY_MFA  Num        8             MFA_ASSUNITS
+CATEGORY      COMP.SUBSIDY_MFA     Char      50
+              PRESCAT.SUBSIDY_MFA  Char      50             CATEGORY
+Proj_Name     COMP.SUBSIDY_MFA     Char      60
+              PRESCAT.SUBSIDY_MFA  Char      60             Proj_Name
+NLIHC_ID      COMP.SUBSIDY_MFA     Char       8
+              PRESCAT.SUBSIDY_MFA  Char       8             NLIHC_ID
+Proj_Addre    COMP.SUBSIDY_MFA     Char     108
+              PRESCAT.SUBSIDY_MFA  Char     108             Proj_Addre
+ID_MFA        COMP.SUBSIDY_MFA     Char       9
+              PRESCAT.SUBSIDY_MFA  Char       9             ID_MFA
+MFA_SOURCE    COMP.SUBSIDY_MFA     Char      84
+              PRESCAT.SUBSIDY_MFA  Char      84             MFA_SOURCE
+MFA_PROG      COMP.SUBSIDY_MFA     Char      15
+              PRESCAT.SUBSIDY_MFA  Char      15             MFA_PROG
+MFA_START     COMP.SUBSIDY_MFA     Num        8  MMDDYY10.
+              PRESCAT.SUBSIDY_MFA  Num        8  MMDDYY8.   MFA_START
+MFA_END       COMP.SUBSIDY_MFA     Num        8  MMDDYY10.
+              PRESCAT.SUBSIDY_MFA  Num        8  MMDDYY8.   MFA_END
+MFA_NOTES     COMP.SUBSIDY_MFA     Char     254
+              PRESCAT.SUBSIDY_MFA  Char     254             MFA_NOTES
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  24
+
+The COMPARE Procedure
+Comparison of COMP.SUBSIDY_MFA with PRESCAT.SUBSIDY_MFA
+(Method=EXACT)
 
 Observation Summary
 
@@ -722,50 +777,73 @@ Number of Observations with All Compared Variables Equal: 0.
 
 Values Comparison Summary
 
-Number of Variables Compared with All Observations Equal: 24.
-Number of Variables Compared with Some Observations Unequal: 6.
-Number of Variables with Missing Value Differences: 4.
-Total Number of Values which Compare Unequal: 126.
-Maximum Difference: 948780.
+Number of Variables Compared with All Observations Equal: 23.
+Number of Variables Compared with Some Observations Unequal: 7.
+Number of Variables with Missing Value Differences: 1.
+Total Number of Values which Compare Unequal: 239.
+Maximum Difference: 18517072.
 
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  24
+
+Variables with Unequal Values
+
+Variable                       Type  Len   Compare Label  Ndif   MaxDif  MissDif
+
+MFA_ASSUNITS                   NUM     8   MFA_ASSUNITS     12      333        0
+CATEGORY                       CHAR   50   CATEGORY         25                 0
+Proj_Addre                     CHAR  108   Proj_Addre        2                 0
+MFA_END                        NUM     8   MFA_END          25     7305        0
+MFA_NOTES                      CHAR  254   MFA_NOTES        29                 2
+Update_Dtm                     NUM     8                   121  1.852E7        0
+Compl_end                      NUM     8                    25     7305        0
+
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  25
 
 The COMPARE Procedure
 Comparison of COMP.SUBSIDY_MFA with PRESCAT.SUBSIDY_MFA
 (Method=EXACT)
 
-Variables with Unequal Values
-
-Variable                       Type  Len  Ndif   MaxDif  MissDif
-
-CATEGORY                       CHAR   50     1                 1
-Proj_Name                      CHAR   60     1                 1
-NLIHC_ID                       CHAR    8     1                 1
-Proj_Addre                     CHAR  108     1                 1
-in_DC_Info                     NUM     8     1    1.000        0
-Update_Dtm                     NUM     8   121   948780        0
-
-
-
 Value Comparison Results for Variables
 
 ______________________________________________________________________________
+                               ||  MFA_ASSUNITS
+                               ||       Base    Compare
+ property_id  contract_number  ||  MFA_ASSUN  MFA_ASSUN      Diff.     % Diff
+                               ||        ITS        ITS
+ ___________  _______________  ||  _________  _________  _________  _________
+                               ||
+   800003675  DC39L000069      ||    40.0000   373.0000   333.0000   832.5000
+   800003675  DC39M000051      ||   333.0000   373.0000    40.0000    12.0120
+   800003706  DC39M000031      ||   103.0000   382.0000   279.0000   270.8738
+   800003741  DC39L000008      ||    50.0000   134.0000    84.0000   168.0000
+   800003741  DC39M000025      ||    84.0000   134.0000    50.0000    59.5238
+   800003780  DC39H001005      ||   159.0000    97.0000   -62.0000   -38.9937
+   800003784  DC390005003      ||    80.0000   381.0000   301.0000   376.2500
+   800003784  DC39L000067      ||    79.0000   381.0000   302.0000   382.2785
+   800003784  DC39L000081      ||   100.0000   381.0000   281.0000   281.0000
+   800003784  DC39M000092      ||   122.0000   381.0000   259.0000   212.2951
+   800218816  DC39M000022      ||   109.0000   205.0000    96.0000    88.0734
+   800218816  DC39M000023      ||    96.0000   205.0000   109.0000   113.5417
+______________________________________________________________________________
+
+
+______________________________________________________________________________
+                               ||  CATEGORY
                                ||  Base Value           Compare Value
  property_id  contract_number  ||  CATEGORY              CATEGORY
  ___________  _______________  ||  ___________________+  ___________________+
                                ||
-   800003779  DC39M000044      ||                        2 - Expiring Subsidy
-______________________________________________________________________________
-
-
-______________________________________________________________________________
-                               ||  Base Value           Compare Value
- property_id  contract_number  ||  Proj_Name             Proj_Name
- ___________  _______________  ||  ___________________+  ___________________+
-                               ||
-   800003779  DC39M000044      ||                        Sayles Place
-______________________________________________________________________________
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  25
+   800000023  DC39S931002      ||  3 - Recent Failing R  5 - Other Subsidized
+   800000063  DC390007005      ||  5 - Other Subsidized  2 - Expiring Subsidy
+   800003671  DC39T792003      ||  2 - Expiring Subsidy  5 - Other Subsidized
+   800003696  DC39S901001      ||  5 - Other Subsidized  2 - Expiring Subsidy
+   800003700  DC390012015      ||  5 - Other Subsidized  1 - Identified as At
+   800003704  DC39E000022      ||  6 - Lost Rental       2 - Expiring Subsidy
+   800003708  DC39M000039      ||  5 - Other Subsidized  4 - More Info Needed
+   800003725  DC39M000033      ||  5 - Other Subsidized  3 - Recent Failing R
+   800003746  DC39H001009      ||  5 - Other Subsidized  2 - Expiring Subsidy
+   800003751  DC390001016      ||  5 - Other Subsidized  6 - Lost Rental
+   800003758  DC39M000071      ||  5 - Other Subsidized  3 - Recent Failing R
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  26
 
 The COMPARE Procedure
 Comparison of COMP.SUBSIDY_MFA with PRESCAT.SUBSIDY_MFA
@@ -774,45 +852,122 @@ Comparison of COMP.SUBSIDY_MFA with PRESCAT.SUBSIDY_MFA
 Value Comparison Results for Variables
 
 ______________________________________________________________________________
+                               ||  CATEGORY
                                ||  Base Value           Compare Value
- property_id  contract_number  ||  NLIHC_ID              NLIHC_ID
- ___________  _______________  ||  ________              ________
+ property_id  contract_number  ||  CATEGORY              CATEGORY
+ ___________  _______________  ||  ___________________+  ___________________+
                                ||
-   800003779  DC39M000044      ||                        NL000262
+   800003762  DC39T802001      ||  5 - Other Subsidized  2 - Expiring Subsidy
+   800003782  DC39L000016      ||  3 - Recent Failing R  5 - Other Subsidized
+   800003783  DC390704201      ||  3 - Recent Failing R  5 - Other Subsidized
+   800003784  DC390005003      ||  5 - Other Subsidized  2 - Expiring Subsidy
+   800003784  DC39L000067      ||  5 - Other Subsidized  2 - Expiring Subsidy
+   800003784  DC39L000081      ||  5 - Other Subsidized  2 - Expiring Subsidy
+   800003784  DC39M000092      ||  5 - Other Subsidized  2 - Expiring Subsidy
+   800003785  DC39M000038      ||  3 - Recent Failing R  2 - Expiring Subsidy
+   800003786  DC390001015      ||  3 - Recent Failing R  5 - Other Subsidized
+   800003788  DC390010006      ||  2 - Expiring Subsidy  5 - Other Subsidized
+   800003800  DC398023019      ||  5 - Other Subsidized  2 - Expiring Subsidy
+   800003806  DC39T792004      ||  3 - Recent Failing R  5 - Other Subsidized
+   800024118  DC39K100006      ||  3 - Recent Failing R  5 - Other Subsidized
+   800024865  DC39L000021      ||  5 - Other Subsidized  2 - Expiring Subsidy
 ______________________________________________________________________________
 
 
 ______________________________________________________________________________
+                               ||  Proj_Addre
                                ||  Base Value           Compare Value
  property_id  contract_number  ||  Proj_Addre            Proj_Addre
  ___________  _______________  ||  ___________________+  ___________________+
                                ||
-   800003779  DC39M000044      ||                        2716 DOUGLASS PL SE
+   800003675  DC39L000069      ||  2400 14th Street, NE  2420 - 2428 14th ST
+   800003675  DC39M000051      ||  2400 14th Street, NE  2420 - 2428 14th ST
 ______________________________________________________________________________
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  27
 
+The COMPARE Procedure
+Comparison of COMP.SUBSIDY_MFA with PRESCAT.SUBSIDY_MFA
+(Method=EXACT)
+
+Value Comparison Results for Variables
 
 ______________________________________________________________________________
+                               ||  MFA_END
                                ||       Base    Compare
- property_id  contract_number  ||  in_DC_Inf  in_DC_Inf      Diff.     % Diff
-                               ||          o          o
+ property_id  contract_number  ||    MFA_END    MFA_END      Diff.     % Diff
  ___________  _______________  ||  _________  _________  _________  _________
                                ||
-   800003779  DC39M000044      ||          0     1.0000     1.0000          .
+   800000063  DC390007005      ||   02/28/15   09/30/15   214.0000     1.0622
+   800003671  DC39T792003      ||   12/20/14   12/20/19       1826     9.0950
+   800003675  DC39L000069      ||   09/30/15   10/31/15    31.0000     0.1523
+   800003681  DC39E000003      ||   11/30/14   11/30/15   365.0000     1.8198
+   800003684  DC39Q881003      ||   04/30/15   04/30/16   366.0000     1.8112
+   800003691  DC39A001003      ||   10/31/14   07/31/34       7213    36.0164
+   800003698  DC390012007      ||   08/02/14   08/02/34       7305    36.6404
+   800003704  DC39E000022      ||   05/31/14   05/31/15   365.0000     1.8366
+   800003705  DC39E000004      ||   01/07/15   10/31/34       7237    36.0139
+   800003719  DC39L000078      ||   02/28/15   05/31/15    92.0000     0.4566
+   800003728  DC39M000095      ||   11/30/14   09/30/19       1765     8.7999
+   800003738  DC39M000030      ||   12/31/14   06/30/15   181.0000     0.9010
+   800003741  DC39L000008      ||   10/31/24   09/30/24   -31.0000    -0.1309
+   800003755  DC398023002      ||   10/01/14   10/01/15   365.0000     1.8253
+   800003758  DC39M000071      ||   08/31/14   08/31/19       1826     9.1455
+   800003759  DC39M000072      ||   11/29/14   11/29/19       1826     9.1045
+   800003761  DC39A001002      ||   09/07/14   09/07/34       7305    36.5744
+   800003783  DC390704201      ||   03/22/15   03/22/35       7305    36.2189
+   800003787  DC39L000005      ||   02/28/15   02/29/16   366.0000     1.8166
+   800003788  DC390010006      ||   07/31/14   07/31/19       1826     9.1598
+   800003807  DC39T781003      ||   02/01/15   02/01/20       1826     9.0755
+   800053918  DC39S951003      ||   03/31/15   03/31/16   366.0000     1.8139
+   800054049  DC39Q961001      ||   06/30/12   06/30/15       1095     5.7109
+   800054053  DC39Q971001      ||   05/31/15   05/31/16   366.0000     1.8084
+   800213311  DC39S001001      ||   01/31/15   01/31/16   365.0000     1.8142
 ______________________________________________________________________________
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  28
 
+The COMPARE Procedure
+Comparison of COMP.SUBSIDY_MFA with PRESCAT.SUBSIDY_MFA
+(Method=EXACT)
+
+Value Comparison Results for Variables
 
 ______________________________________________________________________________
-                               ||       Base    Compare
- property_id  contract_number  ||  Update_Dt  Update_Dt      Diff.     % Diff
-                               ||          m          m
- ___________  _______________  ||  _________  _________  _________  _________
+                               ||  MFA_NOTES
+                               ||  Base Value           Compare Value
+ property_id  contract_number  ||  MFA_NOTES             MFA_NOTES
+ ___________  _______________  ||  ___________________+  ___________________+
                                ||
-   800000023  DC39S931002      ||  18JAN2015  29JAN2015     948780     0.0546
-   800000032  DC390007009      ||  18JAN2015  29JAN2015     948780     0.0546
-   800000063  DC390007005      ||  18JAN2015  29JAN2015     948780     0.0546
-   800000073  DC39A001001      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003669  DC39T871003      ||  18JAN2015  29JAN2015     948780     0.0546
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  26
+   800000063  DC390007005      ||  Exp. Date updated fr  02/15 Exp. Date upda
+   800003671  DC39T792003      ||  10/14 - Expected to   5/15 Sec 202 exp dat
+   800003675  DC39L000069      ||  The 373 units are co  The 373 units are co
+   800003675  DC39M000051      ||  The 373 units are co  The 373 units are co
+   800003681  DC39E000003      ||  10/14 - Expected to   12/14 - Exp. Date up
+   800003684  DC39Q881003      ||  10/14 - Expected to   6/15 - 202/811 exp d
+   800003691  DC39A001003      ||  Expiration date upda  Exp date updated to
+   800003698  DC390012007      ||  Expiration date upda  Exp date updated to
+   800003704  DC39E000022      ||  Management change fr  5/15 S8 exp date upd
+   800003705  DC39E000004      ||  Exp. Date updated fr  Exp date updated fro
+   800003719  DC39L000078      ||  Expiration date upda  5/15 Sec 8 exp date
+   800003728  DC39M000095      ||  Expiration date upda  Exp date updated to
+   800003738  DC39M000030      ||  10/14 - Expected to   02/15 Expiration dat
+   800003751  DC390001016      ||  Exp. Date updated fr  Missing in 11-25 MFA
+   800003755  DC398023002      ||  Exp. Date updated fr  Exp date updated to
+   800003756                   ||  Exp date updated fro  Not in HUD database
+   800003758  DC39M000071      ||  Expiration date upda  Exp date updated to
+   800003759  DC39M000072      ||  Expiration date upda  4/10/15 LMSA extende
+   800003761  DC39A001002      ||  Exp. Date updated fr  Exp date updated to
+   800003781                   ||                        Not in HUD databbase
+   800003783  DC390704201      ||  Expiration date upda  5/10 - Sec 202 exp d
+   800003787  DC39L000005      ||  Exp. Date updated fr  4/10/15 LMSA extende
+   800003788  DC390010006      ||  Expiration date upda  5/15 Sec 8 exp date
+   800003807  DC39T781003      ||  Expiration Date upda  4/10/15 202/8 SR ext
+   800053918  DC39S951003      ||  10/14 - PRAC Contrac  4/10/15 PRAC extende
+   800054049  DC39Q961001      ||                        Exp. Date updated fr
+   800054053  DC39Q971001      ||  10/14 - PRAC Contrac  5/15 202/811 exp dat
+   800213311  DC39S001001      ||  Exp. Updated from 1/  02/15 Exp. Date upda
+   800218062  DC39S021002      ||  10/14 - PRAC Contrac  Exp. Date updated to
+______________________________________________________________________________
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  29
 
 The COMPARE Procedure
 Comparison of COMP.SUBSIDY_MFA with PRESCAT.SUBSIDY_MFA
@@ -826,40 +981,40 @@ ______________________________________________________________________________
                                ||          m          m
  ___________  _______________  ||  _________  _________  _________  _________
                                ||
-   800003671  DC39T792003      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003672  DC392764201      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003673  DC390007006      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003674  DC39M000060      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003675  DC39L000069      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003675  DC39M000051      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003678  DC390010018      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003679  DC390005009      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003680  DC39H001003      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003681  DC39E000003      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003683  DC398023001      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003684  DC39Q881003      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003685  DC398023017      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003686  DC39M000041      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003689  DC39H001001      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003690  DC390007010      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003691  DC39A001003      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003694  DC39A001004      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003695  DC39K100002      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003696  DC39S901001      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003698  DC390012007      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003699  DC390017001      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003700  DC390012015      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003701  DC39Q891001      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003702  DC392815201      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003703                   ||  18JAN2015  29JAN2015     948780     0.0546
-   800003704  DC39E000022      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003705  DC39E000004      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003706  DC39M000031      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003708  DC39M000039      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003709  DC390001013      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003713  DC39Q933001      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003714                   ||  18JAN2015  29JAN2015     948780     0.0546
-PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                    10:32 Thursday, January 29, 2015  27
+   800000023  DC39S931002      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800000032  DC390007009      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800000063  DC390007005      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800000073  DC39A001001      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003669  DC39T871003      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003671  DC39T792003      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003672  DC392764201      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003673  DC390007006      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003674  DC39M000060      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003675  DC39L000069      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003675  DC39M000051      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003678  DC390010018      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003679  DC390005009      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003680  DC39H001003      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003681  DC39E000003      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003683  DC398023001      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003684  DC39Q881003      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003685  DC398023017      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003686  DC39M000041      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003689  DC39H001001      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003690  DC390007010      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003691  DC39A001003      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003694  DC39A001004      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003695  DC39K100002      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003696  DC39S901001      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003698  DC390012007      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003699  DC390017001      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003700  DC390012015      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003701  DC39Q891001      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003702  DC392815201      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003703                   ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003704  DC39E000022      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003705  DC39E000004      ||  29JAN2015  31AUG2015   18517072     1.0653
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  30
 
 The COMPARE Procedure
 Comparison of COMP.SUBSIDY_MFA with PRESCAT.SUBSIDY_MFA
@@ -873,9 +1028,60 @@ ______________________________________________________________________________
                                ||          m          m
  ___________  _______________  ||  _________  _________  _________  _________
                                ||
-   800003715  DC398023003      ||  18JAN2015  29JAN2015     948780     0.0546
-   800003716  DC398023020      ||  18JAN2015  29JAN2015     948780     0.0546
+   800003706  DC39M000031      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003708  DC39M000039      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003709  DC390001013      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003713  DC39Q933001      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003714                   ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003715  DC398023003      ||  29JAN2015  31AUG2015   18517072     1.0653
+   800003716  DC398023020      ||  29JAN2015  31AUG2015   18517072     1.0653
 
 NOTE: The MAXPRINT=40 printing limit has been reached for the variable Update_Dtm. No more values will be printed for this
       comparison.
+______________________________________________________________________________
+
+
+______________________________________________________________________________
+                               ||       Base    Compare
+ property_id  contract_number  ||  Compl_end  Compl_end      Diff.     % Diff
+ ___________  _______________  ||  _________  _________  _________  _________
+                               ||
+   800000063  DC390007005      ||      20147      20361   214.0000     1.0622
+   800003671  DC39T792003      ||      20077      21903       1826     9.0950
+   800003675  DC39L000069      ||      20361      20392    31.0000     0.1523
+   800003681  DC39E000003      ||      20057      20422   365.0000     1.8198
+   800003684  DC39Q881003      ||      20208      20574   366.0000     1.8112
+   800003691  DC39A001003      ||      20027      27240       7213    36.0164
+   800003698  DC390012007      ||      19937      27242       7305    36.6404
+   800003704  DC39E000022      ||      19874      20239   365.0000     1.8366
+   800003705  DC39E000004      ||      20095      27332       7237    36.0139
+   800003719  DC39L000078      ||      20147      20239    92.0000     0.4566
+   800003728  DC39M000095      ||      20057      21822       1765     8.7999
+   800003738  DC39M000030      ||      20088      20269   181.0000     0.9010
+   800003741  DC39L000008      ||      23680      23649   -31.0000    -0.1309
+   800003755  DC398023002      ||      19997      20362   365.0000     1.8253
+   800003758  DC39M000071      ||      19966      21792       1826     9.1455
+PRESCAT/Create_subsidy_mfa.sas:  NeighborhoodInfo DC                                       18:10 Monday, August 31, 2015  31
+
+The COMPARE Procedure
+Comparison of COMP.SUBSIDY_MFA with PRESCAT.SUBSIDY_MFA
+(Method=EXACT)
+
+Value Comparison Results for Variables
+
+______________________________________________________________________________
+                               ||       Base    Compare
+ property_id  contract_number  ||  Compl_end  Compl_end      Diff.     % Diff
+ ___________  _______________  ||  _________  _________  _________  _________
+                               ||
+   800003759  DC39M000072      ||      20056      21882       1826     9.1045
+   800003761  DC39A001002      ||      19973      27278       7305    36.5744
+   800003783  DC390704201      ||      20169      27474       7305    36.2189
+   800003787  DC39L000005      ||      20147      20513   366.0000     1.8166
+   800003788  DC390010006      ||      19935      21761       1826     9.1598
+   800003807  DC39T781003      ||      20120      21946       1826     9.0755
+   800053918  DC39S951003      ||      20178      20544   366.0000     1.8139
+   800054049  DC39Q961001      ||      19174      20269       1095     5.7109
+   800054053  DC39Q971001      ||      20239      20605   366.0000     1.8084
+   800213311  DC39S001001      ||      20119      20484   365.0000     1.8142
 ______________________________________________________________________________

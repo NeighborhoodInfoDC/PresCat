@@ -1,18 +1,18 @@
-1                                       The SAS System           17:56 Saturday, August 1, 2015
+1                                         The SAS System             18:11 Monday, August 31, 2015
 
 NOTE: Copyright (c) 2002-2008 by SAS Institute Inc., Cary, NC, USA. 
 NOTE: SAS (r) Proprietary Software 9.2 (TS2M3) 
       Licensed to THE URBAN INSTITUTE, Site 70097024.
-NOTE: This session is executing on the X64_VSHOME  platform.
+NOTE: This session is executing on the X64_VSPRO  platform.
 
 
 
 NOTE: SAS initialization used:
-      real time           0.16 seconds
-      cpu time            0.12 seconds
+      real time           0.77 seconds
+      cpu time            0.17 seconds
       
 
-NOTE: AUTOEXEC processing beginning; file is C:\Users\Peter\Documents\My SAS 
+NOTE: AUTOEXEC processing beginning; file is D:\Users\ptatian\Documents\My SAS 
       Files\9.2\Autoexnt.sas.
 
 
@@ -44,35 +44,35 @@ NOTE: AUTOEXEC processing completed.
 24                        recorded. (Values need to be verified against older data.)
 25         **************************************************************************/
 26         
-27         /*%include "L:\SAS\Inc\StdLocal.sas";*/
-28         %include "C:\DCData\SAS\Inc\StdLocal.sas";
-NOTE: Library _METADAT does not exist.
-74        +
-75        +options ls=124 ps=48;    ** Landscape **;
-2 The SAS System                                                                              17:56 Saturday, August 1, 2015
+27         %include "L:\SAS\Inc\StdLocal.sas";
+NOTE: Libref _METADAT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: L:\Libraries\Metadata\Data
+73        +
+74        +options ls=124 ps=48;    ** Landscape **;
+2 The SAS System                                                                               18:11 Monday, August 31, 2015
 
-76        +
-77        +** Output title **;
-78        +
-79        +title "&_library/&_program:  NeighborhoodInfo DC";
-80        +
-81        +** Define General library for local session only **;
-82        +
-83        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
+75        +
+76        +** Output title **;
+77        +
+78        +title "&_library/&_program:  NeighborhoodInfo DC";
+79        +
+80        +** Define General library for local session only **;
+81        +
+82        +%DCData_lib( General, env=windows, macdef=dcautos uiautos sasautos )
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref GENERA_L was successfully assigned as follows: 
       Engine:        V9 
-      Physical Name: C:\DCData\Libraries\General\Data
-NOTE: Libname GENERA_R refers to the same physical library as GENERA_L.
+      Physical Name: D:\DCData\Libraries\General\Data
 NOTE: Libref GENERA_R was successfully assigned as follows: 
       Engine:        V9 
-      Physical Name: C:\DCData\Libraries\General\Data
+      Physical Name: L:\Libraries\General\Data
 NOTE: Libref GENERAL was successfully assigned as follows: 
       Levels:           2
       Engine(1):        V9 
-      Physical Name(1): C:\DCData\Libraries\General\Data
+      Physical Name(1): D:\DCData\Libraries\General\Data
       Engine(2):        V9 
-      Physical Name(2): C:\DCData\Libraries\General\Data
+      Physical Name(2): L:\Libraries\General\Data
 
 =====================================================================
 Current FmtSearch Option value:
@@ -93,34 +93,34 @@ NOTE:    GENERAL.FORMATS EXISTS
 =====================================================================
 Current Sasautos Option value:
 
-     GENERA_L DCAUTOS UIAUTOS SASAUTOS
+     TTAUTOS  GENERA_L DCAUTOS UIAUTOS SASAUTOS
 
 =====================================================================
 
-3 The SAS System                                                                              17:56 Saturday, August 1, 2015
 
+3 The SAS System                                                                               18:11 Monday, August 31, 2015
 
 =====================================================================
 Current Sasautos Option value:
 
-     GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
+     TTAUTOS GENERA_L  GENERA_R DCAUTOS UIAUTOS SASAUTOS
 
 =====================================================================
 
-84        +
-85        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
+83        +
+84        +%let _userid = %sysfunc( putc( %lowcase(&SYSUSERID), $longusr. ) );
 NOTE: %INCLUDE (level 1) ending.
-86         
-87         ** Define libraries **;
-88         %DCData_lib( PresCat, local=n )
+85         
+86         ** Define libraries **;
+87         %DCData_lib( PresCat, local=n )
 MPRINT(DCDATA_LIB):   options nomprint;
 NOTE: Libref PRESCA_R was successfully assigned as follows: 
       Engine:        V9 
-      Physical Name: C:\DCData\Libraries\PresCat\Data
+      Physical Name: L:\Libraries\PresCat\Data
 NOTE: Libref PRESCAT was successfully assigned as follows: 
       Levels:           1
       Engine(1):        V9 
-      Physical Name(1): C:\DCData\Libraries\PresCat\Data
+      Physical Name(1): L:\Libraries\PresCat\Data
 
 =====================================================================
 Current FmtSearch Option value:
@@ -142,61 +142,61 @@ NOTE:    PRESCAT.FORMATS EXISTS
 =====================================================================
 Current Sasautos Option value:
 
-     PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
+     TTAUTOS  PRESCA_R GENERA_L GENERA_R DCAUTOS UIAUTOS SASAUTOS
 
 =====================================================================
-4 The SAS System                                                                              17:56 Saturday, August 1, 2015
 
+4 The SAS System                                                                               18:11 Monday, August 31, 2015
 
-89         
-90         /*
-91         proc format;
-92           value $Portfol
-93             '202 Direct Loan/Elderly/Pre - 1974' = 'Section 202/811'
-94             '202/8 Direct Loan/Elderly-Handicapped' = 'Section 202/811'
-95             '202/811 Capital Advance' = 'Section 202/811'
-96             '207/223(f) Pur/Refin Hsg.' = 'Other'
-97             '220 Urban Renewal Hsg.' = 'Other'
-98             '221(d)(3) BMIR Urban Renewal/Coop Hsg' = 'Section 221(d)(3) below market rate interest (BMIR)'
-99             '221(d)(3) Mkt. Rate Moderate Inc/Disp Fams' = 'Section 221(d)(3)&(4) with affordability restrictions'
-100            '221(d)(4) Mkt. Rate Mod Inc/Disp Fams' = 'Section 221(d)(3)&(4) with affordability restrictions'
-101            '223(a)(7)/207/223(f) Refinanced Insurance' = 'Section 223'
-102            '223(a)(7)/220 Refi/Urban Renewal' = 'Section 223'
-103            '223(a)(7)/221(d)(3) MKT Refi/Moderate Income' = 'Section 221(d)(3)&(4) with affordability restrictions'
-104            '223(a)(7)/221(d)(4) MKT Refi/Moderate Income' = 'Section 221(d)(3)&(4) with affordability restrictions'
-105            '223(a)(7)/221(d)(4) MKT/244 Refi/Mod Income Co-In' = 'Section 221(d)(3)&(4) with affordability restrictions'
-106            '223(a)(7)/232 Refi/Nursing Home' = 'Section 223'
-107            '232 Nursing Homes' = 'Section 232'
-108            '232/223(f)/Pur/Refin/Nursing Hms' = 'Section 232'
-109            '236(j)(1)/Lower Income Families' = 'Section 236'
-110            '241(a)/221-BMIR Improvements & Additions' = 'Other'
-111            '542(b) QPE Risk Sharing-Recent Comp' = 'Section 542(b)&(c)'
-112            '542(b) QPE Risk Sharing-Existing' = 'Section 542(b)&(c)'
-113            '542(c) HFA Risk Sharing-Existing' = 'Section 542(b)&(c)'
-114            '542(c) HFA Risk Sharing-Recent Comp' = 'Section 542(b)&(c)'
-115            'CDBG' = 'Community Development Block Grants'
-116            'DC Housing Production Trust Fund' = 'DC Housing Production Trust Fund'
-117            'HOME' = 'HOME'
-118            'Low Income Housing Tax Credit' = 'LIHTC'
-119            'McKinney Vento Act loan' = 'McKinney Vento Act loan'
-120            'PRAC 202/811' = 'Project Rental Assistance Contract (PRAC)'
-121            'Public housing' = 'Public Housing'
-122            'Sec 202' = 'Section 202/811'
-123            'Sec 8 loan management' = 'Project-based Section 8'
-124            'Sec 8 new construction' = 'Project-based Section 8'
-125            'Sec 8 property disposition' = 'Project-based Section 8'
-126            'Sec 8 rehabilitation' = 'Project-based Section 8'
-127            'Sec 8 state agency' = 'Project-based Section 8'
-128            'Tax exempt bond' = 'Tax exempt bond'
-129            other = ' ';
-130        run;
-131        */
-132        
-133        proc sort data=PresCat.Subsidy_mfa out=Subsidy_mfa;
-5 The SAS System                                                                              17:56 Saturday, August 1, 2015
+88         
+89         /*
+90         proc format;
+91           value $Portfol
+92             '202 Direct Loan/Elderly/Pre - 1974' = 'Section 202/811'
+93             '202/8 Direct Loan/Elderly-Handicapped' = 'Section 202/811'
+94             '202/811 Capital Advance' = 'Section 202/811'
+95             '207/223(f) Pur/Refin Hsg.' = 'Other'
+96             '220 Urban Renewal Hsg.' = 'Other'
+97             '221(d)(3) BMIR Urban Renewal/Coop Hsg' = 'Section 221(d)(3) below market rate interest (BMIR)'
+98             '221(d)(3) Mkt. Rate Moderate Inc/Disp Fams' = 'Section 221(d)(3)&(4) with affordability restrictions'
+99             '221(d)(4) Mkt. Rate Mod Inc/Disp Fams' = 'Section 221(d)(3)&(4) with affordability restrictions'
+100            '223(a)(7)/207/223(f) Refinanced Insurance' = 'Section 223'
+101            '223(a)(7)/220 Refi/Urban Renewal' = 'Section 223'
+102            '223(a)(7)/221(d)(3) MKT Refi/Moderate Income' = 'Section 221(d)(3)&(4) with affordability restrictions'
+103            '223(a)(7)/221(d)(4) MKT Refi/Moderate Income' = 'Section 221(d)(3)&(4) with affordability restrictions'
+104            '223(a)(7)/221(d)(4) MKT/244 Refi/Mod Income Co-In' = 'Section 221(d)(3)&(4) with affordability restrictions'
+105            '223(a)(7)/232 Refi/Nursing Home' = 'Section 223'
+106            '232 Nursing Homes' = 'Section 232'
+107            '232/223(f)/Pur/Refin/Nursing Hms' = 'Section 232'
+108            '236(j)(1)/Lower Income Families' = 'Section 236'
+109            '241(a)/221-BMIR Improvements & Additions' = 'Other'
+110            '542(b) QPE Risk Sharing-Recent Comp' = 'Section 542(b)&(c)'
+111            '542(b) QPE Risk Sharing-Existing' = 'Section 542(b)&(c)'
+112            '542(c) HFA Risk Sharing-Existing' = 'Section 542(b)&(c)'
+113            '542(c) HFA Risk Sharing-Recent Comp' = 'Section 542(b)&(c)'
+114            'CDBG' = 'Community Development Block Grants'
+115            'DC Housing Production Trust Fund' = 'DC Housing Production Trust Fund'
+116            'HOME' = 'HOME'
+117            'Low Income Housing Tax Credit' = 'LIHTC'
+118            'McKinney Vento Act loan' = 'McKinney Vento Act loan'
+119            'PRAC 202/811' = 'Project Rental Assistance Contract (PRAC)'
+120            'Public housing' = 'Public Housing'
+121            'Sec 202' = 'Section 202/811'
+122            'Sec 8 loan management' = 'Project-based Section 8'
+123            'Sec 8 new construction' = 'Project-based Section 8'
+124            'Sec 8 property disposition' = 'Project-based Section 8'
+125            'Sec 8 rehabilitation' = 'Project-based Section 8'
+126            'Sec 8 state agency' = 'Project-based Section 8'
+127            'Tax exempt bond' = 'Tax exempt bond'
+128            other = ' ';
+129        run;
+130        */
+131        
+132        proc sort data=PresCat.Subsidy_mfa out=Subsidy_mfa;
+133          by Nlihc_id mfa_start mfa_end;
+5 The SAS System                                                                               18:11 Monday, August 31, 2015
 
-134          by Nlihc_id mfa_start mfa_end;
-135        
+134        
 
 NOTE: There were 121 observations read from the data set PRESCAT.SUBSIDY_MFA.
 NOTE: SAS sort was used.
@@ -208,11 +208,11 @@ NOTE: PROCEDURE SORT used (Total process time):
       cpu time            0.00 seconds
       
 
-136        proc sort data=PresCat.Subsidy_other out=Subsidy_other;
-137          by Nlihc_id poa_start poa_end;
-138        
-139        ** New subsidy records **;
-140        
+135        proc sort data=PresCat.Subsidy_other out=Subsidy_other;
+136          by Nlihc_id poa_start poa_end;
+137        
+138        ** New subsidy records **;
+139        
 
 NOTE: There were 586 observations read from the data set PRESCAT.SUBSIDY_OTHER.
 NOTE: SAS sort was used.
@@ -220,48 +220,48 @@ NOTE: The data set WORK.SUBSIDY_OTHER has 586 observations and 12 variables.
 NOTE: Compressing data set WORK.SUBSIDY_OTHER decreased size by 45.45 percent. 
       Compressed is 6 pages; un-compressed would require 11 pages.
 NOTE: PROCEDURE SORT used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.01 seconds
+      real time           0.01 seconds
+      cpu time            0.00 seconds
       
 
-141        data Subsidy_new;
-142        
-143          length
-144            Nlihc_id $ 8
-145            Units_Assist  8
-146            POA_start  8
-147            POA_end  8
-148            POA_end_prev 8
-149            contract_number $ 11
-150            rent_to_FMR_description $ 40
-151            Subsidy_Active  3
-152            Subsidy_Info_Source_ID $ 40
-153            Subsidy_Info_Source $ 40
-154            Subsidy_Info_Source_Date  8
-155            Update_Dtm  8
-156            Program $ 32
-157            Agency $ 80;
-6 The SAS System                                                                              17:56 Saturday, August 1, 2015
+140        data Subsidy_new;
+141        
+142          length
+143            Nlihc_id $ 8
+144            Units_Assist  8
+145            POA_start  8
+146            POA_end  8
+147            POA_end_prev 8
+148            contract_number $ 11
+149            rent_to_FMR_description $ 40
+150            Subsidy_Active  3
+151            Subsidy_Info_Source_ID $ 40
+152            Subsidy_Info_Source $ 40
+153            Subsidy_Info_Source_Date  8
+154            Update_Dtm  8
+155            Program $ 32
+156            Agency $ 80;
+157        
+6 The SAS System                                                                               18:11 Monday, August 31, 2015
 
-158        
-159          Nlihc_id = "NL001033";
-160          Units_Assist = .;
-161          POA_start = .;
-162          POA_end = .;
-163          POA_end_prev = .;
-164          contract_number = "DC39Q031002";
-165          rent_to_FMR_description = "";
-166          Subsidy_Active = .;
-167          Subsidy_Info_Source_ID = "800219652/DC39Q031002";
-168          Subsidy_Info_Source = "HUD/MFA";
-169          Subsidy_Info_Source_Date = .;
-170          Update_Dtm = .;
-171          Program = "PRAC/811";
-172          Agency = "";
-173        
-174          output;
-175        
-176        run;
+158          Nlihc_id = "NL001033";
+159          Units_Assist = .;
+160          POA_start = .;
+161          POA_end = .;
+162          POA_end_prev = .;
+163          contract_number = "DC39Q031002";
+164          rent_to_FMR_description = "";
+165          Subsidy_Active = .;
+166          Subsidy_Info_Source_ID = "800219652/DC39Q031002";
+167          Subsidy_Info_Source = "HUD/MFA";
+168          Subsidy_Info_Source_Date = .;
+169          Update_Dtm = .;
+170          Program = "PRAC/811";
+171          Agency = "";
+172        
+173          output;
+174        
+175        run;
 
 NOTE: The data set WORK.SUBSIDY_NEW has 1 observations and 14 variables.
 NOTE: Compressing data set WORK.SUBSIDY_NEW increased size by 100.00 percent. 
@@ -271,106 +271,106 @@ NOTE: DATA statement used (Total process time):
       cpu time            0.00 seconds
       
 
-177        
-178        data PresCat.Subsidy (label="Preservation Catalog, Project subsidies");
-179        
-180          length Nlihc_id $ 8 Subsidy_id 8;
-181        
-182          set
-183            Subsidy_mfa
-184              (keep=Nlihc_id Subsidy_Active Program Contract_Number mfa_assunits mfa_start mfa_end Subsidy_Info_Source
-185                    Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm Compl_end
-186                    rent_to_FMR_description
-187               rename=(mfa_assunits=Units_Assist mfa_start=POA_start mfa_end=POA_end))
-188            Subsidy_other
-189              (drop=Subsidy_Info_Source_Var)
-190            Subsidy_new;
-191          by Nlihc_id poa_start poa_end;
-192        
-193          where Nlihc_id ~= "";
-194        
-7 The SAS System                                                                              17:56 Saturday, August 1, 2015
+176        
+177        data PresCat.Subsidy (label="Preservation Catalog, Project subsidies");
+178        
+179          length Nlihc_id $ 8 Subsidy_id 8;
+180        
+181          set
+182            Subsidy_mfa
+183              (keep=Nlihc_id Subsidy_Active Program Contract_Number mfa_assunits mfa_start mfa_end Subsidy_Info_Source
+184                    Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm Compl_end
+185                    rent_to_FMR_description
+186               rename=(mfa_assunits=Units_Assist mfa_start=POA_start mfa_end=POA_end))
+187            Subsidy_other
+188              (drop=Subsidy_Info_Source_Var)
+189            Subsidy_new;
+190          by Nlihc_id poa_start poa_end;
+191        
+192          where Nlihc_id ~= "";
+193        
+194          ** Subsidy ID number **;
+7 The SAS System                                                                               18:11 Monday, August 31, 2015
 
-195          ** Subsidy ID number **;
-196        
-197          if first.Nlihc_id then Subsidy_id = 0;
-198        
-199          Subsidy_id + 1;
-200        
-201          POA_start_orig = POA_start;
-202        
-203          format POA_start_orig POA_end_prev mmddyy10.;
-204        
-205          ** Set subsidies to not active if project is in Lost Rental list **;
-206          ****** NB: NEED TO REVIEW THESE PROJECTS AND FIX SOURCE INFO ******;
-207        
-208          if Nlihc_id in ( "NL000035", "NL000056", "NL000068", "NL000087", "NL000098",
-209                           "NL000105", "NL000132", "NL000134", "NL000137", "NL000196",
-210                           "NL000199", "NL000231", "NL000307", "NL000324", "NL000371",
-211                           "NL000382", "NL000394", "NL000414", "NL000416" ) then Subsidy_Active = 0;
-212        
-213          /*
-214          Program = left( compbl( Program ) );
-215        
-216          if Program = '542(b)QPE Risk Sharing-Existing' then Program = '542(b) QPE Risk Sharing-Existing';
-217        
-218          Program = tranwrd( Program, '/ ', '/' );
-219          */
-220        
-221          length Agency $ 80;
-222        
-223          if Program = "LIHTC" then Agency = "DC Dept of Housing and Community Development; DC Housing Finance Agency";
-224          else if Subsidy_info_Source =: "DCFHA" then Agency = "DC Housing Finance Agency";
-225          else if Subsidy_Info_Source =: "DCHA" then Agency = "DC Housing Authority";
-226          else if Subsidy_Info_Source in ( "Email from KIM DCHA", "Email from Kim Cole DCHA" ) then Agency = "DC Housing
-226      ! Authority";
-227          else if Subsidy_Info_Source =: "DHCD" then Agency = "DC Dept of Housing and Community Development";
-228          else if Subsidy_Info_Source =: "DC/" then Agency = "DC";
-229          else if Subsidy_Info_Source =: "HUD" then Agency = "US Dept of Housing and Urban Development";
-230          else Agency = "Other";
-231        
-232          length Portfolio $ 16;
-233        
-234          Portfolio = put( Program, $progtoportfolio. );
-235        
-236          **** CORRECTIONS ****;
-237        
-238          ** Museum Square One **;
-239        
-8 The SAS System                                                                              17:56 Saturday, August 1, 2015
+195        
+196          if first.Nlihc_id then Subsidy_id = 0;
+197        
+198          Subsidy_id + 1;
+199        
+200          POA_start_orig = POA_start;
+201        
+202          format POA_start_orig POA_end_prev mmddyy10.;
+203        
+204          ** Set subsidies to not active if project is in Lost Rental list **;
+205          ****** NB: NEED TO REVIEW THESE PROJECTS AND FIX SOURCE INFO ******;
+206        
+207          if Nlihc_id in ( "NL000035", "NL000056", "NL000068", "NL000087", "NL000098",
+208                           "NL000105", "NL000132", "NL000134", "NL000137", "NL000196",
+209                           "NL000199", "NL000231", "NL000307", "NL000324", "NL000371",
+210                           "NL000382", "NL000394", "NL000414", "NL000416" ) then Subsidy_Active = 0;
+211        
+212          /*
+213          Program = left( compbl( Program ) );
+214        
+215          if Program = '542(b)QPE Risk Sharing-Existing' then Program = '542(b) QPE Risk Sharing-Existing';
+216        
+217          Program = tranwrd( Program, '/ ', '/' );
+218          */
+219        
+220          length Agency $ 80;
+221        
+222          if Program = "LIHTC" then Agency = "DC Dept of Housing and Community Development; DC Housing Finance Agency";
+223          else if Subsidy_info_Source =: "DCFHA" then Agency = "DC Housing Finance Agency";
+224          else if Subsidy_Info_Source =: "DCHA" then Agency = "DC Housing Authority";
+225          else if Subsidy_Info_Source in ( "Email from KIM DCHA", "Email from Kim Cole DCHA" ) then Agency = "DC Housing
+225      ! Authority";
+226          else if Subsidy_Info_Source =: "DHCD" then Agency = "DC Dept of Housing and Community Development";
+227          else if Subsidy_Info_Source =: "DC/" then Agency = "DC";
+228          else if Subsidy_Info_Source =: "HUD" then Agency = "US Dept of Housing and Urban Development";
+229          else Agency = "Other";
+230        
+231          length Portfolio $ 16;
+232        
+233          Portfolio = put( Program, $progtoportfolio. );
+234        
+235          **** CORRECTIONS ****;
+236        
+237          ** Museum Square One **;
+238        
+239          if nlihc_id = "NL000208" and subsidy_id = 1 then do;
+8 The SAS System                                                                               18:11 Monday, August 31, 2015
 
-240          if nlihc_id = "NL000208" and subsidy_id = 1 then do;
-241            poa_end = '31oct2011'd;
-242            compl_end = poa_end;
-243            Subsidy_Active = 0;
-244          end;
-245        
-246          if nlihc_id = "NL000208" and subsidy_id = 2 then do;
-247            poa_end = '01oct2015'd;
-248          end;
-249        
-250          label
-251            NLIHC_ID = "Preservation Catalog project ID"
-252            Subsidy_ID = "Preservation Catalog subsidy ID"
-253            POA_start = "Period of affordability, current start date"
-254            POA_start_orig = "Period of affordability, original start date"
-255            Compl_end = "Compliance period, end date"
-256            POA_end = "Period of affordability, end date"
-257            POA_end_prev = "Period of affordability, previous end date"
-258            Units_Assist = "Subsidy assisted units"
-259            Subsidy_Active = "Subsidy is active"
-260            Subsidy_Info_Source = "Source for latest subsidy update"
-261            Update_Dtm = "Datetime of last subsidy update"
-262            Program = "Subsidy program"
-263            Subsidy_Info_Source_ID = "Project ID number for subsidy info source"
-264            Subsidy_Info_Source_Date = "Date of last subsidy info source"
-265            Agency = "Agency responsible for managing subsidy"
-266            Portfolio = "Subsidy portfolio"
-267          ;
-268        
-269          format Program $progfull. Portfolio $portfolio.;
-270        
-271        run;
+240            poa_end = '31oct2011'd;
+241            compl_end = poa_end;
+242            Subsidy_Active = 0;
+243          end;
+244        
+245          if nlihc_id = "NL000208" and subsidy_id = 2 then do;
+246            poa_end = '01oct2015'd;
+247          end;
+248        
+249          label
+250            NLIHC_ID = "Preservation Catalog project ID"
+251            Subsidy_ID = "Preservation Catalog subsidy ID"
+252            POA_start = "Period of affordability, current start date"
+253            POA_start_orig = "Period of affordability, original start date"
+254            Compl_end = "Compliance period, end date"
+255            POA_end = "Period of affordability, end date"
+256            POA_end_prev = "Period of affordability, previous end date"
+257            Units_Assist = "Subsidy assisted units"
+258            Subsidy_Active = "Subsidy is active"
+259            Subsidy_Info_Source = "Source for latest subsidy update"
+260            Update_Dtm = "Datetime of last subsidy update"
+261            Program = "Subsidy program"
+262            Subsidy_Info_Source_ID = "Project ID number for subsidy info source"
+263            Subsidy_Info_Source_Date = "Date of last subsidy info source"
+264            Agency = "Agency responsible for managing subsidy"
+265            Portfolio = "Subsidy portfolio"
+266          ;
+267        
+268          format Program $progfull. Portfolio $portfolio.;
+269        
+270        run;
 
 NOTE: There were 120 observations read from the data set WORK.SUBSIDY_MFA.
       WHERE Nlihc_id not = ' ';
@@ -383,25 +383,25 @@ NOTE: Compressing data set PRESCAT.SUBSIDY decreased size by 50.00 percent.
       Compressed is 8 pages; un-compressed would require 16 pages.
 NOTE: DATA statement used (Total process time):
       real time           0.02 seconds
-      cpu time            0.03 seconds
+      cpu time            0.01 seconds
       
-9 The SAS System                                                                              17:56 Saturday, August 1, 2015
 
+9 The SAS System                                                                               18:11 Monday, August 31, 2015
 
-272        
-273        /*
-274        proc sort data=PresCat.Subsidy;
-275          by NLIHC_ID program contract_number;
-276        */
-277        
-278        %File_info( data=PresCat.Subsidy, freqvars=Program Portfolio Subsidy_Info_Source Agency rent_to_FMR_description )
+271        
+272        /*
+273        proc sort data=PresCat.Subsidy;
+274          by NLIHC_ID program contract_number;
+275        */
+276        
+277        %File_info( data=PresCat.Subsidy, freqvars=Program Portfolio Subsidy_Info_Source Agency rent_to_FMR_description )
 MPRINT(FILE_INFO):   title2 "File = PresCat.Subsidy";
 MPRINT(FILE_INFO):   proc contents data=PresCat.Subsidy;
 MPRINT(FILE_INFO):   run;
 
 NOTE: PROCEDURE CONTENTS used (Total process time):
-      real time           0.03 seconds
-      cpu time            0.03 seconds
+      real time           0.01 seconds
+      cpu time            0.01 seconds
       
 NOTE: The PROCEDURE CONTENTS printed pages 1-2.
 
@@ -413,7 +413,7 @@ NOTE: There were 10 observations read from the data set PRESCAT.SUBSIDY.
 NOTE: The PROCEDURE PRINT printed pages 3-4.
 NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.00 seconds
-      cpu time            0.01 seconds
+      cpu time            0.00 seconds
       
 
 MPRINT(FILE_INFO):   title3;
@@ -425,32 +425,32 @@ NOTE: Multiple concurrent threads will be used to summarize data.
 NOTE: There were 707 observations read from the data set PRESCAT.SUBSIDY.
 NOTE: The PROCEDURE MEANS printed page 5.
 NOTE: PROCEDURE MEANS used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.01 seconds
+      real time           0.00 seconds
+      cpu time            0.00 seconds
       
 
 MPRINT(FILE_INFO):   options label;
 MPRINT(FILE_INFO):   proc freq data=PresCat.Subsidy;
 MPRINT(FILE_INFO):   tables Program Portfolio Subsidy_Info_Source Agency rent_to_FMR_description / missing;
 MPRINT(FILE_INFO):   run;
-10 The SAS System                                                                             17:56 Saturday, August 1, 2015
 
+10 The SAS System                                                                              18:11 Monday, August 31, 2015
 
 NOTE: There were 707 observations read from the data set PRESCAT.SUBSIDY.
 NOTE: The PROCEDURE FREQ printed pages 6-9.
 NOTE: PROCEDURE FREQ used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.01 seconds
+      real time           0.00 seconds
+      cpu time            0.00 seconds
       
 
 MPRINT(FILE_INFO):   title2;
-279        
-280        proc print data=PresCat.Subsidy;
-281          where Portfolio = "";
-282          id nlihc_id;
-283          var Program Portfolio Agency;
-284          title2 'Subsidies with missing Portfolio info';
-285        run;
+278        
+279        proc print data=PresCat.Subsidy;
+280          where Portfolio = "";
+281          id nlihc_id;
+282          var Program Portfolio Agency;
+283          title2 'Subsidies with missing Portfolio info';
+284        run;
 
 NOTE: No observations were selected from data set PRESCAT.SUBSIDY.
 NOTE: There were 0 observations read from the data set PRESCAT.SUBSIDY.
@@ -460,29 +460,36 @@ NOTE: PROCEDURE PRINT used (Total process time):
       cpu time            0.00 seconds
       
 
-286        
-287        title2;
-288        
-289        /******
-290        **** Compare with earlier version ****;
+285        
+286        title2;
+287        
+288        **** Compare with earlier version ****;
+289        
+290        libname comp 'D:\DCData\Libraries\PresCat\Data\Old';
+NOTE: Libref COMP was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\DCData\Libraries\PresCat\Data\Old
 291        
-292        libname comp 'D:\DCData\Libraries\PresCat\Data\Old';
-293        
-294        proc sort data=PresCat.Subsidy out=Subsidy_new;
-295          by NLIHC_ID program contract_number;
+292        proc compare base=Comp.Subsidy compare=PresCat.Subsidy listall maxprint=(40,32000);
+293          id NLIHC_ID subsidy_id;
+294        run;
+
+NOTE: There were 707 observations read from the data set COMP.SUBSIDY.
+NOTE: There were 707 observations read from the data set PRESCAT.SUBSIDY.
+NOTE: At least one W.D format was too small for the number to be printed. The decimal may be shifted by the "BEST" format.
+NOTE: The PROCEDURE COMPARE printed pages 10-16.
+NOTE: PROCEDURE COMPARE used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+11 The SAS System                                                                              18:11 Monday, August 31, 2015
+
+
+295        
 296        
-297        proc sort data=Comp.Subsidy out=Subsidy_old;
-298          by NLIHC_ID program contract_number;
-299        
-300        proc compare base=Subsidy_old compare=Subsidy_new listall maxprint=(40,32000);
-301          id NLIHC_ID program contract_number;
-302        run;
-303        ************/
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
 NOTE: The SAS System used:
-11 The SAS System                                                                             17:56 Saturday, August 1, 2015
-
-      real time           0.36 seconds
-      cpu time            0.31 seconds
+      real time           1.29 seconds
+      cpu time            0.29 seconds
       

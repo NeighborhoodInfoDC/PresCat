@@ -22,6 +22,8 @@
   01/08/15 PAT Changed Update_date to Update_dtm (datetime).
   01/18/15 PAT Added Compl_end.
   01/29/15 PAT Added property_id for Sayles Place/NL000262.
+  08/31/15 PAT Replace PresCat.DC_Info_10_19_14 with PresCat.DC_Info_07_08_15.
+               Do not replace MFA_END dates if not missing. 
 **************************************************************************/
 
 %include "L:\SAS\Inc\StdLocal.sas";
@@ -52,7 +54,7 @@ title2;
 
 data DC_Info;
 
-  set PresCat.DC_Info_10_19_14;
+  set PresCat.DC_Info_07_08_15;
   
   property_id = 1 * ID_MFA;
   
@@ -225,55 +227,19 @@ data PresCat.Subsidy_mfa;
   
   if Program = "" then Program = put( mfa_prog, $oldcattoprog. );
   
-  /*
-  if mfa_prog ~= "" then Program = mfa_prog;
-  else do;
-  
-    select ( program_type_name );
-      when ( "HFDA/8 SR" ) Program = "Other S8 Rehab";
-      when ( "LMSA" ) Program = "S8 Loan Mgmt";
-      when ( "PD/8 MR" ) Program = "S8 Prop. Disp.";
-      when ( "Sec 8 SR" ) Program = "S8 Prop. Disp.";
-      when ( "PRAC/811" ) Program = "PRAC 202/811";
-      otherwise do;
-        %warn_put( msg="Unknown program type: " nlihc_id= property_id= program_type_name= mfa_source= )
-      end;
-    end;
-  
-  end;
-  
-  Program = put( Program, $progfl. );
-  */
-  
   ** Update subsidy info **;
   
   ID_MFA = property_id;
   if not missing( tracs_effective_date ) and missing( MFA_START ) then MFA_START = tracs_effective_date;
-  if not missing( tracs_overall_expiration_date ) then MFA_END = tracs_overall_expiration_date;
-  if assisted_units_count > 0 then MFA_ASSUNITS = assisted_units_count;
-  
-  **** TEMPORARY CORRECTIONS TO SUBSIDY INFO ****;
-  /*
-  if Nlihc_id = "NL000046" then do;
-    if contract_number = "DC39L000069" then do;
-      mfa_start = '01oct2010'd;
-      mfa_end = '30sep2015'd;
-      mfa_assunits = 40;
-    end;
-    else if contract_number = "DC39M000051" then do;
-      mfa_start = '01nov2012'd;
-      mfa_end = '31oct2015'd;
-      mfa_assunits = 333;
-    end;
-  end;
-  */
+  if not missing( tracs_overall_expiration_date ) and missing( MFA_END ) then MFA_END = tracs_overall_expiration_date;
+  if missing( MFA_ASSUNITS ) and assisted_units_count > 0 then MFA_ASSUNITS = assisted_units_count;
   
   ** Eliminate entries not in MFA database and with no subsidy info in Catalog **;
   
   if not in_MFA and missing( mfa_assunits) and missing( mfa_source ) and missing( mfa_prog ) 
   and missing( mfa_start ) and missing( mfa_end ) and missing( mfa_notes ) then delete;
   
-  ** Compliance period end date (same as subsidy end date) **;
+  ** Compliance period end date (same as subsidy end date for MFA programs) **;
   
   Compl_end = mfa_end;
   
