@@ -22,6 +22,7 @@
   06/18/15 PAT Corrections for Museum Sq One (latest updates). 
   06/27/15 PAT Added POA_start_orig, value of earliest start date 
                recorded. (Values need to be verified against older data.)
+  09/03/15 PAT Correct POA_start, POA_end format.
 **************************************************************************/
 
 %include "L:\SAS\Inc\StdLocal.sas";
@@ -142,7 +143,7 @@ data PresCat.Subsidy (label="Preservation Catalog, Project subsidies");
   
   POA_start_orig = POA_start;
   
-  format POA_start_orig POA_end_prev mmddyy10.;
+  format POA_start POA_end POA_start_orig POA_end_prev mmddyy10.;
   
   ** Set subsidies to not active if project is in Lost Rental list **;
   ****** NB: NEED TO REVIEW THESE PROJECTS AND FIX SOURCE INFO ******;
