@@ -9,6 +9,8 @@ Prog/Images/
 # SAS files
 *.sas7bdat
 *.sas7bcat
+*.log
+*.lst
 
 # MS Office
 *.doc
