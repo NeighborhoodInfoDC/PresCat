@@ -70,6 +70,8 @@
   &target = tranwrd( &target, 'Npcdc', 'NPCDC' );
   &target = tranwrd( &target, 'Nhpmn', 'NHPMN' );
   &target = tranwrd( &target, 'Gra Properties', 'GRA Properties' );
+  &target = tranwrd( &target, 'Poah', 'POAH' );
+  &target = tranwrd( &target, 'Sc Elsinore', 'SC Elsinore' );
   
 %mend Owner_name_clean;
 
