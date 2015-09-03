@@ -1,6 +1,6 @@
 *.bak
 
-# DCData subfolders 
+# DCData subfolders
 Maps/
 Raw/
 Prog/Temp/
