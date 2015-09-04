@@ -24,6 +24,7 @@
                Congress Heights PUD (NL001032).
   06/18/15 PAT Change category for Wah Luck to 2 (expiring).
   08/31/15 PAT Replace PresCat.DC_Info_10_19_14 with PresCat.DC_Info_07_08_15.
+  09/03/15 PAT Add PBCA flag to data set.
 **************************************************************************/
 
 %include "L:\SAS\Inc\StdLocal.sas";
@@ -128,7 +129,7 @@ data PresCat.Project (label="Preservation Catalog, projects");
     DC_Info 
       (keep=NLIHC_ID Category Proj_Name Proj_Addre Proj_City Proj_ST 
             Units Own_Effect Own_Compan Own_Comp_1 Own_Indivi Mgr_Compan 
-            Mgr_Comp_1 Mgr_Indivi
+            Mgr_Comp_1 Mgr_Indivi PBCA
        rename=(Proj_Name=Proj_Name_old Proj_Addre=Proj_Addre_old)
        in=in1)
     PresCat.Project_geocode (drop=Proj_name)
@@ -292,6 +293,8 @@ data PresCat.Project (label="Preservation Catalog, projects");
     Category_code = '2';
   end;
   
+  if missing( PBCA ) then PBCA = 0;
+  
   label
     NLIHC_ID = "Preservation Catalog project ID"
     Status = "Project is active"
@@ -338,11 +341,12 @@ data PresCat.Project (label="Preservation Catalog, projects");
     Proj_lon = 'Project longitude'
     Bldg_count = 'Number of buildings for project'
     Update_Dtm = "Datetime of last project update"
+    PBCA = "Performance-Based Contract Administrator Program property"
   ;
 
   format Status $Status. Category_code $Categry. Hud_Own_Effect_dt mmddyy10.
     Hud_Own_type Hud_Mgr_type $ownmgrtype.
-    Subsidized Cat_At_Risk Cat_Expiring Cat_Failing_Insp Cat_More_Info Cat_Lost Cat_Replaced dyesno.
+    Subsidized Cat_At_Risk Cat_Expiring Cat_Failing_Insp Cat_More_Info Cat_Lost Cat_Replaced PBCA dyesno.
     Update_Dtm datetime16.
   ;
  
@@ -355,7 +359,7 @@ proc sort data=PresCat.Project;
 run;
 
 %File_info( data=PresCat.Project, printobs=5, 
-            freqvars=Status Category_code Proj_City Proj_ST Ward2012 Proj_Zip Hud_Own_type Hud_Mgr_type )
+            freqvars=Status Category_code Proj_City Proj_ST Ward2012 Proj_Zip Hud_Own_type Hud_Mgr_type PBCA )
 
 title2 'File = PresCat.Project';
 

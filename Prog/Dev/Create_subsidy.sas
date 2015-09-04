@@ -22,6 +22,7 @@
   06/18/15 PAT Corrections for Museum Sq One (latest updates). 
   06/27/15 PAT Added POA_start_orig, value of earliest start date 
                recorded. (Values need to be verified against older data.)
+  09/03/15 PAT Correct POA_start, POA_end format.
 **************************************************************************/
 
 %include "L:\SAS\Inc\StdLocal.sas";
@@ -117,16 +118,18 @@ data Subsidy_new;
   
 run;
 
-data PresCat.Subsidy (label="Preservation Catalog, Project subsidies");
+data 
+  PresCat.Subsidy (drop=Subsidy_notes label="Preservation Catalog, Project subsidies")
+  PresCat.Subsidy_notes (keep=Nlihc_id Subsidy_id Subsidy_notes label="Preservation Catalog, Subsidy notes");
 
-  length Nlihc_id $ 8 Subsidy_id 8;
+  length Nlihc_id $ 8 Subsidy_id 8 Subsidy_notes $ 2000;
 
   set
     Subsidy_mfa
       (keep=Nlihc_id Subsidy_Active Program Contract_Number mfa_assunits mfa_start mfa_end Subsidy_Info_Source 
             Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm Compl_end
-            rent_to_FMR_description
-       rename=(mfa_assunits=Units_Assist mfa_start=POA_start mfa_end=POA_end))
+            rent_to_FMR_description Mfa_notes
+       rename=(mfa_assunits=Units_Assist mfa_start=POA_start mfa_end=POA_end Mfa_notes=Subsidy_notes))
     Subsidy_other
       (drop=Subsidy_Info_Source_Var)
     Subsidy_new;
@@ -142,7 +145,7 @@ data PresCat.Subsidy (label="Preservation Catalog, Project subsidies");
   
   POA_start_orig = POA_start;
   
-  format POA_start_orig POA_end_prev mmddyy10.;
+  format POA_start POA_end POA_start_orig POA_end_prev mmddyy10.;
   
   ** Set subsidies to not active if project is in Lost Rental list **;
   ****** NB: NEED TO REVIEW THESE PROJECTS AND FIX SOURCE INFO ******;
@@ -206,6 +209,7 @@ data PresCat.Subsidy (label="Preservation Catalog, Project subsidies");
     Subsidy_Info_Source_Date = "Date of last subsidy info source"
     Agency = "Agency responsible for managing subsidy"
     Portfolio = "Subsidy portfolio"
+    Subsidy_notes = "Notes from original Preservation Catalog"
   ;
   
   format Program $progfull. Portfolio $portfolio.;
@@ -227,6 +231,8 @@ proc print data=PresCat.Subsidy;
 run;
 
 title2;
+
+%File_info( data=PresCat.Subsidy_notes, stats= )
 
 **** Compare with earlier version ****;
 
