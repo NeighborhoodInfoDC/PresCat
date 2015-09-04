@@ -118,16 +118,18 @@ data Subsidy_new;
   
 run;
 
-data PresCat.Subsidy (label="Preservation Catalog, Project subsidies");
+data 
+  PresCat.Subsidy (drop=Subsidy_notes label="Preservation Catalog, Project subsidies")
+  PresCat.Subsidy_notes (keep=Nlihc_id Subsidy_id Subsidy_notes label="Preservation Catalog, Subsidy notes");
 
-  length Nlihc_id $ 8 Subsidy_id 8;
+  length Nlihc_id $ 8 Subsidy_id 8 Subsidy_notes $ 2000;
 
   set
     Subsidy_mfa
       (keep=Nlihc_id Subsidy_Active Program Contract_Number mfa_assunits mfa_start mfa_end Subsidy_Info_Source 
             Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm Compl_end
-            rent_to_FMR_description
-       rename=(mfa_assunits=Units_Assist mfa_start=POA_start mfa_end=POA_end))
+            rent_to_FMR_description Mfa_notes
+       rename=(mfa_assunits=Units_Assist mfa_start=POA_start mfa_end=POA_end Mfa_notes=Subsidy_notes))
     Subsidy_other
       (drop=Subsidy_Info_Source_Var)
     Subsidy_new;
@@ -207,6 +209,7 @@ data PresCat.Subsidy (label="Preservation Catalog, Project subsidies");
     Subsidy_Info_Source_Date = "Date of last subsidy info source"
     Agency = "Agency responsible for managing subsidy"
     Portfolio = "Subsidy portfolio"
+    Subsidy_notes = "Notes from original Preservation Catalog"
   ;
   
   format Program $progfull. Portfolio $portfolio.;
@@ -228,6 +231,8 @@ proc print data=PresCat.Subsidy;
 run;
 
 title2;
+
+%File_info( data=PresCat.Subsidy_notes, stats= )
 
 **** Compare with earlier version ****;
 
