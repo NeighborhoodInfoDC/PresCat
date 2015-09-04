@@ -18,6 +18,7 @@
   01/08/15 PAT Changed Update_date to Update_dtm (datetime).
   01/18/15 PAT Added calculated Compl_end and Poa_end for LIHTC projects.
   08/31/15 PAT Replace PresCat.DC_Info_10_19_14 with PresCat.DC_Info_07_08_15.
+  09/04/15 PAT Add Subsidy_notes.
 **************************************************************************/
 
 %include "L:\SAS\Inc\StdLocal.sas";
@@ -185,6 +186,7 @@ run;
       Subsidy_Info_Source_Var $ 32
       Subsidy_Info_Source $ /*16*/ 40
       Subsidy_Info_Source_Date 8
+      Subsidy_Notes $ 2000
       Update_Dtm 8
     ;
     
@@ -206,23 +208,24 @@ run;
     end;
     */
 
-  if indexc( &sub._source, '(' ) > 0 then do;
+    if indexc( &sub._source, '(' ) > 0 then do;
 
-    Subsidy_Info_Source_Date = 
-      input( 
-        substr( &sub._source, 
-                indexc( &sub._source, '(' ) + 1, 
-                indexc( &sub._source, ')' ) - ( indexc( &sub._source, '(' ) + 1 ) ),
-        anydtdte12. );
+      Subsidy_Info_Source_Date = 
+        input( 
+          substr( &sub._source, 
+                  indexc( &sub._source, '(' ) + 1, 
+                  indexc( &sub._source, ')' ) - ( indexc( &sub._source, '(' ) + 1 ) ),
+          anydtdte12. );
+      
+    end;
+    else do;
     
-  end;
-  else do;
-  
-    Subsidy_Info_Source_Date = .u;
+      Subsidy_Info_Source_Date = .u;
+      
+    end;
     
-  end;
-  
-
+    Subsidy_notes = left( compbl( &sub._notes ) );
+    
     Subsidy_Info_Source_ID = "";
     Subsidy_Info_Source_Var = "";
 
