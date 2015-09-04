@@ -42,6 +42,7 @@
   revisions=%str(New file.)
 )
 
+/** EMPTY FILES WON'T REGISTER
 %Dc_update_meta_file(
   ds_lib=PresCat,
   ds_name=Project_except,
@@ -57,6 +58,7 @@
   restrictions=None,
   revisions=%str(New file.)
 )
+*/
 
 %Dc_update_meta_file(
   ds_lib=PresCat,
@@ -84,6 +86,15 @@
 
 %Dc_update_meta_file(
   ds_lib=PresCat,
+  ds_name=Subsidy_notes,
+  creator_process=Create_subsidy.sas,
+  restrictions=None,
+  revisions=%str(New file.)
+)
+
+/** EMPTY FILES WON'T REGISTER
+%Dc_update_meta_file(
+  ds_lib=PresCat,
   ds_name=Subsidy_except,
   creator_process=Create_subsidy_except.sas,
   restrictions=None,
@@ -97,7 +108,9 @@
   restrictions=None,
   revisions=%str(New file.)
 )
+*/
 
+/** FILES WITH NO NUMERIC VARS WON'T REGISTER
 %Dc_update_meta_file(
   ds_lib=PresCat,
   ds_name=TA_notes,
@@ -105,5 +118,6 @@
   restrictions=None,
   revisions=%str(New file.)
 )
+*/
 
 run;
