@@ -18,9 +18,15 @@
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
 
+** Process REAC scores: one obs per project **;
+
+proc sort data=PresCat.Reac_score out=Reac_score_sorted;
+  by nlihc_id descending Reac_date;
+run;
+
 data Reac_score;
 
-  set PresCat.Reac_score (keep=nlihc_id Reac_date Reac_score);
+  set Reac_score_sorted (keep=nlihc_id Reac_date Reac_score);
   by nlihc_id;
   
   if first.nlihc_id then do;
@@ -33,11 +39,6 @@ data Reac_score;
   
 run;
 
-/*
-proc print data=Reac_score (obs=40);
-run;
-*/
-
 %Super_transpose(  
   data=Reac_score,
   out=Reac_score_tr,
@@ -47,10 +48,7 @@ run;
   mprint=N
 )
 
-/*
-proc print data=Reac_score_tr (obs=5);
-run;
-*/
+** Create monthly report data **;
 
 options validvarname=any;
 
@@ -59,6 +57,7 @@ data Monthly_rpt;
   length
     CATEGORY $ 40
     NLIHC_ID $ 8
+    Subsidy_id 8
     Proj_Name $ 80
     PBCA 4
     Proj_Addre $ 160
@@ -88,25 +87,25 @@ data Monthly_rpt;
   merge
     PresCat.Project
       (keep=nlihc_id proj_name proj_addre proj_city proj_st proj_zip
-            hud_own_name hud_own_type hud_mgr_name proj_units_tot ward2012) 
+            hud_own_name hud_own_type hud_mgr_name proj_units_tot ward2012 pbca) 
+    PresCat.TA_notes (keep=nlihc_id ta_provider ta_notes)
     PresCat.Project_category
       (keep=nlihc_id category_code)
     Reac_score_tr
     PresCat.Subsidy
-      (keep=nlihc_id subsidy_id subsidy_info_source_date subsidy_info_source portfolio 
+      (keep=nlihc_id subsidy_id subsidy_active subsidy_info_source_date subsidy_info_source program 
             units_assist poa_start poa_end);
   by nlihc_id;
   
   if category_code in ( '1', '2', '3', '4', '5' );
 
   CATEGORY = put( category_code, $categrn. );
-  PBCA = 0;
   Ward = ward2012;
   Own_Compan = hud_own_name;
   Own_Comp_1 = put( hud_own_type, $OWNMGRTYPE. );
   Mgr_Compan = hud_mgr_name;
-  TA_PROVIDER = "";
-  TA_NOTES = "";
+  TA_NOTES = left( compbl( TA_NOTES ) );
+
   'PASS1 Score'n = Reac_Score_1; 
   'PASS1 Date'n = Reac_Date_1;
   'PASS2 Score'n = Reac_Score_2;
@@ -119,16 +118,19 @@ data Monthly_rpt;
   else 
     SOURCE = put( subsidy_info_source, $infosrc. );
   
-  PROGRAM = put( portfolio, $portfolio. );
+  /*PROGRAM = put( portfolio, $portfolio. );*/
   UNITS_ASS = units_assist;
   UNITS_TOT = proj_units_tot;
-  NOTES = "";
+  
+  if subsidy_active then Notes = "";
+  else Notes = "Inactive";
 
   format poa_start poa_end 'PASS1 Date'n 'PASS2 Date'n 'PASS3 Date'n mmddyy10.;
 
   keep
     CATEGORY
     NLIHC_ID
+    Subsidy_ID
     Proj_Name
     PBCA
     Proj_Addre
@@ -157,7 +159,7 @@ data Monthly_rpt;
     
 run;
 
-%File_info( data=Monthly_rpt )
+** Export to CSV **;
 
 options missing=' ';
 
