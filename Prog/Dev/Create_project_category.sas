@@ -20,9 +20,16 @@ Catalog.
 
 data PresCat.Project_category (label="Preservation Catalog, project category");
 
+  length
+    Nlihc_id      $  8
+    Proj_Name     $ 80
+    Category_Code $  1;
+    
   set PresCat.Project;
   
-  keep Nlihc_id Category_code Cat_At_Risk Cat_Lost Cat_More_Info Cat_Replaced;
+  format Category_code $Categrn.;
+  
+  keep Nlihc_id Proj_name Category_code Cat_At_Risk Cat_Lost Cat_More_Info Cat_Replaced;
 
 run;
 
