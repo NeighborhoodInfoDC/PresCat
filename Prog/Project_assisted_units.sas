@@ -51,17 +51,34 @@ proc format;
     7 = 'Ward 7'
     8 = 'Ward 8';
     
+%Data_to_format(
+  FmtLib=work,
+  FmtName=$nlihcid2cat,
+  Desc=,
+  Data=PresCat.Project_category,
+  Value=nlihc_id,
+  Label=category_code,
+  OtherLabel='',
+  DefaultLen=1,
+  Print=N,
+  Contents=N
+  )
+
 ** Combine project and subsidy data **;
 
 data Project_subsidy;
 
   merge
     PresCat.Project
-      (drop=Cat_: Hud_Mgr_: Hud_Own_:)
+      (drop=Cat_: Hud_Mgr_: Hud_Own_:
+       where=(put( nlihc_id, $nlihcid2cat. ) in ( '1', '2', '3', '4', '5' ))
+       in=inProject)
     PresCat.Subsidy
       (keep=NLIHC_ID Portfolio Subsidy_Active Units_Assist POA_end
        where=(Subsidy_Active));
   by NLIHC_ID;
+  
+  if inProject;
 
 run;
 
@@ -174,6 +191,26 @@ run;
 ods rtf file="&_dcdata_r_path\PresCat\Prog\Project_assisted_units.rtf" style=Styles.Rtf_arial_9pt;
 
 options missing='0';
+options nodate nonumber;
+
+%fdate()
+
+proc tabulate data=PresCat.Subsidy format=comma10. noseps missing;
+  where Subsidy_Active and put( nlihc_id, $nlihcid2cat. ) in ( '1', '2', '3', '4', '5' );
+  class Portfolio;
+  var units_assist;
+  table 
+    /** Rows **/
+    Portfolio=' ',
+    /** Columns **/
+    ( n='Projects' sum='Assisted\~Units' ) * units_assist=' '
+  ;
+  title2 " ";
+  title3 "Project and assisted unit counts by subsidy portfolio (nonunique counts)";
+  footnote1 height=9pt "Source: DC Preservation Catalog";
+  footnote2 height=9pt "Prepared by NeighborhoodInfo DC (www.NeighborhoodInfoDC.org), &fdate..";
+  footnote3 height=9pt j=r '{Page}\~{\field{\*\fldinst{\pard\b\i0\chcbpat8\qc\f1\fs19\cf1{PAGE }\cf0\chcbpat0}}}';
+run;
 
 proc tabulate data=PresCat.Project_assisted_units format=comma10. noseps missing;
   where ProgCat ~= .;
@@ -194,7 +231,7 @@ proc tabulate data=PresCat.Project_assisted_units format=comma10. noseps missing
     sum='Assisted Units by Ward' * ward2012=' ' * ( mid_asst_units='Est.' err_asst_units='+/-' )
     ;
   format ProgCat ProgCat.;
-  
+  title3 "Project and assisted unit unique counts";
 run;
 
 ods rtf close;
