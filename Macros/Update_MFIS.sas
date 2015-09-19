@@ -30,7 +30,7 @@
   %end;
 
   %Update_MFIS_init( Update_file=&Update_file )
-  
+  /*************
   %if &Last_update_date = or &Last_update_date < &Subsidy_Info_Source_Date %then %do;
   
     %Update_MFIS_subsidy( Update_file=&Update_file, Subsidy_except=&Subsidy_except, Quiet=&Quiet )
@@ -46,6 +46,7 @@
     %err_mput( macro=Update_MFIS, msg=%str(Update will NOT be applied to Catalog.) )
 
   %end;
+  ************************/
 
   %note_mput( macro=Update_MFIS, msg=%str(Macro exiting.) )
     

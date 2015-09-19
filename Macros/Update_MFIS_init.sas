@@ -48,19 +48,18 @@
   %let Subsidy_tech_vars = Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date contract_number Update_Dtm;
 
   %let Subsidy_missing_info_vars = 
-      property_name_text address_line1_text program_type_name
+      Premise_id Property_name Property_street SOA_cat_sub_cat
       ;
       
   %let Project_mfa_update_vars = 
-      Hud_Own_Effect_dt Hud_Own_Name Hud_Own_Type Hud_Mgr_Name
-      Hud_Mgr_Type;
+      ;
 
   %let Project_subsidy_update_vars =
       Subsidized Proj_Units_Assist_Min Subsidy_Start_First Subsidy_End_First 
       Proj_Units_Assist_Max Subsidy_Start_Last Subsidy_End_Last;
 
   %let Project_missing_info_vars = 
-      contract_number property_name_text address_line1_text program_type_name;
+      Premise_id Property_name Property_street SOA_cat_sub_cat;
 
   %put _user_;
   
