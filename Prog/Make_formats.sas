@@ -43,7 +43,8 @@ proc format library=PresCat;
     "6" = "6 - Lost Rental";
   
   value $Infosrc
-    "HUD/MFA" = "HUD - Multifamily Assistance and Section 8 Contracts";
+    "HUD/MFA" = "HUD/Multifamily Assistance and Section 8 Contracts"
+    "HUD/MFIS" = "HUD/Insured Multifamily Mortgages";
     
   value $mfatoprog
     '202/8 NC' = '202/8-NC'
