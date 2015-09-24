@@ -21,7 +21,7 @@
   **************************************************************************
   ** Initial setup and checks;
   
-  %local Compare_opt;
+  %local Compare_opt Assisted_units_src;
   
   %if %upcase( &Quiet ) = N %then %do;
     %let Compare_opt = listall;
@@ -29,6 +29,8 @@
   %else %do;
     %let Compare_opt = noprint;
   %end;
+  
+  %let Assisted_units_src = Units;
     
   ** Check for duplicates **;
   
@@ -79,7 +81,7 @@
 
     Update_Dtm = &Update_Dtm;
 
-    if assisted_units_count > 0 then Units_Assist = assisted_units_count;
+    if &Assisted_units_src > 0 then Units_Assist = &Assisted_units_src;
 
     POA_start = tracs_effective_date;
     
@@ -97,7 +99,7 @@
     Program = put( program_type_name, $mfatoprog. );
     
     if missing( Program ) then do;
-      %warn_put( msg="Missing program type: " _n_= property_id= contract_number= assisted_units_count= program_type_name= )
+      %warn_put( msg="Missing program type: " _n_= property_id= contract_number= &Assisted_units_src= program_type_name= )
     end;
     
     /********** SKIP FOR NOW ************

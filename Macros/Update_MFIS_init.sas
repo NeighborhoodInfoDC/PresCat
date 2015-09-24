@@ -1,5 +1,5 @@
 /**************************************************************************
- Program:  Update_MFIS.sas
+ Program:  Update_MFIS_init.sas
  Library:  PresCat
  Project:  NeighborhoodInfo DC
  Author:   P. Tatian
