@@ -20,13 +20,26 @@
   %global 
     Update_dtm Subsidy_info_source NO_SUBSIDY_ID Subsidy_Info_Source_Date
     Subsidy_update_vars Subsidy_tech_vars Subsidy_missing_info_vars
+    Subsidy_dupcheck_id_vars Subsidy_compare_id_vars Subsidy_char_diff_vars
     Project_mfa_update_vars Project_subsidy_update_vars Project_missing_info_vars 
-    Last_update_date Last_update_date_fmt;
+    Last_update_date Last_update_date_fmt
+    Assisted_units_src POA_start_src POA_end_src Compl_end_src Is_inactive_src
+    Program_src Subsidy_Info_Source_ID_src Subsidy_info_source_property_src;
     
   %let Update_dtm = %sysfunc( datetime() );
-
-  %let Subsidy_info_source = "HUD/MFIS";
   
+  %** Subsidy source specific parameters **;
+  
+  %let Subsidy_info_source = "HUD/MFIS";
+  %let Subsidy_Info_Source_ID_src = HUD_project_number;
+  %let Assisted_units_src = Units;
+  %let POA_start_src = intnx( 'month', maturity_date, -1 * term_in_months, 'same' );
+  %let POA_end_src = maturity_date;
+  %let Compl_end_src = POA_end;
+  %let Is_inactive_src = ( MFIS_status in ( 'T' ) );
+  %let Program_src = SOA_cat_sub_cat;
+  %let Subsidy_info_source_property_src = Premise_id;
+    
   %let NO_SUBSIDY_ID = 9999999999;
 
   proc sql noprint;
@@ -41,16 +54,21 @@
   %let Last_update_date_fmt = %sysfunc( putn( &Last_update_date, mmddyy10. ) );
   
   %let Subsidy_update_vars = 
-      Units_Assist POA_start POA_end Compl_end 
-      rent_to_FMR_description Subsidy_Active Program 
+      Units_Assist POA_start POA_end Compl_end Subsidy_Active Program 
       ;
       
-  %let Subsidy_tech_vars = Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date contract_number Update_Dtm;
-
+  %let Subsidy_tech_vars = Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date Premise_id Update_Dtm;
+  
   %let Subsidy_missing_info_vars = 
-      Premise_id Property_name Property_street SOA_cat_sub_cat
+      HUD_project_number Premise_id Property_name Property_street SOA_cat_sub_cat
       ;
       
+  %let Subsidy_dupcheck_id_vars = Premise_id Property_name;
+  
+  %let Subsidy_compare_id_vars = ;
+  
+  %let Subsidy_char_diff_vars = ;
+  
   %let Project_mfa_update_vars = 
       ;
 
@@ -99,7 +117,7 @@
   
   proc sql noprint;
     create table property_nlihcid as
-    select scan(subsidy_info_source_id, 1, '/') as property_id, nlihc_id, count(nlihc_id) as N
+    select &Subsidy_info_source_property_src as property_id, nlihc_id, count(nlihc_id) as N
       from PresCat.Subsidy (where=(Subsidy_Info_Source=&Subsidy_Info_Source and not(missing(subsidy_info_source_id))))
       group by property_id, nlihc_id;
   quit;

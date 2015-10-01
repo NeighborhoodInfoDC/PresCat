@@ -21,7 +21,7 @@
   **************************************************************************
   ** Initial setup and checks;
   
-  %local Compare_opt Assisted_units_src;
+  %local Compare_opt;
   
   %if %upcase( &Quiet ) = N %then %do;
     %let Compare_opt = listall;
@@ -30,8 +30,6 @@
     %let Compare_opt = noprint;
   %end;
   
-  %let Assisted_units_src = Units;
-    
   ** Check for duplicates **;
   
   title2 '***** THERE SHOULD NOT BE ANY DUPLICATES OF SUBSIDY_INFO_SOURCE_ID IN PRESCAT.SUBSIDY *****';
@@ -57,7 +55,7 @@
   **************************************************************************
   ** Get data for updating subsidy file;
 
-  data MFIS_subsidy_update;
+  data Subsidy_update_recs;
 
     set Hud.&Update_file._dc;
     
@@ -74,8 +72,7 @@
     
     retain Subsidy_Info_Source &Subsidy_Info_Source;
    
-    Subsidy_Info_Source_ID = trim( left( put( property_id, 16. ) ) ) || "/" || 
-                             left( contract_number );
+    Subsidy_Info_Source_ID = &Subsidy_Info_Source_ID_src;
     
     Subsidy_Info_Source_Date = extract_date;
 
@@ -83,24 +80,26 @@
 
     if &Assisted_units_src > 0 then Units_Assist = &Assisted_units_src;
 
-    POA_start = tracs_effective_date;
+    POA_start = &POA_start_src;
     
-    POA_end = tracs_overall_expiration_date;
+    POA_end = &POA_end_src;
     
-    Compl_end = POA_end;
+    Compl_end = &Compl_end_src;
 
-    if tracs_status in ( 'T' ) then Subsidy_Active = 0;
+    if &Is_inactive_src then Subsidy_Active = 0;
     else Subsidy_Active = 1;
 
     ** Program code **;
     
     length Program $ 32;
     
-    Program = put( program_type_name, $mfatoprog. );
+    Program = &Program_src;
     
+    /*
     if missing( Program ) then do;
       %warn_put( msg="Missing program type: " _n_= property_id= contract_number= &Assisted_units_src= program_type_name= )
     end;
+    */
     
     /********** SKIP FOR NOW ************
     length Agency $ 80;
@@ -119,20 +118,15 @@
     
     keep
       Units_Assist POA_start POA_end Compl_end
-      contract_number rent_to_FMR_description Subsidy_Active
+      Subsidy_Active
       Subsidy_Info_Source 
       Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm 
       Program
-      property_name_text address_line1_text program_type_name
-      ownership_effective_date
-      owner_organization_name owner_individual_full_name
-      owner_organization_name owner_individual_full_name
-      mgmt_agent_org_name mgmt_agent_full_name
-      mgmt_agent_org_name mgmt_agent_full_name;
+      &Subsidy_missing_info_vars;
 
   run;
 
-  proc sort data=MFIS_subsidy_update;
+  proc sort data=Subsidy_update_recs;
     by Subsidy_Info_Source_ID;
   run;
   
@@ -141,9 +135,9 @@
   title2 '**** THERE SHOULD NOT BE ANY DUPLICATE RECORDS IN THE UPDATE FILE ****';
   
   %Dup_check(
-    data=MFIS_subsidy_update,
+    data=Subsidy_update_recs,
     by=Subsidy_Info_Source_ID,
-    id=contract_number,
+    id=&Subsidy_dupcheck_id_vars,
     out=_dup_check,
     listdups=Y,
     count=dup_check_count,
@@ -158,38 +152,38 @@
   ** Apply update to Catalog data;
   
   ** Separate Catalog records to be updated
-  ** Subsidy_mfa = All Catalog subsidy records flagged with MFIS as source 
+  ** Subsidy_target = All Catalog subsidy records for target program 
   ** Subsidy_other = All other Catalog subsidy records;
 
-  data Subsidy_mfa Subsidy_other (drop=_POA_end_hold); 
+  data Subsidy_target Subsidy_other (drop=_POA_end_hold); 
 
     set PresCat.Subsidy;
     
     _POA_end_hold = POA_end;
     
-    if Subsidy_Info_Source=&Subsidy_Info_Source then output Subsidy_mfa;
+    if Subsidy_Info_Source=&Subsidy_Info_Source then output Subsidy_target;
     else output Subsidy_other;
     
   run;
 
-  proc sort data=Subsidy_mfa;
+  proc sort data=Subsidy_target;
     by Subsidy_Info_Source_ID;
   run;
 
   ** Apply update
-  ** Subsidy_mfa_update_a = Initial application of MFIS update to Catalog subsidy records;
+  ** Subsidy_target_update_a = Initial application of MFIS update to Catalog subsidy records;
 
-  data Subsidy_mfa_update_a;
+  data Subsidy_target_update_a;
 
     update 
-      Subsidy_mfa (in=in1)
-      MFIS_subsidy_update (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars);
+      Subsidy_target (in=in1)
+      Subsidy_update_recs (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars);
     by Subsidy_Info_Source_ID;
     
-    In_subsidy_mfa = in1;
+    In_Subsidy_target = in1;
     
-    if not In_subsidy_mfa then do;
-      nlihc_id = put( scan( subsidy_info_source_id, 1, '/' ), $property_nlihcid. );
+    if not In_Subsidy_target then do;
+      nlihc_id = put( &Subsidy_info_source_property_src, $property_nlihcid. );
     end;
     
     if missing( Subsidy_id ) then Subsidy_id = &NO_SUBSIDY_ID;
@@ -202,15 +196,15 @@
     
   run;
 
-  proc sort data=Subsidy_mfa_update_a;
+  proc sort data=Subsidy_target_update_a;
     by Nlihc_id Subsidy_id poa_start poa_end;
   run;
 
-  ** Subsidy_mfa_update_b = Add unique Subsidy_ID to any new subsidy records created by update **;
+  ** Subsidy_target_update_b = Add unique Subsidy_ID to any new subsidy records created by update **;
 
-  data Subsidy_mfa_update_b;
+  data Subsidy_target_update_b;
 
-    set Subsidy_mfa_update_a (in=in1 where=(not(missing(nlihc_id)))) Subsidy_other;
+    set Subsidy_target_update_a (in=in1 where=(not(missing(nlihc_id)))) Subsidy_other;
     by nlihc_id Subsidy_id;
     
     retain Subsidy_id_ret;
@@ -229,16 +223,16 @@
   
   ** Use Proc Compare to summarize update changes **;
   
-  proc sort data=Subsidy_mfa;
+  proc sort data=Subsidy_target;
     by nlihc_id Subsidy_ID;
 
-  proc sort data=Subsidy_mfa_update_b;
+  proc sort data=Subsidy_target_update_b;
     by nlihc_id Subsidy_ID;
 
-  proc compare base=Subsidy_mfa compare=Subsidy_mfa_update_b 
+  proc compare base=Subsidy_target compare=Subsidy_target_update_b 
       &Compare_opt outbase outcomp outdif maxprint=(40,32000)
       out=Update_subsidy_result (rename=(_type_=comp_type));
-    id nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_ID contract_number;
+    id nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_ID &Subsidy_compare_id_vars;
     var &Subsidy_update_vars;
   run;
   
@@ -249,7 +243,7 @@
     out=Update_subsidy_result_tr,
     var=&Subsidy_update_vars,
     id=comp_type,
-    by=nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_ID contract_number,
+    by=nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_ID &Subsidy_compare_id_vars,
     mprint=Y
   )
   
@@ -257,9 +251,9 @@
   **************************************************************************
   ** Apply exception file;
   
-  data Subsidy_mfa_except;
+  data Subsidy_target_except;
 
-    update Subsidy_mfa_update_b (in=in1 drop=In_subsidy_mfa) &Subsidy_except._norm;
+    update Subsidy_target_update_b (in=in1 drop=In_Subsidy_target) &Subsidy_except._norm;
     by nlihc_id Subsidy_ID;
     
     if in1;
@@ -298,7 +292,7 @@
     
     ** Convert DIF for char vars to missing if no differences **;
     
-    array charvars{*} rent_to_FMR_description_DIF Program_DIF;
+    array charvars{*} Program_DIF &Subsidy_char_diff_vars;
     
     do i = 1 to dim( charvars );
       charvars{i} = compress( charvars{i}, '.' );
@@ -320,7 +314,7 @@
 
   data Subsidy_Update_&Update_file (label="Preservation Catalog, Project subsidies" sortedby=nlihc_id Subsidy_id);
 
-    set Subsidy_mfa_except Subsidy_other;
+    set Subsidy_target_except Subsidy_other;
     by nlihc_id Subsidy_id;
     
     where not( missing( nlihc_id ) );
@@ -429,8 +423,8 @@
    
   ods proclabel "New subsidy records";
 
-  proc print data=Subsidy_mfa_update_b label;
-    where not In_subsidy_mfa and not( missing( nlihc_id ) );
+  proc print data=Subsidy_target_update_b label;
+    where not In_Subsidy_target and not( missing( nlihc_id ) );
     by nlihc_id;
     id Subsidy_id;
     var Subsidy_Info_Source_ID &Subsidy_update_vars;
@@ -443,8 +437,8 @@
 
   ods proclabel "Nonmatching subsidy records";
 
-  proc print data=Subsidy_mfa_update_a label;
-    where not In_subsidy_mfa and missing( nlihc_id );
+  proc print data=Subsidy_target_update_a label;
+    where not In_Subsidy_target and missing( nlihc_id );
     id Subsidy_Info_Source_ID;
     var property_name_text address_line1_text program_type_name Subsidy_active Units_assist poa_start poa_end;
     label 
