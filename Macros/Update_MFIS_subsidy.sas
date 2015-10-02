@@ -64,6 +64,7 @@
     length 
       Units_Assist POA_start POA_end Compl_end 8
       Subsidy_Active 3
+      Rent_to_fmr_description $ 40
       Subsidy_Info_Source $ 40
       Subsidy_Info_Source_ID $ 40
       Subsidy_Info_Source_Date 8
@@ -88,6 +89,8 @@
 
     if &Is_inactive_src then Subsidy_Active = 0;
     else Subsidy_Active = 1;
+    
+    Rent_to_fmr_description = &rent_to_fmr_description_src;
 
     ** Program code **;
     
@@ -121,7 +124,7 @@
       Subsidy_Active
       Subsidy_Info_Source 
       Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm 
-      Program
+      Program rent_to_FMR_description 
       &Subsidy_missing_info_vars;
 
   run;
@@ -440,8 +443,8 @@
   proc print data=Subsidy_target_update_a label;
     where not In_Subsidy_target and missing( nlihc_id );
     id Subsidy_Info_Source_ID;
-    var property_name_text address_line1_text program_type_name Subsidy_active Units_assist poa_start poa_end;
-    label 
+    var &Subsidy_missing_info_vars Subsidy_active Units_assist poa_start poa_end;
+    ****label 
       address_line1_text = "Address"
       program_type_name = "Program";
     title3 "PresCat.Subsidy - Nonmatching subsidy records in &Update_file (not added to Catalog)";

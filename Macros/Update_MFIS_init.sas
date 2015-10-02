@@ -24,7 +24,8 @@
     Project_mfa_update_vars Project_subsidy_update_vars Project_missing_info_vars 
     Last_update_date Last_update_date_fmt
     Assisted_units_src POA_start_src POA_end_src Compl_end_src Is_inactive_src
-    Program_src Subsidy_Info_Source_ID_src Subsidy_info_source_property_src;
+    Program_src Subsidy_Info_Source_ID_src Subsidy_info_source_property_src
+    Rent_to_fmr_description_src;
     
   %let Update_dtm = %sysfunc( datetime() );
   
@@ -39,6 +40,7 @@
   %let Is_inactive_src = ( MFIS_status in ( 'T' ) );
   %let Program_src = SOA_cat_sub_cat;
   %let Subsidy_info_source_property_src = Premise_id;
+  %let Rent_to_fmr_description_src = ' ';
     
   %let NO_SUBSIDY_ID = 9999999999;
 
@@ -54,7 +56,7 @@
   %let Last_update_date_fmt = %sysfunc( putn( &Last_update_date, mmddyy10. ) );
   
   %let Subsidy_update_vars = 
-      Units_Assist POA_start POA_end Compl_end Subsidy_Active Program 
+      Units_Assist POA_start POA_end Compl_end Subsidy_Active Program Rent_to_FMR_description
       ;
       
   %let Subsidy_tech_vars = Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date Premise_id Update_Dtm;
@@ -117,8 +119,10 @@
   
   proc sql noprint;
     create table property_nlihcid as
-    select &Subsidy_info_source_property_src as property_id, nlihc_id, count(nlihc_id) as N
-      from PresCat.Subsidy (where=(Subsidy_Info_Source=&Subsidy_Info_Source and not(missing(subsidy_info_source_id))))
+    select Subsidy_info_source_property as property_id, nlihc_id, count(nlihc_id) as N
+      from PresCat.Subsidy (where=(Subsidy_Info_Source=&Subsidy_Info_Source and 
+                                   not(missing(subsidy_info_source_id)) and 
+                                   not(missing(Subsidy_info_source_property))))
       group by property_id, nlihc_id;
   quit;
   

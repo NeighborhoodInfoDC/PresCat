@@ -21,5 +21,5 @@
 %DCData_lib( HUD, local=n )
 
 
-%Update_MFIS( Update_file=MFIS_2015_08, Finalize=N )
+%Update_MFIS( Update_file=MFIS_2015_08, Finalize=N, Quiet=N )
 
