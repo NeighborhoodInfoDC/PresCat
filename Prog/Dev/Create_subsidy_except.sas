@@ -30,7 +30,7 @@ data PresCat.Subsidy_except (label="Preservation Catalog, project subsidies exce
   
   format Except_date mmddyy10.;
   
-  drop Subsidy_Info_Source Subsidy_Info_Source_Date Subsidy_Info_Source_ID Portfolio Update_dtm;
+  drop Subsidy_Info_Source Subsidy_Info_Source_Date Subsidy_Info_Source_ID Subsidy_Info_Source_Property Portfolio Update_dtm;
 
 run;
 
