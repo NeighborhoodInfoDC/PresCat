@@ -87,8 +87,14 @@
     
     Compl_end = &Compl_end_src;
 
-    if &Is_inactive_src then Subsidy_Active = 0;
-    else Subsidy_Active = 1;
+    if &Is_inactive_src then do;
+      Subsidy_Active = 0;
+      POA_end_actual = &POA_end_actual_src;
+    end;
+    else do;
+      Subsidy_Active = 1;
+      POA_end_actual = .n;
+    end;
     
     Rent_to_fmr_description = &rent_to_fmr_description_src;
 
@@ -120,7 +126,7 @@
     format POA_start POA_end Compl_end Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
     
     keep
-      Units_Assist POA_start POA_end Compl_end
+      Units_Assist POA_start POA_end Compl_end POA_end_actual
       Subsidy_Active
       Subsidy_Info_Source 
       Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm 
@@ -240,11 +246,19 @@
   run;
   
   ** Format Proc Compare output file;
+  
+  data Update_subsidy_result_b;
+  
+    set Update_subsidy_result;
+    
+    retain In 1;
+    
+  run;
 
   %Super_transpose(  
-    data=Update_subsidy_result,
+    data=Update_subsidy_result_b,
     out=Update_subsidy_result_tr,
-    var=&Subsidy_update_vars,
+    var=In &Subsidy_update_vars,
     id=comp_type,
     by=nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_ID &Subsidy_compare_id_vars,
     mprint=Y
@@ -376,6 +390,7 @@
   data Update_subsidy_result_report;
 
     set Update_subsidy_result_except_tr;
+    where In_base = 1;
     
     length Subsidy_desc $ 400;
     
@@ -390,6 +405,7 @@
     %Update_rpt_write_var( var=Subsidy_active, fmt=dyesno., lbl="Subsidy active" )
     %Update_rpt_write_var( var=POA_start, fmt=mmddyy10., lbl="Affordability start" )
     %Update_rpt_write_var( var=POA_end, fmt=mmddyy10., lbl="Affordability end" )
+    %Update_rpt_write_var( var=POA_end_actual, fmt=mmddyy10., lbl="Subsidy actual end" )
     %Update_rpt_write_var( var=Units_assist, fmt=comma10., lbl="Assisted units" )
     %Update_rpt_write_var( var=rent_to_FMR_description, fmt=$80., lbl="Rent level", typ=c )
     %Update_rpt_write_var( var=Program, fmt=$80., lbl=, typ=c )
@@ -438,23 +454,27 @@
     title3 "PresCat.Subsidy - New subsidy records from &Update_file";
   run;
 
+  ods pdf close;
+  ods tagsets.excelxp file="&_dcdata_r_path\PresCat\Prog\Updates\Update_&Update_file._subsidy_nonmatch.xls" style=Minimal options(sheet_interval='Proc' );
+
   ods proclabel "Nonmatching subsidy records";
 
   proc print data=Subsidy_target_update_a label;
-    where not In_Subsidy_target and missing( nlihc_id );
-    id Subsidy_Info_Source_ID;
-    var &Subsidy_missing_info_vars Subsidy_active Units_assist poa_start poa_end;
+    where not In_Subsidy_target and missing( nlihc_id ) and 
+      ( Subsidy_active or intck( 'year', poa_end_actual, date() ) <= 10 );
+    /*id Subsidy_Info_Source_ID;*/
+    var nlihc_id &Subsidy_missing_info_vars Subsidy_active Units_assist poa_start poa_end poa_end_actual;
     ****label 
       address_line1_text = "Address"
       program_type_name = "Program";
     title3 "PresCat.Subsidy - Nonmatching subsidy records in &Update_file (not added to Catalog)";
   run;
 
-  title2;
-    
-  ods pdf close;
+  ods tagsets.excelxp close;
   ods listing;
 
+  title2;
+    
 
   **************************************************************************
   ** End of macro;

@@ -13,13 +13,20 @@
  Modifications:
 **************************************************************************/
 
-/*%include "L:\SAS\Inc\StdLocal.sas";*/
-%include "C:\DCData\SAS\Inc\StdLocal.sas";
+%include "L:\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
-%DCData_lib( PresCat, local=n )
+%DCData_lib( PresCat, local=y )
 %DCData_lib( HUD, local=n )
 
 
 %Update_MFIS( Update_file=MFIS_2015_08, Finalize=N, Quiet=N )
+
+
+data _null_;
+  set Update_subsidy_result_except_tr (where=(nlihc_id='NL000037'));
+  file print;
+  put / '--------------------';
+  put (_all_) (= /);
+run;
 
