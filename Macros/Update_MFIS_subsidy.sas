@@ -418,10 +418,12 @@
     
   run;
 
+  options orientation=landscape;
+ 
   ods listing close;
   ods pdf file="&_dcdata_r_path\PresCat\Prog\Updates\Update_&Update_file._subsidy.pdf" 
     style=Styles.Rtf_arial_9pt pdftoc=2 bookmarklist=hide uniform;
- 
+    
   ods proclabel "Updated variables";
 
   proc report data=Update_subsidy_result_report nowd;
@@ -445,15 +447,16 @@
    
   ods proclabel "New subsidy records";
 
-  proc print data=Subsidy_target_update_b label;
+  proc report data=Subsidy_target_update_b nowd;
     where not In_Subsidy_target and not( missing( nlihc_id ) );
-    by nlihc_id;
-    id Subsidy_id;
-    var Subsidy_Info_Source_ID &Subsidy_update_vars;
-    label
-      nlihc_id = ' '
-      Subsidy_id = 'ID'
-      Subsidy_Info_Source_ID = 'Source ID';      
+    column nlihc_id Subsidy_id Subsidy_Info_Source_ID &Subsidy_update_vars;
+    define nlihc_id / order noprint;
+    define Subsidy_id / display "Subsidy ID" style=[textalign=center];
+    define Subsidy_Info_Source_ID / display "Project ID" style=[textalign=center];
+    break before nlihc_id / ;
+    compute before nlihc_id / style=[textalign=left fontweight=bold];
+      line nlihc_id $nlihcid_proj.;
+    endcomp;
     title3 "PresCat.Subsidy - New subsidy records from &Update_file";
   run;
 
@@ -475,6 +478,8 @@
 
   ods tagsets.excelxp close;
   ods listing;
+  
+  options orientation=portrait;
 
   title2;
     

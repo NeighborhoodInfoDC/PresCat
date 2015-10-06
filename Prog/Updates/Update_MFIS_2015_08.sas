@@ -23,10 +23,3 @@
 %Update_MFIS( Update_file=MFIS_2015_08, Finalize=N, Quiet=N )
 
 
-data _null_;
-  set Update_subsidy_result_except_tr (where=(nlihc_id='NL000037'));
-  file print;
-  put / '--------------------';
-  put (_all_) (= /);
-run;
-
