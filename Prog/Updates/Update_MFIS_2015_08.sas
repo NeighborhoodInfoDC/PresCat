@@ -16,10 +16,10 @@
 %include "L:\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
-%DCData_lib( PresCat, local=y )
+%DCData_lib( PresCat, local=n )
 %DCData_lib( HUD, local=n )
 
 
-%Update_MFIS( Update_file=MFIS_2015_08, Finalize=N, Quiet=N )
+%Update_MFIS( Update_file=MFIS_2015_08, Finalize=Y )
 
 

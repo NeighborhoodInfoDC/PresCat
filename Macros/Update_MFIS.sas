@@ -37,9 +37,7 @@
     
     %Update_MFIS_project( Update_file=&Update_file, Project_except=&Project_except, Quiet=&Quiet )
     
-  /*************
     %Update_MFIS_finish( Update_file=&Update_file, Finalize=&Finalize, Subsidy_except=&Subsidy_except, Project_except=&Project_except, Final_compare=&Final_compare )
-  ************************/
     
   %end;
   %else %do;
