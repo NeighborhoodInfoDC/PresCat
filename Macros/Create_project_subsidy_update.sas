@@ -22,37 +22,58 @@
   ** Get min/max assisted units by program **;
 
   proc summary data=&data nway;
+    where Subsidy_active;
     class Nlihc_id Program;
     var units_assist poa_start_orig poa_end Subsidy_active;
     output out=_Project_subsidy_update_a
       sum(units_assist)=
       min(poa_start_orig poa_end)=Subsidy_Start_First Subsidy_End_First
       max(poa_start_orig poa_end)=Subsidy_Start_Last Subsidy_End_Last
-      max(Subsidy_active)=xSubsidized;
+      max(Subsidy_active)=_Subsidized;
   run;
 
   ** Summarize by project **;
 
   proc summary data=_Project_subsidy_update_a;
     by Nlihc_id;
-    var units_assist Subsidy_Start_First Subsidy_End_First Subsidy_Start_Last Subsidy_End_Last xSubsidized;
+    var units_assist Subsidy_Start_First Subsidy_End_First Subsidy_Start_Last Subsidy_End_Last _Subsidized;
     output out=_Project_subsidy_update_b (drop=_freq_ _type_)
-      min(units_assist Subsidy_Start_First Subsidy_End_First)=Proj_Units_Assist_Min Subsidy_Start_First Subsidy_End_First
-      max(units_assist Subsidy_Start_Last Subsidy_End_Last)=Proj_Units_Assist_Max Subsidy_Start_Last Subsidy_End_Last
-      max(xSubsidized)=;
+      sum(units_assist)=_units_assist_sum
+      min(Subsidy_Start_First Subsidy_End_First)=Subsidy_Start_First Subsidy_End_First
+      max(units_assist Subsidy_Start_Last Subsidy_End_Last)=_units_assist_max Subsidy_Start_Last Subsidy_End_Last
+      max(_Subsidized)=;
   run;
   
-  ** Adjust length of Subsidized var **;
+  ** Adjust length of Subsidized var, max assisted unit count **;
   
   data &out;
   
-    set _Project_subsidy_update_b;
+    merge
+      _Project_subsidy_update_b
+      PresCat.Project (keep=nlihc_id proj_units_tot);
+    by nlihc_id;
     
     length Subsidized 3;
     
-    Subsidized = xSubsidized;
+    Subsidized = _Subsidized;
+    if missing( Subsidized ) then Subsidized = 0;
     
-    drop xSubsidized;
+    if Subsidized then do;
+      Proj_Units_Assist_Min = min( _units_assist_max, proj_units_tot );
+      Proj_Units_Assist_Max = min( _units_assist_sum, proj_units_tot );
+    end;
+    else do;
+      Proj_Units_Assist_Min = .n;
+      Proj_Units_Assist_Max = .n;
+      Subsidy_Start_First = .n;
+      Subsidy_End_First =.n;
+      Subsidy_Start_Last =.n;
+      Subsidy_End_Last = .n;
+    end;
+    
+    format Subsidized dyesno.;
+    
+    drop _Subsidized _units_assist_sum _units_assist_max proj_units_tot;
     
   run;
 
