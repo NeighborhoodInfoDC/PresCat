@@ -22,11 +22,13 @@
     Subsidy_info_source Subsidy_Info_Source_Date
     Subsidy_update_vars Subsidy_tech_vars Subsidy_missing_info_vars
     Subsidy_dupcheck_id_vars Subsidy_compare_id_vars Subsidy_char_diff_vars
-    Project_mfa_update_vars Project_subsidy_update_vars Project_missing_info_vars 
+    Project_src_update_vars Project_subsidy_update_vars Project_missing_info_vars 
     Last_update_date Last_update_date_fmt
     Assisted_units_src POA_start_src POA_end_src Compl_end_src Is_inactive_src
     Program_src Subsidy_Info_Source_ID_src Subsidy_info_source_property_src
-    POA_end_actual_src Rent_to_fmr_description_src;
+    POA_end_actual_src Rent_to_fmr_description_src
+    ownership_effective_date_src owner_organization_name_src owner_individual_full_name_src
+    Hud_Own_Type_src mgmt_agent_org_name_src mgmt_agent_full_name_src Hud_Mgr_Type_src;
     
   %let Update_dtm = %sysfunc( datetime() );
   
@@ -43,6 +45,14 @@
   %let Program_src = SOA_cat_sub_cat;
   %let Subsidy_info_source_property_src = Premise_id;
   %let Rent_to_fmr_description_src = ' ';
+  
+  %let ownership_effective_date_src = .;
+  %let owner_organization_name_src = "";
+  %let owner_individual_full_name_src = "";
+  %let Hud_Own_Type_src = "";
+  %let mgmt_agent_org_name_src = "";
+  %let mgmt_agent_full_name_src = "";
+  %let Hud_Mgr_Type_src = "";
     
   %let NONMATCH_YEARS_CUTOFF = 10;   /** Maximum years since expiration to report nonmatching subsidy records **/
   %let NO_SUBSIDY_ID = 9999999999;
@@ -62,10 +72,10 @@
       Units_Assist POA_start POA_end Compl_end POA_end_actual Subsidy_Active Program Rent_to_FMR_description
       ;
       
-  %let Subsidy_tech_vars = Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date Premise_id Update_Dtm;
+  %let Subsidy_tech_vars = Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date subsidy_info_source_property Update_Dtm;
   
   %let Subsidy_missing_info_vars = 
-      HUD_project_number Premise_id Property_name Property_street SOA_cat_sub_cat
+      Premise_id Property_name Property_street SOA_cat_sub_cat
       ;
       
   %let Subsidy_dupcheck_id_vars = Premise_id Property_name;
@@ -74,7 +84,7 @@
   
   %let Subsidy_char_diff_vars = ;
   
-  %let Project_mfa_update_vars = 
+  %let Project_src_update_vars = 
       ;
 
   %let Project_subsidy_update_vars =

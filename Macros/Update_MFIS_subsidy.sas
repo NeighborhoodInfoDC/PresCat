@@ -68,6 +68,7 @@
       Subsidy_Info_Source $ 40
       Subsidy_Info_Source_ID $ 40
       Subsidy_Info_Source_Date 8
+      Subsidy_info_source_property $ 40
       Update_Dtm 8
     ;
     
@@ -76,6 +77,8 @@
     Subsidy_Info_Source_ID = &Subsidy_Info_Source_ID_src;
     
     Subsidy_Info_Source_Date = extract_date;
+    
+    Subsidy_info_source_property = &Subsidy_info_source_property_src;
 
     Update_Dtm = &Update_Dtm;
 
@@ -127,11 +130,8 @@
     
     keep
       Units_Assist POA_start POA_end Compl_end POA_end_actual
-      Subsidy_Active
-      Subsidy_Info_Source 
-      Subsidy_Info_Source_ID Subsidy_Info_Source_Date Update_Dtm 
-      Program rent_to_FMR_description 
-      &Subsidy_missing_info_vars;
+      Subsidy_Active Program rent_to_FMR_description 
+      &Subsidy_tech_vars &Subsidy_missing_info_vars &Subsidy_Info_Source_ID_src;
 
   run;
 
@@ -189,7 +189,7 @@
 
     update 
       Subsidy_target (in=in1)
-      Subsidy_update_recs (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars);
+      Subsidy_update_recs (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars &Subsidy_Info_Source_ID_src);
     by Subsidy_Info_Source_ID;
     
     In_Subsidy_target = in1;
@@ -229,7 +229,7 @@
     
     if in1 then output;
     
-    drop Subsidy_id_ret &Subsidy_missing_info_vars;
+    drop Subsidy_id_ret &Subsidy_missing_info_vars &Subsidy_Info_Source_ID_src;
     
   run;
   
@@ -457,7 +457,7 @@
     compute before nlihc_id / style=[textalign=left fontweight=bold];
       line nlihc_id $nlihcid_proj.;
     endcomp;
-    title3 "PresCat.Subsidy - New subsidy records from &Update_file";
+    title3 "PresCat.Subsidy - New subsidy records from &Update_file (added to Catalog)";
   run;
 
   ods pdf close;
@@ -473,7 +473,7 @@
     ****label 
       address_line1_text = "Address"
       program_type_name = "Program";
-    title3 "PresCat.Subsidy - Nonmatching subsidy records in &Update_file (not added to Catalog)";
+    title3 "PresCat.Subsidy - Nonmatching subsidy records in &Update_file (NOT added to Catalog)";
   run;
 
   ods tagsets.excelxp close;
