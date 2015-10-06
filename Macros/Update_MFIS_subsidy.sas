@@ -168,6 +168,9 @@
 
     set PresCat.Subsidy;
     
+    ** Correction to program code **;
+    if program = "236-LIF" then program = "236J1LIF";
+    
     _POA_end_hold = POA_end;
     
     if Subsidy_Info_Source=&Subsidy_Info_Source then output Subsidy_target;
