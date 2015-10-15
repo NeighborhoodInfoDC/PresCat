@@ -19,7 +19,6 @@
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
 
-%let MAXPROGS = 8;
 %let PUBHSNG  = 1;
 %let S8PROG   = 2;
 %let LIHTC    = 3;
@@ -27,20 +26,23 @@
 %let CDBG     = 5;
 %let HPTF     = 6;
 %let TEBOND   = 7;
-%let OTHER    = 8;
+%let HUDMORT  = 8;
+%let S202811  = 9;
+%let OTHER    = 10;
+%let MAXPROGS = 10;
 
 proc format;
   value ProgCat (notsorted)
     1 = 'Public Housing only'
     2 = 'Section 8 only'
     9 = 'Section 8 and other subsidies'
-    3 = 'LIHTC only'
-    4 = 'HOME only'
-    5 = 'CDBG only'
-    6 = 'HPTF only'
-    /*7 = 'Other single subsidy'*/
-    8 = 'LIHTC and Tax Exempt Bond only'
-    7, 10 = 'All other combinations';
+    8 = 'LIHTC w/tax exempt bonds'
+    3 = 'LIHTC w/o tax exempt bonds'
+    7 = 'HUD-insured mortgage only'
+    4,5 = 'HOME/CDBG only'
+    6 = 'DC HPTF only'
+    10 = 'Section 202/811 only'
+    20, 30 = 'Other subsidies/combinations';
   value ward
     1 = 'Ward 1'
     2 = 'Ward 2'
@@ -50,7 +52,114 @@ proc format;
     6 = 'Ward 6'
     7 = 'Ward 7'
     8 = 'Ward 8';
-    
+  value $tempphfix
+    "NL000413" = "DEL"
+    "NL000394" = "???"
+    "NL000410" = "???"
+    "NL000362" = "LECOOP"
+    "NL000414" = "???"
+    "NL000393" = "LECOOP"
+    "NL000390" = "???"
+    "NL000399" = "???"
+    "NL000010" = "NO"
+    "NL000392" = "???"
+    "NL000115" = "NO"
+    "NL000391" = "???"
+    "NL000405" = "???"
+    "NL000396" = "???"
+    "NL000404" = "COMCON"
+    "NL000409" = "???"
+    "NL000408" = "???"
+    "NL000397" = "???"
+    "NL000264" = "PUBHSNG"
+    "NL000337" = "???"
+    "NL000033" = "???"
+    "NL000034" = "PUBHSNG"
+    "NL000043" = "PUBHSNG"
+    "NL001000" = "PUBHSNG"
+    "NL000050" = "PUBHSNG"
+    "NL000375" = "PUBHSNG"
+    "NL000990" = "PUBHSNG"
+    "NL000056" = "???"
+    "NL000058" = "PUBHSNG"
+    "NL001007" = "???"
+    "NL000411" = "LECOOP"
+    "NL000066" = "???"
+    "NL000398" = "???"
+    "NL000071" = "PUBHSNG"
+    "NL000075" = "PUBHSNG"
+    "NL000078" = "PUBHSNG"
+    "NL000079" = "???"
+    "NL000403" = "COMCON"
+    "NL000402" = "COMCON"
+    "NL000301" = "PUBHSNG"
+    "NL000097" = "PUBHSNG"
+    "NL000106" = "???"
+    "NL000110" = "PUBHSNG"
+    "NL000407" = "???"
+    "NL000121" = "PUBHSNG"
+    "NL000129" = "PUBHSNG"
+    "NL000130" = "PUBHSNG"
+    "NL000148" = "???"
+    "NL000132" = "???"
+    "NL000145" = "PUBHSNG"
+    "NL000146" = "PUBHSNG"
+    "NL000325" = "???"
+    "NL000150" = "PUBHSNG"
+    "NL000388" = "PUBHSNG"
+    "NL000158" = "PUBHSNG"
+    "NL000157" = "PUBHSNG"
+    "NL000161" = "PUBHSNG"
+    "NL000162" = "PUBHSNG"
+    "NL000169" = "???"
+    "NL000171" = "???"
+    "NL000173" = "PUBHSNG"
+    "NL000174" = "PUBHSNG"
+    "NL000401" = "???"
+    "NL000177" = "PUBHSNG"
+    "NL000178" = "PUBHSNG"
+    "NL000181" = "PUBHSNG"
+    "NL000184" = "PUBHSNG"
+    "NL000418" = "PUBHSNG"
+    "NL000188" = "PUBHSNG"
+    "NL000191" = "PUBHSNG"
+    "NL000192" = "PUBHSNG"
+    "NL000193" = "PUBHSNG"
+    "NL000194" = "PUBHSNG"
+    "NL000204" = "???"
+    "NL000205" = "PUBHSNG"
+    "NL000412" = "LECOOP"
+    "NL000219" = "PUBHSNG"
+    "NL000232" = "???"
+    "NL000221" = "???"
+    "NL000231" = "???"
+    "NL000389" = "LECOOP"
+    "NL000244" = "PUBHSNG"
+    "NL000245" = "PUBHSNG"
+    "NL000248" = "PUBHSNG"
+    "NL000249" = "PUBHSNG"
+    "NL001009" = "???"
+    "NL000266" = "???"
+    "NL000268" = "PUBHSNG"
+    "NL000276" = "???"
+    "NL000282" = "PUBHSNG"
+    "NL000287" = "PUBHSNG"
+    "NL000289" = "PUBHSNG"
+    "NL001008" = "???"
+    "NL000225" = "PUBHSNG"
+    "NL000302" = "PUBHSNG"
+    "NL000419" = "PUBHSNG"
+    "NL000312" = "???"
+    "NL000270" = "???"
+    "NL000349" = "???"
+    "NL000317" = "PUBHSNG"
+    "NL000415" = "???"
+    "NL000395" = "???"
+    "NL000327" = "PUBHSNG"
+    "NL000329" = "PUBHSNG"
+    "NL000400" = "???"
+    "NL000333" = "PUBHSNG";
+  
 %Data_to_format(
   FmtLib=work,
   FmtName=$nlihcid2cat,
@@ -64,6 +173,15 @@ proc format;
   Contents=N
   )
 
+** Aggregate subsidies so one record per portfolio **;
+
+proc summary data=PresCat.Subsidy (where=(Subsidy_Active and Portfolio~='PRAC')) nway;
+  class nlihc_id portfolio;
+  var Units_assist Poa_end;
+  output out=Subsidy_unique 
+    sum(Units_assist)= min(Poa_end)=;
+run;
+
 ** Combine project and subsidy data **;
 
 data Project_subsidy;
@@ -73,19 +191,22 @@ data Project_subsidy;
       (drop=Cat_: Hud_Mgr_: Hud_Own_:
        where=(put( nlihc_id, $nlihcid2cat. ) in ( '1', '2', '3', '4', '5' ))
        in=inProject)
-    PresCat.Subsidy
-      (keep=NLIHC_ID Portfolio Subsidy_Active Units_Assist POA_end
-       where=(Subsidy_Active));
+    Subsidy_unique
+      (in=inSubsidy);
   by NLIHC_ID;
   
-  if inProject;
+  if inProject and inSubsidy;
+  
+  if Portfolio = "PUBHSNG" then do;
+    Portfolio = put( Portfolio, $tempphfix. );
+    if Portfolio ~= "PUBHSNG" then delete;
+  end;
 
 run;
 
 data Assisted_units;
 
-  set Project_subsidy 
-        (where=(portfolio~='Project Rental Assistance Contract (PRAC)'));
+  set Project_subsidy;
   by NLIHC_ID;
   
   retain num_progs total_units min_asst_units max_asst_units asst_units1-asst_units&MAXPROGS
@@ -116,13 +237,15 @@ data Assisted_units;
   total_units = max( total_units, Proj_Units_Tot, Units_Assist );
 
   select ( portfolio );
-    when ( 'PUBHSNG' ) a_aunits{&PUBHSNG} = Units_Assist;
-    when ( 'PB8' ) a_aunits{&S8PROG} = Units_Assist;
-    when ( "LIHTC" ) a_aunits{&LIHTC} = Units_Assist;
-    when ( "HOME" ) a_aunits{&HOME} = Units_Assist;
-    when ( 'CDBG' ) a_aunits{&CDBG} = Units_Assist;
-    when ( 'DC HPTF' ) a_aunits{&HPTF} = Units_Assist;
-    when ( 'TEBOND' ) a_aunits{&TEBOND} = Units_Assist;
+    when ( 'PUBHSNG' ) a_aunits{&PUBHSNG} = sum( Units_Assist, a_aunits{&PUBHSNG} );
+    when ( 'PB8' ) a_aunits{&S8PROG} = sum( Units_Assist, a_aunits{&S8PROG} );
+    when ( 'LIHTC' ) a_aunits{&LIHTC} = sum( Units_Assist, a_aunits{&LIHTC} );
+    when ( 'HOME' ) a_aunits{&HOME} = sum( Units_Assist, a_aunits{&HOME} );
+    when ( 'CDBG' ) a_aunits{&CDBG} = sum( Units_Assist, a_aunits{&CDBG} );
+    when ( 'DC HPTF' ) a_aunits{&HPTF} = sum( Units_Assist, a_aunits{&HPTF} );
+    when ( 'TEBOND' ) a_aunits{&TEBOND} = sum( Units_Assist, a_aunits{&TEBOND} );
+    when ( 'HUDMORT' ) a_aunits{&HUDMORT} = sum( Units_Assist, a_aunits{&HUDMORT} );
+    when ( '202/811' ) a_aunits{&S202811} = sum( Units_Assist, a_aunits{&S202811} );
     otherwise a_aunits{&OTHER} = sum( Units_Assist, a_aunits{&OTHER} );
   end;
   
@@ -153,14 +276,17 @@ data Assisted_units;
       else if a_aunits{&HOME} > 0 then ProgCat = 4;
       else if a_aunits{&CDBG} > 0 then ProgCat = 5;
       else if a_aunits{&HPTF} > 0 then ProgCat = 6;
-      else if a_aunits{&TEBOND} > 0 or a_aunits{&OTHER} > 0 then ProgCat = 7;
+      else if a_aunits{&HUDMORT} > 0 then ProgCat = 7;
+      else if a_aunits{&S202811} > 0 then ProgCat = 10;
+      else if a_aunits{&TEBOND} > 0 or a_aunits{&OTHER} > 0 then ProgCat = 20;
     
     end;
     else do;
     
-      if num_progs = 2 and a_aunits{&LIHTC} > 0 and a_aunits{&TEBOND} > 0 then ProgCat = 8;
-      else if a_aunits{&S8PROG} > 0 then ProgCat = 9;
-      else ProgCat = 10;
+      if a_aunits{&S8PROG} > 0 then ProgCat = 9;
+      else if a_aunits{&LIHTC} > 0 and a_aunits{&TEBOND} > 0 then ProgCat = 8;
+      else if a_aunits{&LIHTC} > 0 then ProgCat = 3;
+      else ProgCat = 30;
       
     end;
     
@@ -170,11 +296,13 @@ data Assisted_units;
   
   format poa_end_min poa_end_max mmddyy10.;
   
-  drop i portfolio Subsidy_Active Units_Assist poa_end;
+  drop i portfolio Units_Assist poa_end _freq_ _type_;
 
 run;
 
-proc sort data=Assisted_units out=PresCat.Project_assisted_units;
+proc sort data=Assisted_units 
+    out=PresCat.Project_assisted_units 
+          (label="Preservation Catalog, Assisted unit counts by project and subsidy portfolio");
   by ProgCat NLIHC_ID;
 
 %File_info( data=PresCat.Project_assisted_units, printobs=0, freqvars=ProgCat Ward2012 Geo2010 )
