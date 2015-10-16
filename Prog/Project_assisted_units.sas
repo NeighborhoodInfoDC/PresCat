@@ -33,7 +33,7 @@
 
 proc format;
   value ProgCat (notsorted)
-    1 = 'Public Housing only'
+    1 = 'Public housing'
     2 = 'Section 8 only'
     9 = 'Section 8 and other subsidies'
     8 = 'LIHTC w/tax exempt bonds'
