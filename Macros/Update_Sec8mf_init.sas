@@ -1,5 +1,5 @@
 /**************************************************************************
- Program:  Update_Sec8mf.sas
+ Program:  Update_Sec8mf_init.sas
  Library:  PresCat
  Project:  NeighborhoodInfo DC
  Author:   P. Tatian
@@ -18,14 +18,43 @@
 %macro Update_Sec8mf_init( Update_file= );
 
   %global 
-    Update_dtm Subsidy_info_source NO_SUBSIDY_ID Subsidy_Info_Source_Date
+    Update_dtm NO_SUBSIDY_ID NONMATCH_YEARS_CUTOFF 
+    Subsidy_info_source Subsidy_Info_Source_Date
     Subsidy_update_vars Subsidy_tech_vars Subsidy_missing_info_vars
-    Project_mfa_update_vars Project_subsidy_update_vars Project_missing_info_vars 
-    Last_update_date Last_update_date_fmt;
-    
+    Subsidy_dupcheck_id_vars Subsidy_compare_id_vars Subsidy_char_diff_vars
+    Project_src_update_vars Project_subsidy_update_vars Project_missing_info_vars 
+    Last_update_date Last_update_date_fmt
+    Assisted_units_src POA_start_src POA_end_src Compl_end_src Is_inactive_src
+    Program_src Subsidy_Info_Source_ID_src Subsidy_info_source_property_src
+    POA_end_actual_src Rent_to_fmr_description_src
+    ownership_effective_date_src owner_organization_name_src owner_individual_full_name_src
+    Hud_Own_Type_src mgmt_agent_org_name_src mgmt_agent_full_name_src Hud_Mgr_Type_src;
+
   %let Update_dtm = %sysfunc( datetime() );
 
+  %** Subsidy source specific parameters **;
+
   %let Subsidy_info_source = "HUD/MFA";
+  %let Subsidy_Info_Source_ID_src = trim( left( put( property_id, 16. ) ) ) || "/" || left( contract_number );
+  %let Assisted_units_src = assisted_units_count;
+  %let POA_start_src = tracs_effective_date;
+  %let POA_end_src = tracs_overall_expiration_date;
+  %let Compl_end_src = POA_end;
+  %let Is_inactive_src = ( tracs_status in ( 'T' ) );
+  %let POA_end_actual_src = .;
+  %let Program_src = put( program_type_name, $mfatoprog. );
+  %let Subsidy_info_source_property_src = property_id;
+  %let Rent_to_fmr_description_src = rent_to_FMR_description;
+  
+  %let ownership_effective_date_src = ownership_effective_date;
+  %let owner_organization_name_src = owner_organization_name;
+  %let owner_individual_full_name_src = owner_individual_full_name;
+  %let Hud_Own_Type_src = owner_company;
+  %let mgmt_agent_org_name_src = mgmt_agent_org_name;
+  %let mgmt_agent_full_name_src = mgmt_agent_full_name;
+  %let Hud_Mgr_Type_src = mgmt_agent_company;
+    
+  %let NONMATCH_YEARS_CUTOFF = 10;   /** Maximum years since expiration to report nonmatching subsidy records **/
   
   %let NO_SUBSIDY_ID = 9999999999;
 
@@ -41,8 +70,7 @@
   %let Last_update_date_fmt = %sysfunc( putn( &Last_update_date, mmddyy10. ) );
   
   %let Subsidy_update_vars = 
-      Units_Assist POA_start POA_end Compl_end 
-      rent_to_FMR_description Subsidy_Active Program 
+      Units_Assist POA_start POA_end Compl_end POA_end_actual Subsidy_Active Program Rent_to_FMR_description
       ;
       
   %let Subsidy_tech_vars = Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date contract_number Update_Dtm;
@@ -51,7 +79,13 @@
       property_name_text address_line1_text program_type_name
       ;
       
-  %let Project_mfa_update_vars = 
+  %let Subsidy_dupcheck_id_vars = Premise_id Property_name;
+  
+  %let Subsidy_compare_id_vars = contract_number;
+  
+  %let Subsidy_char_diff_vars = rent_to_FMR_description_DIF;
+  
+  %let Project_src_update_vars = 
       Hud_Own_Effect_dt Hud_Own_Name Hud_Own_Type Hud_Mgr_Name
       Hud_Mgr_Type;
 
@@ -96,12 +130,14 @@
     Contents=N
     )
 
-  ** Create $property_nlihcid. format to add NLIHC ID from HUD MFA property ID **;
+  ** Create $property_nlihcid. format to add NLIHC ID from HUD property ID **;
   
   proc sql noprint;
     create table property_nlihcid as
-    select scan(subsidy_info_source_id, 1, '/') as property_id, nlihc_id, count(nlihc_id) as N
-      from PresCat.Subsidy (where=(Subsidy_Info_Source=&Subsidy_Info_Source and not(missing(subsidy_info_source_id))))
+    select Subsidy_info_source_property as property_id, nlihc_id, count(nlihc_id) as N
+      from PresCat.Subsidy (where=(Subsidy_Info_Source=&Subsidy_Info_Source and 
+                                   not(missing(subsidy_info_source_id)) and 
+                                   not(missing(Subsidy_info_source_property))))
       group by property_id, nlihc_id;
   quit;
   
