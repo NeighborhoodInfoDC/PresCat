@@ -128,7 +128,7 @@
     Contents=N
     )
 
-  ** Create $property_nlihcid. format to add NLIHC ID from HUD MFA property ID **;
+  ** Create $property_nlihcid. format to add NLIHC ID from HUD property ID **;
   
   proc sql noprint;
     create table property_nlihcid as
