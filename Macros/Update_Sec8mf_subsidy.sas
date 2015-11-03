@@ -129,7 +129,8 @@
     keep
       Units_Assist POA_start POA_end Compl_end POA_end_actual
       Subsidy_Active Program rent_to_FMR_description 
-      &Subsidy_tech_vars &Subsidy_missing_info_vars &Subsidy_Info_Source_ID_src;
+      Subsidy_info_source_property
+      &Subsidy_tech_vars &Subsidy_missing_info_vars &Subsidy_dupcheck_id_vars;
       /*
       Units_Assist POA_start POA_end Compl_end
       contract_number rent_to_FMR_description Subsidy_Active
@@ -196,13 +197,13 @@
 
     update 
       Subsidy_target (in=in1)
-      Subsidy_update_recs (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars &Subsidy_Info_Source_ID_src);
+      Subsidy_update_recs (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars Subsidy_Info_Source_ID);
     by Subsidy_Info_Source_ID;
     
     In_Subsidy_target = in1;
     
     if not In_Subsidy_target then do;
-      nlihc_id = put( &Subsidy_info_source_property_src, $property_nlihcid. );
+      nlihc_id = put( Subsidy_info_source_property, $property_nlihcid. );
     end;
     
     if missing( Subsidy_id ) then Subsidy_id = &NO_SUBSIDY_ID;
@@ -236,7 +237,7 @@
     
     if in1 then output;
     
-    drop Subsidy_id_ret &Subsidy_missing_info_vars &Subsidy_Info_Source_ID_src;
+    drop Subsidy_id_ret &Subsidy_missing_info_vars;
     
   run;
   
