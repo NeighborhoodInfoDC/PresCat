@@ -1,5 +1,5 @@
 /**************************************************************************
- Program:  Update_Sec8mf_2015_10.sas
+ Program:  Update_MFIS_2015_09.sas
  Library:  PresCat
  Project:  NeighborhoodInfo DC
  Author:   P. Tatian
@@ -7,8 +7,8 @@
  Version:  SAS 9.2
  Environment:  Local Windows session (desktop)
  
- Description:  Update Preservation Catalog with latest HUD Sec 8 MF
- update file.
+ Description:  Update Preservation Catalog with latest 
+ HUD MFIS update file.
 
  Modifications:
 **************************************************************************/
@@ -20,5 +20,6 @@
 %DCData_lib( HUD, local=n )
 
 
-%Update_Sec8mf( Update_file=Sec8mf_2015_10, Finalize=Y )
+%Update_MFIS( Update_file=MFIS_2015_09, Finalize=Y )
+
 
