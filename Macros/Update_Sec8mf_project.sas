@@ -79,37 +79,38 @@
    
     retain Subsidy_Info_Source &Subsidy_Info_Source;
 
-    Subsidy_Info_Source_ID = trim( left( put( property_id, 16. ) ) ) || "/" || 
-                             left( contract_number );
+    Subsidy_Info_Source_ID = &Subsidy_Info_Source_ID_src;
 
     Subsidy_Info_Source_Date = extract_date;
 
+    Subsidy_info_source_property = &Subsidy_info_source_property_src;
+
     Update_Dtm = &Update_Dtm;
 
-    Hud_Own_Effect_dt = ownership_effective_date;
+    Hud_Own_Effect_dt = &ownership_effective_date_src;
     
-    if not( missing( owner_organization_name ) ) then do;
-      %owner_name_clean( owner_organization_name, Hud_Own_Name )
+    if not( missing( &owner_organization_name_src ) ) then do;
+      %owner_name_clean( &owner_organization_name_src, Hud_Own_Name )
     end;
-    else do;
-      %owner_name_clean( owner_individual_full_name, Hud_Own_Name )
+    else if not( missing( &owner_individual_full_name_src ) ) then do;
+      %owner_name_clean( &owner_individual_full_name_src, Hud_Own_Name )
     end;
 
-    Hud_Own_Type = owner_company;
+    Hud_Own_Type = &Hud_Own_Type_src;
     
-    if not( missing( mgmt_agent_org_name ) ) then do;
-      %owner_name_clean( mgmt_agent_org_name, Hud_Mgr_Name )
+    if not( missing( &mgmt_agent_org_name_src ) ) then do;
+      %owner_name_clean( &mgmt_agent_org_name_src, Hud_Mgr_Name )
     end;
-    else do;
-      %owner_name_clean( mgmt_agent_full_name, Hud_Mgr_Name )
+    else if not( missing( &mgmt_agent_full_name_src ) ) then do;
+      %owner_name_clean( &mgmt_agent_full_name_src, Hud_Mgr_Name )
     end;
 
-    Hud_Mgr_Type = mgmt_agent_company;
+    Hud_Mgr_Type = &Hud_Mgr_Type_src;
 
     format Hud_Own_Type $ownmgrtype. Hud_Mgr_Type $ownmgrtype.
            Hud_Own_Effect_dt Subsidy_Info_Source_Date mmddyy10. Update_Dtm datetime16.;
     
-    keep &Project_mfa_update_vars &Project_missing_info_vars 
+    keep &Project_src_update_vars &Project_missing_info_vars 
          &Subsidy_tech_vars Update_dtm; 
 
   run;
@@ -123,7 +124,7 @@
   %Dup_check(
     data=Sec8MF_project_update,
     by=Subsidy_Info_Source_ID,
-    id=contract_number
+    id=&Project_missing_info_vars
   )
   
   title2;
@@ -137,10 +138,10 @@
   ** Apply update to Catalog data;
   
   ** Separate Catalog records to be updated
-  ** Project_mfa = All Catalog project records with subsidies flagged with Sec8MF as source 
+  ** Project_target = All Catalog project records with subsidies flagged with Sec8MF as source 
   ** Project_other = All other Catalog project records;
 
-  data Project_mfa Project_other; 
+  data Project_target Project_other; 
 
     merge PresCat.Project Project_source_link (drop=Update_dtm);
     by nlihc_id;
@@ -148,7 +149,7 @@
     if not( missing( Subsidy_Info_Source_ID ) ) then do;
       %Owner_name_clean( Hud_Own_Name, Hud_Own_Name )
       %Owner_name_clean( Hud_Mgr_Name, Hud_Mgr_Name )
-      output Project_mfa;
+      output Project_target;
     end;
     else do;
       output Project_other;
@@ -156,35 +157,35 @@
     
   run;
 
-  proc sort data=Project_mfa;
+  proc sort data=Project_target;
     by Subsidy_Info_Source_ID;
   run;
 
   ** Apply update
-  ** Project_mfa_update_a = Initial application of Sec8mf update to Catalog project records;
+  ** Project_target_update_a = Initial application of Sec8mf update to Catalog project records;
 
-  data Project_mfa_update_a;
+  data Project_target_update_a;
 
     update 
-      Project_mfa (in=in_Project)
+      Project_target (in=in_Project)
       Sec8MF_project_update 
-        (keep=&Project_mfa_update_vars &Project_missing_info_vars &Subsidy_tech_vars Update_dtm);
+        (keep=&Project_src_update_vars &Project_missing_info_vars &Subsidy_tech_vars Update_dtm);
     by Subsidy_Info_Source_ID;
     
     if in_Project;
     
   run;
 
-  proc sort data=Project_mfa_update_a;
+  proc sort data=Project_target_update_a;
     by Nlihc_id;
   run;
 
-  ** Project_mfa_update_b = Add data from updated subsidy records **;
+  ** Project_target_update_b = Add data from updated subsidy records **;
 
-  data Project_mfa_update_b;
+  data Project_target_update_b;
 
     update 
-      Project_mfa_update_a (in=in_Project)
+      Project_target_update_a (in=in_Project)
       Project_subsidy_update
         (keep=nlihc_id &Project_subsidy_update_vars);
     by Nlihc_id;
@@ -195,14 +196,14 @@
 
   ** Use Proc Compare to summarize update changes **;
 
-  proc sort data=Project_mfa;
+  proc sort data=Project_target;
     by nlihc_id;
 
-  proc compare base=Project_mfa compare=Project_mfa_update_b 
+  proc compare base=Project_target compare=Project_target_update_b 
       &Compare_opt outbase outcomp outdif maxprint=(40,32000)
       out=Update_project_result (rename=(_type_=comp_type));
     id nlihc_id Subsidy_Info_Source Subsidy_Info_Source_ID;
-    var &Project_mfa_update_vars &Project_subsidy_update_vars;
+    var &Project_src_update_vars &Project_subsidy_update_vars;
   run;
 
   ** Format Proc Compare output file;
@@ -210,7 +211,7 @@
   %Super_transpose(  
     data=Update_project_result,
     out=Update_project_result_tr,
-    var=&Project_mfa_update_vars &Project_subsidy_update_vars,
+    var=&Project_src_update_vars &Project_subsidy_update_vars,
     id=comp_type,
     by=nlihc_id Subsidy_Info_Source Subsidy_Info_Source_ID,
     mprint=N
@@ -223,9 +224,9 @@
   proc sort data=&Project_except._norm;
     by nlihc_id;
 
-  data Project_mfa_except;
+  data Project_target_except;
 
-    update Project_mfa_update_b (in=in1) &Project_except._norm;
+    update Project_target_update_b (in=in1) &Project_except._norm;
     by nlihc_id;
     
     if in1;
@@ -238,14 +239,14 @@
 
     set &Project_except._norm;
     
-    retain comp_type 'EXCEPT';
+    retain comp_type 'EXCEPT' In 1;
     
   run;
   
   %Super_transpose(  
     data=&Project_except._b,
     out=Update_project_except_tr,
-    var=&Project_mfa_update_vars,
+    var=In &Project_src_update_vars,
     id=comp_type,
     by=nlihc_id,
     mprint=N
@@ -279,15 +280,14 @@
   data Project_Update_all;
 
     set
-      Project_mfa_except
+      Project_target_except
       Project_other;
     by nlihc_id;
     
     where not( missing( nlihc_id ) );
     
-    drop Subsidy_Info_Source_ID Subsidy_Info_Source contract_number
-         program_type_name property_name_text address_line1_text
-         Subsidy_Info_Source_Date; 
+    drop Subsidy_Info_Source_ID Subsidy_Info_Source Subsidy_Info_Source_Date
+         &Subsidy_missing_info_vars; 
     
   run;
 
@@ -315,32 +315,47 @@
   **************************************************************************
   ** Update Project_update_history data set;
 
-  %Update_history_recs( data=Update_project_result_except_tr, out=Project_update_history_recs, Update_vars=&Project_mfa_update_vars )
+  %if &Project_src_update_vars ~= %then %do;
 
-  data Project_update_history_del;
+    %Update_history_recs( data=Update_project_result_except_tr, out=Project_update_history_recs, Update_vars=&Project_src_update_vars )
 
-    set PresCat.Project_update_history;
+    data Project_update_history_del;
+
+      set PresCat.Project_update_history;
+      
+      if Subsidy_info_source = &Subsidy_info_source and Subsidy_info_source_date = &Subsidy_Info_Source_Date then delete;
+      
+    run;
     
-    if Subsidy_info_source = &Subsidy_info_source and Subsidy_info_source_date = &Subsidy_Info_Source_Date then delete;
+    proc sort data=Project_update_history_del;
+      by Nlihc_id Subsidy_info_source Subsidy_info_source_date;
+    run;
+
+    data Project_update_history_new (label="Preservation Catalog, Project update history" sortedby=Nlihc_id Subsidy_info_source Subsidy_info_source_date);
+
+      update updatemode=nomissingcheck
+        Project_update_history_del
+        Project_update_history_recs;
+      by Nlihc_id Subsidy_info_source Subsidy_info_source_date;
+      
+    run;
     
-  run;
+    proc sort data=Project_update_history_new;
+      by Nlihc_id descending Update_dtm;
+    run;
+    
+  %end;
+  %else %do;
   
-  proc sort data=Project_update_history_del;
-    by Nlihc_id Subsidy_info_source Subsidy_info_source_date;
-  run;
-
-  data Project_update_history_new (label="Preservation Catalog, Project update history" sortedby=Nlihc_id Subsidy_info_source Subsidy_info_source_date);
-
-    update updatemode=nomissingcheck
-      Project_update_history_del
-      Project_update_history_recs;
-    by Nlihc_id Subsidy_info_source Subsidy_info_source_date;
-    
-  run;
+    ** No variables to update, just copy data set **;
   
-  proc sort data=Project_update_history_new;
-    by Nlihc_id descending Update_dtm;
-  run;
+    proc datasets library=Work memtype=(data) nolist;
+      copy in=PresCat out=Work;
+        select Project_update_history;
+      change Project_update_history=Project_update_history_new;
+    quit;
+    
+  %end;
 
 
   **************************************************************************
