@@ -79,7 +79,7 @@
       property_name_text address_line1_text program_type_name
       ;
       
-  %let Subsidy_dupcheck_id_vars = Premise_id Property_name;
+  %let Subsidy_dupcheck_id_vars = property_id property_name_text;
   
   %let Subsidy_compare_id_vars = contract_number;
   
