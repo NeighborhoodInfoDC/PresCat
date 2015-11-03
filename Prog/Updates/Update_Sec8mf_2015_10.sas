@@ -16,7 +16,7 @@
 %include "L:\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
-%DCData_lib( PresCat, local=y )
+%DCData_lib( PresCat, local=n )
 %DCData_lib( HUD, local=n )
 
 
