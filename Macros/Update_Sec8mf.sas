@@ -17,7 +17,7 @@
 
 %macro Update_Sec8mf( 
   Update_file=, 
-  Finalize=N,
+  Finalize=Y,
   Project_except=Project_except,
   Subsidy_except=Subsidy_except,
   Quiet=Y,
