@@ -392,12 +392,16 @@ proc format library=PresCat;
     "908NTDH" = "Sec 908 National Defense Housing"
     "TX1002LD" = "Title X 1002 Land Development"
     "TXIGRPPR" = "Title XI Group Practice"
+    'LIHTC/UNKWN' = 'Low income housing tax credit: unknown pct'
+    'LIHTC/4PCT' = 'Low income housing tax credit: 4 percent'
+    'LIHTC/9PCT' = 'Low income housing tax credit: 9 percent'
+    'LIHTC/4+9PCT' = 'Low income housing tax credit: 4 + 9 percent'
+    'LIHTC/TCEP' = 'Low income housing tax credit: TCEP only'
 
     /** Other **/
     'CDBG' = 'Community development block grant'
     'DC-HPTF' = 'DC housing production trust fund'
     'HOME' = 'HOME'
-    'LIHTC' = 'Low income housing tax credit'
     'MCKINNEY' = 'McKinney Vento Act loan'
     'PUBHSNG' = 'Public housing'
     'TEBOND' = 'Tax exempt bond';
@@ -444,7 +448,11 @@ proc format library=PresCat;
     'CDBG' = 'CDBG'
     'DC-HPTF' = 'DC HPTF'
     'HOME' = 'HOME'
-    'LIHTC' = 'LIHTC'
+    'LIHTC/UNKWN' = 'LIHTC unknown pct'
+    'LIHTC/4PCT' = 'LIHTC 4 percent'
+    'LIHTC/9PCT' = 'LIHTC 9 percent'
+    'LIHTC/4+9PCT' = 'LIHTC 4 + 9 percent'
+    'LIHTC/TCEP' = 'LIHTC TCEP only'
     'MCKINNEY' = 'McKinney Vento'
     'PUBHSNG' = 'Public housing'
     'TEBOND' = 'Tax exempt bond';
@@ -469,6 +477,13 @@ proc format library=PresCat;
     'PUBHSNG' = 'Public housing'
     'TEBOND' = 'Tax exempt bond';
 
+  value lihtc_credit2prog
+    . = 'LIHTC/UNKWN'
+    1 = 'LIHTC/4PCT'
+    2 = 'LIHTC/9PCT'
+    3 = 'LIHTC/4+9PCT'
+    4 = 'LIHTC/TCEP';
+ 
 run;
 
 proc catalog catalog=PresCat.Formats;
