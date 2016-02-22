@@ -177,9 +177,9 @@ proc format;
 
 proc summary data=PresCat.Subsidy (where=(Subsidy_Active and Portfolio~='PRAC')) nway;
   class nlihc_id portfolio;
-  var Units_assist Poa_end;
+  var Units_assist Poa_end Compl_end;
   output out=Subsidy_unique 
-    sum(Units_assist)= min(Poa_end)=;
+    sum(Units_assist)= min(Poa_end Compl_end)=;
 run;
 
 ** Combine project and subsidy data **;
@@ -210,7 +210,7 @@ data Assisted_units;
   by NLIHC_ID;
   
   retain num_progs total_units min_asst_units max_asst_units asst_units1-asst_units&MAXPROGS
-         poa_end_min poa_end_max;
+         poa_end_min poa_end_max compl_end_min compl_end_max;
 
   array a_aunits{&MAXPROGS} asst_units1-asst_units&MAXPROGS;
   
@@ -225,6 +225,9 @@ data Assisted_units;
     
     poa_end_min = .;
     poa_end_max = .;
+
+    compl_end_min = .;
+    compl_end_max = .;
 
     do i = 1 to &MAXPROGS;
       a_aunits{i} = 0;
@@ -252,7 +255,10 @@ data Assisted_units;
   min_asst_units = max( Units_Assist, min_asst_units );
   
   poa_end_min = min( poa_end, poa_end_min );
-  poa_end_max = min( poa_end, poa_end_max );
+  poa_end_max = max( poa_end, poa_end_max );
+  
+  compl_end_min = min( compl_end, compl_end_min );
+  compl_end_max = max( compl_end, compl_end_max );
   
   if last.NLIHC_ID then do;
   
@@ -294,9 +300,9 @@ data Assisted_units;
   
   end;
   
-  format poa_end_min poa_end_max mmddyy10.;
+  format poa_end_min poa_end_max compl_end_min compl_end_max mmddyy10.;
   
-  drop i portfolio Units_Assist poa_end _freq_ _type_;
+  drop i portfolio Units_Assist poa_end compl_end _freq_ _type_;
 
 run;
 
