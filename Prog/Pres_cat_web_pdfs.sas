@@ -32,9 +32,10 @@
 
   data Project;
 
-    *merge PresCat.Project PresCat.Project_geocode;
-    set PresCat.Project;
-    *by NLIHC_ID;
+    merge 
+      PresCat.Project (drop=Category_code Cat_At_Risk Cat_More_Info Cat_Lost Cat_Replaced)
+      PresCat.Project_category (drop=Proj_Name);
+    by NLIHC_ID;
     where NLIHC_ID = "&proj_select";
       
     length Subsidy_range $ 80;
@@ -64,21 +65,20 @@
   ods listing close;
 
   ods pdf file="L:\Libraries\PresCat\Prog\PDFs\&ver\&proj_select.-detailed.pdf" 
-    style=Printer /*Styles.Rtf_arial_9pt*/ 
+    style=Listing 
     startpage=never 
     notoc;
 
-  proc report data=Project list nowd /*noheader*/
+  proc report data=Project list nowd
       /*style(report)=[width=2in postimage='http://citizenatlas.dc.gov/mobilevideo/20040926/QQ112940.jpg']*/
+      style(report)={frame=void}
       style(header)={fontsize=2}
-      style(column)={fontsize=2};
+      style(column)={fontsize=4 font_weight=bold};
     column 
-/*      NLIHC_ID */
       Proj_Name
       Proj_Addre
       Proj_ZIP
     ;
-/*    define NLIHC_ID / ' ' group; */
     define Proj_Name / ' ' display;
     define Proj_Addre / width=120 ' ' display;
     define Proj_ZIP / ' ' display;
@@ -103,8 +103,7 @@
     define Cluster_tr2000 / ' ' format=$CLUS00F. display;
   run;
 
-  proc report data=Project list nowd /*noheader*/
-      /*style(report)=[width=2in postimage='http://citizenatlas.dc.gov/mobilevideo/20040926/QQ112940.jpg']*/
+  proc report data=Project list nowd
       style(header)={fontsize=2}
       style(column)={fontsize=2};
     column 
@@ -114,7 +113,7 @@
       Cat_expiring
       Cat_failing_insp
     ;
-    define Status / display;
+    define Status / 'Status?' display;
     define Subsidized / 'Subsidized?' display
                           style(column)={textalign=center};
     define Category_Code / 'Main Category' display;
@@ -124,13 +123,12 @@
                           style(column)={textalign=center cellwidth=1.5in};
   run;
 
-  proc report data=Project list nowd /*noheader*/
+  proc report data=Project list nowd
       style(header)={fontsize=2}
       style(column)={fontsize=2};
     column 
       Proj_units_tot
       Proj_units_assist_max
-      /*( "Subsidy date range" Subsidy_start_first Subsidy_end_last )*/
       Subsidy_range
     ;
     define Proj_units_tot / 'Total project units' display
@@ -140,7 +138,7 @@
     define Subsidy_range / 'Subsidy date range' display;
   run;
 
-  proc report data=Subsidy list nowd /*noheader*/
+  proc report data=Subsidy list nowd
       style(header)={fontsize=2}
       style(column)={fontsize=2};
     column 
@@ -206,11 +204,6 @@ data Parcel;
   
 run;
 
-proc print data=Parcel;
-  id ssl;
-  WHERE NLIHC_ID IN ( "NL000046" ); 
-run;
-
 
 *****************************
 *****  Create all PDFs  *****
@@ -226,7 +219,7 @@ x "del /q L:\Libraries\PresCat\Prog\PDFs\public\*.pdf";
 data _null_;
 
   set PresCat.Project (keep=NLIHC_ID);
-  ***WHERE NLIHC_ID IN ( "NL000208", "NL000319" ); 
+  ***UNCOMMENT FOR TESTING***WHERE NLIHC_ID IN ( "NL000208", "NL000319" ); 
   
   call execute ( '%Create_pdf( ' || NLIHC_ID || ', public )' );
 
@@ -234,4 +227,3 @@ data _null_;
 
 run;
 
-    
