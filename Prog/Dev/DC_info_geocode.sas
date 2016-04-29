@@ -25,11 +25,14 @@
 %include "L:\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
-%DCData_lib( PresCat, local=n )
+%DCData_lib( PresCat )
 
-%let MAX_PROJ_ADDRE = 3;   /** Maximum number of addresses to include in Proj_addre field **/
 
-/* %File_info( data=PresCat.DC_info_geocode, freqvars=, printobs=0 ) */
+%let MAX_PROJ_ADDRE = 3;   /** Maximum number of addresses to include in Proj_addre field in PresCat.Project_geo **/
+
+
+%let outlib = %mif_select( &_remote_batch_submit, PresCat, WORK );
+
 
 ** Import geocoded building addresses from MAR Geocoder **;
 
@@ -315,11 +318,13 @@ proc sort data=DC_info_geocode_mar;
 %let geo_vars = Ward2012 Anc2012 Psa2012 Geo2010 Cluster_tr2000 Cluster_tr2000_name Zip;
 
 data 
-  PresCat.Project_geocode 
-    (keep=nlihc_id Proj_Name &geo_vars Proj_address_id Proj_x Proj_y Proj_lat Proj_lon 
+  &outlib..Project_geocode 
+    (label="Preservation Catalog, Project-level geocoding info"
+     keep=nlihc_id Proj_Name &geo_vars Proj_address_id Proj_x Proj_y Proj_lat Proj_lon 
           Proj_addre Proj_zip Proj_image_url Proj_Streetview_url Bldg_count)
-  PresCat.Building_geocode
-    (keep=nlihc_id Proj_Name &geo_vars address_id Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre Zip
+  &outlib..Building_geocode
+    (label="Preservation Catalog, Building-level geocoding info"
+     keep=nlihc_id Proj_Name &geo_vars address_id Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre Zip
           image_url Streetview_url ssl_std
      rename=(address_id=Bldg_address_id Zip=Bldg_zip image_url=Bldg_image_url Streetview_url=Bldg_streetview_url
              ssl_std=Ssl));
@@ -362,7 +367,7 @@ data
   Bldg_lat = MAR_LATITUDE;
   Bldg_addre = MAR_MATCHADDRESS;
   
-  output PresCat.Building_geocode;
+  output &outlib..Building_geocode;
   
   if address_id > 0 and missing( Proj_address_id ) then Proj_address_id = address_id;
   if Proj_zip = "" then Proj_zip = Zip;
@@ -387,7 +392,7 @@ data
     Proj_lat = Proj_lat / Bldg_count;
     Proj_lon = Proj_lon / Bldg_count;
     
-    output PresCat.Project_geocode;
+    output &outlib..Project_geocode;
     
   end;
   
@@ -428,53 +433,85 @@ data
   
 run;
 
-%File_info( data=PresCat.Project_geocode, freqvars=Ward2012 Bldg_count )
-%File_info( data=PresCat.Building_geocode, freqvars=Ward2012 )
+%File_info( data=&outlib..Project_geocode, freqvars=Ward2012 Bldg_count )
+%File_info( data=&outlib..Building_geocode, freqvars=Ward2012 )
 
 %Dup_check(
-  data=PresCat.Project_geocode,
+  data=&outlib..Project_geocode,
   by=nlihc_id,
   id=Proj_Name Proj_addre 
 )
 
-proc print data=PresCat.Project_geocode;
+proc print data=&outlib..Project_geocode;
   where Ward2012 = '';
   id nlihc_id;
-  title2 'PresCat.Project_geocode / Missing Ward';
+  title2 "&outlib..Project_geocode / Missing Ward";
 run;
 
-proc print data=PresCat.Building_geocode;
+proc print data=&outlib..Building_geocode;
   where Ward2012 = '';
   id nlihc_id;
-  title2 'PresCat.Building_geocode / Missing Ward';
+  title2 "&outlib..Building_geocode / Missing Ward";
 run;
   
-proc print data=PresCat.Building_geocode noobs;
+proc print data=&outlib..Building_geocode noobs;
   id nlihc_id;
   var ssl Ward2012 Bldg_address_id bldg_addre;
   title2;
 run;
 
 data _null_;
-  set PresCat.Building_geocode (where=(nlihc_id='NL001032'));
+  set &outlib..Building_geocode (where=(nlihc_id='NL001032'));
   file print;
-  put / '---PresCat.Building_geocode-----------------';
+  put / "---&outlib..Building_geocode-----------------";
   put (_all_) (= /);
 run;
 
 data _null_;
-  set PresCat.Project_geocode (where=(nlihc_id='NL001032'));
+  set &outlib..Project_geocode (where=(nlihc_id='NL001032'));
   file print;
-  put / '---PresCat.Project_geocode-----------------';
+  put / "---&outlib..Project_geocode-----------------";
   put (_all_) (= /);
 run;
 
 
-**** Compare with earlier versions ****;
+/** Macro Register_metadata - Start Definition **/
 
-libname comp 'D:\DCData\Libraries\PresCat\Data\Old';
+%macro Register_metadata( revisions= );
 
-proc compare base=Comp.Project_geocode compare=PresCat.Project_geocode listall maxprint=(40,32000);
-  id nlihc_id;
+  %if &_remote_batch_submit %then %do;
+  
+    ** Register metadata **;
+    
+    %Dc_update_meta_file(
+      ds_lib=PresCat,
+      ds_name=Building_geocode,
+      creator_process=DC_info_geocode.sas,
+      restrictions=None,
+      revisions=%str(&revisions)
+    )
+    
+    %Dc_update_meta_file(
+      ds_lib=PresCat,
+      ds_name=Project_geocode,
+      creator_process=DC_info_geocode.sas,
+      restrictions=None,
+      revisions=%str(&revisions)
+    )
+    
+  %end;  
+  %else %do;
+  
+    %warn_mput( msg=Not final batch submit. Files will not be registered with metadata system. )
+    
+  %end;
+
+%mend Register_metadata;
+
+/** End Macro Definition **/
+
+
+%Register_metadata( revisions=%str(New file.) )
+
 run;
 
