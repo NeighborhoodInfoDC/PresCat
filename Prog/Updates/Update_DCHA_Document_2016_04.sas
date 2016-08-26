@@ -1,7 +1,7 @@
 libname prescat "L:\Libraries\PresCat\Data";
 options nofmterr;
 
-data subs;
+data prescat.subsidy;
 set prescat.subsidy; 
 *Capitol Gateway Senior Estates;
 if Nlihc_id= "NL001000" & Portfolio="PUBHSNG" then delete;
@@ -38,7 +38,7 @@ if Nlihc_id="NL000034" then do;Units_Assist=439;Subsidy_Info_Source="APSH";end;*
 if nlihc_id="NL000043" then do;Units_Assist=284;Subsidy_Info_Source="APSH";end;
 
 run;
-data proj;
+data prescat.project;
 set prescat.project;
 /*Parkway Overlook ownership*/
 if Nlihc_id= "NL000234" then Hud_Own_Name="Parkway Overlook, LP (DCHA affiliate)";
