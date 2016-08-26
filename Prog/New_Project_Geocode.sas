@@ -1,5 +1,5 @@
 /**************************************************************************
- Program:  Add_Project.sas
+ Program:  New_Project_Geocode.sas
  Library:  PresCat
  Project:  NeighborhoodInfo DC
  Author:   M. Cohen
@@ -49,54 +49,198 @@ data NLIHC_ID;
 	run;
 
 proc sort data=nlihc_id;
-by nlihc_num;
-run;
+	by nlihc_num;
+	run;
 
 proc sort data = New_Proj_Geocode;
-by proj_name;
-run;
+	by proj_name;
+	run;
 
 data New_Proj_Geocode;
-set New_Proj_Geocode;
-by proj_name;
-firstproj = first.proj_name;
-run;
+  set New_Proj_Geocode;
+	by proj_name;
+	firstproj = first.proj_name;
+	run;
 
 
 ** Merge new projects and existing nlihc id's, and generate nlihc id's for new projects **;
 
 data New_Proj_Geocode;
-retain proj_name nlihc_id;
-format nlihc_id $8.;
+  retain proj_name nlihc_id;
+  format nlihc_id $8.;
 	set Nlihc_id New_Proj_Geocode;
-	retain nlihc_hold real_nlihc;
-	if nlihc_num > nlihc_hold then nlihc_hold = nlihc_num;
-	select (firstproj);
-	when (1)
-	real_nlihc = nlihc_hold + _n_;*nlihc_num + 1;
-	otherwise
-	real_nlihc = real_nlihc;
-	end;
-	if proj_name = '' then delete;
-	drop_nlihc = 'NL00';
-	nlihc_id = cats (drop_nlihc, real_nlihc);
+	  retain nlihc_hold real_nlihc;
+	  if nlihc_num > nlihc_hold then nlihc_hold = nlihc_num;
+	  select (firstproj);
+	  	when (1)
+		real_nlihc = nlihc_hold + _n_;*nlihc_num + 1;
+		otherwise
+		real_nlihc = real_nlihc;
+		end;
+	  if proj_name = '' then delete;
+	  drop_nlihc = 'NL00';
+	  nlihc_id = cats (drop_nlihc, real_nlihc);
+	  drop drop_nlihc real_nlihc firstproj nlihc_num nlihc_sum;
 	run;
 
   ** MAR address info sheet **;
 
 filename fimport "D:\DCData\Libraries\PresCat\Raw\Buildings_for_geocoding_2016-08-01_mar_address.csv" lrecl=2000;
 
-proc import out=Mar_address
+/*proc import out=mar_address
     datafile=fimport
     dbms=csv replace;
   datarow=2;
   getnames=yes;
   guessingrows=500;
-
-run;
+  run;*/
+ data WORK.MAR_ADDRESS    ;
+%let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+informat ADDRESS_ID best32. ;
+informat STATUS $6. ;
+informat FULLADDRESS $19. ;
+informat ADDRNUM best32. ;
+informat ADDRNUMSUFFIX $1. ;
+informat STNAME $5. ;
+informat STREET_TYPE $6. ;
+informat QUADRANT $2. ;
+informat CITY $10. ;
+informat STATE $2. ;
+informat XCOORD best32. ;
+informat YCOORD best32. ;
+informat SSL $17. ;
+informat ANC $6. ;
+informat PSA $23. ;
+informat WARD $6. ;
+informat NBHD_ACTION $1. ;
+informat CLUSTER_ $10. ;
+informat POLDIST $34. ;
+informat ROC $2. ;
+informat CENSUS_TRACT best32. ;
+informat VOTE_PRCNCT $12. ;
+informat SMD $8. ;
+informat ZIPCODE best32. ;
+informat NATIONALGRID $18. ;
+informat ROADWAYSEGID best32. ;
+informat FOCUS_IMPROVEMENT_AREA $2. ;
+informat HAS_ALIAS $1. ;
+informat HAS_CONDO_UNIT $1. ;
+informat HAS_RES_UNIT $1. ;
+informat HAS_SSL $1. ;
+informat LATITUDE best32. ;
+informat LONGITUDE best32. ;
+informat STREETVIEWURL $104. ;
+informat RES_TYPE $11. ;
+informat WARD_2002 $6. ;
+informat WARD_2012 $6. ;
+informat ANC_2002 $6. ;
+informat ANC_2012 $6. ;
+informat SMD_2002 $8. ;
+informat SMD_2012 $8. ;
+informat MARID best32. ;
+informat IMAGEURL $38. ;
+informat IMAGEDIR best32. ;
+informat IMAGENAME $12. ;
+informat CONFIDENCELEVEL $1. ;
+format ADDRESS_ID best12. ;
+format STATUS $6. ;
+format FULLADDRESS $19. ;
+format ADDRNUM best12. ;
+format ADDRNUMSUFFIX $1. ;
+format STNAME $5. ;
+format STREET_TYPE $6. ;
+format QUADRANT $2. ;
+format CITY $10. ;
+format STATE $2. ;
+format XCOORD best12. ;
+format YCOORD best12. ;
+format SSL $17. ;
+format ANC $6. ;
+format PSA $23. ;
+format WARD $6. ;
+format NBHD_ACTION $1. ;
+format CLUSTER_ $10. ;
+format POLDIST $34. ;
+format ROC $2. ;
+format CENSUS_TRACT best12. ;
+format VOTE_PRCNCT $12. ;
+format SMD $8. ;
+format ZIPCODE best12. ;
+format NATIONALGRID $18. ;
+format ROADWAYSEGID best12. ;
+format FOCUS_IMPROVEMENT_AREA $2. ;
+format HAS_ALIAS $1. ;
+format HAS_CONDO_UNIT $1. ;
+format HAS_RES_UNIT $1. ;
+format HAS_SSL $1. ;
+format LATITUDE best12. ;
+format LONGITUDE best12. ;
+format STREETVIEWURL $104. ;
+format RES_TYPE $11. ;
+format WARD_2002 $6. ;
+format WARD_2012 $6. ;
+format ANC_2002 $6. ;
+format ANC_2012 $6. ;
+format SMD_2002 $8. ;
+format SMD_2012 $8. ;
+format MARID best12. ;
+format IMAGEURL $38. ;
+format IMAGEDIR best12. ;
+format IMAGENAME $12. ;
+format CONFIDENCELEVEL $1. ;
+input
+ADDRESS_ID
+                   STATUS $
+                   FULLADDRESS $
+                   ADDRNUM
+                   ADDRNUMSUFFIX $
+                   STNAME $
+                   STREET_TYPE $
+                   QUADRANT $
+                   CITY $
+                   STATE $
+                   XCOORD
+                   YCOORD
+                   SSL $
+                   ANC $
+                   PSA $
+                   WARD $
+                   NBHD_ACTION $
+                   CLUSTER_ $
+                   POLDIST $
+                   ROC $
+                   CENSUS_TRACT
+                   VOTE_PRCNCT $
+                   SMD $
+                   ZIPCODE
+                   NATIONALGRID $
+                   ROADWAYSEGID
+                   FOCUS_IMPROVEMENT_AREA $
+                   HAS_ALIAS $
+                   HAS_CONDO_UNIT $
+                   HAS_RES_UNIT $
+                   HAS_SSL $
+                   LATITUDE
+                   LONGITUDE
+                   STREETVIEWURL $
+                   RES_TYPE $
+                   WARD_2002 $
+                   WARD_2012 $
+                   ANC_2002 $
+                   ANC_2012 $
+                   SMD_2002 $
+                   SMD_2012 $
+                   MARID
+                   IMAGEURL $
+                   IMAGEDIR
+                   IMAGENAME $
+                   CONFIDENCELEVEL $
+       ;
+       if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+       run;
 
 filename fimport clear;
-
 
 proc sort data=New_Proj_Geocode;
   by marid;
@@ -175,11 +319,11 @@ data DC_info_geocode_mar;
 run;
 
 proc sort data=DC_info_geocode_mar;
-  by nlihc_id bldg_ssl MAR_MATCHADDRESS;
+  by nlihc_id address_id bldg_ssl MAR_MATCHADDRESS;
   
 %File_info( data=DC_info_geocode_mar, freqvars=Ward2012 )
 
-** Create project and building geocode data sets **;
+** Create project and building geocode data sets for new projects **;
 
 %let geo_vars = Ward2012 Anc2012 Psa2012 Geo2010 Cluster_tr2000 Cluster_tr2000_name Zip;
 
@@ -259,8 +403,6 @@ data
     Proj_lon = Proj_lon / Bldg_count;
     
     output work.Project_geocode_a;
-    
-	output work.Subsidy_a;
 
   end;
   
@@ -301,11 +443,13 @@ data
   
 run;
 
-data Project_geocode;
+** merge new geocode files onto existing geocode files**;
+
+data prescat.Project_geocode;
 	set Prescat.Project_geocode Project_geocode_a;
 	run;
 
-data Building_geocode;
+data prescat.Building_geocode;
 	set Prescat.Building_geocode Building_geocode_a;
 	run;
 

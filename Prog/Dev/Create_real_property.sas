@@ -12,7 +12,8 @@
 
  Modifications:
   09/27/14 PAT Updated for SAS1.
-  12/19/14 PAT Added variable labels. 
+  12/19/14 PAT Added variable labels.
+  08/25/16 MAC Added Foreclosure Data 2014, 2015, 2016
 **************************************************************************/
 
 %include "L:\SAS\Inc\StdLocal.sas";
@@ -110,7 +111,10 @@ data Foreclosure_notices;
     Rod.Foreclosures_2010 (keep=&fcl_keep_vars)
     Rod.Foreclosures_2011 (keep=&fcl_keep_vars)
     Rod.Foreclosures_2012 (keep=&fcl_keep_vars)
-    Rod.Foreclosures_2013 (keep=&fcl_keep_vars); 
+    Rod.Foreclosures_2013 (keep=&fcl_keep_vars)
+	Rod.Foreclosures_2014 (keep=&fcl_keep_vars)
+	Rod.Foreclosures_2015 (keep=&fcl_keep_vars)
+	Rod.Foreclosures_2016 (keep=&fcl_keep_vars); 
   
   where put( ssl, $sslsel. ) ~= "";
   
