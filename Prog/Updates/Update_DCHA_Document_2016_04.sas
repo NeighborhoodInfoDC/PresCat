@@ -1,5 +1,21 @@
-libname prescat "L:\Libraries\PresCat\Data";
-options nofmterr;
+/**************************************************************************
+ Program:  Update_DCHA_Document_2016_04.sas
+ Library:  PresCat
+ Project:  NeighborhoodInfo DC
+ Author:   K. Abazajian
+ Created:  08/29/2016
+ Version:  SAS 9.2
+ Environment:  Local Windows session (desktop)
+ 
+ Description:  Make manual adjustments to projects with edits from DCHA (04/16)
+
+ Modifications:
+**************************************************************************/
+
+%include "L:\SAS\Inc\StdLocal.sas";
+
+** Define libraries **;
+%DCData_lib( PresCat, local=n, rreadonly=n )
 
 data prescat.subsidy;
 set prescat.subsidy; 
