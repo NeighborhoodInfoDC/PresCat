@@ -85,12 +85,10 @@ data Monthly_rpt;
     NOTES $ 2000;
 
   merge
-    PresCat.Project
+    PresCat.Project_category_view
       (keep=nlihc_id proj_name proj_addre proj_city proj_st proj_zip
-            hud_own_name hud_own_type hud_mgr_name proj_units_tot ward2012 pbca) 
+            hud_own_name hud_own_type hud_mgr_name proj_units_tot ward2012 pbca category_code) 
     PresCat.TA_notes (keep=nlihc_id ta_provider ta_notes)
-    PresCat.Project_category
-      (keep=nlihc_id category_code)
     Reac_score_tr
     PresCat.Subsidy
       (keep=nlihc_id subsidy_id subsidy_active subsidy_info_source_date subsidy_info_source program 
