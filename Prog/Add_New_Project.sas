@@ -85,7 +85,7 @@ run;
 data Project_Status;
 
 	merge Project_Status (rename=(marid=Proj_address_id)) 
-	tmp1.Building_Geocode (keep = nlihc_id bldg_address_id rename=(bldg_address_id=proj_address_id));
+	prescat.Building_Geocode (keep = nlihc_id bldg_address_id rename=(bldg_address_id=proj_address_id));
 	by Proj_address_id;
 	if proj_name = "" then delete;
 	run;
@@ -148,7 +148,7 @@ data Project_New (label="Preservation Catalog, projects update");
     */;
 
   merge 
-	/*PresCat.*/tmp1.Project_geocode
+	PresCat.Project_geocode
     Subsidy (keep=Nlihc_id Proj_Units_Assist_: Subsidy_Start_: Subsidy_End_: Subsidized)
 	Status (keep=nlihc_id at_risk failing_inspection more_info lost replaced own_name own_type mgr_name mgr_type 
 					rename=(at_risk=cat_at_risk failing_inspection=cat_failing_insp more_info=cat_more_info lost=cat_lost replaced=cat_replaced))
@@ -313,7 +313,7 @@ data Project_New (label="Preservation Catalog, projects update");
   
 run;
 
-data /*PresCat.*/Project;
+data PresCat.Project;
 set PresCat.Project Add_Project;
 run;
 
