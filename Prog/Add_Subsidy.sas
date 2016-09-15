@@ -21,66 +21,57 @@
 
 ** Import subsidy data **;
 
-filename fimport "D:\DCData\Libraries\PresCat\Raw\Buildings_for_geocoding_2016-08-01_subsidy.csv" lrecl=2000;
+filename fimport "D:\DCData\Libraries\PresCat\Raw\Buildings_for_geocoding_2016-08-01_subsidy1.csv" lrecl=2000;
 
 data WORK.NEW_PROJ_SUBS    ;
 %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
 infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
 informat MARID best32. ;
 informat Units_assist 8. ;
-informat POA_start mmddyy10. ;
-informat POA_end mmddyy10. ;
-informat rent_to_fmr_description $40. ;
+informat Current_Affordability_Start mmddyy10. ;
+informat Current_Affordability_End mmddyy10. ;
+informat Fair_Market_Rent_Ratio $40. ;
 informat Subsidy_Info_Source_ID $40. ;
 informat Subsidy_Info_Source $40. ;
 informat Subsidy_Info_Source_Date 8. ;
-informat Subsidy_Notes $40. ;
-informat Update_Dtm DATETIME16.;
+informat Update_Date_Time DATETIME16.;
 informat Program $32. ;
-informat Compl_end mmddyy10. ;
-informat POA_end_prev mmddyy10. ;
+informat Compliance_end_date mmddyy10. ;
+informat Previous_Affordability_End mmddyy10. ;
 informat Agency $80. ;
-informat POA_start_orig mmddyy10. ;
 informat Portfolio $16. ;
-informat Subsidy_info_source_property $40. ;
-informat POA_end_actual mmddyy10. ;
+informat Date_Affordability_Ended mmddyy10. ;
 format MARID best12. ;
 format Units_assist 8. ;
-format POA_start mmddyy10. ;
-format POA_end mmddyy10. ;
-format rent_to_fmr_description $40. ;
+format Current_Affordability_Start mmddyy10. ;
+format Current_Affordability_End mmddyy10. ;
+format Fair_Market_Rent_Ratio $40. ;
 format Subsidy_Info_Source_ID $40. ;
 format Subsidy_Info_Source $40. ;
 format Subsidy_Info_Source_Date 8. ;
-format Subsidy_Notes $40. ;
-format Update_Dtm DATETIME16. ;
+format Update_Date_Time DATETIME16. ;
 format Program $32. ;
-format Compl_end mmddyy10. ;
-format POA_end_prev mmddyy10. ;
+format Compliance_end_date mmddyy10. ;
+format Previous_Affordability_End mmddyy10. ;
 format Agency $80. ;
-format POA_start_orig mmddyy10. ;
 format Portfolio $16. ;
-format Subsidy_info_source_property $40. ;
-format POA_end_actual mmddyy10. ;
+format Date_Affordability_Ended mmddyy10. ;
 input
 MARID
 Units_assist
-POA_start
-POA_end
-rent_to_fmr_description $
+Current_Affordability_Start
+Current_Affordability_End
+Fair_Market_Rent_Ratio $
 Subsidy_Info_Source_ID $
 Subsidy_Info_Source $
 Subsidy_Info_Source_Date
-Subsidy_Notes $
-Update_Dtm
+Update_Date_Time
 Program $
-Compl_end 
-POA_end_prev 
+Compliance_end_date 
+Previous_Affordability_End 
 Agency $
-POA_start_orig
 Portfolio $
-Subsidy_info_source_property $
-POA_end_actual
+Date_Affordability_Ended
 ;
 if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
 _drop = 0;
@@ -90,7 +81,7 @@ filename fimport clear;
   
 data NLIHC_ID;
 
-	set work.project_geocode
+	set prescat.project_geocode
 	(keep=NLIHC_id proj_address_id);
 	_drop = 1;
 	run;
@@ -125,10 +116,16 @@ data Subsidy_a;
   if first.Nlihc_id then Subsidy_id = 0;
   
   Subsidy_id + 1;
+  
+  
+  if Date_Affordability_Ended = . then Subsidy_Active = 1;
+  else Subsidy_Active = 0;
 
 run;
 
 data prescat.Subsidy;
 
-set  prescat.subsidy Subsidy_a;
+set  prescat.subsidy Subsidy_a (rename=(current_affordability_start=POA_start current_affordability_end=POA_end 
+								Fair_Market_Rent_Ratio=rent_to_fmr_description update_date_time=update_dtm 
+								Compliance_End_Date=compl_end Date_Affordability_Ended=POA_End_actual Previous_affordability_end=POA_end_prev));
 run;

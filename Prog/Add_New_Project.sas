@@ -17,6 +17,83 @@
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
 
+
+data project_old;
+	set prescat.project;
+	run;
+
+** Import project info and match to NLIHC_ID **;
+	filename fimport "D:\DCData\Libraries\PresCat\Raw\Buildings_for_geocoding_2016-08-01_status.csv" lrecl=2000;
+
+data WORK.PROJECT_STATUS    ;
+%let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+informat Proj_Name $20. ;
+informat NLIHC_ID $8. ;
+informat MARID best32. ;
+informat At_Risk 3. ;
+informat Failing_Inspection 3. ;
+informat More_Info 3. ;
+informat Lost 3. ;
+informat Replaced 3. ;
+informat Own_Name $60. ;
+informat Own_Type $20. ;
+informat Mgr_Name $60. ;
+informat Mgr_Type $20. ;
+format Proj_Name $20. ;
+format NLIHC_ID $8. ;
+format MARID best12. ;
+format At_Risk DYESNO3. ;
+format Failing_Inspection DYESNO3. ;
+format More_Info DYESNO3. ;
+format Lost DYESNO3. ;
+format Replaced DYESNO3. ;
+format Own_Name $60. ;
+format Own_Type $20. ;
+format Mgr_Name $60. ;
+format Mgr_Type $20. ;
+input
+Proj_Name $
+NLIHC_ID $
+Bldg_SSL $
+Bldg_City $
+Bldg_ST $
+MARID
+At_Risk 
+Failing_Inspection 
+More_Info 
+Lost 
+Replaced $
+Own_Name $
+Own_Type $
+Mgr_Name $
+Mgr_Type $
+     ;
+if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+run;
+
+filename fimport clear;
+
+proc sort data=project_status;
+by marid;
+run;
+
+proc sort data=tmp1.building_geocode;
+by bldg_address_id;
+run;
+
+data Project_Status;
+
+	merge Project_Status (rename=(marid=Proj_address_id)) 
+	tmp1.Building_Geocode (keep = nlihc_id bldg_address_id rename=(bldg_address_id=proj_address_id));
+	by Proj_address_id;
+	if proj_name = "" then delete;
+	run;
+
+proc sort data=Project_Status out=Status;
+	by nlihc_id;
+	run;
+
 ** Get min/max assisted units **;
 
 proc summary data=PresCat.Subsidy nway;
@@ -40,7 +117,7 @@ run;
 
 data Project_New (label="Preservation Catalog, projects update");
 
-  length
+  */length
     Nlihc_id $ 8
     Status $ 1
     Subsidized 3
@@ -59,21 +136,22 @@ data Project_New (label="Preservation Catalog, projects update");
     Proj_Units_Tot 8
     Proj_Units_Assist_Min 8
     Proj_Units_Assist_Max 8
-    Hud_Own_Effect_dt 8
-    Hud_Own_Name $ 80
-    Hud_Own_Type $ 2
-    Hud_Mgr_Name $ 80
-    Hud_Mgr_Type $ 2
     Subsidy_Start_First 8
     Subsidy_Start_Last 8
     Subsidy_End_First 8
     Subsidy_End_Last 8
-    Ward2012 $ 1
-    ;
+	Ward2012 $ 1
+	own_name $60
+	own_type $20
+	mgr_name $60
+	mgr_type $20
+    */;
 
   merge 
-	/*PresCat.*/Project_geocode
+	/*PresCat.*/tmp1.Project_geocode
     Subsidy (keep=Nlihc_id Proj_Units_Assist_: Subsidy_Start_: Subsidy_End_: Subsidized)
+	Status (keep=nlihc_id at_risk failing_inspection more_info lost replaced own_name own_type mgr_name mgr_type 
+					rename=(at_risk=cat_at_risk failing_inspection=cat_failing_insp more_info=cat_more_info lost=cat_lost replaced=cat_replaced))
             ;
   by Nlihc_id;
   
@@ -88,66 +166,43 @@ data Project_New (label="Preservation Catalog, projects update");
 	run;
  
   Data add_project;
+
   set new_project;
   by nlihc_id;
   if not (first.nlihc_id and last.nlihc_id) then delete;
 
-  Category_Code = Category;
+
+  ** Set Categories (default as 'other subsidized property') **;
+
+  if cat_at_risk = . then cat_at_risk = 0;
+  if cat_failing_insp = . then cat_failing_insp = 0;
+  if cat_more_info = . then cat_more_info = 1;
+  if cat_lost = . then cat_lost = 0;
+  if cat_replaced = . then cat_replaced = 0;
+
+  if category_code = "" then category_code = "5";
   
-  if Category_Code ~= '6' then Status = 'A';
-  else Status = 'I';
-  
-  array cat{*} Cat_: ;
-  
-  do i = 1 to dim( cat );
-    cat{i} = 0;
-  end;
-  
-  select ( Category_code );
-    when ( '1' )
-      Cat_At_Risk = 1;
-    when ( '2' )
-      Cat_Expiring = 1;
-    when ( '3' )
-      Cat_Failing_Insp = 1;
-    when ( '4' )
-      Cat_More_Info = 1;
-    when ( '5' )
-      /** Skip category 5 **/;
-    when ( '6' )
-      Cat_Lost = 1;
-    when ( '7' )
-      Cat_Replaced = 1;
-    otherwise
-      do;
-        %warn_put( msg="Invalid Category value. " _n_= NLIHC_ID= Category= Category_code= )
-      end;
-  end;
-  
+  if category_code = "6" then status = "I";
+  else status = "A";
+
   ** Mark projects with subsidy less than one year away as expiring **;
   
   if -100 < intck( 'year', Subsidy_End_First, date() ) < 1 then Cat_Expiring = 1;
+  if cat_expiring = . then cat_expiring = 0;
 
   Proj_units_tot = Units;
   
-  Hud_Own_Effect_dt = Own_Effect;
+  ** Label City and State **;
+  Proj_City = "Washington";
+  Proj_St = "DC";
   
-  array a{*} Proj_Addre Proj_City Own_Compan Own_Indivi Mgr_Compan 
-          Mgr_Indivi;
-  
-  do i = 1 to dim( a );
-    if a{i} = upcase( a{i} ) then a{i} = propcase( a{i} );
-  end;
-  
-  if Proj_City = "Wash" then Proj_City = "Washington";
-  
-  if Own_Compan ~= "" then do;
-  
-    Hud_Own_Name = left( Own_Compan );
-    
-    if Own_Indivi ~= "" then Hud_Own_Name = trim( Hud_Own_Name ) || ' / ' || left( Own_Indivi );
+  ** Format information on Owner and Manager **;
 
-    select ( Own_comp_1 );
+  if Own_Name ~= "" then do;
+  
+    Hud_Own_Name = left( Own_Name );
+
+    select ( Own_type );
       when ( 'Limited Dividend' ) Hud_Own_type = 'LD';
       when ( 'Non-Profit' ) Hud_Own_type = 'NP';
       when ( 'Non-Profit Controlled' ) Hud_Own_type = 'NC';
@@ -156,25 +211,23 @@ data Project_New (label="Preservation Catalog, projects update");
       when ( 'Profit Motivated' ) Hud_Own_type = 'PM';
       when ( '' ) Hud_Own_type = '  ';
       otherwise do;
-        %warn_put( msg='Unknown company type: ' _n_= nlihc_id= Hud_Own_name= Own_comp_1= )
+        %warn_put( msg='Unknown company type: ' _n_= nlihc_id= Hud_Own_name= )
       end;
     end;
   
   end;
   else do;
   
-    Hud_Own_Name = left( Own_Indivi );
-    Hud_Own_type = 'IN';
+    Hud_Own_Name = "Unknown";
+    Hud_Own_type = 'OT';
   
   end;
   
-  if Mgr_Compan ~= "" then do;
+  if Mgr_Name ~= "" then do;
   
-    Hud_Mgr_Name = left( Mgr_Compan );
+    Hud_Mgr_Name = left( Mgr_Name );
     
-    if Mgr_Indivi ~= "" then Hud_Mgr_Name = trim( Hud_Mgr_Name ) || ' / ' || left( Mgr_Indivi );
-    
-    select ( Mgr_comp_1 );
+    select ( Mgr_type );
       when ( 'Limited Dividend' ) Hud_Mgr_type = 'LD';
       when ( 'Non-Profit' ) Hud_Mgr_type = 'NP';
       when ( 'Non-Profit Controlled' ) Hud_Mgr_type = 'NC';
@@ -183,15 +236,15 @@ data Project_New (label="Preservation Catalog, projects update");
       when ( 'Profit Motivated', 'Proft Motivated' ) Hud_Mgr_type = 'PM';
       when ( '' ) Hud_Mgr_type = '  ';
       otherwise do;
-        %warn_put( msg='Unknown company type: ' _n_= nlihc_id= Hud_Mgr_name= Mgr_comp_1= )
+        %warn_put( msg='Unknown company type: ' _n_= nlihc_id= Hud_Mgr_name= )
       end;
     end;
     
   end;
   else do;
   
-    Hud_Mgr_Name = left( Mgr_Indivi );
-    Hud_Mgr_type = 'IN';
+    Hud_Mgr_Name = "Unknown";
+    Hud_Mgr_type = 'OT';
     
   end;
   
@@ -231,8 +284,6 @@ data Project_New (label="Preservation Catalog, projects update");
     Subsidy_Start_Last = "Last subsidy start date"
     Subsidy_End_First = "First subsidy end date"
     Subsidy_End_Last = "Last subsidy end date"
-    Proj_Name_old = "Old project name from Access DB"
-    Proj_Addre_old = "Old project address from Access DB"
     Ward2012 = 'Ward (2012)'
     Anc2012 = 'Advisory Neighborhood Commission (2012)'
     Psa2012 = 'Police Service Area (2012)'
@@ -258,11 +309,11 @@ data Project_New (label="Preservation Catalog, projects update");
     Update_Dtm datetime16.
   ;
  
-  drop i units category Own_Effect Own_Compan Own_Comp_1 Own_Indivi Mgr_Compan Mgr_Comp_1 Mgr_Indivi;
+  drop units  own_name own_type mgr_name mgr_type;
   
 run;
 
-data PresCat.Project;
+data /*PresCat.*/Project;
 set PresCat.Project Add_Project;
 run;
 
@@ -309,6 +360,6 @@ run;
 
 libname comp 'D:\DCData\Libraries\PresCat\Data\Old';
 
-proc compare base=Comp.Project compare=PresCat.Project listall maxprint=(40,32000);
+proc compare base=project_old compare=PresCat.Project listall maxprint=(40,32000);
   id nlihc_id;
 run;

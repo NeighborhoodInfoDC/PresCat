@@ -20,6 +20,7 @@
 
 
 %let MAX_PROJ_ADDRE = 3;   /** Maximum number of addresses to include in Proj_addre field in PresCat.Project_geo **/
+%let outlib = %mif_select( &_remote_batch_submit, PresCat, WORK );
 
 ** Import geocoded project data **;
 
@@ -44,8 +45,17 @@ data NLIHC_ID;
 
 	set PresCat.project
 	(keep=NLIHC_id);
-	NLIHC_SANS = compress(NLIHC_ID, , "a");
-	NLIHC_NUM = input(NLIHC_SANS, 6.);
+	nlihc_sans = compress(NLIHC_ID, , "a");
+	nlihc_num = input(NLIHC_SANS, 6.);
+	_drop_constant = 1;
+	run;
+
+data NLIHC_ID;
+	
+	set NLIHC_ID;
+	by _drop_constant nlihc_num;
+	lastid = last._drop3;
+	if lastid = 0 then delete;
 	run;
 
 proc sort data=nlihc_id;
@@ -80,7 +90,7 @@ data New_Proj_Geocode;
 	  if proj_name = '' then delete;
 	  drop_nlihc = 'NL00';
 	  nlihc_id = cats (drop_nlihc, real_nlihc);
-	  drop drop_nlihc real_nlihc firstproj nlihc_num nlihc_sum;
+	  drop drop_nlihc real_nlihc firstproj nlihc_num nlihc_sans nlihc_hold lastid _drop_constant;
 	run;
 
   ** MAR address info sheet **;
@@ -247,6 +257,8 @@ proc sort data=New_Proj_Geocode;
   
 proc sort data=Mar_address;
   by address_id;
+
+**Merge project info and address info for new projects**;
 
 data DC_info_geocode_mar;
 
@@ -443,14 +455,46 @@ data
   
 run;
 
+**remove projects from geocode datasets that are no longer in project dataset**;
+
+proc sql;
+
+   create table project as
+   select *
+   from prescat.project_geocode
+   where nlihc_id in (select distinct nlihc_id from prescat.project)
+   ;
+
+quit;
+
+proc sql;
+
+   create table building as
+   select *
+   from prescat.building_geocode
+   where nlihc_id in (select distinct nlihc_id from prescat.project)
+   ;
+
+quit;
+
+**compare new datasets with old geocode datasets**;
+
+proc compare base=prescat.project_geocode compare=work.project listall maxprint=(40,32000);
+  id nlihc_id;
+run;
+
+proc compare base=prescat.building_geocode compare=work.building listall maxprint=(40,32000);
+  id Bldg_address_id;
+run;
+
 ** merge new geocode files onto existing geocode files**;
 
 data prescat.Project_geocode;
-	set Prescat.Project_geocode Project_geocode_a;
+	set Project Project_geocode_a;
 	run;
 
 data prescat.Building_geocode;
-	set Prescat.Building_geocode Building_geocode_a;
+	set Building Building_geocode_a;
 	run;
 
 %File_info( data=&outlib..Project_geocode, freqvars=Ward2012 Bldg_count )
