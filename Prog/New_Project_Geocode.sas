@@ -20,7 +20,6 @@
 
 
 %let MAX_PROJ_ADDRE = 3;   /** Maximum number of addresses to include in Proj_addre field in PresCat.Project_geo **/
-%let outlib = %mif_select( &_remote_batch_submit, PresCat, WORK );
 
 ** Import geocoded project data **;
 
@@ -39,7 +38,7 @@ run;
 
 filename fimport clear;
 
-** Call in existing nlihc id's. **;
+** Create Unique NLIHC IDs for New Projects **;
 
 data NLIHC_ID;
 
@@ -54,7 +53,7 @@ data NLIHC_ID;
 	
 	set NLIHC_ID;
 	by _drop_constant nlihc_num;
-	lastid = last._drop3;
+	lastid = last._drop_constant;
 	if lastid = 0 then delete;
 	run;
 
@@ -73,24 +72,23 @@ data New_Proj_Geocode;
 	run;
 
 
-** Merge new projects and existing nlihc id's, and generate nlihc id's for new projects **;
-
 data New_Proj_Geocode;
   retain proj_name nlihc_id;
   format nlihc_id $8.;
 	set Nlihc_id New_Proj_Geocode;
-	  retain nlihc_hold real_nlihc;
+	  retain nlihc_hold;
 	  if nlihc_num > nlihc_hold then nlihc_hold = nlihc_num;
 	  select (firstproj);
-	  	when (1)
-		real_nlihc = nlihc_hold + _n_;*nlihc_num + 1;
+	when (1) do;
+	nlihc_hold = nlihc_hold + 1;
+ 	end;
 		otherwise
-		real_nlihc = real_nlihc;
+		nlihc_hold = nlihc_hold;
 		end;
 	  if proj_name = '' then delete;
 	  drop_nlihc = 'NL00';
-	  nlihc_id = cats (drop_nlihc, real_nlihc);
-	  drop drop_nlihc real_nlihc firstproj nlihc_num nlihc_sans nlihc_hold lastid _drop_constant;
+	  nlihc_id = cats (drop_nlihc, nlihc_hold);
+	  drop drop_nlihc firstproj nlihc_num nlihc_sans nlihc_hold lastid _drop_constant;
 	run;
 
   ** MAR address info sheet **;
@@ -319,19 +317,19 @@ data DC_info_geocode_mar;
   length Image_url $ 255;
   
   if imagename ~= "" and imagename ~=: "No_Image_Available" then 
-    Image_url = trim( imageurl ) || "/" || trim( imagedir ) || "/" || imagename;
+    Image_url = trim( imageurl ) || "/" || left( imagedir ) || "/" || imagename;
     
   rename Streetviewurl=Streetview_url;
   
   ** Reformat addresses **;
   
-  %address_clean( MAR_MATCHADDRESS, MAR_MATCHADDRESS );
+  %address_clean( MAR_MATCHADDRESS, MAR_rMATCHADDRESS );
   
 
 run;
 
 proc sort data=DC_info_geocode_mar;
-  by nlihc_id address_id bldg_ssl MAR_MATCHADDRESS;
+  by nlihc_id address_id /*bldg_ssl*/ MAR_MATCHADDRESS;
   
 %File_info( data=DC_info_geocode_mar, freqvars=Ward2012 )
 
@@ -477,7 +475,7 @@ proc sql;
 
 quit;
 
-**compare new datasets with old geocode datasets**;
+**Check to see if any projects or buildings were removed in previous step**;
 
 proc compare base=prescat.project_geocode compare=work.project listall maxprint=(40,32000);
   id nlihc_id;
@@ -489,44 +487,56 @@ run;
 
 ** merge new geocode files onto existing geocode files**;
 
-data prescat.Project_geocode;
+data Project_geocode;
 	set Project Project_geocode_a;
 	run;
 
-data prescat.Building_geocode;
+data Building_geocode;
 	set Building Building_geocode_a;
 	run;
 
-%File_info( data=&outlib..Project_geocode, freqvars=Ward2012 Bldg_count )
-%File_info( data=&outlib..Building_geocode, freqvars=Ward2012 )
-
 %Dup_check(
-  data=&outlib..Project_geocode,
+  data=Project_geocode,
   by=nlihc_id,
   id=Proj_Name Proj_addre 
 )
 
-proc print data=&outlib..Project_geocode;
-  where Ward2012 = '';
-  id nlihc_id;
-  title2 "&outlib..Project_geocode / Missing Ward";
-run;
+**Check for changes in the new geocode files that are not related to the new projects**;
 
-proc print data=&outlib..Building_geocode;
-  where Ward2012 = '';
-  id nlihc_id;
-  title2 "&outlib..Building_geocode / Missing Ward";
-run;
-  
-proc print data=&outlib..Building_geocode noobs;
-  id nlihc_id;
-  var ssl Ward2012 Bldg_address_id bldg_addre;
-  title2;
-run;
+proc sort data=prescat.building_geocode;
+ by nlihc_id proj_name Bldg_address_id;
+ run;
+
+proc sort data=building_geocode;
+ by nlihc_id proj_name Bldg_address_id;
+ run;
+
+proc compare base=prescat.project_geocode compare=work.project_geocode listall maxprint=(40,32000);
+ id nlihc_id proj_name;
+ run;
+
+proc compare base=prescat.building_geocode compare=work.building_geocode listall maxprint=(40,32000);
+ id nlihc_id proj_name Bldg_address_id;
+ run;
 
 ** Macro Register_metadata - Start Definition **/
 
 %macro Register_metadata( revisions= );
+
+proc sort 
+ data=Project_geocode 
+ out=PresCat.Project_geocode (label="Preservation Catalog, Project-level geocoding info");
+ by nlihc_id;
+ run;
+
+proc sort 
+ data=Building_geocode 
+ out=PresCat.Project_geocode (label="Preservation Catalog, Building-level geocoding info");
+ by nlihc_id Bldg_address_id;
+ run;
+
+%File_info( data=&outlib..Project_geocode, freqvars=Ward2012 Bldg_count )
+%File_info( data=&outlib..Building_geocode, freqvars=Ward2012 )
 
   %if &_remote_batch_submit %then %do;
   
@@ -552,7 +562,10 @@ run;
   %else %do;
   
     %warn_mput( msg=Not final batch submit. Files will not be registered with metadata system. )
-    
+  
+%File_info( data=Project_geocode, freqvars=Ward2012 Bldg_count )
+%File_info( data=Building_geocode, freqvars=Ward2012 )
+
   %end;
 
 %mend Register_metadata;
