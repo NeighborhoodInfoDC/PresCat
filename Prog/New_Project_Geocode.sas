@@ -496,12 +496,6 @@ data Building_geocode;
 	set Building Building_geocode_a;
 	run;
 
-%Dup_check(
-  data=Project_geocode,
-  by=nlihc_id,
-  id=Proj_Name Proj_addre 
-)
-
 proc sort data=building_geocode;
  by nlihc_id Bldg_addre;
  run;
@@ -520,7 +514,30 @@ proc compare base=prescat.building_geocode compare=work.building_geocode listall
  id nlihc_id proj_name Bldg_addre;
  run;
  
+title2 '********************************************************************************************';
+title3 '** Project_geocode: Check for duplicate project IDs';
+
+%Dup_check(
+  data=Project_geocode,
+  by=nlihc_id,
+  id=Proj_Name Proj_addre 
+)
+
+run;
+
+title2 '********************************************************************************************';
+title3 '** Building_geocode: Check for duplicate addresses in different projects';
+
+%Dup_check(
+  data=Building_geocode,
+  by=Bldg_address_id,
+  id=nlihc_id Proj_name Bldg_addre 
+)
+
+run;
+
 title2;
+
 
 ** Macro Register_metadata - Start Definition **;
 
