@@ -18,6 +18,7 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 
+%let input_file_pre = Buildings_for_geocoding_2016-08-01;
 
 %let MAX_PROJ_ADDRE = 3;   /** Maximum number of addresses to include in Proj_addre field in PresCat.Project_geo **/
 
@@ -25,7 +26,7 @@
 
 ** Main sheet info **;
 
-filename fimport "D:\DCData\Libraries\PresCat\Raw\Buildings_for_geocoding_2016-08-01_main.csv" lrecl=2000;
+filename fimport "&_dcdata_r_path\PresCat\Raw\New\&input_file_pre._main.csv" lrecl=2000;
 
 proc import out=New_Proj_Geocode
     datafile=fimport
@@ -93,7 +94,7 @@ data New_Proj_Geocode;
 
   ** MAR address info sheet **;
 
-filename fimport "D:\DCData\Libraries\PresCat\Raw\Buildings_for_geocoding_2016-08-01_mar_address.csv" lrecl=2000;
+filename fimport "&_dcdata_r_path\PresCat\Raw\New\&input_file_pre._mar_address.csv" lrecl=2000;
 
 data WORK.MAR_ADDRESS    ;
 %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
