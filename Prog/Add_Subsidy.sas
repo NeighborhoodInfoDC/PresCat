@@ -57,6 +57,7 @@ format Previous_Affordability_End mmddyy10. ;
 format Agency $80. ;
 format Portfolio $16. ;
 format Date_Affordability_Ended mmddyy10. ;
+
 input
 MARID
 Units_assist
@@ -74,8 +75,10 @@ Agency $
 Portfolio $
 Date_Affordability_Ended
 ;
+
 if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
 _drop = 0;
+
 run;
 
 filename fimport clear;
@@ -124,9 +127,19 @@ data Subsidy_a;
 
 run;
 
-data prescat.Subsidy;
+data Subsidy;
 
 set  prescat.subsidy Subsidy_a (rename=(current_affordability_start=POA_start current_affordability_end=POA_end 
 								Fair_Market_Rent_Ratio=rent_to_fmr_description update_date_time=update_dtm 
 								Compliance_End_Date=compl_end Date_Affordability_Ended=POA_End_actual Previous_affordability_end=POA_end_prev));
+run;
+
+proc sort data=Subsidy;
+  by nlihc_id subsidy_id;
+run;
+
+%File_info( data=Subsidy )
+
+proc compare base=PresCat.Subsidy compare=Subsidy listall maxprint=(40,32000);
+  id nlihc_id subsidy_id;
 run;
