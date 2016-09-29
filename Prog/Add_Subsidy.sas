@@ -18,10 +18,11 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 
+%let input_file_pre = Buildings_for_geocoding_2016-08-01;
 
 ** Import subsidy data **;
 
-filename fimport "D:\DCData\Libraries\PresCat\Raw\Buildings_for_geocoding_2016-08-01_subsidy1.csv" lrecl=2000;
+filename fimport "&_dcdata_r_path\PresCat\Raw\New\&input_file_pre._subsidy1.csv" lrecl=2000;
 
 data WORK.NEW_PROJ_SUBS    ;
 %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
