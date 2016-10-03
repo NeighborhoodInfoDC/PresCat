@@ -21,7 +21,7 @@
 
 ** Import subsidy data **;
 
-filename fimport "D:\DCData\Libraries\PresCat\Raw\Buildings_for_geocoding_2016-08-01_subsidy1.csv" lrecl=2000;
+filename fimport "L:\Libraries\PresCat\Raw\Buildings_for_geocoding_2016-08-01_subsidy.csv" lrecl=2000;
 
 data WORK.NEW_PROJ_SUBS    ;
 %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
@@ -34,7 +34,6 @@ informat Fair_Market_Rent_Ratio $40. ;
 informat Subsidy_Info_Source_ID $40. ;
 informat Subsidy_Info_Source $40. ;
 informat Subsidy_Info_Source_Date 8. ;
-informat Update_Date_Time DATETIME16.;
 informat Program $32. ;
 informat Compliance_end_date mmddyy10. ;
 informat Previous_Affordability_End mmddyy10. ;
@@ -49,7 +48,6 @@ format Fair_Market_Rent_Ratio $40. ;
 format Subsidy_Info_Source_ID $40. ;
 format Subsidy_Info_Source $40. ;
 format Subsidy_Info_Source_Date 8. ;
-format Update_Date_Time DATETIME16. ;
 format Program $32. ;
 format Compliance_end_date mmddyy10. ;
 format Previous_Affordability_End mmddyy10. ;
@@ -65,7 +63,6 @@ Fair_Market_Rent_Ratio $
 Subsidy_Info_Source_ID $
 Subsidy_Info_Source $
 Subsidy_Info_Source_Date
-Update_Date_Time
 Program $
 Compliance_end_date 
 Previous_Affordability_End 
@@ -81,13 +78,13 @@ filename fimport clear;
   
 data NLIHC_ID;
 
-	set prescat.project_geocode
-	(keep=NLIHC_id proj_address_id);
+	set building_geocode
+	(keep=NLIHC_id bldg_address_id);
 	_drop = 1;
 	run;
 
-proc sort data=nlihc_id;
-by proj_address_id;
+proc sort data=nlihc_id nodupkey;
+by bldg_address_id;
 run;
 
 
@@ -98,7 +95,7 @@ run;
 
 data Subsidy_a;
 
-  merge NLIHC_ID (rename=(proj_address_id=address_id)) New_Proj_Subs (rename=(marid=address_id));
+  merge NLIHC_ID (rename=(bldg_address_id=address_id)) New_Proj_Subs (rename=(marid=address_id));
   by address_id;
   if _drop = 1 then delete;
   drop _drop address_id;
@@ -111,21 +108,27 @@ run;
 data Subsidy_a;
   set Subsidy_a;
   by nlihc_id;
+
   ** Subsidy ID number **;
   
   if first.Nlihc_id then Subsidy_id = 0;
   
   Subsidy_id + 1;
   
-  
+  ** Create Active Subsidy Indicator **;
+
   if Date_Affordability_Ended = . then Subsidy_Active = 1;
   else Subsidy_Active = 0;
 
+  ** Create Timestamp for Update **;
+
+  Update_dtm =datetime();
+
 run;
 
-data prescat.Subsidy;
+data Subsidy;
 
 set  prescat.subsidy Subsidy_a (rename=(current_affordability_start=POA_start current_affordability_end=POA_end 
-								Fair_Market_Rent_Ratio=rent_to_fmr_description update_date_time=update_dtm 
-								Compliance_End_Date=compl_end Date_Affordability_Ended=POA_End_actual Previous_affordability_end=POA_end_prev));
+								Fair_Market_Rent_Ratio=rent_to_fmr_description Compliance_End_Date=compl_end 
+								Date_Affordability_Ended=POA_End_actual Previous_affordability_end=POA_end_prev));
 run;
