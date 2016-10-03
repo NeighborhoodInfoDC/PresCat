@@ -18,10 +18,11 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 
+%let input_file_pre = Buildings_for_geocoding_2016-08-01;
 
 ** Import subsidy data **;
 
-filename fimport "L:\Libraries\PresCat\Raw\Buildings_for_geocoding_2016-08-01_subsidy.csv" lrecl=2000;
+filename fimport "&_dcdata_r_path\PresCat\Raw\New\&input_file_pre._subsidy.csv" lrecl=2000;
 
 data WORK.NEW_PROJ_SUBS    ;
 %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
@@ -54,6 +55,7 @@ format Previous_Affordability_End mmddyy10. ;
 format Agency $80. ;
 format Portfolio $16. ;
 format Date_Affordability_Ended mmddyy10. ;
+
 input
 MARID
 Units_assist
@@ -70,8 +72,10 @@ Agency $
 Portfolio $
 Date_Affordability_Ended
 ;
+
 if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
 _drop = 0;
+
 run;
 
 filename fimport clear;
@@ -86,7 +90,6 @@ data NLIHC_ID;
 proc sort data=nlihc_id nodupkey;
 by bldg_address_id;
 run;
-
 
 proc sort data=New_Proj_Subs;
 by marid;
@@ -131,4 +134,16 @@ data Subsidy;
 set  prescat.subsidy Subsidy_a (rename=(current_affordability_start=POA_start current_affordability_end=POA_end 
 								Fair_Market_Rent_Ratio=rent_to_fmr_description Compliance_End_Date=compl_end 
 								Date_Affordability_Ended=POA_End_actual Previous_affordability_end=POA_end_prev));
+run;
+
+proc sort data=Subsidy;
+  by nlihc_id subsidy_id;
+run;
+
+%File_info( data=Subsidy )
+
+  ** Check against original subsidy file to ensure only new subsidy files have changed**;
+
+proc compare base=PresCat.Subsidy compare=Subsidy listall maxprint=(40,32000);
+  id nlihc_id subsidy_id;
 run;
