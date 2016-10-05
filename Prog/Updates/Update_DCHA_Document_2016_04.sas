@@ -15,7 +15,7 @@
 %include "L:\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
-%DCData_lib( PresCat, local=n, rreadonly=n )
+%DCData_lib( PresCat )
 
 
 /*******************UPDATE SUBSIDY DATA****************/
@@ -222,7 +222,7 @@ run;
 /*Compare files*/
 proc sort data=subsidy_old_plus_new out=update_subsidy; by nlihc_id subsidy_id; run;
 
-ods html body="&_dcdata_default_path\PresCat\Prog\Update\Update_DCHA_Document_2016_04_subsidy_compare.html" style=Default; 
+ods html body="&_dcdata_default_path\PresCat\Prog\Updates\Update_DCHA_Document_2016_04_subsidy_compare.html" style=Default; 
 proc compare base=PresCat.Subsidy compare=update_subsidy listall maxprint=(40,32000);
 id nlihc_id subsidy_id;
 run;
