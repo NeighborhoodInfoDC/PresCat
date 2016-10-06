@@ -131,9 +131,15 @@ run;
 
 data Subsidy;
 
-set  prescat.subsidy Subsidy_a (rename=(current_affordability_start=POA_start current_affordability_end=POA_end 
+  set  prescat.subsidy Subsidy_a (rename=(current_affordability_start=POA_start current_affordability_end=POA_end 
 								Fair_Market_Rent_Ratio=rent_to_fmr_description Compliance_End_Date=compl_end 
 								Date_Affordability_Ended=POA_End_actual Previous_affordability_end=POA_end_prev));
+
+  ** Remove extraneous formats and informats **;
+
+  format units_assist rent_to_fmr_description Subsidy_Info_Source_ID Agency ;
+  informat _all_ ;
+
 run;
 
 proc sort data=Subsidy;
@@ -142,7 +148,7 @@ run;
 
 %File_info( data=Subsidy )
 
-  ** Check against original subsidy file to ensure only new subsidy files have changed**;
+** Check against original subsidy file to ensure only new subsidy files have changed**;
 
 proc compare base=PresCat.Subsidy compare=Subsidy listall maxprint=(40,32000);
   id nlihc_id subsidy_id;
