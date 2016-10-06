@@ -17,6 +17,34 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 
+%let Update_dtm = %sysfunc( datetime() );
+
+%let Project_tracking_list =
+"NL000033",
+"NL000034",
+"NL000043",
+"NL000050",
+"NL000085",
+"NL000110",
+"NL000133",
+"NL000157",
+"NL000169",
+"NL000225",
+"NL000232",
+"NL000234",
+"NL000242",
+"NL000264",
+"NL000301",
+"NL000303",
+"NL000329",
+"NL000349",
+"NL000353",
+"NL000384",
+"NL000388",
+"NL000419",
+"NL000990",
+"NL001000"
+;
 
 /*******************UPDATE SUBSIDY DATA****************/
 
@@ -37,6 +65,8 @@ data Subsidy_new_recs;
 
   ** Add new observations **;
   
+  Update_Dtm = &Update_Dtm; 
+
 	*Glenncrest;
   nlihc_id = 'NL000085';
   subsidy_id = 5;
@@ -45,7 +75,7 @@ data Subsidy_new_recs;
   agency="DCHA";
   subsidy_info_source = "DCHA Document" ;
   subsidy_info_source_date = '12apr2016'd;
-  active=1;
+  Subsidy_active=1;
   output;
   	*Glenncrest;
   nlihc_id = 'NL000085';
@@ -54,7 +84,7 @@ data Subsidy_new_recs;
   program="HOPEVI";
   subsidy_info_source = "DCHA Document" ;
   subsidy_info_source_date = '12apr2016'd;
-  active=1;
+  Subsidy_active=1;
   output;
 	*Gibson Plaza;
   nlihc_id = 'NL000133';
@@ -64,7 +94,7 @@ data Subsidy_new_recs;
    agency="DCHA";
   subsidy_info_source = "DCHA Document" ;
   subsidy_info_source_date = '12apr2016'd;
-   active=1;
+   Subsidy_active=1;
   output;
 	*Phyllis Wheatley;
   nlihc_id = 'NL000242';
@@ -74,7 +104,7 @@ data Subsidy_new_recs;
    agency="DCHA";
   subsidy_info_source = "DCHA Document" ;
   subsidy_info_source_date = '12apr2016'd;
-    active=1;
+    Subsidy_active=1;
   output;
 	*Phyllis Wheatley;
   nlihc_id = 'NL000242';
@@ -83,7 +113,7 @@ data Subsidy_new_recs;
   program="LIHTC";
   subsidy_info_source = "DCHA Document" ;
   subsidy_info_source_date = '12apr2016'd;
-    active=1;
+    Subsidy_active=1;
   output;
 	*St. Martin's;
   nlihc_id = 'NL000384';
@@ -93,7 +123,7 @@ data Subsidy_new_recs;
   agency="DCHA";
   subsidy_info_source = "DCHA Document" ;
   subsidy_info_source_date = '12apr2016'd;
-    active=1;
+    Subsidy_active=1;
   output;
 	*St. Martin's;
   nlihc_id = 'NL000384';
@@ -103,7 +133,7 @@ data Subsidy_new_recs;
   agency="DCHA";
   subsidy_info_source = "DCHA Document" ;
   subsidy_info_source_date = '12apr2016'd;
-    active=1;
+    Subsidy_active=1;
   output;
   	*The Avenue;
   nlihc_id = 'NL000225';
@@ -112,7 +142,7 @@ data Subsidy_new_recs;
   program="LIHTC";
   subsidy_info_source = "DCHA Document" ;
   subsidy_info_source_date = '12apr2016'd;
-    active=1;
+    Subsidy_active=1;
   output;
   	*Highland Dwellings; 
   nlihc_id="NL000157";
@@ -121,7 +151,7 @@ data Subsidy_new_recs;
   units_assist=30;
   subsidy_info_source = "DCHA Document" ;
   subsidy_info_source_date = '12apr2016'd;
-    active=1;
+    Subsidy_active=1;
   output;
   	*Henson UFAs;
   nlihc_id = "NL000388";
@@ -131,7 +161,7 @@ data Subsidy_new_recs;
   agency="DCHA";
   subsidy_info_source = "DCHA Document" ;
   subsidy_info_source_date = '12apr2016'd;
-    active=1;
+    Subsidy_active=1;
   output;
 
   	*Capper Senior II - Capitol Quarter Senior II;
@@ -140,7 +170,7 @@ data Subsidy_new_recs;
   program="TEBOND";
   subsidy_info_source = "DCHA Document" ;
   subsidy_info_source_date = '12apr2016'd;
-    active=1;
+    Subsidy_active=1;
   output;
 
     *Capper Senior II - Capitol Quarter Senior II;
@@ -150,8 +180,6 @@ data Subsidy_new_recs;
   subsidy_info_source = "DCHA Document" ;
   subsidy_info_source_date = '12apr2016'd;
   output;
-
-  Update_Dtm = &Update_Dtm; 
 
 
 run;
@@ -340,36 +368,16 @@ id nlihc_id subsidy_id;
 run;
 ods html close;
 
-data update_project_tracking;
-set update_project (where=( nlihc_id in 
-(
-"NL000085",
-"NL000133",
-"NL000242",
-"NL000384",
-"NL000225",
-"NL000157",
-"NL000388",
-"NL000990",
-"NL000033",
-"NL000169",
-"NL000232",
-"NL000264",
-"NL000050",
-"NL000353",
-"NL000419",
-"NL000303",
-"NL000034",
-"NL000043",
-"NL000110",
-"NL001000"
- ) ));
+data update_subsidy_tracking;
+set update_subsidy (where=( nlihc_id in ( &Project_tracking_list ) ));
 run;
 ods html body="&_dcdata_default_path\PresCat\Prog\Updates\Update_DCHA_Document_2016_04_Subsidy_changes.html" style=Default; 
 
-proc print data=update_project_tracking; run;
+proc print data=update_subsidy_tracking; run;
 
 ods html close;
+
+
 /*******************UPDATE PROJECT DATA****************/
 
 
@@ -453,17 +461,7 @@ run;
 ods html close;
 
 data update_project_tracking;
-set update_project(where=(nlihc_id in
-(
-"NL000234", 
-"NL000388", 
-"NL000157", 
-"NL000085", 
-"NL000242", 
-"NL000384", 
-"NL000225", 
-"NL000419", 
-"NL000303" ) ) );
+set update_project(where=(nlihc_id in ( &Project_tracking_list ) ) );
 run;
 ods html body="&_dcdata_default_path\PresCat\Prog\Updates\Update_DCHA_Document_2016_04_Project_changes.html" style=Default; 
 
