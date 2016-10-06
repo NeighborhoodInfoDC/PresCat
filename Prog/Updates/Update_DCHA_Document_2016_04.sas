@@ -127,7 +127,6 @@ data Subsidy_new_recs;
   subsidy_info_source_date = '12apr2016'd;
   output;*/
 
-  Portfolio = put( Program, $progtoportfolio. );
 run;
 
 ** Combine new and old observations **;
@@ -216,6 +215,7 @@ if nlihc_id="NL000043" then do;
 end;
 
 
+  Portfolio = put( Program, $progtoportfolio. );
 
 run;
 
