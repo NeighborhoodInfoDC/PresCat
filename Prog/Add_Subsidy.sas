@@ -123,6 +123,9 @@ data Subsidy_a;
   if Date_Affordability_Ended = . then Subsidy_Active = 1;
   else Subsidy_Active = 0;
 
+  ** Fill in portfolio **;
+  Portfolio = put( Program, $progtoportfolio. );
+
   ** Create Timestamp for Update **;
 
   Update_dtm =datetime();
