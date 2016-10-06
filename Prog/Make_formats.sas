@@ -114,6 +114,7 @@ proc format library=PresCat;
     '202/811-CA' = '202/811'
 	'S8-MR' = 'PB8'
 	'PBV' = 'PBV'
+	'HOPEVI' = 'HOPE VI'
 
     /***
     '207/223-PR' = 'OTHER'
@@ -404,7 +405,8 @@ proc format library=PresCat;
     'LIHTC' = 'Low income housing tax credit'
     'MCKINNEY' = 'McKinney Vento Act loan'
     'PUBHSNG' = 'Public housing'
-    'TEBOND' = 'Tax exempt bond';
+    'TEBOND' = 'Tax exempt bond'
+	'HOPEVI' = 'HOPE VI';
 
   value $progshrt
     '202/8-NC' = 'Sec 202 NC/SR'
@@ -453,7 +455,8 @@ proc format library=PresCat;
     'LIHTC' = 'LIHTC'
     'MCKINNEY' = 'McKinney Vento'
     'PUBHSNG' = 'Public housing'
-    'TEBOND' = 'Tax exempt bond';
+    'TEBOND' = 'Tax exempt bond'
+	'HOPEVI' = 'HOPE VI';
 
   value $portfolio
     '202/811' = 'Section 202/811'
@@ -474,7 +477,8 @@ proc format library=PresCat;
     'PRAC' = 'Project rental assistance contract'
     'PUBHSNG' = 'Public housing'
     'TEBOND' = 'Tax exempt bond'
-	'PBV' = 'Project-based vouchers';
+	'PBV' = 'Project-based vouchers'
+	'HOPEVI' = 'HOPE VI';
 
 run;
 
