@@ -31,7 +31,7 @@ informat NLIHC_ID $8.;
 informat ADDRESS_ID best32. ;
 informat STATUS $6. ;
 informat FULLADDRESS $19. ;
-informat ADDRNUM best32. ;
+informat ADDRNUM $5. ;
 informat ADDRNUMSUFFIX $1. ;
 informat STNAME $5. ;
 informat STREET_TYPE $6. ;
@@ -78,7 +78,7 @@ format NLIHC_ID $8.;
 format ADDRESS_ID best12. ;
 format STATUS $6. ;
 format FULLADDRESS $19. ;
-format ADDRNUM best12. ;
+format ADDRNUM $5. ;
 format ADDRNUMSUFFIX $1. ;
 format STNAME $5. ;
 format STREET_TYPE $6. ;
@@ -126,7 +126,7 @@ NLIHC_ID $
 ADDRESS_ID
                    STATUS $
                    FULLADDRESS $
-                   ADDRNUM
+                   ADDRNUM $
                    ADDRNUMSUFFIX $
                    STNAME $
                    STREET_TYPE $
@@ -179,16 +179,21 @@ filename fimport clear;
 proc sort data=Mar_address;
   by address_id;
 
-**Merge project info and address info for new projects**;
+**Create Building_Geocode Fix**;
 
 data bldg_mar_address;
 
-  set Mar_address (rename = (address_id = bldg_address_id fulladdress=bldg_addre Streetviewurl=Bldg_streetview_url));
+  set Mar_address (rename = (address_id = bldg_address_id Streetviewurl=Bldg_streetview_url XCOORD=Bldg_x
+YCOORD=Bldg_y LONGITUDE=Bldg_lon LATITUDE=Bldg_lat));
   
   format _all_ ;
   informat _all_ ;
   
-  
+  ** Fix capatilization for match**;
+
+  street = propcase(stname);
+  type = propcase(street_type);
+  bldg_addre = catx (' ',addrnum, street, type, quadrant);
   ** Standard geos **;
   
   length Ward2012 $ 1;
@@ -236,6 +241,8 @@ data bldg_mar_address;
   if imagename ~= "" and imagename ~=: "No_Image_Available" then 
     bldg_image_url = trim( imageurl ) || "/" || trim( left( imagedir ) ) || "/" || imagename;
   
+drop street type;
+
 run;
 
 data Building_Geocode;
@@ -248,26 +255,36 @@ by nlihc_ID;
 run;
 
 
-/*proc sort data=building_geocode;
+proc sort data=building_geocode;
  by nlihc_id Bldg_addre;
- run;*/
-
-title2 '********************************************************************************************';
-title3 '** 3/ Check for changes in building_geocode file unrelated to fixes for NL000093 and NL000319';
-
-proc compare base=prescat.building_geocode compare=building_geocode listall maxprint=(40,32000);
- id nlihc_id proj_name;
  run;
 
+title2 '********************************************************************************************';
+title3 '** 1/ Check for changes in building_geocode file unrelated to fixes for NL000093 and NL000319';
+
+proc compare base=prescat.building_geocode compare=building_geocode listall maxprint=(40,32000);
+ id nlihc_id bldg_addre;
+ run;
+
+ **use this to check NL000093 (obs 174), since the bldg_addre has changed**;
+proc compare base=building_geocode1 compare=building_geocode listall maxprint=(40,32000);
+run;
+
+**Create Project_Geocode Fix**;
 
 data proj_mar_address;
 
-  set Mar_address (rename = (address_id = proj_address_id fulladdress=proj_addre Streetviewurl=proj_streetview_url));
+  set Mar_address (rename = (address_id = proj_address_id Streetviewurl=proj_streetview_url XCOORD=proj_x
+YCOORD=proj_y LONGITUDE=proj_lon LATITUDE=proj_lat));
   
   format _all_ ;
   informat _all_ ;
   
-  
+ ** Fix capatilization for match**;
+
+  street = propcase(stname);
+  type = propcase(street_type);
+  proj_addre = catx (' ',addrnum, street, type, quadrant);
   ** Standard geos **;
   
   length Ward2012 $ 1;
@@ -314,8 +331,11 @@ data proj_mar_address;
   
   if imagename ~= "" and imagename ~=: "No_Image_Available" then 
     proj_image_url = trim( imageurl ) || "/" || trim( left( imagedir ) ) || "/" || imagename;
-  
+	
+	drop street type;
+
 run;
+
 
 data Project_Geocode;
 set prescat.Project_Geocode;
@@ -328,15 +348,17 @@ run;
 
 
 proc sort data=project_geocode;
- by nlihc_id proj_addre;
+ by nlihc_id;
  run;
 
 title2 '********************************************************************************************';
-title3 '** 3/ Check for changes in project_geocode file unrelated to fixes for NL000093 and NL000319';
+title3 '** 2/ Check for changes in project_geocode file unrelated to fixes for NL000093 and NL000319';
 
 proc compare base=prescat.project_geocode compare=project_geocode listall maxprint=(40,32000);
- id nlihc_id proj_name;
+ id nlihc_id;
  run;
+
+**Create Project Fix**;
 
 data project;
 set prescat.project;
@@ -345,6 +367,7 @@ run;
 data project_fix;
 set project_geocode;
 if nlihc_id in ('NL000093', 'NL000319');
+drop proj_name;
 run;
 
 data Project;
@@ -356,15 +379,11 @@ title2 '************************************************************************
 title3 '** 3/ Check for changes in project file unrelated to fixes for NL000093 and NL000319';
 
 proc compare base=prescat.project compare=project listall maxprint=(40,32000);
- id nlihc_id proj_name;
+ id nlihc_id;
  run;
 
-** Unsure here if simply directly modifying the files on the L drive makes the most or if 
- they need to be saved as work. files first and then batch submitted**
-
-
 ** Macro Register_metadata - Start Definition **;
-/*
+
 %macro Register_metadata( revisions= );
 
   %if &_remote_batch_submit %then %do;
@@ -383,8 +402,15 @@ proc compare base=prescat.project compare=project listall maxprint=(40,32000);
      by nlihc_id Bldg_addre;
      run;
 
+    proc sort 
+     data=Project
+     out=PresCat.Project (label="Preservation Catalog, Project info");
+     by nlihc_id;
+     run;
+
     %File_info( data=&outlib..Project_geocode, freqvars=Ward2012 Bldg_count )
-    %File_info( data=&outlib..Building_geocode, freqvars=Ward2012 )
+    %File_info( data=&outlib..Building_geocode, freqvars=Ward2012 ) 
+	%File_info( data=&outlib..Project, freqvars=Ward2012 ) 
 
     ** Register metadata **;
     
@@ -404,6 +430,14 @@ proc compare base=prescat.project compare=project listall maxprint=(40,32000);
       revisions=%str(&revisions)
     )
     
+	%Dc_update_meta_file(
+      ds_lib=PresCat,
+      ds_name=Project,
+      creator_process=DC_info_geocode.sas,
+      restrictions=None,
+      revisions=%str(&revisions)
+    )
+    
   %end;  
   %else %do;
   
@@ -411,7 +445,7 @@ proc compare base=prescat.project compare=project listall maxprint=(40,32000);
   
     %File_info( data=Project_geocode, freqvars=Ward2012 Bldg_count )
     %File_info( data=Building_geocode, freqvars=Ward2012 )
-
+	%File_info( data=Project, freqvars=Ward2012 )
   %end;
 
 %mend Register_metadata;
