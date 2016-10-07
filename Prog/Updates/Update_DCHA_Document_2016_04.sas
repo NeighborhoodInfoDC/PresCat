@@ -256,7 +256,7 @@ if nlihc_id="NL000133" & program="LMSA" then do;
 end;
 
 *Henson UFAs;
-if nlihc_id = "NL000388" & Subsidy_id=3 then Units_Assist=22 ;
+if nlihc_id = "NL000388" & Subsidy_id=3 then Units_Assist=280 ;
 if nlihc_id = "NL000388" & Subsidy_id=1 then do;
 	program="CDBG" ;
 	Subsidy_Info_Source = "DCHA Document";
@@ -390,8 +390,10 @@ if Nlihc_id= "NL000234" then do;
 	Hud_Own_Name="Parkway Overlook, LP (DCHA affiliate)";
 Update_Dtm = &Update_Dtm; 
 end;
+
 *Henson UFAs - subsidies are TEBOND, HPTF, LIHTC, PH, PBV;
 if nlihc_id = "NL000388" then do; 
+	Proj_Units_Tot=600 ;
 	Hud_Mgr_Name="Edgewood Management Corporation";
 Update_Dtm = &Update_Dtm; 
 end;
