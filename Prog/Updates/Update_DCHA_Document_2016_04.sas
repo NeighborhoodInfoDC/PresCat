@@ -363,7 +363,7 @@ run;
 proc sort data=subsidy_old_plus_new out=update_subsidy; by nlihc_id subsidy_id; run;
 
 ods html body="&_dcdata_default_path\PresCat\Prog\Updates\Update_DCHA_Document_2016_04_subsidy_compare.html" style=Default; 
-proc compare base=PresCat.Subsidy compare=update_subsidy listall maxprint=(40,32000);
+proc compare base=PresCat.Subsidy compare=update_subsidy listall maxprint=(100,32000);
 id nlihc_id subsidy_id;
 run;
 ods html close;
@@ -381,9 +381,7 @@ ods html close;
 /*******************UPDATE PROJECT DATA****************/
 
 
-%let Update_dtm = %sysfunc( datetime() );
-
-data update_project;
+data update_project_a;
 set prescat.project;
 
 /******************Adjusting ownership****************/
@@ -394,7 +392,6 @@ Update_Dtm = &Update_Dtm;
 end;
 *Henson UFAs - subsidies are TEBOND, HPTF, LIHTC, PH, PBV;
 if nlihc_id = "NL000388" then do; 
-	Proj_Units_Assist_Max=22 ;
 	Hud_Mgr_Name="Edgewood Management Corporation";
 Update_Dtm = &Update_Dtm; 
 end;
@@ -417,45 +414,60 @@ end;
 *Phyllis Wheatley - HPTF says 117 units, HOME says 115? DCHA corrections below;
 if nlihc_id="NL000242" then do; 
 	Proj_Units_Tot=84;
-	Proj_Units_Assist_Min = 6; 
 Update_Dtm = &Update_Dtm; 
 end;
 
 *St. Martin;
 if nlihc_id = "NL000384" then do;
-	Proj_Units_Assist_Min=10;
 Update_Dtm = &Update_Dtm; 
 end;
 
 *The Avenue;
 if nlihc_id = "NL000225" then do;
-	Proj_Units_Assist_Min=27;
-	Proj_Units_assist_Max=83;
 	Update_Dtm = &Update_Dtm; 
 end;
 
 *Triangle View;
 if nlihc_id="NL000419" then do;
 	Proj_Units_Tot=100;
-	Proj_Units_Assist_Min=25;
 	Update_Dtm = &Update_Dtm; 
 end;
 
 *Williston;
 if nlihc_id="NL000303" then do;
 	Proj_Units_Tot=28;
-	Proj_Units_Assist_Min=28;
-	Proj_Units_Assist_Max=28;
 	Update_Dtm = &Update_Dtm; 
 end;
 
+*Capitol Gateway Sf Rental;
+if nlihc_id="NL000050" then do;
+	Proj_name="Capitol Gateway Single Family Rental";
+	Update_Dtm = &Update_Dtm; 
+end;
 
 run;
 
-proc sort data=update_project; by nlihc_id; run;
+proc sort data=update_project_a; by nlihc_id; run;
+
+/*********Update Project summary vars from Subsidy data set**************/
+
+%Create_project_subsidy_update( data=update_subsidy, out=update_project_subsidy )
+
+data update_project;
+
+    update 
+      update_project_a (in=in_Project)
+      update_project_subsidy
+        (keep=nlihc_id Subsidized Proj_Units_Assist_Min Subsidy_Start_First Subsidy_End_First 
+      Proj_Units_Assist_Max Subsidy_Start_Last Subsidy_End_Last);
+    by Nlihc_id;
+
+    if in_Project;
+
+run;
 
 ods html body="&_dcdata_default_path\PresCat\Prog\Updates\Update_DCHA_Document_2016_04_project_compare.html" style=Default; 
-proc compare base=PresCat.Project compare=update_project listall maxprint=(40,32000);
+proc compare base=PresCat.Project compare=update_project listall maxprint=(100,32000);
 id nlihc_id;
 run;
 ods html close;
@@ -481,7 +493,10 @@ run;
 /*Projects to delete
 
 Capitol Gateway Townhomes part of single family, nlihc_id = "NL000375" 
+Duplicate of nlihc_id = "NL000050"
 
 Capper Senior duplicate, nlihc_id = "NL001019" 
+Duplicate of nlihc_id = "NL000990"
+
 
 */
