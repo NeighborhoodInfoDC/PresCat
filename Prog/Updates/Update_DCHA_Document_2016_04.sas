@@ -453,7 +453,7 @@ proc sort data=update_project_a; by nlihc_id; run;
 
 /*********Update Project summary vars from Subsidy data set**************/
 
-%Create_project_subsidy_update( data=update_subsidy, out=update_project_subsidy )
+%Create_project_subsidy_update( data=update_subsidy, out=update_project_subsidy, project_file=update_project_a )
 
 data update_project;
 
