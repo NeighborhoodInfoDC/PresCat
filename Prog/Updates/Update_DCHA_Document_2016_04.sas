@@ -481,24 +481,27 @@ ods html body="&_dcdata_default_path\PresCat\Prog\Updates\Update_DCHA_Document_2
 
 proc print data=update_project_tracking ; run;
 ods html close;
-/*
-data prescat.subsidy;
-set Subsidy_old_plus_new;
-run;
-
-data prescat.project;
-set update_project;
-run;
-*/
 
 
-/*Projects to delete
+/*********Finalize data sets**************/
 
-Capitol Gateway Townhomes part of single family, nlihc_id = "NL000375" 
-Duplicate of nlihc_id = "NL000050"
+%Finalize_dataset(
+  data=update_project,
+  out=Project,
+  outlib=PresCat,
+  label="Preservation Catalog, Projects",
+  sortby=nlihc_id,
+  revisions=Make manual adjustments with edits from DCHA (04/16).,
+  archive=y
+)
 
-Capper Senior duplicate, nlihc_id = "NL001019" 
-Duplicate of nlihc_id = "NL000990"
+%Finalize_dataset(
+  data=update_subsidy,
+  out=Subsidy,
+  outlib=PresCat,
+  label="Preservation Catalog, Project subsidies",
+  sortby=nlihc_id subsidy_id,
+  revisions=Make manual adjustments with edits from DCHA (04/16).,
+  archive=y
+)
 
-
-*/
