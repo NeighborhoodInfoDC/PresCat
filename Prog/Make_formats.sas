@@ -259,7 +259,7 @@ proc format library=PresCat;
     'MCKINNEY' = 'MCKINNEY'
     'PUBHSNG' = 'PUBHSNG'
     'TEBOND' = 'TEBOND'
-	'FHLB' = 'FHLB'
+	'FHLB' = 'Federal Home Loan Bank'
     other = ' ';
 
   value $progfull
@@ -408,7 +408,7 @@ proc format library=PresCat;
     'PUBHSNG' = 'Public housing'
     'TEBOND' = 'Tax exempt bond'
 	'HOPEVI' = 'HOPE VI'
-	'FHLB' = 'Federal Home Loan Bank of Atlanta';
+	'FHLB' = 'Federal Home Loan Bank';
 
   value $progshrt
     '202/8-NC' = 'Sec 202 NC/SR'
