@@ -259,6 +259,7 @@ proc format library=PresCat;
     'MCKINNEY' = 'MCKINNEY'
     'PUBHSNG' = 'PUBHSNG'
     'TEBOND' = 'TEBOND'
+	'FHLB' = 'FHLB'
     other = ' ';
 
   value $progfull
@@ -406,7 +407,8 @@ proc format library=PresCat;
     'MCKINNEY' = 'McKinney Vento Act loan'
     'PUBHSNG' = 'Public housing'
     'TEBOND' = 'Tax exempt bond'
-	'HOPEVI' = 'HOPE VI';
+	'HOPEVI' = 'HOPE VI'
+	'FHLB' = 'Federal Home Loan Bank of Atlanta';
 
   value $progshrt
     '202/8-NC' = 'Sec 202 NC/SR'
@@ -456,7 +458,8 @@ proc format library=PresCat;
     'MCKINNEY' = 'McKinney Vento'
     'PUBHSNG' = 'Public housing'
     'TEBOND' = 'Tax exempt bond'
-	'HOPEVI' = 'HOPE VI';
+	'HOPEVI' = 'HOPE VI'
+	'FLHB' = 'FLHB';
 
   value $portfolio
     '202/811' = 'Section 202/811'
@@ -478,7 +481,8 @@ proc format library=PresCat;
     'PUBHSNG' = 'Public housing'
     'TEBOND' = 'Tax exempt bond'
 	'PBV' = 'Project-based vouchers'
-	'HOPEVI' = 'HOPE VI';
+	'HOPEVI' = 'HOPE VI'
+	'FLHB' = 'FLHB';
 
 run;
 

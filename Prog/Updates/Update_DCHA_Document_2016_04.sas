@@ -180,8 +180,14 @@ data Subsidy_new_recs;
   subsidy_info_source = "DCHA Document" ;
   subsidy_info_source_date = '12apr2016'd;
   output;
-
-
+    
+	*Edgewood Terrace;
+  nlihc_id = "NL000301";
+  subsidy_id=8;
+  program="FHLB";
+  subsidy_info_source = "DCHA Document" ;
+  subsidy_info_source_date = '12apr2016'd;
+  output;
 run;
 
 ** Combine new and old observations **;
@@ -264,7 +270,7 @@ if nlihc_id = "NL000388" & Subsidy_id=1 then do;
    	Update_Dtm = &Update_Dtm; 
 end;
 
-*Arthur Capper Phase I; *Need to add HOPEVI program;
+*Arthur Capper Phase I; 
 if nlihc_id = "NL000264" & Subsidy_id=3 then do; 
 	Subsidy_Info_Source = "DCHA Document";
   	subsidy_info_source_date = '12apr2016'd;
@@ -272,7 +278,7 @@ if nlihc_id = "NL000264" & Subsidy_id=3 then do;
 	Update_Dtm = &Update_Dtm; 
 end;
 
-*Capitol Gateway SF; *Need to add HOPEVI program;
+*Capitol Gateway SF; 
 if nlihc_id = "NL000050" & Subsidy_id=2 then do; 
 	program="HOPEVI" ;
 	Subsidy_Info_Source = "DCHA Document";
