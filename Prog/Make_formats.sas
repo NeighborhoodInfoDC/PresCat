@@ -259,7 +259,7 @@ proc format library=PresCat;
     'MCKINNEY' = 'MCKINNEY'
     'PUBHSNG' = 'PUBHSNG'
     'TEBOND' = 'TEBOND'
-	'FHLB' = 'Federal Home Loan Bank'
+	'FHLB' = 'FHLB'
     other = ' ';
 
   value $progfull
@@ -459,7 +459,7 @@ proc format library=PresCat;
     'PUBHSNG' = 'Public housing'
     'TEBOND' = 'Tax exempt bond'
 	'HOPEVI' = 'HOPE VI'
-	'FLHB' = 'FLHB';
+	'FHLB' = 'FHLB';
 
   value $portfolio
     '202/811' = 'Section 202/811'
@@ -482,7 +482,7 @@ proc format library=PresCat;
     'TEBOND' = 'Tax exempt bond'
 	'PBV' = 'Project-based vouchers'
 	'HOPEVI' = 'HOPE VI'
-	'FLHB' = 'FLHB';
+	'FHLB' = 'Federal Home Loan Bank';
 
 run;
 
