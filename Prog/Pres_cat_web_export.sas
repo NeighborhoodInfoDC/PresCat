@@ -82,7 +82,8 @@ data Subsidy_project;
     
     /** HUD project-based rental assistance **/
     when ( "PB8",
-           "PRAC" ) do;
+           "PRAC",
+           "PBV" ) do;
       if Subsidy_active then Hud_PBRA_Status = "C";
       else Hud_PBRA_Status = "F";
       Hud_PBRA_Year = year( POA_start );
