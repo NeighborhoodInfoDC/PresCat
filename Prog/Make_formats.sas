@@ -79,9 +79,9 @@ proc format library=PresCat;
   ;
   
   value $rptype
-    "SALE" = "Property sale"
-    "FCLNOT" = "Foreclosure notice"
-    "FCLOUT" = "Foreclosure outcome";
+    "OTR/SALE" = "OTR: Property sale"
+    "ROD/FCLNOT" = "ROD: Foreclosure notice"
+    "NIDC/FCLOUT" = "NIDC: Foreclosure outcome";
   
   value $ownmgrtype
     "LD" = "Limited dividend"
@@ -112,6 +112,9 @@ proc format library=PresCat;
     '202-DL-E74' = '202/811'
     '202-DL-EH' = '202/811'
     '202/811-CA' = '202/811'
+	'S8-MR' = 'PB8'
+	'PBV' = 'PBV'
+	'HOPEVI' = 'HOPE VI'
 
     /***
     '207/223-PR' = 'OTHER'
@@ -256,6 +259,7 @@ proc format library=PresCat;
     'MCKINNEY' = 'MCKINNEY'
     'PUBHSNG' = 'PUBHSNG'
     'TEBOND' = 'TEBOND'
+	'FHLB' = 'FHLB'
     other = ' ';
 
   value $progfull
@@ -275,6 +279,8 @@ proc format library=PresCat;
     'PRAC/202/811' = 'Sec 202/811 project rental assistance contract'
     'S8-NC' = 'Sec 8 new construction'
     'S8-SR' = 'Sec 8 substantial rehabilitation'
+	'S8-MR' = 'Sec 8 moderate rehabilitation'
+	'PBV' = 'Project-based vouchers'
     '202-DL-E74' = 'Sec 202 direct loan/elderly/pre-1974'
     '202-DL-EH' = 'Sec 202/8 direct loan/elderly-handicapped'
     '202/811-CA' = 'Sec 202/811 capital advance'
@@ -400,7 +406,9 @@ proc format library=PresCat;
     'LIHTC' = 'Low income housing tax credit'
     'MCKINNEY' = 'McKinney Vento Act loan'
     'PUBHSNG' = 'Public housing'
-    'TEBOND' = 'Tax exempt bond';
+    'TEBOND' = 'Tax exempt bond'
+	'HOPEVI' = 'HOPE VI'
+	'FHLB' = 'Federal Home Loan Bank';
 
   value $progshrt
     '202/8-NC' = 'Sec 202 NC/SR'
@@ -419,6 +427,8 @@ proc format library=PresCat;
     'PRAC/202/811' = 'Sec 202/811 PRAC'
     'S8-NC' = 'Sec 8 NC/SR'
     'S8-SR' = 'Sec 8 NC/SR'
+	'S8-MR' = 'Sec 8 MR'
+	'PBV' = 'PBV' 
     '202-DL-E74' = 'Sec 202 direct loan pre-1974'
     '202-DL-EH' = 'Sec 202/8 direct loan'
     '202/811-CA' = 'Sec 202/811 capital advance'
@@ -447,7 +457,9 @@ proc format library=PresCat;
     'LIHTC' = 'LIHTC'
     'MCKINNEY' = 'McKinney Vento'
     'PUBHSNG' = 'Public housing'
-    'TEBOND' = 'Tax exempt bond';
+    'TEBOND' = 'Tax exempt bond'
+	'HOPEVI' = 'HOPE VI'
+	'FHLB' = 'FHLB';
 
   value $portfolio
     '202/811' = 'Section 202/811'
@@ -467,7 +479,10 @@ proc format library=PresCat;
     'PB8' = 'Project-based section 8'
     'PRAC' = 'Project rental assistance contract'
     'PUBHSNG' = 'Public housing'
-    'TEBOND' = 'Tax exempt bond';
+    'TEBOND' = 'Tax exempt bond'
+	'PBV' = 'Project-based vouchers'
+	'HOPEVI' = 'HOPE VI'
+	'FHLB' = 'Federal Home Loan Bank';
 
 run;
 
