@@ -311,6 +311,8 @@ data Parcel_bis;
   set PresCat.Parcel;
   
   if missing( Parcel_owner_date ) then Parcel_owner_date = .;
+  if missing( Parcel_x ) then Parcel_x = .;
+  if missing( Parcel_y ) then Parcel_y = .;
   
 run;
 
