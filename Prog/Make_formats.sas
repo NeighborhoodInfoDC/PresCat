@@ -81,7 +81,8 @@ proc format library=PresCat;
   value $rptype
     "OTR/SALE" = "OTR: Property sale"
     "ROD/FCLNOT" = "ROD: Foreclosure notice"
-    "NIDC/FCLOUT" = "NIDC: Foreclosure outcome";
+    "NIDC/FCLOUT" = "NIDC: Foreclosure outcome"
+    "DHCD/RCASD" = "DHCD: RCASD notice";
   
   value $ownmgrtype
     "LD" = "Limited dividend"
