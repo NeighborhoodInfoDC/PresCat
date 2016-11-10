@@ -19,7 +19,7 @@
 
 %let Start_date = today()-60;  %** Look for events two months prior **;
 
-** Generate Excel (XML) file **;
+** Create report **;
 
 data Real_property_rpt;
 
@@ -40,20 +40,28 @@ proc sort data=Real_property_rpt;
   by category_code rpt_id;
 run;
 
-ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\Updates\Real_property_rpt.xls" 
-  style=Normal options(sheet_interval='None' sheet_name="Real_property" absolute_column_width='40,12,80' row_height_fudge='16' );
+%let rpt_suffix = %sysfunc( putn( %sysfunc( today() ), yymmddn8. ) );
+
+%fdate()
+
+ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\Updates\Real_property_rpt_&rpt_suffix..xls" 
+  style=Normal 
+  options(sheet_interval='None' sheet_name="Real_property" orientation='landscape'
+          absolute_column_width='40,12,80' row_height_fudge='16' );
 ods listing close;
 
 proc report data=Real_property_rpt nowd
-      style(header)=[fontsize=2 font_weight=bold]
-      style(column)=[fontsize=2];
+      style(header)=[fontsize=2 font_weight=bold textalign=left]
+      style(column)=[fontsize=2 textalign=left];
   by Category_code;
   column rpt_id rp_date rp_desc;
-  define rpt_id / "Project" order style=[textalign=left];
-  define rp_date / display style=[textalign=center];
-  define rp_desc / display style=[textalign=left];
+  define rpt_id / "Project" order;
+  define rp_date / display;
+  define rp_desc / "Description" display;
   break before rpt_id /;
   label category_code = 'Category';
+  title1;
+  footnote1 height=9pt "Prepared by NeighborhoodInfo DC (www.NeighborhoodInfoDC.org), &fdate..";
 run;
 
 ods tagsets.excelxp close;
