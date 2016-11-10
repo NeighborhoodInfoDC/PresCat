@@ -255,23 +255,6 @@ proc sql noprint;
   order by Nlihc_id, RP_date desc, sort_order desc;
 
 
-** Generate Excel (XML) file **;
-
-ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\Updates\Update_real_property.xls" 
-  style=Minimal options(sheet_interval='None' sheet_name="Real_property");
-ods listing close;
-
-proc print data=Real_property noobs;
-  id NLIHC_ID;
-  var ssl RP_date RP_type RP_desc;
-run;
-
-ods tagsets.excelxp close;
-ods listing;
-
-run;
-
-
 ** Finalize data set **;
 
 %Finalize_dataset(
