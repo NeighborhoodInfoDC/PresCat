@@ -16,6 +16,7 @@
   01/29/15 PAT Made correction for new Update_dtm var in PresCat.Subsidy.
                All existing PDFs are deleted before new ones created.
   06/18/15 PAT Changed sort order to list active subsidies before inactive. 
+  11/09/15 PAT Added RCASD notices to Network version of PDFs. 
 **************************************************************************/
 
 %include "L:\SAS\Inc\StdLocal.sas";
@@ -23,6 +24,8 @@
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
 %DCData_lib( RealProp, local=n )
+
+%let output_path = &_dcdata_default_path\PresCat\Prog\PDFs;
 
 /** Macro Create_pdf - Start Definition **/
 
@@ -64,7 +67,7 @@
 
   ods listing close;
 
-  ods pdf file="L:\Libraries\PresCat\Prog\PDFs\&ver\&proj_select.-detailed.pdf" 
+  ods pdf file="&output_path\&ver\&proj_select.-detailed.pdf" 
     style=Listing 
     startpage=never 
     notoc;
@@ -175,6 +178,25 @@
     define premiseadd / 'Address' display;
     define Parcel_owner_name / 'Owner' display;
   run;    
+  
+  %if &ver = Network %then %do;
+
+    ** Real property events **;
+    
+    proc report data=PresCat.Real_property list nowd
+        style(header)={fontsize=2}
+        style(column)={fontsize=2};
+      where NLIHC_ID = "&proj_select";
+      column
+        ( rp_date
+          rp_desc
+        )
+      ;
+      define rp_date / 'Date' display;
+      define rp_desc / 'Property sales, notices, other events' display;
+    run;    
+    
+  %end;
 
   ods pdf close;
   ods listing;
@@ -213,13 +235,13 @@ run;
 
 options noxwait;
 
-x "del /q L:\Libraries\PresCat\Prog\PDFs\network\*.pdf";
-x "del /q L:\Libraries\PresCat\Prog\PDFs\public\*.pdf";
+x "del /q &output_path\network\*.pdf";
+x "del /q &output_path\public\*.pdf";
 
 data _null_;
 
   set PresCat.Project (keep=NLIHC_ID);
-  ***UNCOMMENT FOR TESTING***WHERE NLIHC_ID IN ( "NL000208", "NL000319" ); 
+  ***UNCOMMENT FOR TESTING***WHERE NLIHC_ID IN ( "NL000027", "NL000208", "NL000319" ); 
   
   call execute ( '%Create_pdf( ' || NLIHC_ID || ', public )' );
 

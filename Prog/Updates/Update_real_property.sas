@@ -19,9 +19,10 @@
 %DCData_lib( PresCat )
 %DCData_lib( RealProp, local=n )
 %DCData_lib( ROD, local=n )
+%DCData_lib( DHCD, local=n )
 
 
-** Create format for selecting SSL's of enrolled borrowers **;
+** Create format for selecting SSL's of Catalog properties **;
 
 proc sort data=PresCat.Parcel out=Parcel_list (keep=ssl) nodupkey;
   by ssl;
@@ -40,6 +41,7 @@ proc sort data=PresCat.Parcel out=Parcel_list (keep=ssl) nodupkey;
   Print=N,
   Contents=N
   )
+
 
 ** Compile OTR property transaction data **;
 
@@ -177,11 +179,48 @@ data Foreclosure_outcomes;
   
 run;
 
-/*%File_info( data=Foreclosure_outcomes, printobs=50 )*/
 
-** Combine foreclosure notice, transaction, and outcome data **;
+** Compile DHCD RCASD notice data **;
 
-data Foreclosures_transactions;
+data Rcasd_notices;
+
+  length RP_type $ 40 RP_desc $ 200;
+  
+  retain sort_order 4 RP_type "DHCD/RCASD";
+  
+  set 
+    Dhcd.Rcasd_2015
+    Dhcd.Rcasd_2016;
+  by nidc_rcasd_id;
+  
+  where put( ssl, $sslsel. ) ~= "";
+  
+  if first.nidc_rcasd_id;
+  
+  RP_desc = 'RCASD: ' || put( Notice_type, $rcasd_notice_type. );
+  
+  if num_units > 0 then 
+    RP_desc = trim( RP_desc ) || '; units: ' || left( put( num_units, comma8.0 ) );
+  
+  if sale_price > 0 then 
+    RP_desc = trim( RP_desc ) || '; price: ' || left( put( sale_price, dollar12.0 ) );
+  
+  RP_desc = trim( RP_desc ) || '.';
+  
+  rename notice_date=RP_date;
+  
+  keep ssl notice_date rp_type rp_desc;
+  
+run;
+
+proc sort data=Rcasd_notices nodupkey;
+  by ssl descending rp_date rp_type;
+run;
+
+
+** Combine all real property events **;
+
+data Realproperty_events;
 
   set 
     Foreclosure_notices 
@@ -191,7 +230,8 @@ data Foreclosures_transactions;
       (keep=ssl saledate sort_order RP_type RP_desc 
        rename=(saledate=RP_date))
     Foreclosure_outcomes
-       (rename=(episode_end=RP_date));
+       (rename=(episode_end=RP_date))
+    Rcasd_notices;
   
   if missing( RP_date ) then delete;
   
@@ -205,30 +245,14 @@ data Foreclosures_transactions;
   
 run;
 
+
 ** Add NLIHC_ID to data (NB: can have multiple parcels) **;
 
 proc sql noprint;
   create table Real_property (label="Preservation Catalog, Real property events" drop=sort_order) as
-  select * from PresCat.Parcel (keep=ssl nlihc_id) as Parcel right join Foreclosures_transactions as Tran
+  select * from PresCat.Parcel (keep=ssl nlihc_id) as Parcel right join Realproperty_events as Tran
   on Parcel.ssl = Tran.ssl
   order by Nlihc_id, RP_date desc, sort_order desc;
-
-
-** Generate Excel (XML) file **;
-
-ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\Updates\Update_real_property.xls" 
-  style=Minimal options(sheet_interval='None' sheet_name="Real_property");
-ods listing close;
-
-proc print data=Real_property noobs;
-  id NLIHC_ID;
-  var ssl RP_date RP_type RP_desc;
-run;
-
-ods tagsets.excelxp close;
-ods listing;
-
-run;
 
 
 ** Finalize data set **;
@@ -239,7 +263,7 @@ run;
   outlib=PresCat,
   label="Preservation Catalog, Real property events",
   sortby=nlihc_id descending rp_date rp_type,
-  revisions=%str(Update with latest PresCat.Parcel, ROD.Foreclosure, and RealProp.Sales data.),
+  revisions=%str(Update with latest PresCat.Parcel, ROD.Foreclosure, RealProp.Sales, and DHCD.Rcasd_* data.),
   archive=y,
   freqvars=rp_type 
 )
