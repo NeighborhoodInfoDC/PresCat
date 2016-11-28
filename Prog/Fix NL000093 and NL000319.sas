@@ -263,12 +263,8 @@ title2 '************************************************************************
 title3 '** 1/ Check for changes in building_geocode file unrelated to fixes for NL000093 and NL000319';
 
 proc compare base=prescat.building_geocode compare=building_geocode listall maxprint=(40,32000);
- id nlihc_id bldg_addre;
+ id nlihc_id;
  run;
-
- **use this to check NL000093 (obs 174), since the bldg_addre has changed**;
-proc compare base=building_geocode1 compare=building_geocode listall maxprint=(40,32000);
-run;
 
 **Create Project_Geocode Fix**;
 
