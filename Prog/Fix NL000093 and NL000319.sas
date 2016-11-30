@@ -193,7 +193,10 @@ YCOORD=Bldg_y LONGITUDE=Bldg_lon LATITUDE=Bldg_lat));
 
   street = propcase(stname);
   type = propcase(street_type);
+  
+  length bldg_addre $ 160;
   bldg_addre = catx (' ',addrnum, street, type, quadrant);
+  
   ** Standard geos **;
   
   length Ward2012 $ 1;
@@ -246,6 +249,7 @@ drop street type;
 run;
 
 data Building_Geocode;
+length bldg_image_url bldg_streetview_url $ 255;
 set prescat.Building_Geocode;
 run;
 
@@ -263,7 +267,7 @@ title2 '************************************************************************
 title3 '** 1/ Check for changes in building_geocode file unrelated to fixes for NL000093 and NL000319';
 
 proc compare base=prescat.building_geocode compare=building_geocode listall maxprint=(40,32000);
- id nlihc_id;
+ id nlihc_id bldg_addre;
  run;
 
 **Create Project_Geocode Fix**;
@@ -280,7 +284,10 @@ YCOORD=proj_y LONGITUDE=proj_lon LATITUDE=proj_lat));
 
   street = propcase(stname);
   type = propcase(street_type);
+  
+  length proj_addre $ 160;
   proj_addre = catx (' ',addrnum, street, type, quadrant);
+  
   ** Standard geos **;
   
   length Ward2012 $ 1;
