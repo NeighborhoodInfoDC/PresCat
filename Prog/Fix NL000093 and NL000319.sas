@@ -456,6 +456,6 @@ proc compare base=prescat.project compare=project listall maxprint=(40,32000);
 ** End Macro Definition **;
 
 
-%Register_metadata( revisions=%str(New file.) )
+%Register_metadata( revisions=%str(Fix geocoding data for NL000093 and NL000319.) )
 
 run;
