@@ -17,16 +17,11 @@
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
 
-
-data project_old;
-	set prescat.project;
-	run;
-
-** Import project info and match to NLIHC_ID **;
+/** Import project info and match to NLIHC_ID (Probably won't need to import, if this will be run from one large program **
 	filename fimport "D:\DCData\Libraries\PresCat\Raw\Buildings_for_geocoding_2016-08-01_status.csv" lrecl=2000;
 
 data WORK.PROJECT_STATUS    ;
-%let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+%let _EFIERR_ = 0; * set the ERROR detection macro variable *
 infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
 informat Proj_Name $20. ;
 informat NLIHC_ID $8. ;
@@ -69,10 +64,10 @@ Own_Type $
 Mgr_Name $
 Mgr_Type $
      ;
-if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+if _ERROR_ then call symputx('_EFIERR_',1);  * set ERROR detection macro variable *
 run;
 
-filename fimport clear;
+filename fimport clear;*/
 
 proc sort data=project_status;
 by marid;
@@ -93,6 +88,10 @@ data Project_Status;
 proc sort data=Project_Status out=Status;
 	by nlihc_id;
 	run;
+
+** Create subsidy update data set **;
+
+%Create_project_subsidy_update( data=Subsidy ) 
 
 ** Get min/max assisted units **;
 
@@ -313,34 +312,34 @@ data Project_New (label="Preservation Catalog, projects update");
   
 run;
 
-data PresCat.Project;
+data Project;
 set PresCat.Project Add_Project;
 run;
 
-proc sort data=PresCat.Project;
+proc sort data=Project;
   by nlihc_id;
 run;
 
-%File_info( data=PresCat.Project, printobs=5, 
+%File_info( data=Project, printobs=5, 
             freqvars=Status Category_code Proj_City Proj_ST Ward2012 Proj_Zip Hud_Own_type Hud_Mgr_type PBCA )
 
 title2 'File = PresCat.Project';
 
 %Dup_check(
-  data=PresCat.Project,
+  data=Project,
   by=nlihc_id,
   id=Proj_name Proj_addre
 )
 title2;
 
-proc print data=PresCat.Project;
+proc print data=Project;
   where missing( Nlihc_id );
   var status Proj_name Proj_addre Proj_zip Ward2012;
   title2 '---MISSING NLIHC_ID---';
 run;
 title2;
 
-proc print data=PresCat.Project;
+proc print data=Project;
   where missing( Ward2012 );
   id nlihc_id;
   var status Proj_name Proj_addre Proj_zip Ward2012;
@@ -348,7 +347,7 @@ proc print data=PresCat.Project;
 run;
 title2;
 
-proc freq data=PresCat.Project;
+proc freq data=Project;
   tables Hud_Own_Effect_dt;
   tables Category_code * Cat_At_Risk * Cat_Expiring * Cat_Failing_Insp * Cat_More_Info * Cat_Lost 
          * Cat_Replaced 
@@ -360,6 +359,6 @@ run;
 
 libname comp 'D:\DCData\Libraries\PresCat\Data\Old';
 
-proc compare base=project_old compare=PresCat.Project listall maxprint=(40,32000);
+proc compare base=Prescat.project compare=Project listall maxprint=(40,32000);
   id nlihc_id;
 run;
