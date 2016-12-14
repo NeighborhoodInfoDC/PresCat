@@ -20,6 +20,6 @@
 %DCData_lib( HUD )
 
 
-%Update_MFIS( Update_file=MFIS_yyyy_mm )
+%Update_MFIS( Update_file=MFIS_2015_12 )
 
 

@@ -1,14 +1,14 @@
 /**************************************************************************
- Program:  Update_MFIS_yyyy_mm.sas
+ Program:  Update_DCHA_Document_2016_04_del.sas
  Library:  PresCat
  Project:  NeighborhoodInfo DC
- Author:   
- Created:  
+ Author:   P. Tatian
+ Created:  10/07/16
  Version:  SAS 9.2
  Environment:  Local Windows session (desktop)
  
- Description:  Update Preservation Catalog with latest 
- HUD MFIS update file.
+ Description:  Delete duplicate projects NL000375 and NL001019 from
+ all Catalog data sets.
 
  Modifications:
 **************************************************************************/
@@ -17,9 +17,8 @@
 
 ** Define libraries **;
 %DCData_lib( PresCat )
-%DCData_lib( HUD )
 
 
-%Update_MFIS( Update_file=MFIS_yyyy_mm )
+%Delete_catalog_projects( Project_list="NL000375" "NL001019" )
 
-
+run;

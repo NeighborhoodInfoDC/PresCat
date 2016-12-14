@@ -1,29 +1,22 @@
 /**************************************************************************
- Program:  Azavea_export.sas
+ Program:  Pres_cat_web_export.sas
  Library:  PresCat
  Project:  NeighborhoodInfo DC
  Author:   P. Tatian
- Created:  08/11/13
- Version:  SAS 9.1
+ Created:  03/24/16
+ Version:  SAS 9.2
  Environment:  Windows
  
- Description:  Export data files for Avazea.
+ Description:  Export data files for Preservation Catalog web site.
 
  Modifications:
-  10/27/13 PAT Incorporated subsidy vars: Portfolios, Agencies, subsidy
-               status and starting year. 
-               Added Bldg_count.
-               Fixed Subsidized variable.
-  10/28/13 PAT Replaced Subsidized var with version in Project data set.
-  03/11/14 PAT Added n/a for Parcel_owner_type.
 **************************************************************************/
 
-%include "K:\Metro\PTatian\DCData\SAS\Inc\Stdhead.sas";
-/*%include "C:\DCData\SAS\Inc\Stdhead.sas";*/
+%include "L:\SAS\Inc\StdLocal.sas"; 
 
 ** Define libraries **;
-%DCData_lib( PresCat )
-%DCData_lib( RealProp )
+%DCData_lib( PresCat, local=n )
+%DCData_lib( RealProp, local=n )
 
 options missing=' ';
 
@@ -35,6 +28,11 @@ proc format;
 run;
 
 **** Collapse subsidy data by project ****;
+
+proc freq data=PresCat.Subsidy;
+  tables portfolio;
+  format portfolio ;
+run;
 
 data Subsidy_project;
 
@@ -67,18 +65,15 @@ data Subsidy_project;
   else if indexw( compress( Agencies ), compress( Agency ), ';' ) = 0 then 
     Agencies = trim( Agencies ) || "; " || Agency;
   
-  if Portfolios = "" then Portfolios = Portfolio;
+  if Portfolios = "" then Portfolios = put( Portfolio, $portfolio. );
   else if indexw( compress( Portfolios ), compress( Portfolio ), ';' ) = 0 then 
-    Portfolios = trim( Portfolios ) || "; " || Portfolio;
+    Portfolios = trim( Portfolios ) || "; " || put( Portfolio, $portfolio. );
  
   select ( Portfolio );
   
     /** HUD financing/insurance programs **/
-    when ( "Section 202/811", 
-           "Section 221(d)(3) below market rate interest (BMIR)",
-           "Section 221(d)(3)&(4) with affordability restrictions",
-           "Section 236",
-           "Section 542(b)&(c)"
+    when ( "202/811", 
+           "HUDMORT"
           ) do;
       if Subsidy_active then Hud_Fin_Ins_Status = "C";
       else Hud_Fin_Ins_Status = "F";
@@ -86,8 +81,9 @@ data Subsidy_project;
     end;
     
     /** HUD project-based rental assistance **/
-    when ( "Project-based Section 8",
-           "Project Rental Assistance Contract (PRAC)" ) do;
+    when ( "PB8",
+           "PRAC",
+           "PBV" ) do;
       if Subsidy_active then Hud_PBRA_Status = "C";
       else Hud_PBRA_Status = "F";
       Hud_PBRA_Year = year( POA_start );
@@ -100,15 +96,15 @@ data Subsidy_project;
       LIHTC_Year = year( POA_start );
     end;
       
-    /** DC HPTF **/
-    when ( "DC Housing Production Trust Fund" ) do;
+    /** DC Housing Production Trust Fund **/
+    when ( "DC HPTF" ) do;
       if Subsidy_active then DC_HPTF_Status = "C";
       else DC_HPTF_Status = "F";
       DC_HPTF_Year = year( POA_start );
     end;
 
-    /** DC IZ/ADU **/
-    when ( "DC Inclusionary Zoning/ADU" ) do;
+    /** DC Inclusionary Zoning/ADU **/
+    when ( "DC IZ/ADU" ) do;
       if Subsidy_active then DC_IZ_ADU_Status = "C";
       else DC_IZ_ADU_Status = "F";
       DC_IZ_ADU_Year = year( POA_start );
@@ -139,10 +135,10 @@ run;
 proc sql noprint;
   create table Project as
   select 
-    coalesce( Project.NLIHC_ID, Subsidy.NLIHC_ID ) as NLIHC_ID, 
+    coalesce( Project_category.NLIHC_ID, Subsidy.NLIHC_ID ) as NLIHC_ID, 
     Status,
     Subsidized,
-    Category,
+    put( category_code, $categrn. ) as Category,
     Proj_Name,
     Proj_Addre,
     Proj_City,
@@ -152,11 +148,11 @@ proc sql noprint;
     Proj_Units_Assist_Min,
     Proj_Units_Assist_Max,
     Bldg_count,
-    Own_Effect,
-    Own_Name,
-    "" as Own_Type,
-    Mgr_Name,
-    "" as Mgr_Type,
+    Hud_own_effect_dt as Own_Effect,
+    Hud_own_name as Own_Name,
+    Hud_Own_Type as Own_Type,
+    Hud_Mgr_Name as Mgr_Name,
+    Hud_Mgr_type as Mgr_Type,
     Subsidy_End_First,
     Subsidy_End_Last,
     Agencies,
@@ -176,21 +172,26 @@ proc sql noprint;
     PSA2012,
     Cluster_tr2000,
     Cluster_tr2000_name,
+    /*put( Cluster_tr2000, $clus00f. ) as Cluster_combo,*/
     Geo2010 as Census_Tract_2010,
-    Proj_X,
-    Proj_Y,
+    "" as Blank1,
+    "" as Blank2,
     Proj_lat,
     Proj_lon,
     Proj_Streetview_url as Streetview_url,
     Proj_Image_url as Image_url
-  from PresCat.Project as Project 
+  from
+    ( select * from 
+      PresCat.Project (drop=Category_code) as Project 
+      left join PresCat.Project_category (keep=nlihc_id Category_code) as Category
+      on Project.Nlihc_id = Category.Nlihc_id ) as Project_category
     left join Subsidy_project as Subsidy
-  on Project.Nlihc_id = Subsidy.Nlihc_id 
+  on Project_category.Nlihc_id = Subsidy.Nlihc_id 
   where not( missing( Proj_lat ) ) and not( missing( Proj_lon ) ) 
   order by NLIHC_ID;
 quit;
 
-**** Clean up missing values for projects not in subsidy table ****;
+**** Clean up missing values ****;
 
 data Project;
 
@@ -198,17 +199,27 @@ data Project;
   
   if missing( Subsidized ) then Subsidized = 0;
   
+  ** Projects not in subsidy table **;
+  
   array a{*} Hud_Fin_Ins_Status HUD_PBRA_Status LIHTC_Status DC_HPTF_Status DC_IZ_ADU_Status;
   
   do i = 1 to dim( a );
     if missing( a{i} ) then a{i} = 'N';
   end;
   
+  ** Change user missing values to . **;
+  
+  array b{*} Proj_Units_Assist_Min Proj_Units_Assist_Max Subsidy_End_First Subsidy_End_Last;
+  
+  do i = 1 to dim( b );
+    if missing( b{i} ) then b{i} = .;
+  end;
+  
   drop i;
   
 run;
 
-filename fexport "&_dcdata_path\PresCat\Raw\Project.csv" lrecl=3000;
+filename fexport "&_dcdata_r_path\PresCat\Raw\Web\Project.csv" lrecl=3000;
 
 proc export data=Project
     outfile=fexport
@@ -225,21 +236,39 @@ proc sql noprint;
   create table Subsidy as
   select 
     NLIHC_ID,
-    Subsidy_Active,
-    Program,
-    Subsidy,
-    Contract_Number,
-    Units_Assist,
-    POA_Start,
-    POA_End,
-    Subsidy_Info_Source,
-    "" as Subsidy_Notes,
-    Update_Date as Subsidy_Update
+    Subsidy_Active as SubsidyActive,
+    Program as ProgramName,
+    Portfolio as Subsidy,
+    Contract_Number as Contractnumber,
+    Units_Assist as UnitsAssist,
+    POA_Start as programactivestart,
+    POA_End as programactiveend,
+    Subsidy_Info_Source as SubsidyInfoSource ,
+    "" as SubsidyNotes,
+    Subsidy_info_source_date as SubsidyUpdate
   from PresCat.Subsidy
   order by NLIHC_ID;
 quit;
 
-filename fexport "&_dcdata_path\PresCat\Raw\Subsidy.csv" lrecl=2000;
+** Recode missing values **;
+
+data Subsidy;
+
+  set Subsidy;
+  
+  ** Change user missing values to . **;
+
+  array a{*} SubsidyUpdate;
+  
+  do i = 1 to dim( a );
+    if missing( a{i} ) then a{i} = .;
+  end;
+  
+  drop i;
+  
+run;
+  
+filename fexport "&_dcdata_r_path\PresCat\Raw\Web\Subsidy.csv" lrecl=2000;
 
 proc export data=Subsidy
     outfile=fexport
@@ -250,23 +279,23 @@ run;
 filename fexport clear;
 
 
-******  REAC_score  ******;
+******  REAC  ******;
 
 proc sql noprint;
-  create table REAC_score as
+  create table REAC as
   select 
     NLIHC_ID,
-    Reac_date,
-    Reac_score,
-    Reac_score_num,
-    Reac_score_letter
+    Reac_date as scoredate,
+    Reac_score as score,
+    Reac_score_num as scorenum,
+    trim( Reac_score_letter ) || Reac_score_star as scoreletter
   from PresCat.Reac_score
   order by NLIHC_ID;
 quit;
 
-filename fexport "&_dcdata_path\PresCat\Raw\REAC_score.csv" lrecl=2000;
+filename fexport "&_dcdata_r_path\PresCat\Raw\Web\REAC.csv" lrecl=2000;
 
-proc export data=Reac_score
+proc export data=Reac
     outfile=fexport
     dbms=csv replace;
 
@@ -282,6 +311,8 @@ data Parcel_bis;
   set PresCat.Parcel;
   
   if missing( Parcel_owner_date ) then Parcel_owner_date = .;
+  if missing( Parcel_x ) then Parcel_x = .;
+  if missing( Parcel_y ) then Parcel_y = .;
   
 run;
 
@@ -290,18 +321,18 @@ proc sql noprint;
   select 
     NLIHC_ID,
     ssl,
-    Parcel_type,
-    Parcel_owner_name,
-    Parcel_owner_date,
-    "n/a" as Parcel_owner_type,
-    "" as Parcel_units,
-    Parcel_x,
-    Parcel_y
+    Parcel_type as parceltype,
+    Parcel_owner_name as ownername,
+    Parcel_owner_date as ownerdate,
+    Parcel_owner_type as ownertype,
+    "" as units,
+    Parcel_x as x,
+    Parcel_y as y
   from Parcel_bis
   order by NLIHC_ID;
 quit;
 
-filename fexport "&_dcdata_path\PresCat\Raw\Parcel.csv" lrecl=2000;
+filename fexport "&_dcdata_r_path\PresCat\Raw\Web\Parcel.csv" lrecl=2000;
 
 proc export data=Parcel
     outfile=fexport
@@ -315,20 +346,20 @@ filename fexport clear;
 ******  Real Property  ******;
 
 proc sql noprint;
-  create table Real_property as
+  create table RealPropertyEvent as
   select 
     NLIHC_ID,
     ssl,
-    rp_date,
-    rp_type,
-    rp_desc
+    rp_date as eventdate,
+    rp_type as eventtype,
+    rp_desc as eventdescription
   from PresCat.Real_property
-  order by NLIHC_ID, RP_date desc, sort_order desc;
+  order by NLIHC_ID, RP_date desc;
 quit;
 
-filename fexport "&_dcdata_path\PresCat\Raw\Real_property.csv" lrecl=2000;
+filename fexport "&_dcdata_r_path\PresCat\Raw\Web\RealPropertyEvent.csv" lrecl=2000;
 
-proc export data=Real_property
+proc export data=RealPropertyEvent
     outfile=fexport
     dbms=csv replace;
 
