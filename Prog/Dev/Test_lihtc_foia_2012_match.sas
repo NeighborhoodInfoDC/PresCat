@@ -1,5 +1,5 @@
 /**************************************************************************
- Program:  Test_lihtc_foia_cat_match.sas
+ Program:  Test_lihtc_foia_2012_match.sas
  Library:  PresCat
  Project:  NeighborhoodInfo DC
  Author:   P. Tatian
@@ -19,6 +19,19 @@
 %DCData_lib( PresCat )
 %DCData_lib( DHCD )
 %DCData_lib( RealProp )
+
+
+** Remove extraneous geo matches from LIHTC FOIA data **;
+
+data Lihtc_foia_11_09_12;
+
+  set dhcd.Lihtc_foia_11_09_12;
+  
+  if scan( address_std, 1 ) ~= scan( m_addr, 1 ) then _score_ = .n;
+  
+  if _score_ >= 45;
+  
+run;
 
 
 ** Identify tax credit projects in Catalog **;
@@ -55,7 +68,7 @@ Calculate corrected compliance dates
       add 30 years to (b) to get extended compliance end
 ************************************************************************;
 
-proc summary data=Dhcd.Lihtc_foia_11_09_12 nway;
+proc summary data=Lihtc_foia_11_09_12 nway;
   class dhcd_project_id address_id;
   var seg_placed_in_service;
   output out=Lihtc_a max=;
@@ -69,7 +82,7 @@ run;
 
 ** Merge compliance dates with unique project and SSL combos **;
 
-proc sort data=Dhcd.Lihtc_foia_11_09_12 (drop=_:) out=lihtc_proj_ssl nodupkey;
+proc sort data=Lihtc_foia_11_09_12 (drop=_:) out=lihtc_proj_ssl nodupkey;
   by dhcd_project_id ssl;
 run;
 
@@ -161,7 +174,7 @@ proc sql noprint;
 ** Export project matching lists for review **;
 
 ods listing close;
-ods tagsets.excelxp file="D:\DCData\Libraries\PresCat\Prog\Dev\Test_lihtc_foia_cat_match_A.xls" style=Analysis options(sheet_interval='Proc' );
+ods tagsets.excelxp file="D:\DCData\Libraries\PresCat\Prog\Dev\Test_lihtc_foia_2012_match_A.xls" style=Analysis options(sheet_interval='Proc' );
 
 
 title2 '** Full listing **';
@@ -248,4 +261,25 @@ title2;
 
 ods tagsets.excelxp close;
 ods listing;
+
+
+** Export building addresses for geocoding through MAR geocoding tool **;
+
+data Geo_export;
+
+  set Lihtc_foia_11_09_12;
+  
+  keep dhcd_project_id dhcd_seg_id addr_num address_std;
+  
+run;
+
+filename fexport "L:\Libraries\PresCat\Raw\Lihtc_foia_2012_geocode.csv" lrecl=2000;
+
+proc export data=Geo_export
+    outfile=fexport
+    dbms=csv replace;
+
+run;
+
+filename fexport clear;
 
