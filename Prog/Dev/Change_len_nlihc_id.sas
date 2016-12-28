@@ -58,7 +58,5 @@
 %Change_len( ds=Subsidy, label="Preservation Catalog, Project subsidies", sortby=nlihc_id subsidy_id )
 %Change_len( ds=Subsidy_notes, label="Preservation Catalog, Subsidy notes", sortby=nlihc_id subsidy_id )
 %Change_len( ds=Subsidy_update_history, label="Preservation Catalog, Subsidy update history", sortby=nlihc_id subsidy_id update_dtm )
-%Change_len( ds=Project_except, label="Preservation Catalog, Project exception file" )
-%Change_len( ds=Subsidy_except, label="Preservation Catalog, Project subsidies exception file", sortby=nlihc_id subsidy_id )
 
 run;
