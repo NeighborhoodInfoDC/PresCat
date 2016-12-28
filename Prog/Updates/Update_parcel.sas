@@ -75,7 +75,7 @@ proc sort data=Parcel_a2;
   
 data Parcel (label="Preservation Catalog, Real property parcels");
 
-  length Nlihc_id $ 8 Ssl $ 17;
+  length Nlihc_id $ 16 Ssl $ 17;
   
   merge
     Parcel_a2 
