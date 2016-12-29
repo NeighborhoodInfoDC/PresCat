@@ -22,15 +22,21 @@ Preservation Catalog.
 %DCData_lib( RealProp )
 
 
-** Remove extraneous geo matches from LIHTC FOIA data **;
+** Edits to DHCD LIHTC data **;
 
 data Lihtc_foia_11_09_12;
 
   set dhcd.Lihtc_foia_11_09_12;
   
+  ** Remove extraneous geo matches from LIHTC FOIA data **;
+
   if scan( address_std, 1 ) ~= scan( m_addr, 1 ) then _score_ = .n;
   
   if _score_ >= 45;
+  
+  ** Combine dhcd_project_id 29 and 30 (same project) **;
+
+  if dhcd_project_id = 30 then dhcd_project_id = 29;
   
 run;
 
@@ -97,7 +103,7 @@ data Lihtc;
   
   rev_proj_initial_expiration = intnx( 'year', rev_proj_placed_in_service, 15, 'same' );
   rev_proj_extended_expiration = intnx( 'year', rev_proj_placed_in_service, 30, 'same' );
-  
+
   format rev_proj_placed_in_service rev_proj_initial_expiration rev_proj_extended_expiration mmddyy10.;
   
   label
