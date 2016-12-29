@@ -110,38 +110,26 @@ data Lihtc;
 run;
 
 
-** Merge LIHTC with Catalog Parcel, Subsidy, and Project data **;
+** Match LIHTC projects to Catalog by parcel **;
 
 proc sql noprint;
-  create table A as
-  select
-    coalesce( project_parcel.nlihc_id, subsidy.nlihc_id ) as nlihc_id, project_parcel.*, 
-    subsidy.poa_start, subsidy.poa_end, subsidy.units_assist from
-    ( select 
-        coalesce( project.nlihc_id, lihtc_parcel.nlihc_id ) as nlihc_id, lihtc_parcel.*, 
-        project.proj_name, project.proj_addre from 
-        (  select 
-             coalesce( parcel.ssl, lihtc.ssl ) as ssl, lihtc.*, parcel.nlihc_id, 
-             input( put(nlihc_id, $lihtc_sel.), 8. ) as cat_lihtc_proj, 
-             not( missing( parcel.nlihc_id ) ) as in_cat, not( missing( lihtc.dhcd_project_id ) ) as in_dhcd 
-             from lihtc as lihtc 
-             full join PresCat.Parcel as parcel
-             on lihtc.ssl = parcel.ssl
-        ) as lihtc_parcel 
-      left join PresCat.project as project
-      on project.nlihc_id = lihtc_parcel.nlihc_id
-    ) as project_parcel
-    left join PresCat.Subsidy (where=(portfolio = 'LIHTC')) as subsidy
-    on project_parcel.nlihc_id = subsidy.nlihc_id
-  order by ssl
-;
+  create table lihtc_parcel as
+  select 
+    coalesce( parcel.ssl, lihtc.ssl ) as ssl, lihtc.dhcd_project_id, parcel.nlihc_id, 
+    input( put(nlihc_id, $lihtc_sel.), 8. ) as cat_lihtc_proj, 
+    not( missing( parcel.nlihc_id ) ) as in_cat, not( missing( lihtc.dhcd_project_id ) ) as in_dhcd 
+    from lihtc as lihtc 
+    full join PresCat.Parcel as parcel
+    on lihtc.ssl = parcel.ssl
+  ;
+quit;
 
 
 ** Manual corrections to matching **;
 
-data A;
+data lihtc_parcel;
 
-  set A;
+  set lihtc_parcel;
 
   select ( nlihc_id );
     when ( 'NL000237' )
@@ -179,6 +167,41 @@ data A;
 run;
 
 
+** Add LIHTC project details to matched data **;
+
+proc sql noprint;
+  create table lihtc_parcel_b as
+  select 
+    coalesce( lihtc_parcel.dhcd_project_id, lihtc.dhcd_project_id ) as dhcd_project_id, lihtc_parcel.*, lihtc.* 
+    from lihtc_parcel
+    left join lihtc
+    on lihtc_parcel.dhcd_project_id = lihtc.dhcd_project_id
+	order by lihtc_parcel.dhcd_project_id, lihtc_parcel.nlihc_id
+  ;
+quit;
+
+
+** Merge LIHTC/Cat match with Catalog Subsidy and Project data **;
+
+proc sql noprint;
+  create table A as
+  select
+    coalesce( project_parcel.nlihc_id, subsidy.nlihc_id ) as nlihc_id, project_parcel.*, 
+    subsidy.poa_start, subsidy.poa_end, subsidy.units_assist from
+    ( select 
+        coalesce( project.nlihc_id, lihtc_parcel.nlihc_id ) as nlihc_id, lihtc_parcel.*, 
+        project.proj_name from 
+      lihtc_parcel_b as lihtc_parcel
+      left join PresCat.project as project
+      on project.nlihc_id = lihtc_parcel.nlihc_id
+    ) as project_parcel
+    left join PresCat.Subsidy (where=(portfolio = 'LIHTC')) as subsidy
+    on project_parcel.nlihc_id = subsidy.nlihc_id
+  order by ssl
+;
+quit;
+
+
 ** Count different match types **;
 
 proc sort data=A out=A_nodup nodupkey;
@@ -210,8 +233,7 @@ proc sql noprint;
   on AA.dhcd_project_id = A_dhcd.dhcd_project_id
   order by nlihc_id, dhcd_project_id, ssl
 ;
-
-run;
+quit;
 
 
 ** A) Single matching nlihc_id LIHTC project and dhcd_project_id (1:1) **;
@@ -250,11 +272,17 @@ run;
   debug=N
 )
 
-proc print data=Update_a;
+proc print data=Update_a label;
   where abs( poa_start - rev_proj_placed_in_service ) > 365 or abs( units_assist - proj_lihtc_units ) > 0;
   id nlihc_id proj_name subsidy_id;
   var POA_start rev_proj_placed_in_service proj_units_tot Units_Assist proj_lihtc_units;
   title2 'A) Nonmatching compliance start dates or assisted unit counts';
+  label
+    POA_start = 'Placed in service (CATALOG)'
+    rev_proj_placed_in_service = 'Placed in service (DHCD)'
+    proj_units_tot = 'Total project units (CATALOG)'
+    Units_Assist = 'LIHTC units (CATALOG)'
+    proj_lihtc_units = 'LIHTC units (DHCD)';
 run;
 
 title2;
@@ -333,6 +361,9 @@ units_assist update_dtm Except_:;
 
 run;
 
+
+** Update Subsidy records **;
+
 data Subsidy;
 
   update 
@@ -345,7 +376,12 @@ run;
 
 proc compare base=PresCat.Subsidy compare=Subsidy listall maxprint=(400,32000);
   id nlihc_id subsidy_id;
+  title2 'Update Subsidy records: results';
 run;
+title2;
+
+
+** Add new info to Subsidy_except to prevent overwriting by HUD data updates **;
 
 data Subsidy_except;
 
