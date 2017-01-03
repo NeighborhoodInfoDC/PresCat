@@ -267,9 +267,21 @@ ods listing;
 
 data Geo_export;
 
+  retain dhcd_project_id dhcd_seg_id addr_num ssl address_std;
+
   set Lihtc_foia_11_09_12;
   
-  keep dhcd_project_id dhcd_seg_id addr_num address_std;
+  ** Remove extraneous geo matches from LIHTC FOIA data **;
+
+  if scan( address_std, 1 ) ~= scan( m_addr, 1 ) then _score_ = .n;
+  
+  if _score_ >= 45;
+  
+  ** Combine dhcd_project_id 29 and 30 (same project) **;
+
+  if dhcd_project_id = 30 then dhcd_project_id = 29;
+  
+  keep dhcd_project_id dhcd_seg_id addr_num ssl address_std;
   
 run;
 

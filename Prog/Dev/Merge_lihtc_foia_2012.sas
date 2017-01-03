@@ -363,7 +363,7 @@ poa_end_actual poa_end_prev poa_start poa_start_orig
 portfolio program rent_to_fmr_description subsidy_active
 subsidy_id subsidy_info_source subsidy_info_source_date
 subsidy_info_source_id subsidy_info_source_property
-units_assist update_dtm Except_:;
+units_assist update_dtm Except_: dhcd_project_id;
 
 run;
 
@@ -374,7 +374,7 @@ data Subsidy;
 
   update 
     PresCat.Subsidy
-	Update_all (drop=Except_:)
+	Update_all (drop=Except_: dhcd_project_id)
     updatemode=nomissingcheck;
   by nlihc_id subsidy_id;
 
@@ -399,3 +399,330 @@ data Subsidy_except;
 run;
 
 
+** Import geocoded building addresses from MAR Geocoder **;
+
+filename fimport "&_dcdata_r_path\PresCat\Raw\Lihtc_foia_2012_geocode main.csv" lrecl=2000;
+
+proc import out=Geocode_main
+    datafile=fimport
+    dbms=csv replace;
+  datarow=2;
+  getnames=yes;
+  guessingrows=1000;
+
+run;
+
+filename fimport clear;
+
+filename fimport "&_dcdata_r_path\PresCat\Raw\Lihtc_foia_2012_geocode mar_address.csv" lrecl=2000;
+
+proc import out=Geocode_mar_address
+    datafile=fimport
+    dbms=csv replace;
+  datarow=2;
+  getnames=yes;
+  guessingrows=1000;
+
+run;
+
+filename fimport clear;
+
+proc sort data=Geocode_main;
+  by marid;
+  
+proc sort data=Geocode_mar_address nodupkey;
+  by address_id;
+  
+data Lihtc_foia_2012_geocode;
+
+  merge 
+    Geocode_main (rename=(marid=address_id ssl=ssl1) in=in1) 
+    Geocode_mar_address;
+  by address_id;
+  
+  if in1;
+  
+  format _all_ ;
+  informat _all_ ;
+  
+  ** Standard geos **
+  
+  length Ward2012 $ 1;
+  
+  Ward2012 = substr( Ward_2012, 6, 1 );
+  
+  format Ward2012 $ward12a.;
+  
+  length Anc2012 $ 2;
+  
+  Anc2012 = substr( Anc_2012, 5, 2 );
+  
+  format Anc2012 $anc12a.;
+  
+  length Psa2012 $ 3;
+  
+  Psa2012 = substr( Psa, 21, 3 ); 
+  
+  format Psa2012 $psa12a.;
+  
+  length Geo2010 $ 11;
+  
+  if Census_tract ~= . then Geo2010 = "11001" || put( Census_tract, z6. );
+  
+  format Geo2010 $geo10a.;
+  
+  length Cluster_tr2000 $ 2 Cluster_tr2000_name $ 80;
+  
+  if Cluster_ ~= "" then Cluster_tr2000 = put( 1 * substr( Cluster_, 9, 2 ), z2. );
+  
+  format Cluster_tr2000 $clus00a.;
+  
+  length Zip $ 5;
+  
+  Zip = put( MAR_ZIPCODE, z5.0 );
+  
+  format Zip $zipa.;
+
+  ** Cluster names **;
+  
+  Cluster_tr2000_name = put( Cluster_tr2000, $clus00b. );
+  
+  ** Image url **
+  
+  length Image_url $ 255;
+  
+  if imagename ~= "" and imagename ~=: "No_Image_Available" then 
+    Image_url = trim( imageurl ) || "/" || trim( imagedir ) || "/" || imagename;
+    
+  rename Streetviewurl=Streetview_url;
+  
+  ** Reformat addresses **;
+  
+  %address_clean( MAR_MATCHADDRESS, MAR_MATCHADDRESS );
+
+  ** Check SSL against earlier geocode **;
+
+  if compbl( ssl1 ) ~= compbl( ssl ) then do;
+    %warn_put( msg="SSLs not the same. " _n_= ssl1= ssl= dhcd_project_id= dhcd_seg_id= address_std= mar_matchaddress= )
+  end;
+  
+  drop ssl1;
+
+run;
+
+
+** Update Building_geocode **;
+
+proc sort data=Update_all out=Dhcd_project_id_to_nlihc_id nodupkey;
+  by nlihc_id dhcd_project_id;
+run;
+
+%Data_to_format(
+  FmtLib=work,
+  FmtName=dhcd_project_id_to_nlihc_id,
+  Desc=,
+  Data=Dhcd_project_id_to_nlihc_id,
+  Value=dhcd_project_id,
+  Label=nlihc_id,
+  OtherLabel=' ',
+  Print=N
+)
+
+%Data_to_format(
+  FmtLib=work,
+  FmtName=$Update_nlihc_id_list,
+  Desc=,
+  Data=Dhcd_project_id_to_nlihc_id,
+  Value=nlihc_id,
+  Label=nlihc_id,
+  OtherLabel=' ',
+  Print=N
+)
+
+data Lihtc_foia_2012_geocode_nlihc_id;
+
+  set Lihtc_foia_2012_geocode;
+
+  Nlihc_id = put( dhcd_project_id, dhcd_project_id_to_nlihc_id. );
+  
+  if missing( Nlihc_id ) then delete;
+  
+run;
+
+proc sort data=Lihtc_foia_2012_geocode_nlihc_id nodupkey;
+  by nlihc_id address_id;
+run;
+
+proc sort data=Lihtc_foia_2012_geocode_nlihc_id;
+  by nlihc_id address_std;
+run;
+
+%let MAX_PROJ_ADDRE = 3;   /** Maximum number of addresses to include in Proj_addre field in PresCat.Project_geo **/
+
+%let geo_vars = Ward2012 Anc2012 Psa2012 Geo2010 Cluster_tr2000 Cluster_tr2000_name Zip;
+
+data
+  Project_geocode_update 
+    (keep=nlihc_id &geo_vars Proj_address_id Proj_x Proj_y Proj_lat Proj_lon 
+          Proj_addre Proj_zip Proj_image_url Proj_Streetview_url Bldg_count)
+  Building_geocode_update
+    (keep=nlihc_id &geo_vars address_id Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre Zip
+          image_url Streetview_url ssl_std
+     rename=(address_id=Bldg_address_id Zip=Bldg_zip image_url=Bldg_image_url Streetview_url=Bldg_streetview_url
+             ssl_std=Ssl));
+
+  length Nlihc_id $ 16;
+
+  set Lihtc_foia_2012_geocode_nlihc_id;
+  by nlihc_id;
+  
+  length Ward2012x $ 1;
+  
+  Ward2012x = left( Ward2012 );
+  
+  length
+    Proj_addre Bldg_addre $ 160
+    Proj_zip $ 5
+    Proj_image_url Proj_streetview_url $ 255
+    Ssl_std $ 17;
+  
+  retain Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Proj_addre Proj_zip Proj_image_url Bldg_count;
+  
+  Ssl_std = left( Ssl );
+  
+  if first.nlihc_id then do;
+    Bldg_count = 0;
+    Proj_address_id = .;
+    Proj_x = .;
+    Proj_y = .;
+    Proj_lat = .;
+    Proj_lon = .;
+    Proj_addre = "";
+    Proj_zip = "";
+    Proj_image_url = "";
+    Proj_streetview_url = "";
+  end;
+    
+  Bldg_count + 1;
+  
+  Bldg_x = MAR_XCOORD;
+  Bldg_y = MAR_YCOORD;
+  Bldg_lon = MAR_LONGITUDE;
+  Bldg_lat = MAR_LATITUDE;
+  Bldg_addre = MAR_MATCHADDRESS;
+  
+  output Building_geocode_update;
+  
+  if address_id > 0 and missing( Proj_address_id ) then Proj_address_id = address_id;
+  if Proj_zip = "" then Proj_zip = Zip;
+  
+  Proj_x = sum( Proj_x, MAR_XCOORD );
+  Proj_y = sum( Proj_y, MAR_YCOORD );
+  Proj_lat = sum( Proj_lat, MAR_LATITUDE );
+  Proj_lon = sum( Proj_lon, MAR_LONGITUDE );
+  
+  if image_url ~= "" and Proj_image_url = "" then Proj_image_url = image_url;
+
+  if Streetview_url ~= "" and Proj_streetview_url = "" then Proj_streetview_url = Streetview_url;
+
+  if Bldg_count = 1 then Proj_addre = MAR_MATCHADDRESS;
+  else if Bldg_count <= &MAX_PROJ_ADDRE then Proj_addre = trim( Proj_addre ) || "; " || MAR_MATCHADDRESS;
+  else if Bldg_count = %eval( &MAX_PROJ_ADDRE + 1 ) then Proj_addre = trim( Proj_addre ) || "; others";
+    
+  if last.nlihc_id then do;
+  
+    Proj_x = Proj_x / Bldg_count;
+    Proj_y = Proj_y / Bldg_count;
+    Proj_lat = Proj_lat / Bldg_count;
+    Proj_lon = Proj_lon / Bldg_count;
+    
+    output Project_geocode_update;
+    
+  end;
+  
+  label
+    Ward2012x = "Ward (2012)"
+    Ssl_std = "Property identification number (square/suffix/lot)"
+    NLIHC_ID = "Preservation Catalog project ID"
+    address_id = "MAR address ID"
+    streetview_url = "Google Street View URL"
+    Anc2012 = "Advisory Neighborhood Commission (2012)"
+    Psa2012 = "Police Service Area (2012)"
+    Geo2010 = "Full census tract ID (2010): ssccctttttt"
+    Cluster_tr2000 = "Neighborhood cluster (tract-based, 2000)"
+    Cluster_tr2000_name = "Neighborhood cluster names (tract-based, 2000)"
+    zip = "ZIP code (5 digit)"
+    image_url = "OCTO property image URL"
+    Proj_addre = "Project address"
+    Proj_address_id = "Project MAR address ID"
+    Proj_image_url = "OCTO property image URL"
+    Proj_lat = "Project latitude"
+    Proj_lon = "Project longitude"
+    Proj_streetview_url = "Google Street View URL"
+    Proj_x = "Project longitude (MD State Plane Coord., NAD 1983 meters)"
+    Proj_y = "Project latitude (MD State Plane Coord., NAD 1983 meters)"
+    Proj_zip = "ZIP code (5 digit)"
+    Bldg_addre = "Building address"
+    Bldg_x = "Building longitude (MD State Plane Coord., NAD 1983 meters)"
+    Bldg_y = "Building latitude (MD State Plane Coord., NAD 1983 meters)"
+    Bldg_lon = "Building longitude"
+    Bldg_lat = "Building latitude"
+    Bldg_count = "Number of buildings for project";
+  
+  format Ward2012x $ward12a.;
+  
+  rename Ward2012x = Ward2012;
+  drop Ward2012;
+  
+run;
+
+title4 '**** SHOULD NOT BE ANY DUPLICATES REPORTED ****';
+
+%Dup_check(
+  data=Building_geocode_update,
+  by=nlihc_id Bldg_address_id,
+  id=Bldg_addre
+)
+
+%Dup_check(
+  data=Project_geocode_update,
+  by=nlihc_id,
+  id=Proj_addre 
+)
+ 
+run;
+title2;
+
+
+** Update Building_geocode **;
+
+data Building_geocode;
+
+  set 
+    PresCat.Building_geocode
+      (where=(put(nlihc_id,$Update_nlihc_id_list.)=' ') drop=proj_name)
+    Building_geocode_update;
+  by Nlihc_id Bldg_addre;
+
+run;
+
+proc compare base=PresCat.Building_geocode compare=Building_geocode listall maxprint=(400,32000);
+  id Nlihc_id Bldg_addre;
+run;
+
+
+** Update Project_geocode **;
+
+data Project_geocode;
+
+  set 
+    PresCat.Project_geocode
+      (where=(put(nlihc_id,$Update_nlihc_id_list.)=' ') drop=proj_name)
+    Project_geocode_update;
+  by Nlihc_id;
+
+run;
+
+proc compare base=PresCat.Project_geocode compare=Project_geocode listall maxprint=(400,32000);
+  id Nlihc_id;
+run;
