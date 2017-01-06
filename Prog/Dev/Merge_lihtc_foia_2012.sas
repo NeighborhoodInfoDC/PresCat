@@ -279,11 +279,28 @@ run;
 )
 
 proc print data=Update_a label;
-  where abs( poa_start - rev_proj_placed_in_service ) > 365 or abs( units_assist - proj_lihtc_units ) > 0;
-  id nlihc_id proj_name subsidy_id;
-  var POA_start rev_proj_placed_in_service proj_units_tot Units_Assist proj_lihtc_units;
-  title2 'A) Nonmatching compliance start dates or assisted unit counts';
+  where abs( poa_start - rev_proj_placed_in_service ) > 365;
+  id nlihc_id subsidy_id proj_name;
+  var POA_start rev_proj_placed_in_service;
+  title2 'A) Nonmatching compliance start dates';
   label
+    nlihc_id = 'Project ID'
+	subsidy_id = 'Subsidy ID'
+    POA_start = 'Placed in service (CATALOG)'
+    rev_proj_placed_in_service = 'Placed in service (DHCD)'
+    proj_units_tot = 'Total project units (CATALOG)'
+    Units_Assist = 'LIHTC units (CATALOG)'
+    proj_lihtc_units = 'LIHTC units (DHCD)';
+run;
+
+proc print data=Update_a label;
+  where abs( units_assist - proj_lihtc_units ) > 0;
+  id nlihc_id subsidy_id proj_name;
+  var proj_units_tot Units_Assist proj_lihtc_units;
+  title2 'B) Nonmatching assisted unit counts';
+  label
+    nlihc_id = 'Project ID'
+	subsidy_id = 'Subsidy ID'
     POA_start = 'Placed in service (CATALOG)'
     rev_proj_placed_in_service = 'Placed in service (DHCD)'
     proj_units_tot = 'Total project units (CATALOG)'
