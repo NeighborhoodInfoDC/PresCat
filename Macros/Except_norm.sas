@@ -141,7 +141,7 @@
     
     data _Except_norm_blank;
     
-      length Nlihc_id $ 8;
+      length Nlihc_id $ 16;
       
       Nlihc_id = "";
       
