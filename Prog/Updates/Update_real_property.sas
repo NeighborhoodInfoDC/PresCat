@@ -107,7 +107,9 @@ data Foreclosure_notices;
     Rod.Foreclosures_2011 (keep=&fcl_keep_vars)
     Rod.Foreclosures_2012 (keep=&fcl_keep_vars)
     Rod.Foreclosures_2013 (keep=&fcl_keep_vars)
-    Rod.Foreclosures_2014 (keep=&fcl_keep_vars); 
+    Rod.Foreclosures_2014 (keep=&fcl_keep_vars)
+	Rod.Foreclosures_2015 (keep=&fcl_keep_vars)
+	Rod.Foreclosures_2016 (keep=&fcl_keep_vars); 
   
   where put( ssl, $sslsel. ) ~= "";
   
@@ -190,7 +192,8 @@ data Rcasd_notices;
   
   set 
     Dhcd.Rcasd_2015
-    Dhcd.Rcasd_2016;
+    Dhcd.Rcasd_2016
+	Dhcd.Rcasd_2017;
   by nidc_rcasd_id;
   
   where put( ssl, $sslsel. ) ~= "";
