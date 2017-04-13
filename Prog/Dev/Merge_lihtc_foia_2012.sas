@@ -242,7 +242,9 @@ proc sql noprint;
 quit;
 
 
-** A) Single matching nlihc_id LIHTC project and dhcd_project_id (1:1) **;
+*********************************************************************************************
+  A) Single matching nlihc_id LIHTC project and dhcd_project_id (1:1)
+*********************************************************************************************;
 
 %let Update_dtm = %sysfunc( datetime() );
 
@@ -311,7 +313,10 @@ run;
 title2;
 
 
-** B) Single matching nlihc_id non-LIHTC project and dhcd_project_id (1:1) **;
+*********************************************************************************************
+  B) Single matching nlihc_id non-LIHTC project and dhcd_project_id (1:1)
+*********************************************************************************************;
+
 
 proc sort data=Merge_lihtc_foia_2012 out=Merge_lihtc_foia_2012_b nodupkey;
   where not( missing( nlihc_id ) or missing( dhcd_project_id ) ) and cat_count = 1 and dhcd_count = 1 and cat_lihtc_proj = 0;
@@ -352,6 +357,47 @@ data Update_b;
   end;
 
 run;
+
+
+*********************************************************************************************
+  C) Multiple matching nlihc_id for same dhcd_project_id
+    1) NL000202/Mayfair Mansions was originally parcel 5057 0040, PIS=10/10/1988.
+         >> Assign records from dhcd_project_id=1.
+       Parcel was later split into parcels 5057 0803 and 5057 0804.
+       Parcel 5057 0803 is NL001005/Mayfair Mansions Apartments, PIS=07/09/2009.
+         >> Reassign to project ID NL000202A.
+         >> Assign records from dhcd_project_id=72.
+       Parcel 5057 0804 is not yet in Catalog. HUD.Lihtc_2013_dc lists as HUD_ID=DCB2012802.
+         >> Create new project ID NL000202B.
+    2) NL000237/Hanover Court (Hartford Knox St Apts) should be dhcd_project_id=10
+    3) NL000325
+    4) NL000102/Faircliff Plaza West should be only these addresses
+        1400 - 1404 EUCLID ST NW
+        1424 - 1432 CLIFTON ST NW (ADD: not in DHCD list)
+    5) NL001019 >> DUPLICATE, DELETE 
+    6) NL000273/NL000274/Orchard Park (Southview Apts I)
+         >> Combine into one project
+         >> Add 3522 22ND ST SE
+    7) NL000997/NL000998/Stanton Park Apts
+         >> Divide addresses between two projects as follows
+              _Stanton Gainesville_
+              2606 18th St SE
+              1811 Gainesville St SE
+              1817 Gainesville St SE
+              _Stanton Wagner_
+              2446 Wagner St SE
+              2440 Wagner St SE
+              2436 Wagner St SE
+              2422 Wagner St SE
+    
+*********************************************************************************************;      
+
+
+proc sort data=Merge_lihtc_foia_2012 out=Merge_lihtc_foia_2012_c nodupkey;
+  where not( missing( nlihc_id ) or missing( dhcd_project_id ) ) and cat_count > 1 and dhcd_count > 0;
+  by nlihc_id dhcd_project_id;
+run;
+
 
 
 
