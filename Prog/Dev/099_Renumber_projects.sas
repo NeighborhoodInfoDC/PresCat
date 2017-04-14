@@ -54,7 +54,7 @@
     
     label
       Nlihc_id_new = "Preservation Catalog project ID"
-      Nlihc_id = "Preservation Catalog project ID (old)";
+      Nlihc_id = "Old Preservation Catalog project ID";
         
     %if %upcase( &data ) = PROJECT %then %do;
       rename Nlihc_id_new=Nlihc_id Nlihc_id=Nlihc_id_old;
@@ -97,6 +97,20 @@
 
 
 %Renumber_projects( data=Project, sortby=nlihc_id )
+
+** Check for duplicate IDs **;
+
+%Dup_check(
+  data=Project,
+  by=nlihc_id,
+  id=proj_name,
+  out=_dup_check,
+  listdups=Y,
+  count=dup_check_count,
+  quiet=N,
+  debug=N
+)
+
 %Renumber_projects( data=Subsidy, sortby=nlihc_id subsidy_id )
 %Renumber_projects( data=building_geocode, sortby=nlihc_id bldg_addre )
 %Renumber_projects( data=parcel, sortby=nlihc_id ssl )
@@ -105,7 +119,7 @@
 %Renumber_projects( data=project_update_history, sortby=nlihc_id update_dtm )
 %Renumber_projects( data=reac_score, sortby=nlihc_id descending REAC_date )
 %Renumber_projects( data=real_property, sortby=nlihc_id descending rp_date rp_type )
-%Renumber_projects( data=subsidy_notes, sortby=nlihc_id subsidy_id, newlabel=%str(Preservation Catalog, Subsidy notes archive from Access db) )
+%Renumber_projects( data=subsidy_notes, sortby=nlihc_id subsidy_id, newlabel=%str(Preservation Catalog, Subsidy notes archive from Access DB) )
 %Renumber_projects( data=subsidy_update_history, sortby=nlihc_id subsidy_id update_dtm )
-%Renumber_projects( data=ta_notes, sortby=nlihc_id, newlabel=%str(Preservation Catalog, TA notes archive from Access db) )
+%Renumber_projects( data=ta_notes, sortby=nlihc_id, newlabel=%str(Preservation Catalog, TA notes archive from Access DB) )
 
