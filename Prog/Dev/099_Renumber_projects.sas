@@ -19,6 +19,9 @@
 %DCData_lib( PresCat )
 
 
+**********************************************************************************
+** Renumber projects in active Catalog data sets;
+
 /** Macro Renumber_projects - Start Definition **/
 
 %macro Renumber_projects( data=, sortby=, newlabel= );
@@ -119,7 +122,74 @@
 %Renumber_projects( data=project_update_history, sortby=nlihc_id update_dtm )
 %Renumber_projects( data=reac_score, sortby=nlihc_id descending REAC_date )
 %Renumber_projects( data=real_property, sortby=nlihc_id descending rp_date rp_type )
-%Renumber_projects( data=subsidy_notes, sortby=nlihc_id subsidy_id, newlabel=%str(Preservation Catalog, Subsidy notes archive from Access DB) )
 %Renumber_projects( data=subsidy_update_history, sortby=nlihc_id subsidy_id update_dtm )
-%Renumber_projects( data=ta_notes, sortby=nlihc_id, newlabel=%str(Preservation Catalog, TA notes archive from Access DB) )
+
+
+**********************************************************************************
+** These are legacy files, so don't renumber. Just change labeling and var name;
+
+/** Macro Relabel_legacy - Start Definition **/
+
+%macro Relabel_legacy( data=, sortby=, newlabel= );
+
+  %if %length( &newlabel ) = 0 %then %do;
+  
+    proc sql noprint;
+      select memlabel into :label separated by ' ' from dictionary.tables
+      where libname = 'PRESCAT' and memname = "%upcase( &data )";
+    quit;
+    
+  %end;
+  %else %do;
+  
+    %let label = &newlabel;
+    
+  %end;
+  
+  %put label=&label;
+  
+  data &data;
+  
+    length Nlihc_id $ 16;
+  
+    set PresCat.&data;
+    
+    label
+      Nlihc_id = "Old Preservation Catalog project ID";
+        
+    rename Nlihc_id=Nlihc_id_old;
+    
+  run;
+  
+  %Finalize_data_set( 
+    /** Finalize data set parameters **/
+    data=&data,
+    out=&data,
+    outlib=PresCat,
+    label="&label",
+    sortby=&sortby,
+    archive=Y,
+    archive_name=,
+    /** Metadata parameters **/
+    creator_process=&_program,
+    restrictions=None,
+    revisions=%str(Renumber projects.),
+    /** File info parameters **/
+    contents=Y,
+    printobs=5,
+    printchar=N,
+    printvars=,
+    freqvars=,
+    stats=
+  )
+  
+  run;
+
+%mend Relabel_legacy;
+
+/** End Macro Definition **/
+
+
+%Relabel_legacy( data=subsidy_notes, sortby=nlihc_id_old subsidy_id, newlabel=%str(Preservation Catalog, Subsidy notes archive from Access DB) )
+%Relabel_legacy( data=ta_notes, sortby=nlihc_id_old, newlabel=%str(Preservation Catalog, TA notes archive from Access DB) )
 
