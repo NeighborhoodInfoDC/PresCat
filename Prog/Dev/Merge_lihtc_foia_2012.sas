@@ -17,7 +17,6 @@ Preservation Catalog.
 
 ** Define libraries **;
 %DCData_lib( PresCat )
-
 %DCData_lib( DHCD )
 %DCData_lib( RealProp )
 
@@ -27,12 +26,6 @@ Preservation Catalog.
 data Lihtc_foia_11_09_12;
 
   set dhcd.Lihtc_foia_11_09_12;
-  
-  ** Remove extraneous geo matches from LIHTC FOIA data **;
-
-  if scan( address_std, 1 ) ~= scan( m_addr, 1 ) then _score_ = .n;
-  
-  if _score_ >= 45;
   
   ** Combine dhcd_project_id 29 and 30 (same project) **;
 
@@ -138,31 +131,31 @@ data lihtc_parcel;
   set lihtc_parcel;
 
   select ( nlihc_id );
-    when ( 'NL000237' )
+    when ( 'N00023700' )
       dhcd_project_id = 10;
-    when ( 'NL001019' )
+    when ( 'N00101900' )
       delete;
-    when ( 'NL000041' )
+    when ( 'N00004100' )
       dhcd_project_id = 4;
-    when ( 'NL000061' )
+    when ( 'N00006100' )
       dhcd_project_id = 9;
-    when ( 'NL000123' )
+    when ( 'N00012300' )
       dhcd_project_id = 2;
-    when ( 'NL000153' )
+    when ( 'N00015300' )
       dhcd_project_id = 57;
-    when ( 'NL000154' )
+    when ( 'N00015400' )
       dhcd_project_id = 38;
-    when ( 'NL000176' )
+    when ( 'N00017600' )
       dhcd_project_id = 106;
-    when ( 'NL000180' )
+    when ( 'N00018000' )
       dhcd_project_id = 105;
-    when ( 'NL000335' )
+    when ( 'N00033500' )
       dhcd_project_id = 27;
-    when ( 'NL000384' )
+    when ( 'N00038400' )
       dhcd_project_id = 79;
-    when ( 'NL000388' )
+    when ( 'N00038800' )
       dhcd_project_id = 74;
-    when ( 'NL000413' )
+    when ( 'N00041300' )
       dhcd_project_id = 33;
     otherwise
       /** DO NOTHING **/;
@@ -242,15 +235,48 @@ proc sql noprint;
 quit;
 
 
+
 *********************************************************************************************
   A) Single matching nlihc_id LIHTC project and dhcd_project_id (1:1)
 *********************************************************************************************;
 
 %let Update_dtm = %sysfunc( datetime() );
 
-proc sort data=Merge_lihtc_foia_2012 out=Merge_lihtc_foia_2012_a nodupkey;
-  where not( missing( nlihc_id ) or missing( dhcd_project_id ) ) and cat_count = 1 and dhcd_count = 1 and cat_lihtc_proj = 1;
-  by nlihc_id dhcd_project_id;
+proc sort data=Merge_lihtc_foia_2012 out=Merge_lihtc_foia_2012_ab nodupkey;
+  where 
+    ( not( missing( nlihc_id ) or missing( dhcd_project_id ) ) and cat_count = 1 and dhcd_count = 1 and cat_lihtc_proj in ( 0, 1 ) );
+  by dhcd_project_id nlihc_id;
+run;
+
+%Dup_check(
+  data=Merge_lihtc_foia_2012_ab,
+  by=dhcd_project_id,
+  id=nlihc_id
+)
+
+data Lihtc_foia_nlihcid_a;
+
+  merge
+    Lihtc_foia_11_09_12
+    Merge_lihtc_foia_2012_ab (keep=dhcd_project_id nlihc_id);
+  by dhcd_project_id;
+
+  ** Manual edits **;
+
+  select ( dhcd_project_id );
+    when ( 1 ) nlihc_id = 'N00020200'; /** Mayfair Mansions (Phase I) **/
+	when ( 72 ) nlihc_id = 'N00100500'; /** Mayfair Mansions (Phase II) **/
+	when ( 6 ) nlihc_id = 'N00012800'; /** Maplewood Court **/
+	when ( 10 ) nlihc_id = 'N00023700'; /** Hanover Court (Hartford Knox St Apts) **/
+	when ( 44 ) do;
+	  if ssl = '5755 0137' then nlihc_id = 'N00031600';  /** W Street Apts **/
+[[CONTINUE HERE]]
+
+	  else if 
+	end;
+	otherwise /** Nothing **/;
+  end;
+
 run;
 
 data Update_a;
@@ -317,7 +343,6 @@ title2;
   B) Single matching nlihc_id non-LIHTC project and dhcd_project_id (1:1)
 *********************************************************************************************;
 
-
 proc sort data=Merge_lihtc_foia_2012 out=Merge_lihtc_foia_2012_b nodupkey;
   where not( missing( nlihc_id ) or missing( dhcd_project_id ) ) and cat_count = 1 and dhcd_count = 1 and cat_lihtc_proj = 0;
   by nlihc_id dhcd_project_id;
@@ -361,35 +386,33 @@ run;
 
 *********************************************************************************************
   C) Multiple matching nlihc_id for same dhcd_project_id
-    1) NL000202/Mayfair Mansions was originally parcel 5057 0040, PIS=10/10/1988.
+    1) N00020200/Mayfair Mansions was originally parcel 5057 0040, PIS=10/10/1988.
          >> Assign records from dhcd_project_id=1.
        Parcel was later split into parcels 5057 0803 and 5057 0804.
-       Parcel 5057 0803 is NL001005/Mayfair Mansions Apartments, PIS=07/09/2009.
-         >> Reassign to project ID NL000202A.
+       Parcel 5057 0803 is N00100500/Mayfair Mansions Apartments, PIS=07/09/2009.
          >> Assign records from dhcd_project_id=72.
+         >> Reassign to project ID N00020201.
        Parcel 5057 0804 is not yet in Catalog. HUD.Lihtc_2013_dc lists as HUD_ID=DCB2012802.
-         >> Create new project ID NL000202B.
-    2) NL000237/Hanover Court (Hartford Knox St Apts) should be dhcd_project_id=10
-    3) NL000325
-    4) NL000102/Faircliff Plaza West should be only these addresses
+         >> Create new project ID N00020202.  >>> SEPARATE PROGRAM
+    2) N00023700/Hanover Court (Hartford Knox St Apts) should be dhcd_project_id=10
+    3) N00032500
+    4) N00010200/Faircliff Plaza West should be only these addresses
         1400 - 1404 EUCLID ST NW
-        1424 - 1432 CLIFTON ST NW (ADD: not in DHCD list)
-    5) NL001019 >> DUPLICATE, DELETE 
-    6) NL000273/NL000274/Orchard Park (Southview Apts I)
+        1424 - 1432 CLIFTON ST NW (ADDED TO DHCD LIST)
+    5) N00027300/N00027400/Orchard Park (Southview Apts I)
          >> Combine into one project
-         >> Add 3522 22ND ST SE
-    7) NL000997/NL000998/Stanton Park Apts
+         [ADDED 3522 22ND ST SE TO DHCD LIST]
+    6) N00099700/N00099800/Stanton Park Apts
          >> Divide addresses between two projects as follows
-              _Stanton Gainesville_
+              _Stanton Gainesville_ [N00099701]
               2606 18th St SE
               1811 Gainesville St SE
               1817 Gainesville St SE
-              _Stanton Wagner_
+              _Stanton Wagner_ [N00099702]
               2446 Wagner St SE
               2440 Wagner St SE
               2436 Wagner St SE
               2422 Wagner St SE
-    
 *********************************************************************************************;      
 
 
@@ -398,8 +421,13 @@ proc sort data=Merge_lihtc_foia_2012 out=Merge_lihtc_foia_2012_c nodupkey;
   by nlihc_id dhcd_project_id;
 run;
 
+data Merge_lihtc_foia_2012_c;
+  
+  set Merge_lihtc_foia_2012;
+  where not( missing( nlihc_id ) or missing( dhcd_project_id ) ) and cat_count > 1 and dhcd_count > 0;
 
-
+  if nlihc_id = 'N00100500' then dhcd_project_id = 72;  /** Mayfair Mansions Apartments **/
+  else if nlihc_id = 'N00023700' then dhcd_project_id = 10;  /** Hanover Court **/
 
 ** Update Subsidy file with new records **;
 
