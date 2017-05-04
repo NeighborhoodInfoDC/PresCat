@@ -17,7 +17,7 @@
 
 /** Macro Create_project_subsidy_update - Start Definition **/
 
-%macro Create_project_subsidy_update( data=PresCat.Subsidy, out=Project_subsidy_update );
+%macro Create_project_subsidy_update( data=PresCat.Subsidy, out=Project_subsidy_update, project_file=PresCat.Project );
 
   ** Get min/max assisted units by program **;
 
@@ -50,7 +50,7 @@
   
     merge
       _Project_subsidy_update_b
-      PresCat.Project (keep=nlihc_id proj_units_tot);
+      &project_file (keep=nlihc_id proj_units_tot);
     by nlihc_id;
     
     length Subsidized 3;
