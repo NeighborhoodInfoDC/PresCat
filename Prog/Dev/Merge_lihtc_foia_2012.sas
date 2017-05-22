@@ -50,6 +50,19 @@
 
 %let Update_dtm = %sysfunc( datetime() );
 
+** Project names **;
+
+%Data_to_format(
+  FmtLib=work,
+  FmtName=$project_name,
+  Data=PresCat.Project,
+  Value=nlihc_id,
+  Label=proj_name,
+  OtherLabel="",
+  Print=N,
+  Contents=N
+  )
+
 ** Edits to DHCD LIHTC data **;
 
 data Lihtc_foia_11_09_12;
@@ -651,7 +664,7 @@ data LIHTC_FOIA_mar_final;
 
   merge
     LIHTC_FOIA_mar_base_nlihc_id
-      (keep=marid nlihc_id MAR_MATCHADDRESS mar_zipcode
+      (keep=marid nlihc_id MAR_MATCHADDRESS mar_zipcode mar_latitude mar_longitude mar_xcoord mar_ycoord
        rename=(marid=address_id))
     Lihtc_foia_mar_address;
   by address_id;
@@ -742,11 +755,12 @@ data
   
   length
     Proj_addre Bldg_addre $ 160
+    Proj_name $ 80
     Proj_zip $ 5
     Proj_image_url Proj_streetview_url $ 255
     Ssl_std $ 17;
   
-  retain Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Proj_addre Proj_zip Proj_image_url Bldg_count;
+  retain Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Proj_addre Proj_name Proj_zip Proj_image_url Bldg_count;
   
   Ssl_std = left( Ssl );
   
@@ -761,6 +775,7 @@ data
     Proj_zip = "";
     Proj_image_url = "";
     Proj_streetview_url = "";
+    Proj_name = put( nlihc_id, $project_name. );
   end;
     
   Bldg_count + 1;
@@ -843,12 +858,13 @@ run;
 /** 
 Next steps: 
 x Update subsidy exception file
-- Update subsidy_update_history
-- Update building_geocode
-- Update project_geocde
+x Update building_geocode
+x Update project_geocde
 - Update Parcel
 - Update project
 - Update real_property 
+- Update subsidy_update_history
+- Apply updates
 **/
 
 
