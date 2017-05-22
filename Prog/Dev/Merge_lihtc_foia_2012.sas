@@ -50,7 +50,10 @@
 
 %let Update_dtm = %sysfunc( datetime() );
 
-** Project names **;
+
+**************************************************************************
+  Project names 
+**************************************************************************;
 
 %Data_to_format(
   FmtLib=work,
@@ -63,7 +66,10 @@
   Contents=N
   )
 
-** Edits to DHCD LIHTC data **;
+
+**************************************************************************
+  Edits to DHCD LIHTC data
+**************************************************************************;
 
 data Lihtc_foia_11_09_12;
 
@@ -102,7 +108,7 @@ proc sort data=Lihtc_foia_11_09_12;
 run;
 
 
-*************************************************************************
+**************************************************************************
 Calculate corrected compliance dates
   From Risha Williams, DCHFA: 
   The "Placed is Service Date" + "15 Years" = the "Compliance Period"
@@ -112,7 +118,7 @@ Calculate corrected compliance dates
   (b) Take earliest date from (a) for each dhcd_project_id
   (c) Add 15 years to (b) to get initial compliance period end,
       add 30 years to (b) to get extended compliance end
-************************************************************************;
+**************************************************************************;
 
 proc summary data=Lihtc_foia_11_09_12 nway;
   class dhcd_project_id address_id;
@@ -126,7 +132,6 @@ proc summary data=Lihtc_pis_addr nway;
   output out=Lihtc_pis (drop=_freq_ _type_) min=rev_proj_placed_in_service;
 run;
 
-
 ** Merge compliance dates with unique project and SSL combos **;
 
 proc sort data=Lihtc_foia_11_09_12 (drop=_:) out=lihtc_proj_ssl nodupkey;
@@ -134,7 +139,9 @@ proc sort data=Lihtc_foia_11_09_12 (drop=_:) out=lihtc_proj_ssl nodupkey;
 run;
 
 
-** Match LIHTC projects to Catalog IDs by parcel **;
+**************************************************************************
+  Match LIHTC projects to Catalog IDs by parcel
+**************************************************************************;
 
 proc sql noprint;
   create table lihtc_parcel as
@@ -245,7 +252,6 @@ run;
   Contents=N
   )
 
-
 data Lihtc_foia_nlihc_id;
 
   length Nlihc_id $ 16;
@@ -272,15 +278,19 @@ data Lihtc_foia_nlihc_id;
 run;
 
 
-** Prepare Subsidy file: Merge project NL000274 with NL000273 (Orchard Park), remove NL001019
-** Remove public housing subsidy from NL000325 (actually HCV);
+**************************************************************************
+  Prepare Subsidy update file: 
+  Merge project NL000274 with NL000273 (Orchard Park), remove NL001019
+  Remove public housing subsidy from NL000325 (actually HCV)
+  Remove previously deleted project NL000375.
+**************************************************************************;
 
 data Subsidy_lihtc Subsidy_non_lihtc Subsidy_all;
 
   retain _subsidy_count;
 
   set PresCat.Subsidy;
-  where nlihc_id ~= 'NL001019';
+  where nlihc_id not in ( 'NL000375', 'NL001019' );
   by nlihc_id subsidy_id;
 
   if nlihc_id = 'NL000273' and last.subsidy_id then _subsidy_count = subsidy_id;
@@ -339,7 +349,6 @@ run;
   Print=N,
   Contents=N
   )
-
 
 ** Prepare subsidy file update **;
 
@@ -428,7 +437,7 @@ run;
 
 ** Update projects that had no previous LIHTC records **;
 
-data Subsidy_b;
+data Subsidy;
 
   retain _subsidy_id_last;
 
@@ -452,12 +461,12 @@ data Subsidy_b;
 run;
 
 %Dup_check(
-  data=Subsidy_b,
+  data=Subsidy,
   by=nlihc_id subsidy_id,
   id=program
 )
 
-proc compare base=Subsidy_all compare=Subsidy_b listall maxprint=(140,32000);
+proc compare base=Subsidy_all compare=Subsidy listall maxprint=(140,32000);
   id nlihc_id subsidy_id;
 run;
 
@@ -468,7 +477,7 @@ proc print data=Subsidy_lihtc;
   title2 'Orchard Park: Before Update';
 run;
 
-proc print data=Subsidy_lihtc_a;
+proc print data=Subsidy;
   where nlihc_id in ( 'NL000273', 'NL000274' );
   id nlihc_id subsidy_id;
   var program units_assist poa_: compl_:; 
@@ -478,7 +487,9 @@ run;
 title2; 
 
 
-** Update Subsidy_except **;
+**************************************************************************
+  Update Subsidy_except
+**************************************************************************;
 
 data Subsidy_except;
 
@@ -504,7 +515,9 @@ proc compare base=PresCat.Subsidy_except compare=Subsidy_except maxprint=(40,320
 run;
 
 
-** Update Building_geocode **;
+**************************************************************************
+  Update Building_geocode
+**************************************************************************;
 
 filename fimport "L:\Libraries\DHCD\Raw\LIHTC\Read_LIHTC_FOIA_11_09_12_mar_tool_base.csv" lrecl=2000;
 
@@ -853,6 +866,47 @@ data
 run;
 
 
+**************************************************************************
+  Update Project
+**************************************************************************;
+
+%Create_project_subsidy_update( data=Subsidy, out=Project_subsidy_update )
+
+data Project_a;
+
+  update
+    PresCat.Project
+    Project_subsidy_update
+      updatemode=missingcheck;
+  by nlihc_id;
+
+run;
+
+data Project;
+
+  update
+    Project_a
+    Project_geocode_update
+      updatemode=missingcheck;
+  by nlihc_id;
+
+  if nlihc_id in ( 'NL001034', 'NL001035' ) then do;
+
+    ADD DATA FOR NEW PROJECTS 
+
+  end;
+
+run;
+
+proc compare base=PresCat.Project compare=Project listall maxprint=(40,32000);
+  id nlihc_id;
+run;
+
+
+**************************************************************************
+
+**************************************************************************;
+
 /*[START HERE]*/
 
 /** 
@@ -860,11 +914,11 @@ Next steps:
 x Update subsidy exception file
 x Update building_geocode
 x Update project_geocde
-- Update Parcel
 - Update project
-- Update real_property 
-- Update subsidy_update_history
 - Apply updates
+- Update Parcel --> Update_parcel.sas
+- Update real_property --> Update_real_property.sas
+- Update subsidy_update_history
 **/
 
 
