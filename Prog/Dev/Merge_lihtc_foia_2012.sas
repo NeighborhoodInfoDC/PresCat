@@ -495,7 +495,7 @@ data Subsidy_except;
 
   set 
     PresCat.Subsidy_except
-    Subsidy_b 
+    Subsidy 
       (keep=nlihc_id subsidy_id poa_start compl_end poa_end units_assist update_dtm
        where=(update_dtm = &Update_dtm)
        in=in2);
@@ -762,6 +762,9 @@ data
   set Lihtc_foia_mar_final (where=(not(missing(nlihc_id))));
   by nlihc_id;
   
+  format Streetview_url address_id ;
+  informat _all_ ;
+
   length Ward2012x $ 1;
   
   Ward2012x = left( Ward2012 );
@@ -865,6 +868,63 @@ data
   
 run;
 
+** Create new version of geocode data sets **;
+
+%Data_to_format(
+  FmtLib=work,
+  FmtName=$Project_geocode_update,
+  Data=Project_geocode_update,
+  Value=nlihc_id,
+  Label=nlihc_id,
+  OtherLabel="",
+  Print=N
+  )
+
+proc sort data=Building_geocode_update;
+  by nlihc_id bldg_addre;
+run;
+
+data Building_geocode;
+
+  set
+    PresCat.Building_geocode (where=(put(nlihc_id,$Project_geocode_update.)=""))
+    Building_geocode_update;
+  by nlihc_id bldg_addre;
+
+run;
+
+proc compare base=PresCat.Building_geocode compare=Building_geocode maxprint=(40,32000);
+  id nlihc_id bldg_addre;
+run;
+
+data Project_geocode;
+
+  set
+    PresCat.Project_geocode (where=(put(nlihc_id,$Project_geocode_update.)=""))
+    Project_geocode_update;
+  by nlihc_id;
+
+  select ( nlihc_id );
+
+    when ( 'NL001034' ) do;
+      proj_name = "WDC I - B";
+    end;
+
+    when ( 'NL001035' ) do;
+      proj_name = "WDC I - C";
+    end;
+
+    otherwise
+      /** DO NOTHING **/;
+
+  end;
+
+run;
+
+proc compare base=PresCat.Project_geocode compare=Project_geocode listall maxprint=(40,32000);
+  id nlihc_id;
+run;
+
 
 **************************************************************************
   Update Project
@@ -877,8 +937,10 @@ data Project_a;
   update
     PresCat.Project
     Project_subsidy_update
-      updatemode=missingcheck;
+      updatemode=nomissingcheck;
   by nlihc_id;
+
+  if put( nlihc_id, $Project_geocode_update. ) ~= "" then update_dtm = &Update_dtm;
 
 run;
 
@@ -890,9 +952,46 @@ data Project;
       updatemode=missingcheck;
   by nlihc_id;
 
-  if nlihc_id in ( 'NL001034', 'NL001035' ) then do;
+  select ( nlihc_id );
 
-    ADD DATA FOR NEW PROJECTS 
+    when ( 'NL001034' ) do;
+      proj_name = "WDC I - B";
+      status = 'A';
+      category_code = '5';
+      Cat_at_risk = 0;
+      Cat_expiring = 0;
+      Cat_failing_insp = 0;
+      Cat_more_info = 0;
+      Cat_lost = 0;
+      Cat_replaced = 0;
+      Proj_city = 'Washington';
+      Proj_st = 'DC';
+      Proj_units_tot = 111;
+      PBCA = 0;
+    end;
+
+    when ( 'NL001035' ) do;
+      proj_name = "WDC I - C";
+      status = 'A';
+      category_code = '5';
+      Cat_at_risk = 0;
+      Cat_expiring = 0;
+      Cat_failing_insp = 0;
+      Cat_more_info = 0;
+      Cat_lost = 0;
+      Cat_replaced = 0;
+      Proj_city = 'Washington';
+      Proj_st = 'DC';
+      Proj_units_tot = 54;
+      PBCA = 0;
+    end;
+
+    when ( 'NL000325' ) do;
+      Proj_units_tot = 18;
+    end;
+
+    otherwise
+      /** DO NOTHING **/;
 
   end;
 
@@ -901,6 +1000,82 @@ run;
 proc compare base=PresCat.Project compare=Project listall maxprint=(40,32000);
   id nlihc_id;
 run;
+
+
+**************************************************************************
+  Apply updates
+**************************************************************************;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Subsidy,
+  out=Subsidy,
+  outlib=PresCat,
+  label="Preservation Catalog, Project subsidies",
+  sortby=nlihcd_id subsidy_id,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(Update LIHTC projects with DHCD FOIA, 11-09-12.),
+  /** File info parameters **/
+  printobs=10
+)
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Project,
+  out=Project,
+  outlib=PresCat,
+  label="Preservation Catalog, Projects",
+  sortby=nlihcd_id,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(Update LIHTC projects with DHCD FOIA, 11-09-12.),
+  /** File info parameters **/
+  printobs=10
+)
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Subsidy_except,
+  out=Subsidy_except,
+  outlib=PresCat,
+  label="Preservation Catalog, ",
+  sortby=nlihcd_id subsidy_id except_date,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(Update LIHTC projects with DHCD FOIA, 11-09-12.),
+  /** File info parameters **/
+  printobs=10
+)
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Building_geocode,
+  out=Building_geocode,
+  outlib=PresCat,
+  label="Preservation Catalog, Building-level geocoding info",
+  sortby=nlihcd_id bldg_addre,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(Update LIHTC projects with DHCD FOIA, 11-09-12.),
+  /** File info parameters **/
+  printobs=10
+)
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Project_geocode,
+  out=Project_geocode,
+  outlib=PresCat,
+  label="Preservation Catalog, Project-level geocoding info",
+  sortby=nlihcd_id,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(Update LIHTC projects with DHCD FOIA, 11-09-12.),
+  /** File info parameters **/
+  printobs=10
+)
+
 
 
 **************************************************************************
@@ -914,619 +1089,12 @@ Next steps:
 x Update subsidy exception file
 x Update building_geocode
 x Update project_geocde
-- Update project
-- Apply updates
+x Update project
+x Apply updates
+- Output new projects to add to Catalog
 - Update Parcel --> Update_parcel.sas
 - Update real_property --> Update_real_property.sas
-- Update subsidy_update_history
+SKIP Update subsidy_update_history
 **/
 
 
-*******************************************************************************************************
-*******************************************************************************************************
-*******************************************************************************************************
-*******************************************************************************************************
-*******************************************************************************************************
-*******************************************************************************************************;
-
-** Merge LIHTC/Cat match with Catalog Subsidy and Project data **;
-
-proc sql noprint;
-  create table A as
-  select
-    coalesce( project_parcel.nlihc_id, subsidy.nlihc_id ) as nlihc_id, project_parcel.*, 
-    subsidy.poa_start, subsidy.poa_end, subsidy.units_assist from
-    ( select 
-        coalesce( project.nlihc_id, lihtc_parcel_b.nlihc_id ) as nlihc_id, lihtc_parcel_b.*, 
-        project.proj_name from lihtc_parcel_b
-      left join PresCat.project as project
-      on project.nlihc_id = lihtc_parcel_b.nlihc_id
-    ) as project_parcel
-    left join PresCat.Subsidy (where=(portfolio = 'LIHTC')) as subsidy
-    on project_parcel.nlihc_id = subsidy.nlihc_id
-  order by ssl
-;
-quit;
-
-
-** Count different match types **;
-
-proc sort data=A out=A_nodup nodupkey;
-  by nlihc_id dhcd_project_id;
-run;
-
-proc summary data=A_nodup nway;
-  where not missing( nlihc_id );
-  class nlihc_id;
-  var in_dhcd;
-  output out=A_nlihcid (drop=_freq_ _type_) sum=dhcd_count;
-run;
-
-proc summary data=A_nodup nway;
-  where not missing( dhcd_project_id );
-  class dhcd_project_id;
-  var in_cat;
-  output out=A_dhcd (drop=_freq_ _type_) sum=cat_count;
-run;
-
-proc sql noprint;
-  create table Merge_lihtc_foia_2012 as 
-  select AA.*, A_dhcd.* from
-  ( select A.*, A_nlihcid.* from
-    A left join A_nlihcid 
-    on A.nlihc_id = A_nlihcid.nlihc_id
-  ) as AA
-  left join A_dhcd
-  on AA.dhcd_project_id = A_dhcd.dhcd_project_id
-  order by nlihc_id, dhcd_project_id, ssl
-;
-quit;
-
-
-
-*********************************************************************************************
-  A) Single matching nlihc_id LIHTC project and dhcd_project_id (1:1)
-*********************************************************************************************;
-
-
-
-proc sort data=Merge_lihtc_foia_2012 out=Merge_lihtc_foia_2012_ab nodupkey;
-  where 
-    ( not( missing( nlihc_id ) or missing( dhcd_project_id ) ) and cat_count = 1 and dhcd_count = 1 and cat_lihtc_proj in ( 0, 1 ) );
-  by dhcd_project_id nlihc_id;
-run;
-
-%Dup_check(
-  data=Merge_lihtc_foia_2012_ab,
-  by=dhcd_project_id,
-  id=nlihc_id
-)
-
-data Lihtc_foia_nlihcid_a;
-
-  merge
-    Lihtc_foia_11_09_12
-    Merge_lihtc_foia_2012_ab (keep=dhcd_project_id nlihc_id);
-  by dhcd_project_id;
-
-  ** Manual edits **;
-
-
-[[START HERE]]
-
-run;
-
-data Update_a;
-
-  merge 
-    PresCat.Subsidy 
-      (where=(portfolio = 'LIHTC'))
-    PresCat.Project
-      (keep=nlihc_id proj_name proj_units_tot)
-    Merge_lihtc_foia_2012_a
-      (keep=nlihc_id dhcd_project_id cat_count dhcd_count cat_lihtc_proj rev_proj_: proj_lihtc_units
-       in=inFoia);
-  by nlihc_id;
-  
-  if inFoia;
-  
-run;
-
-%Dup_check(
-  data=Update_a,
-  by=nlihc_id,
-  id=subsidy_id POA_start rev_proj_placed_in_service POA_end rev_proj_initial_expiration rev_proj_extended_expiration Units_Assist proj_lihtc_units,
-  out=_dup_check,
-  listdups=Y,
-  count=dup_check_count,
-  quiet=N,
-  debug=N
-)
-
-proc print data=Update_a label;
-  where abs( poa_start - rev_proj_placed_in_service ) > 365;
-  id nlihc_id subsidy_id proj_name;
-  var POA_start rev_proj_placed_in_service;
-  title2 'A) Nonmatching compliance start dates';
-  label
-    nlihc_id = 'Project ID'
-    subsidy_id = 'Subsidy ID'
-    POA_start = 'Placed in service (CATALOG)'
-    rev_proj_placed_in_service = 'Placed in service (DHCD)'
-    proj_units_tot = 'Total project units (CATALOG)'
-    Units_Assist = 'LIHTC units (CATALOG)'
-    proj_lihtc_units = 'LIHTC units (DHCD)';
-run;
-
-proc print data=Update_a label;
-  where abs( units_assist - proj_lihtc_units ) > 0;
-  id nlihc_id subsidy_id proj_name;
-  var proj_units_tot Units_Assist proj_lihtc_units;
-  title2 'B) Nonmatching assisted unit counts';
-  label
-    nlihc_id = 'Project ID'
-    subsidy_id = 'Subsidy ID'
-    POA_start = 'Placed in service (CATALOG)'
-    rev_proj_placed_in_service = 'Placed in service (DHCD)'
-    proj_units_tot = 'Total project units (CATALOG)'
-    Units_Assist = 'LIHTC units (CATALOG)'
-    proj_lihtc_units = 'LIHTC units (DHCD)';
-run;
-
-title2;
-
-
-*********************************************************************************************
-  B) Single matching nlihc_id non-LIHTC project and dhcd_project_id (1:1)
-*********************************************************************************************;
-
-proc sort data=Merge_lihtc_foia_2012 out=Merge_lihtc_foia_2012_b nodupkey;
-  where not( missing( nlihc_id ) or missing( dhcd_project_id ) ) and cat_count = 1 and dhcd_count = 1 and cat_lihtc_proj = 0;
-  by nlihc_id dhcd_project_id;
-run;
-
-data Update_b;
-
-  merge 
-    PresCat.Subsidy
-    Merge_lihtc_foia_2012_b
-      (keep=nlihc_id dhcd_project_id cat_count dhcd_count cat_lihtc_proj rev_proj_: proj_lihtc_units
-       in=inFoia);
-  by nlihc_id;
-  
-  if inFoia;
-  
-  if last.nlihc_id then do;
-  
-    subsidy_id = subsidy_id + 1;
-    
-    agency = '';
-    contract_number = '';
-    poa_end_actual = .n;
-    poa_end_prev = .n;
-    poa_start_orig = rev_proj_placed_in_service;
-    portfolio = 'LIHTC';
-    program = 'LIHTC';
-    rent_to_fmr_description = '';
-    subsidy_active = 1;
-    subsidy_info_source = '';
-    subsidy_info_source_date = .n;
-    subsidy_info_source_id = '';
-    subsidy_info_source_property = '';
-    
-    output;
-    
-  end;
-
-run;
-
-
-
-
-proc sort data=Merge_lihtc_foia_2012 out=Merge_lihtc_foia_2012_c nodupkey;
-  where not( missing( nlihc_id ) or missing( dhcd_project_id ) ) and cat_count > 1 and dhcd_count > 0;
-  by nlihc_id dhcd_project_id;
-run;
-
-data Merge_lihtc_foia_2012_c;
-  
-  set Merge_lihtc_foia_2012;
-  where not( missing( nlihc_id ) or missing( dhcd_project_id ) ) and cat_count > 1 and dhcd_count > 0;
-
-  if nlihc_id = 'N00100500' then dhcd_project_id = 72;  /** Mayfair Mansions Apartments **/
-  else if nlihc_id = 'N00023700' then dhcd_project_id = 10;  /** Hanover Court **/
-
-** Update Subsidy file with new records **;
-
-data Update_all;
-
-  set
-    Update_a
-    Update_b;
-  by nlihc_id subsidy_id;
-
-  if not missing( rev_proj_initial_expiration ) then compl_end = rev_proj_initial_expiration;
-  if not missing( rev_proj_extended_expiration ) then poa_end = rev_proj_extended_expiration;
-  if not missing( rev_proj_placed_in_service ) then poa_start = rev_proj_placed_in_service;
-  if not missing( proj_lihtc_units ) then units_assist = proj_lihtc_units;
-  Update_Dtm = &Update_Dtm;
-
-  Except_date = today();
-
-  length Except_init $ 8;
-  Except_init = 'PAT';
-
-  keep agency compl_end contract_number nlihc_id poa_end
-poa_end_actual poa_end_prev poa_start poa_start_orig
-portfolio program rent_to_fmr_description subsidy_active
-subsidy_id subsidy_info_source subsidy_info_source_date
-subsidy_info_source_id subsidy_info_source_property
-units_assist update_dtm Except_: dhcd_project_id;
-
-run;
-
-
-** Update Subsidy records **;
-
-data Subsidy;
-
-  update 
-    PresCat.Subsidy
-    Update_all (drop=Except_: dhcd_project_id)
-    updatemode=nomissingcheck;
-  by nlihc_id subsidy_id;
-
-run;
-
-proc compare base=PresCat.Subsidy compare=Subsidy listall maxprint=(400,32000);
-  id nlihc_id subsidy_id;
-  title2 'Update Subsidy records: results';
-run;
-title2;
-
-proc print data=Subsidy;
-  where nlihc_id in ( 'NL000273', 'NL000274' );
-  id nlihc_id subsidy_id;
-  var program units_assist subsidy_info_:; 
-  title2 'Orchard Park: After Update';
-run;
-
-** Add new info to Subsidy_except to prevent overwriting by HUD data updates **;
-
-data Subsidy_except;
-
-  update 
-    PresCat.Subsidy_except
-    Update_all (keep=nlihc_id subsidy_id poa_start compl_end poa_end units_assist Except_:);
-  by nlihc_id subsidy_id;
-
-run;
-
-
-** Import geocoded building addresses from MAR Geocoder **;
-
-filename fimport "&_dcdata_r_path\PresCat\Raw\Lihtc_foia_2012_geocode main.csv" lrecl=2000;
-
-proc import out=Geocode_main
-    datafile=fimport
-    dbms=csv replace;
-  datarow=2;
-  getnames=yes;
-  guessingrows=1000;
-
-run;
-
-filename fimport clear;
-
-filename fimport "&_dcdata_r_path\PresCat\Raw\Lihtc_foia_2012_geocode mar_address.csv" lrecl=2000;
-
-proc import out=Geocode_mar_address
-    datafile=fimport
-    dbms=csv replace;
-  datarow=2;
-  getnames=yes;
-  guessingrows=1000;
-
-run;
-
-filename fimport clear;
-
-proc sort data=Geocode_main;
-  by marid;
-  
-proc sort data=Geocode_mar_address nodupkey;
-  by address_id;
-  
-data Lihtc_foia_2012_geocode;
-
-  merge 
-    Geocode_main (rename=(marid=address_id ssl=ssl1) in=in1) 
-    Geocode_mar_address;
-  by address_id;
-  
-  if in1;
-  
-  format _all_ ;
-  informat _all_ ;
-  
-  ** Standard geos **
-  
-  length Ward2012 $ 1;
-  
-  Ward2012 = substr( Ward_2012, 6, 1 );
-  
-  format Ward2012 $ward12a.;
-  
-  length Anc2012 $ 2;
-  
-  Anc2012 = substr( Anc_2012, 5, 2 );
-  
-  format Anc2012 $anc12a.;
-  
-  length Psa2012 $ 3;
-  
-  Psa2012 = substr( Psa, 21, 3 ); 
-  
-  format Psa2012 $psa12a.;
-  
-  length Geo2010 $ 11;
-  
-  if Census_tract ~= . then Geo2010 = "11001" || put( Census_tract, z6. );
-  
-  format Geo2010 $geo10a.;
-  
-  length Cluster_tr2000 $ 2 Cluster_tr2000_name $ 80;
-  
-  if Cluster_ ~= "" then Cluster_tr2000 = put( 1 * substr( Cluster_, 9, 2 ), z2. );
-  
-  format Cluster_tr2000 $clus00a.;
-  
-  length Zip $ 5;
-  
-  Zip = put( MAR_ZIPCODE, z5.0 );
-  
-  format Zip $zipa.;
-
-  ** Cluster names **;
-  
-  Cluster_tr2000_name = put( Cluster_tr2000, $clus00b. );
-  
-  ** Image url **
-  
-  length Image_url $ 255;
-  
-  if imagename ~= "" and imagename ~=: "No_Image_Available" then 
-    Image_url = trim( imageurl ) || "/" || trim( imagedir ) || "/" || imagename;
-    
-  rename Streetviewurl=Streetview_url;
-  
-  ** Reformat addresses **;
-  
-  %address_clean( MAR_MATCHADDRESS, MAR_MATCHADDRESS );
-
-  ** Check SSL against earlier geocode **;
-
-  if compbl( ssl1 ) ~= compbl( ssl ) then do;
-    %warn_put( msg="SSLs not the same. " _n_= ssl1= ssl= dhcd_project_id= dhcd_seg_id= address_std= mar_matchaddress= )
-  end;
-  
-  drop ssl1;
-
-run;
-
-
-** Update Building_geocode **;
-
-proc sort data=Update_all out=Dhcd_project_id_to_nlihc_id nodupkey;
-  by nlihc_id dhcd_project_id;
-run;
-
-%Data_to_format(
-  FmtLib=work,
-  FmtName=dhcd_project_id_to_nlihc_id,
-  Desc=,
-  Data=Dhcd_project_id_to_nlihc_id,
-  Value=dhcd_project_id,
-  Label=nlihc_id,
-  OtherLabel=' ',
-  Print=N
-)
-
-%Data_to_format(
-  FmtLib=work,
-  FmtName=$Update_nlihc_id_list,
-  Desc=,
-  Data=Dhcd_project_id_to_nlihc_id,
-  Value=nlihc_id,
-  Label=nlihc_id,
-  OtherLabel=' ',
-  Print=N
-)
-
-data Lihtc_foia_2012_geocode_nlihc_id;
-
-  set Lihtc_foia_2012_geocode;
-
-  Nlihc_id = put( dhcd_project_id, dhcd_project_id_to_nlihc_id. );
-  
-  if missing( Nlihc_id ) then delete;
-  
-run;
-
-proc sort data=Lihtc_foia_2012_geocode_nlihc_id nodupkey;
-  by nlihc_id address_id;
-run;
-
-proc sort data=Lihtc_foia_2012_geocode_nlihc_id;
-  by nlihc_id address_std;
-run;
-
-%let MAX_PROJ_ADDRE = 3;   /** Maximum number of addresses to include in Proj_addre field in PresCat.Project_geo **/
-
-%let geo_vars = Ward2012 Anc2012 Psa2012 Geo2010 Cluster_tr2000 Cluster_tr2000_name Zip;
-
-data
-  Project_geocode_update 
-    (keep=nlihc_id &geo_vars Proj_address_id Proj_x Proj_y Proj_lat Proj_lon 
-          Proj_addre Proj_zip Proj_image_url Proj_Streetview_url Bldg_count)
-  Building_geocode_update
-    (keep=nlihc_id &geo_vars address_id Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre Zip
-          image_url Streetview_url ssl_std
-     rename=(address_id=Bldg_address_id Zip=Bldg_zip image_url=Bldg_image_url Streetview_url=Bldg_streetview_url
-             ssl_std=Ssl));
-
-  length Nlihc_id $ 16;
-
-  set Lihtc_foia_2012_geocode_nlihc_id;
-  by nlihc_id;
-  
-  length Ward2012x $ 1;
-  
-  Ward2012x = left( Ward2012 );
-  
-  length
-    Proj_addre Bldg_addre $ 160
-    Proj_zip $ 5
-    Proj_image_url Proj_streetview_url $ 255
-    Ssl_std $ 17;
-  
-  retain Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Proj_addre Proj_zip Proj_image_url Bldg_count;
-  
-  Ssl_std = left( Ssl );
-  
-  if first.nlihc_id then do;
-    Bldg_count = 0;
-    Proj_address_id = .;
-    Proj_x = .;
-    Proj_y = .;
-    Proj_lat = .;
-    Proj_lon = .;
-    Proj_addre = "";
-    Proj_zip = "";
-    Proj_image_url = "";
-    Proj_streetview_url = "";
-  end;
-    
-  Bldg_count + 1;
-  
-  Bldg_x = MAR_XCOORD;
-  Bldg_y = MAR_YCOORD;
-  Bldg_lon = MAR_LONGITUDE;
-  Bldg_lat = MAR_LATITUDE;
-  Bldg_addre = MAR_MATCHADDRESS;
-  
-  output Building_geocode_update;
-  
-  if address_id > 0 and missing( Proj_address_id ) then Proj_address_id = address_id;
-  if Proj_zip = "" then Proj_zip = Zip;
-  
-  Proj_x = sum( Proj_x, MAR_XCOORD );
-  Proj_y = sum( Proj_y, MAR_YCOORD );
-  Proj_lat = sum( Proj_lat, MAR_LATITUDE );
-  Proj_lon = sum( Proj_lon, MAR_LONGITUDE );
-  
-  if image_url ~= "" and Proj_image_url = "" then Proj_image_url = image_url;
-
-  if Streetview_url ~= "" and Proj_streetview_url = "" then Proj_streetview_url = Streetview_url;
-
-  if Bldg_count = 1 then Proj_addre = MAR_MATCHADDRESS;
-  else if Bldg_count <= &MAX_PROJ_ADDRE then Proj_addre = trim( Proj_addre ) || "; " || MAR_MATCHADDRESS;
-  else if Bldg_count = %eval( &MAX_PROJ_ADDRE + 1 ) then Proj_addre = trim( Proj_addre ) || "; others";
-    
-  if last.nlihc_id then do;
-  
-    Proj_x = Proj_x / Bldg_count;
-    Proj_y = Proj_y / Bldg_count;
-    Proj_lat = Proj_lat / Bldg_count;
-    Proj_lon = Proj_lon / Bldg_count;
-    
-    output Project_geocode_update;
-    
-  end;
-  
-  label
-    Ward2012x = "Ward (2012)"
-    Ssl_std = "Property identification number (square/suffix/lot)"
-    NLIHC_ID = "Preservation Catalog project ID"
-    address_id = "MAR address ID"
-    streetview_url = "Google Street View URL"
-    Anc2012 = "Advisory Neighborhood Commission (2012)"
-    Psa2012 = "Police Service Area (2012)"
-    Geo2010 = "Full census tract ID (2010): ssccctttttt"
-    Cluster_tr2000 = "Neighborhood cluster (tract-based, 2000)"
-    Cluster_tr2000_name = "Neighborhood cluster names (tract-based, 2000)"
-    zip = "ZIP code (5 digit)"
-    image_url = "OCTO property image URL"
-    Proj_addre = "Project address"
-    Proj_address_id = "Project MAR address ID"
-    Proj_image_url = "OCTO property image URL"
-    Proj_lat = "Project latitude"
-    Proj_lon = "Project longitude"
-    Proj_streetview_url = "Google Street View URL"
-    Proj_x = "Project longitude (MD State Plane Coord., NAD 1983 meters)"
-    Proj_y = "Project latitude (MD State Plane Coord., NAD 1983 meters)"
-    Proj_zip = "ZIP code (5 digit)"
-    Bldg_addre = "Building address"
-    Bldg_x = "Building longitude (MD State Plane Coord., NAD 1983 meters)"
-    Bldg_y = "Building latitude (MD State Plane Coord., NAD 1983 meters)"
-    Bldg_lon = "Building longitude"
-    Bldg_lat = "Building latitude"
-    Bldg_count = "Number of buildings for project";
-  
-  format Ward2012x $ward12a.;
-  
-  rename Ward2012x = Ward2012;
-  drop Ward2012;
-  
-run;
-
-title4 '**** SHOULD NOT BE ANY DUPLICATES REPORTED ****';
-
-%Dup_check(
-  data=Building_geocode_update,
-  by=nlihc_id Bldg_address_id,
-  id=Bldg_addre
-)
-
-%Dup_check(
-  data=Project_geocode_update,
-  by=nlihc_id,
-  id=Proj_addre 
-)
- 
-run;
-title2;
-
-
-** Update Building_geocode **;
-
-data Building_geocode;
-
-  set 
-    PresCat.Building_geocode
-      (where=(put(nlihc_id,$Update_nlihc_id_list.)=' ') drop=proj_name)
-    Building_geocode_update;
-  by Nlihc_id Bldg_addre;
-
-run;
-
-proc compare base=PresCat.Building_geocode compare=Building_geocode listall maxprint=(400,32000);
-  id Nlihc_id Bldg_addre;
-run;
-
-
-** Update Project_geocode **;
-
-data Project_geocode;
-
-  set 
-    PresCat.Project_geocode
-      (where=(put(nlihc_id,$Update_nlihc_id_list.)=' ') drop=proj_name)
-    Project_geocode_update;
-  by Nlihc_id;
-
-run;
-
-proc compare base=PresCat.Project_geocode compare=Project_geocode listall maxprint=(400,32000);
-  id Nlihc_id;
-run;
