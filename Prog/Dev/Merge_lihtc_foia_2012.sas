@@ -164,8 +164,10 @@ data lihtc_parcel_a;
   ** Manual matches **;
 
   select ( nlihc_id );
-    when ( 'NL000237' )
+    when ( 'NL000237' ) do;
       dhcd_project_id = 10;
+      dhcd_project_id_orig = 10;
+    end;
     when ( 'NL001019' )
       delete;
     when ( 'NL000041' )
@@ -194,6 +196,8 @@ data lihtc_parcel_a;
       /** DO NOTHING **/;
   end;
 
+  if missing( dhcd_project_id_orig ) then dhcd_project_id_orig = dhcd_project_id;
+
   ** Correct multiple/ambiguous matches **;
 
   select ( dhcd_project_id );
@@ -214,6 +218,7 @@ data lihtc_parcel_a;
   end;
  
   if not missing( dhcd_project_id ) then in_dhcd = 1;
+  if not missing( nlihc_id ) then in_cat = 1;
 
 run;
 
@@ -677,7 +682,9 @@ data LIHTC_FOIA_mar_final;
 
   merge
     LIHTC_FOIA_mar_base_nlihc_id
-      (keep=marid nlihc_id MAR_MATCHADDRESS mar_zipcode mar_latitude mar_longitude mar_xcoord mar_ycoord
+      (keep=marid nlihc_id dhcd_project_id  
+            MAR_MATCHADDRESS mar_zipcode mar_latitude mar_longitude mar_xcoord mar_ycoord
+            MAR_ERROR MAR_SCORE MAR_SOURCEOPERATION MAR_IGNORE
        rename=(marid=address_id))
     Lihtc_foia_mar_address;
   by address_id;
@@ -1144,9 +1151,30 @@ data Lihtc_foia_nomatch;
   
 run;
 
+** Remove duplicate addresses **;
+
 proc sort data=Lihtc_foia_nomatch nodupkey;
   by dhcd_project_id address_id;
 run;
+
+** Add full address geocoding info **;
+
+proc sort data=Lihtc_foia_mar_final;
+  by dhcd_project_id address_id;
+run;
+
+data Lihtc_foia_nomatch_geo;
+
+  merge
+    Lihtc_foia_nomatch (in=in1 drop=ward ssl)
+    Lihtc_foia_mar_final;
+  by dhcd_project_id address_id;
+
+  if in1;
+
+run;
+
+** Subsidy records **;
 
 data Buildings_for_geocoding_subsidy;
 
@@ -1158,7 +1186,7 @@ data Buildings_for_geocoding_subsidy;
     Compliance_End_Date 8 Previous_Affordability_end 8 Agency $ 250
     Portfolio $ 250 Date_Affordability_Ended 8;
 
-  set Lihtc_foia_nomatch;
+  set Lihtc_foia_nomatch_geo;
   by dhcd_project_id;
 
   if first.dhcd_project_id;
@@ -1196,20 +1224,68 @@ data Buildings_for_geocoding_subsidy;
 
 run;
 
+filename fexport "&_dcdata_default_path\PresCat\Raw\Buildings_for_geocoding_2017-05-25_subsidy.csv" lrecl=2000;
 
-/*[START HERE]*/
+proc export data=Buildings_for_geocoding_subsidy
+    outfile=fexport
+    dbms=csv replace;
 
-/** 
-Next steps: 
-x Update subsidy exception file
-x Update building_geocode
-x Update project_geocde
-x Update project
-x Apply updates
-- Output new projects to add to Catalog
-- Update Parcel --> Update_parcel.sas
-- Update real_property --> Update_real_property.sas
-SKIP Update subsidy_update_history
-**/
+run;
 
+filename fexport clear;
+
+** Building records **;
+
+data Buildings_for_geocoding_main;
+
+  length  
+    Proj_Name Bldg_City Bldg_ST Bldg_Zip Bldg_Addre MAR_MATCHADDRESS $ 250
+    MAR_XCOORD MAR_YCOORD MAR_LATITUDE MAR_LONGITUDE 8
+    MAR_WARD MAR_CENSUS_TRACT $ 80
+    MAR_ZIPCODE MARID 8 
+    MAR_ERROR $ 80
+    MAR_SCORE 8
+    MAR_SOURCEOPERATION MAR_IGNORE $ 80;
+
+  set Lihtc_foia_nomatch_geo;
+
+  Proj_name = Project;
+  Bldg_City = 'Washington';
+  Bldg_ST = 'DC';
+  Bldg_Zip = M_ZIP;
+  Bldg_Addre = Address;
+  MAR_WARD = ward_2012;
+  MAR_CENSUS_TRACT = census_tract;
+  MARID = address_id;
+  /*
+  MAR_MATCHADDRESS = M_ADDR;
+  MAR_XCOORD = xcoord;
+  MAR_YCOORD = ycoord;
+  MAR_LATITUDE = latitude;
+  MAR_LONGITUDE = longitude;
+  MAR_ZIPCODE = zipcode;
+  MAR_ERROR = 
+  MAR_SCORE 
+  MAR_SOURCEOPERATION 
+  MAR_IGNORE
+  */
+
+  keep
+    Proj_Name Bldg_City Bldg_ST Bldg_Zip Bldg_Addre
+    MAR_MATCHADDRESS MAR_XCOORD MAR_YCOORD MAR_LATITUDE
+    MAR_LONGITUDE MAR_WARD MAR_CENSUS_TRACT MAR_ZIPCODE MARID
+    MAR_ERROR MAR_SCORE MAR_SOURCEOPERATION MAR_IGNORE
+    image_url streetview_url;
+
+run;
+
+filename fexport "&_dcdata_default_path\PresCat\Raw\Buildings_for_geocoding_2017-05-25_main.csv" lrecl=2000;
+
+proc export data=Buildings_for_geocoding_main
+    outfile=fexport
+    dbms=csv replace;
+
+run;
+
+filename fexport clear;
 
