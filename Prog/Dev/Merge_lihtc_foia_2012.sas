@@ -58,7 +58,7 @@
 %Data_to_format(
   FmtLib=work,
   FmtName=$project_name,
-  Data=PresCat.Project,
+  Data=PresCat.Project_category,
   Value=nlihc_id,
   Label=proj_name,
   OtherLabel="",
@@ -894,7 +894,7 @@ data Building_geocode;
     PresCat.Building_geocode (where=(put(nlihc_id,$Project_geocode_update.)=""))
     Building_geocode_update;
   by nlihc_id bldg_addre;
-
+  
   select ( nlihc_id );
 
     when ( 'NL001034' ) do;
@@ -903,6 +903,14 @@ data Building_geocode;
 
     when ( 'NL001035' ) do;
       proj_name = "WDC I - C";
+    end;
+
+    when ( 'NL000033' ) do;
+      Proj_name = 'Barnaby Manor (The Gregory)';
+    end;
+    
+    when ( 'NL000375', 'NL001019' ) do;
+      delete;
     end;
 
     otherwise do;
@@ -937,6 +945,14 @@ data Project_geocode;
       proj_name = "WDC I - C";
     end;
 
+    when ( 'NL000033' ) do;
+      Proj_name = 'Barnaby Manor (The Gregory)';
+    end;
+
+    when ( 'NL000375', 'NL001019' ) do;
+      delete;
+    end;
+
     otherwise do;
       if put( nlihc_id, $project_name. ) ~= "" then 
         Proj_name = put( nlihc_id, $project_name. );
@@ -947,6 +963,13 @@ data Project_geocode;
   end;
 
 run;
+
+%Dup_check(
+  data=Project_geocode,
+  by=nlihc_id,
+  id=proj_name,
+  listdups=Y
+)
 
 proc compare base=PresCat.Project_geocode compare=Project_geocode listall maxprint=(40,32000);
   id nlihc_id;
@@ -1016,6 +1039,10 @@ data Project;
     when ( 'NL000325' ) do;
       Proj_units_tot = 18;
     end;
+    
+    when ( 'NL000033' ) do;
+      Proj_name = 'Barnaby Manor (The Gregory)';
+    end;
 
     otherwise
       /** DO NOTHING **/;
@@ -1030,6 +1057,34 @@ run;
 
 
 **************************************************************************
+  Update Project_category
+**************************************************************************;
+
+data Project_category;
+
+  merge
+    Project (keep=nlihc_id proj_name in=in1)
+    PresCat.Project_category (drop=proj_name in=in2);
+  by nlihc_id;
+  
+  if in1;
+  
+  if not in2 then do;
+    Category_code = '5';
+    Cat_at_risk = 0;
+    Cat_lost = 0;
+    Cat_more_info = 0;
+    Cat_replaced = 0;
+  end;
+  
+run;
+
+proc compare base=PresCat.Project_category compare=Project_category listall maxprint=(40,32000);
+  id nlihc_id;
+run;
+
+
+**************************************************************************
   Apply updates
 **************************************************************************;
 
@@ -1039,7 +1094,7 @@ run;
   out=Subsidy,
   outlib=PresCat,
   label="Preservation Catalog, Project subsidies",
-  sortby=nlihcd_id subsidy_id,
+  sortby=nlihc_id subsidy_id,
   archive=Y,
   /** Metadata parameters **/
   revisions=%str(Update LIHTC projects with DHCD FOIA, 11-09-12.),
@@ -1053,7 +1108,21 @@ run;
   out=Project,
   outlib=PresCat,
   label="Preservation Catalog, Projects",
-  sortby=nlihcd_id,
+  sortby=nlihc_id,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(Update LIHTC projects with DHCD FOIA, 11-09-12.),
+  /** File info parameters **/
+  printobs=10
+)
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Project_category,
+  out=Project_category,
+  outlib=PresCat,
+  label="Preservation Catalog, Project category",
+  sortby=nlihc_id,
   archive=Y,
   /** Metadata parameters **/
   revisions=%str(Update LIHTC projects with DHCD FOIA, 11-09-12.),
@@ -1067,7 +1136,7 @@ run;
   out=Subsidy_except,
   outlib=PresCat,
   label="Preservation Catalog, ",
-  sortby=nlihcd_id subsidy_id except_date,
+  sortby=nlihc_id subsidy_id except_date,
   archive=Y,
   /** Metadata parameters **/
   revisions=%str(Update LIHTC projects with DHCD FOIA, 11-09-12.),
@@ -1081,7 +1150,7 @@ run;
   out=Building_geocode,
   outlib=PresCat,
   label="Preservation Catalog, Building-level geocoding info",
-  sortby=nlihcd_id bldg_addre,
+  sortby=nlihc_id bldg_addre,
   archive=Y,
   /** Metadata parameters **/
   revisions=%str(Update LIHTC projects with DHCD FOIA, 11-09-12.),
@@ -1095,7 +1164,7 @@ run;
   out=Project_geocode,
   outlib=PresCat,
   label="Preservation Catalog, Project-level geocoding info",
-  sortby=nlihcd_id,
+  sortby=nlihc_id,
   archive=Y,
   /** Metadata parameters **/
   revisions=%str(Update LIHTC projects with DHCD FOIA, 11-09-12.),
@@ -1122,7 +1191,7 @@ run;
   Desc=,
   Data=Lihtc_parcel_in_cat,
   Value=dhcd_project_id_orig,
-  Label=put( in_cat, $1. ),
+  Label=put( in_cat, 1. ),
   OtherLabel=" ",
   Print=N,
   Contents=N
@@ -1257,18 +1326,6 @@ data Buildings_for_geocoding_main;
   MAR_WARD = ward_2012;
   MAR_CENSUS_TRACT = census_tract;
   MARID = address_id;
-  /*
-  MAR_MATCHADDRESS = M_ADDR;
-  MAR_XCOORD = xcoord;
-  MAR_YCOORD = ycoord;
-  MAR_LATITUDE = latitude;
-  MAR_LONGITUDE = longitude;
-  MAR_ZIPCODE = zipcode;
-  MAR_ERROR = 
-  MAR_SCORE 
-  MAR_SOURCEOPERATION 
-  MAR_IGNORE
-  */
 
   keep
     Proj_Name Bldg_City Bldg_ST Bldg_Zip Bldg_Addre
