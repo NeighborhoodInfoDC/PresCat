@@ -45,7 +45,7 @@
     
   run;
 
-  data /*Metadata.*/Meta_history;
+  data Metadata.Meta_history;
 
     set Metadata.Meta_history;
     by library filename descending FileUpdated;
@@ -71,7 +71,7 @@
 
   run;
 
-  proc print data=/*Metadata.*/Meta_history noobs n;
+  proc print data=Metadata.Meta_history noobs n;
     where library = "&library" and filename = "&filename";
     by library filename;
     id FileUpdated;
