@@ -146,7 +146,7 @@ run;
 proc sql noprint;
   create table lihtc_parcel as
   select 
-    coalesce( parcel.ssl, lihtc.ssl ) as ssl, lihtc.dhcd_project_id, parcel.nlihc_id, 
+    coalesce( parcel.ssl, lihtc.ssl ) as ssl, lihtc.dhcd_project_id, lihtc.dhcd_project_id_orig, parcel.nlihc_id, 
     input( put(nlihc_id, $lihtc_sel.), 8. ) as cat_lihtc_proj, 
     not( missing( parcel.nlihc_id ) ) as in_cat, not( missing( lihtc.dhcd_project_id ) ) as in_dhcd 
     from lihtc_proj_ssl as lihtc 
@@ -751,10 +751,10 @@ run;
 
 data 
   Project_geocode_update 
-    (keep=nlihc_id Proj_Name &geo_vars Proj_address_id Proj_x Proj_y Proj_lat Proj_lon 
+    (keep=nlihc_id &geo_vars Proj_address_id Proj_x Proj_y Proj_lat Proj_lon 
           Proj_addre Proj_zip Proj_image_url Proj_Streetview_url Bldg_count)
   Building_geocode_update
-    (keep=nlihc_id Proj_Name &geo_vars address_id Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre Zip
+    (keep=nlihc_id &geo_vars address_id Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre Zip
           image_url Streetview_url ssl_std
      rename=(address_id=Bldg_address_id Zip=Bldg_zip image_url=Bldg_image_url Streetview_url=Bldg_streetview_url
              ssl_std=Ssl));
@@ -771,12 +771,11 @@ data
   
   length
     Proj_addre Bldg_addre $ 160
-    Proj_name $ 80
     Proj_zip $ 5
     Proj_image_url Proj_streetview_url $ 255
     Ssl_std $ 17;
   
-  retain Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Proj_addre Proj_name Proj_zip Proj_image_url Bldg_count;
+  retain Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Proj_addre Proj_zip Proj_image_url Bldg_count;
   
   Ssl_std = left( Ssl );
   
@@ -791,7 +790,6 @@ data
     Proj_zip = "";
     Proj_image_url = "";
     Proj_streetview_url = "";
-    Proj_name = put( nlihc_id, $project_name. );
   end;
     
   Bldg_count + 1;
@@ -834,7 +832,6 @@ data
   label
     Ward2012x = "Ward (2012)"
     Ssl_std = "Property identification number (square/suffix/lot)"
-    Proj_Name = "Project name"
     NLIHC_ID = "Preservation Catalog project ID"
     address_id = "MAR address ID"
     streetview_url = "Google Street View URL"
@@ -891,6 +888,25 @@ data Building_geocode;
     Building_geocode_update;
   by nlihc_id bldg_addre;
 
+  select ( nlihc_id );
+
+    when ( 'NL001034' ) do;
+      proj_name = "WDC I - B";
+    end;
+
+    when ( 'NL001035' ) do;
+      proj_name = "WDC I - C";
+    end;
+
+    otherwise do;
+      if put( nlihc_id, $project_name. ) ~= "" then 
+        Proj_name = put( nlihc_id, $project_name. );
+      else
+        delete;
+    end;
+
+  end;
+
 run;
 
 proc compare base=PresCat.Building_geocode compare=Building_geocode maxprint=(40,32000);
@@ -914,8 +930,12 @@ data Project_geocode;
       proj_name = "WDC I - C";
     end;
 
-    otherwise
-      /** DO NOTHING **/;
+    otherwise do;
+      if put( nlihc_id, $project_name. ) ~= "" then 
+        Proj_name = put( nlihc_id, $project_name. );
+      else
+        delete;
+    end;
 
   end;
 
@@ -1077,10 +1097,105 @@ run;
 )
 
 
-
 **************************************************************************
-
+  Export data for new projects not currently in Catalog
 **************************************************************************;
+
+** Identify nonmatching projects **;
+
+proc summary data=Lihtc_parcel_a nway;
+  class dhcd_project_id_orig;
+  var in_cat;
+  output out=Lihtc_parcel_in_cat max=;
+run;
+
+%Data_to_format(
+  FmtLib=work,
+  FmtName=Dhcd_proj_id_in_cat,
+  Desc=,
+  Data=Lihtc_parcel_in_cat,
+  Value=dhcd_project_id_orig,
+  Label=put( in_cat, $1. ),
+  OtherLabel=" ",
+  Print=N,
+  Contents=N
+  )
+
+data Lihtc_foia_nomatch;
+
+  merge 
+    Lihtc_foia_11_09_12
+    Lihtc_pis;
+  by dhcd_project_id;
+
+  if put( dhcd_project_id, Dhcd_proj_id_in_cat. ) = '0';
+
+  rev_proj_initial_expiration = intnx( 'year', rev_proj_placed_in_service, 15, 'same' );
+  rev_proj_extended_expiration = intnx( 'year', rev_proj_placed_in_service, 30, 'same' );
+
+  format rev_proj_placed_in_service rev_proj_initial_expiration rev_proj_extended_expiration mmddyy10.;
+  
+  label
+    rev_proj_placed_in_service = 'Project placed in service date (NIDC revised)'
+    rev_proj_initial_expiration = 'Project initial compliance expiration date (NIDC revised)'
+    rev_proj_extended_expiration = 'Project extended compliance expiration date (NIDC revised)';
+  
+  drop proj_initial_expiration proj_extended_expiration seg_placed_in_service;
+  
+run;
+
+proc sort data=Lihtc_foia_nomatch nodupkey;
+  by dhcd_project_id address_id;
+run;
+
+data Buildings_for_geocoding_subsidy;
+
+  length  
+    MARID 8 Units_assist 8 Current_Affordability_Start 8
+    Affordability_End 8 Fair_Market_Rent_Ratio $ 250
+    Subsidy_Info_Source_ID $ 250 Subsidy_Info_Source $ 250
+    Subsidy_Info_Source_Date 8 Update_Date_Time 8 Program $ 250
+    Compliance_End_Date 8 Previous_Affordability_end 8 Agency $ 250
+    Portfolio $ 250 Date_Affordability_Ended 8;
+
+  set Lihtc_foia_nomatch;
+  by dhcd_project_id;
+
+  if first.dhcd_project_id;
+
+  MARID = address_id;
+  Units_assist = proj_lihtc_units;
+  Current_Affordability_Start = rev_proj_placed_in_service;
+  Affordability_End = rev_proj_extended_expiration;
+  Fair_Market_Rent_Ratio = '';
+  Subsidy_Info_Source_ID = '';
+  Subsidy_Info_Source = 'DHCD/FOIA';
+  Subsidy_Info_Source_Date = '09nov2012'd;
+  Update_Date_Time = &Update_dtm;
+  Program = 'LIHTC';
+  Compliance_End_Date = rev_proj_initial_expiration;
+  Previous_Affordability_end = .;
+  Agency = 'DC Dept of Housing and Community Development; DC Housing Finance Agency';
+  Portfolio = 'LIHTC';
+  Date_Affordability_Ended = .;
+
+  format 
+    Current_Affordability_Start
+    Affordability_End Subsidy_Info_Source_Date 
+    Compliance_End_Date Previous_Affordability_end 
+    Date_Affordability_Ended mmddyy10.
+    Update_Date_Time datetime16.;
+
+  keep
+    MARID Units_assist Current_Affordability_Start
+    Affordability_End Fair_Market_Rent_Ratio
+    Subsidy_Info_Source_ID Subsidy_Info_Source
+    Subsidy_Info_Source_Date Update_Date_Time Program
+    Compliance_End_Date Previous_Affordability_end Agency
+    Portfolio Date_Affordability_Ended;
+
+run;
+
 
 /*[START HERE]*/
 
