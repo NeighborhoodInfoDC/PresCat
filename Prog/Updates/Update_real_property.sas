@@ -21,6 +21,8 @@
 %DCData_lib( ROD, local=n )
 %DCData_lib( DHCD, local=n )
 
+%let revisions = %str(Update LIHTC projects with DHCD FOIA, 11-09-12.);
+
 
 ** Create format for selecting SSL's of Catalog properties **;
 
@@ -263,7 +265,7 @@ proc sql noprint;
   outlib=PresCat,
   label="Preservation Catalog, Real property events",
   sortby=nlihc_id descending rp_date rp_type,
-  revisions=%str(Update with latest PresCat.Parcel, ROD.Foreclosure, RealProp.Sales, and DHCD.Rcasd_* data.),
+  revisions=&revisions,
   archive=y,
   freqvars=rp_type 
 )
