@@ -19,6 +19,7 @@
 %DCData_lib( MAR, local=n )
 %DCData_lib( RealProp, local=n )
 
+%let revisions = %str(Update LIHTC projects with DHCD FOIA, 11-09-12.);
 
 data Building_geocode;
 
@@ -122,7 +123,7 @@ run;
   outlib=PresCat,
   label="Preservation Catalog, Real property parcels",
   sortby=nlihc_id ssl,
-  revisions=%str(Update with latest PresCat.Building_geocode, RealProp.Parcel_base, and Mar.Address_ssl_xref.),
+  revisions=&revisions,
   archive=y,
   freqvars=parcel_type parcel_owner_type 
 )
