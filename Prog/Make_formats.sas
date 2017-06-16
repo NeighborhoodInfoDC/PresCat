@@ -256,7 +256,13 @@ proc format library=PresCat;
     'CDBG' = 'CDBG'
     'DC-HPTF' = 'DC HPTF'
     'HOME' = 'HOME'
-    'LIHTC' = 'LIHTC'
+
+    'LIHTC/UNKWN', 
+    'LIHTC/4PCT', 
+    'LIHTC/9PCT', 
+    'LIHTC/4+9PCT', 
+    'LIHTC/TCEP' = 'LIHTC'
+    
     'MCKINNEY' = 'MCKINNEY'
     'PUBHSNG' = 'PUBHSNG'
     'TEBOND' = 'TEBOND'
@@ -400,9 +406,9 @@ proc format library=PresCat;
     "TX1002LD" = "Title X 1002 Land Development"
     "TXIGRPPR" = "Title XI Group Practice"
     'LIHTC/UNKWN' = 'Low income housing tax credit: unknown pct'
-    'LIHTC/4PCT' = 'Low income housing tax credit: 4 percent'
-    'LIHTC/9PCT' = 'Low income housing tax credit: 9 percent'
-    'LIHTC/4+9PCT' = 'Low income housing tax credit: 4 + 9 percent'
+    'LIHTC/4PCT' = 'Low income housing tax credit 4%'
+    'LIHTC/9PCT' = 'Low income housing tax credit 9%'
+    'LIHTC/4+9PCT' = 'Low income housing tax credit 4+9%'
     'LIHTC/TCEP' = 'Low income housing tax credit: TCEP only'
 
     /** Other **/
@@ -460,9 +466,9 @@ proc format library=PresCat;
     'DC-HPTF' = 'DC HPTF'
     'HOME' = 'HOME'
     'LIHTC/UNKWN' = 'LIHTC unknown pct'
-    'LIHTC/4PCT' = 'LIHTC 4 percent'
-    'LIHTC/9PCT' = 'LIHTC 9 percent'
-    'LIHTC/4+9PCT' = 'LIHTC 4 + 9 percent'
+    'LIHTC/4PCT' = 'LIHTC 4%'
+    'LIHTC/9PCT' = 'LIHTC 9%'
+    'LIHTC/4+9PCT' = 'LIHTC 4+9%'
     'LIHTC/TCEP' = 'LIHTC TCEP only'
     'MCKINNEY' = 'McKinney Vento'
     'PUBHSNG' = 'Public housing'

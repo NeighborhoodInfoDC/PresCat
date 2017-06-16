@@ -38,11 +38,11 @@
   %let Subsidy_Info_Source_ID_src = HUD_ID;
   %let Assisted_units_src = LI_units;
   %let POA_start_src = mdy( 1, 1, yr_pis);
-  %let POA_end_src = intnx( 'year', &POA_start_src, 29, 'end' );
-  %let Compl_end_src = intnx( 'year', &POA_start_src, 14, 'end' );
+  %let POA_end_src = intnx( 'year', &POA_start_src, 30, 'same' );
+  %let Compl_end_src = intnx( 'year', &POA_start_src, 15, 'same' );
   %let Is_inactive_src = ( NONPROG );
   %let POA_end_actual_src = .;
-  %let Program_src = put( credit, $lihtc_credit2prog. );
+  %let Program_src = put( credit, lihtc_credit2prog. );
   %let Subsidy_info_source_property_src = ' ';
   %let Rent_to_fmr_description_src = ' ';
   
@@ -54,7 +54,7 @@
   %let mgmt_agent_full_name_src = "";
   %let Hud_Mgr_Type_src = "";
     
-  %let NONMATCH_YEARS_CUTOFF = 10;   /** Maximum years since expiration to report nonmatching subsidy records **/
+  %let NONMATCH_YEARS_CUTOFF = 30;   /** Maximum years since expiration to report nonmatching subsidy records **/
   %let NO_SUBSIDY_ID = 9999999999;
 
   proc sql noprint;
@@ -74,11 +74,10 @@
       
   %let Subsidy_tech_vars = Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date subsidy_info_source_property Update_Dtm;
   
-  %let Subsidy_missing_info_vars = 
-      Premise_id Property_name Property_street SOA_cat_sub_cat
+  %let Subsidy_missing_info_vars =       
       ;
       
-  %let Subsidy_dupcheck_id_vars = Premise_id Property_name;
+  %let Subsidy_dupcheck_id_vars = ;
   
   %let Subsidy_compare_id_vars = ;
   
@@ -92,7 +91,7 @@
       Proj_Units_Assist_Max Subsidy_Start_Last Subsidy_End_Last;
 
   %let Project_missing_info_vars = 
-      Premise_id Property_name Property_street SOA_cat_sub_cat;
+      ;
 
   %put _user_;
   
@@ -128,6 +127,7 @@
     Contents=N
     )
 
+  /******************************
   ** Create $property_nlihcid. format to add NLIHC ID from HUD property ID **;
   
   proc sql noprint;
@@ -153,6 +153,7 @@
     Print=N,
     Contents=N
     )
+  ****************************************/
   
   ** Traffic-lighting format $except_tl. for update report **;
   
