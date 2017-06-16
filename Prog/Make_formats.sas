@@ -515,6 +515,7 @@ proc catalog catalog=PresCat.Formats;
   modify progfull (desc="Catalog program full description") / entrytype=formatc;
   modify progshrt (desc="Catalog program short description") / entrytype=formatc;
   modify portfolio (desc="Catalog subsidy portfolio description") / entrytype=formatc;
+  modify lihtc_credit2prog (desc="HUD LIHTC credit code to program code") / entrytype=format;
   contents;
 quit;
 
