@@ -17,6 +17,7 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 %DCData_lib( HUD )
+%DCData_lib( MAR )
 
 
 %Update_LIHTC( Update_file=Lihtc_2013, quiet=n )

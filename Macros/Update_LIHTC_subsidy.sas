@@ -134,7 +134,8 @@
       Units_Assist POA_start POA_end Compl_end POA_end_actual
       Subsidy_Active Program rent_to_FMR_description 
       Subsidy_info_source_property
-      &Subsidy_tech_vars &Subsidy_missing_info_vars &Subsidy_dupcheck_id_vars;
+      &Subsidy_tech_vars &Subsidy_missing_info_vars &Subsidy_dupcheck_id_vars
+      &Project_address &Project_zip;
 
   run;
 
@@ -173,8 +174,10 @@
     
     _POA_end_hold = POA_end;
     
-    if Subsidy_Info_Source=&Subsidy_Info_Source then output Subsidy_target;
-    else output Subsidy_other;
+    if Subsidy_Info_Source=&Subsidy_Info_Source and not( missing( Subsidy_Info_Source_ID ) ) then 
+      output Subsidy_target;
+    else 
+      output Subsidy_other;
     
   run;
 
@@ -185,7 +188,7 @@
   ** Apply update
   ** Subsidy_target_update_a = Initial application of LIHTC update to Catalog subsidy records;
 
-  data Subsidy_target_update_a;
+  data Subsidy_target_update_a Subsidy_update_nomatch (drop=Subsidy_id);
 
     update 
       Subsidy_target (in=in1)
@@ -200,25 +203,126 @@
     end;
     **************/
     
-    if missing( Subsidy_id ) then Subsidy_id = &NO_SUBSIDY_ID;
-    
     ** Update POA_end_prev if POA_end changed **;
     
     if POA_end ~= _POA_end_hold then POA_end_prev = _POA_end_hold;
+
+    ** Write observations **;
     
+    if not In_subsidy_target then output Subsidy_update_nomatch;
+    else output Subsidy_target_update_a;
+
     drop _POA_end_hold;
     
   run;
 
   proc sort data=Subsidy_target_update_a;
-    by Nlihc_id Subsidy_id poa_start poa_end;
+    by Nlihc_id Subsidy_id;
   run;
 
+
+  **************************************************************************
+  ** Geocode unmatched update records for possible property-level matching;
+  
+  %DC_mar_geocode(
+    geo_match=Y,
+    data=Subsidy_update_nomatch,
+    out=Subsidy_update_nomatch_geocode,
+    staddr=&Project_address,
+    zip=&Project_zip,
+    id=Subsidy_Info_Source_ID,
+    ds_label=,
+    listunmatched=Y
+  )
+  
+  %Dup_check(
+    data=Subsidy_update_nomatch_geocode,
+    by=ssl,
+    id=Subsidy_Info_Source_ID &Project_address &Project_zip,
+    out=_dup_check,
+    listdups=Y,
+    count=dup_check_count,
+    quiet=N,
+    debug=N
+  )
+
+  proc sql noprint;
+    create table Id_to_ssl as
+      select coalesce( Parcel.ssl, Update.ssl ) as ssl, Parcel.nlihc_id, 
+        put( Parcel.nlihc_id, $nlihcid2status. ) as Project_status,
+        Update.*
+      from Subsidy_update_nomatch_geocode (where=(ssl ~= '')) as Update 
+      left join PresCat.Parcel as Parcel
+      on Parcel.ssl = Update.ssl
+    order by ssl, nlihc_id;
+  quit;
+  
+  proc print data=Id_to_ssl;
+    by ssl;
+    id ssl;
+    var nlihc_id Project_status Poa_start Units_assist Subsidy_Info_Source_ID &Project_address &Project_zip;
+  run;
+  
+  
+  
+  *** THREE POSSIBILITIES FROM HERE:
+  1) MATCH TO AN EXISTING SUBSIDY RECORD,
+  2) CREATE A NEW SUBSIDY RECORD IN EXISTING PROJECT,
+  3) ADD A NEW CATALOG PROJECT;
+  
+
+  **************************************************************************
+  ** Match to existing subsidy records;
+  
+  proc sql noprint;
+    create table Subsidy_rec_match as
+      select coalesce( Update.Nlihc_id, Subsidy.Nlihc_id ) as Nlihc_id, 
+        Subsidy.Subsidy_id, Subsidy.poa_start as Subsidy_poa_start, Subsidy.Units_assist as Subsidy_units_assist,
+        Update.*
+      from Id_to_ssl as Update
+      left join
+      PresCat.Subsidy (where=(portfolio='LIHTC')) as Subsidy
+      on Update.Nlihc_id = Subsidy.Nlihc_id and year( Subsidy.Poa_start ) = year( Update.Poa_start )
+      order by Nlihc_id, Subsidy_id;
+    quit;
+      
+  
+proc print data=Subsidy_rec_match;
+  id nlihc_id subsidy_id;
+  by nlihc_id;
+  var Subsidy_poa_start Poa_start Subsidy_units_assist Units_assist Subsidy_Info_Source_ID;
+  title2 'data=Subsidy_rec_match';
+run;
+
+  data Subsidy_target_update_a2 Subsidy_update_nomatch_2;
+  
+    set Subsidy_rec_match;
+    
+    Subsidy_id = &NO_SUBSIDY_ID;
+    
+    if not( missing( nlihc_id ) ) then output Subsidy_target_update_a2;
+    else output Subsidy_update_nomatch_2;
+    
+  run;
+  
+  proc sort data=Subsidy_target_update_a2;
+    by Nlihc_id Subsidy_id poa_start poa_end Subsidy_Info_Source_ID;
+  run;
+
+
+************************************************************************************;
+************************************************************************************;
+************************************************************************************;
+************************************************************************************;
+  
   ** Subsidy_target_update_b = Add unique Subsidy_ID to any new subsidy records created by update **;
 
   data Subsidy_target_update_b;
 
-    set Subsidy_target_update_a (in=in1 where=(not(missing(nlihc_id)))) Subsidy_other;
+    set 
+      Subsidy_target_update_a (in=in1)
+      Subsidy_target_update_a2 (in=in2)
+      Subsidy_other;
     by nlihc_id Subsidy_id;
     
     retain Subsidy_id_ret;
@@ -229,11 +333,19 @@
     
     Subsidy_id_ret = Subsidy_id;
     
-    if in1 then output;
+    if in1 or in2 then output;
     
     drop Subsidy_id_ret &Subsidy_missing_info_vars;
     
   run;
+  
+  proc print data=Subsidy_target_update_b;
+    id nlihc_id subsidy_id;
+    by nlihc_id;
+    var units_assist poa_start poa_end Subsidy_Info_Source: ;
+    title2 'data=Subsidy_target_update_b';
+  run;
+  title2;
   
   ** Use Proc Compare to summarize update changes **;
   
