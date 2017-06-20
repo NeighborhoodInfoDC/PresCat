@@ -22,6 +22,7 @@
     Subsidy_info_source Subsidy_Info_Source_Date
     Subsidy_update_vars Subsidy_tech_vars Subsidy_missing_info_vars
     Subsidy_dupcheck_id_vars Subsidy_compare_id_vars Subsidy_char_diff_vars
+    Subsidy_final_vars
     Project_src_update_vars Project_subsidy_update_vars Project_missing_info_vars 
     Last_update_date Last_update_date_fmt
     Assisted_units_src POA_start_src POA_end_src Compl_end_src Is_inactive_src
@@ -84,6 +85,15 @@
   %let Subsidy_compare_id_vars = ;
   
   %let Subsidy_char_diff_vars = ;
+  
+  %let Subsidy_final_vars = 
+    Agency Compl_end Nlihc_id POA_end POA_end_actual
+    POA_end_prev POA_start POA_start_orig Portfolio Program
+    Subsidy_Active Subsidy_Info_Source Subsidy_Info_Source_Date
+    Subsidy_Info_Source_ID Subsidy_id
+    Subsidy_info_source_property Units_Assist Update_Dtm
+    contract_number rent_to_fmr_description
+  ;
   
   %let Project_src_update_vars = 
       ;

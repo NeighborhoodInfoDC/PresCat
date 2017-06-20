@@ -174,7 +174,8 @@
     
     _POA_end_hold = POA_end;
     
-    if Subsidy_Info_Source=&Subsidy_Info_Source and not( missing( Subsidy_Info_Source_ID ) ) then 
+    /**if Subsidy_Info_Source=&Subsidy_Info_Source and not( missing( Subsidy_Info_Source_ID ) ) then **/
+    if Portfolio = 'LIHTC' then
       output Subsidy_target;
     else 
       output Subsidy_other;
@@ -191,8 +192,13 @@
   data Subsidy_target_update_a Subsidy_update_nomatch (drop=Subsidy_id);
 
     update 
-      Subsidy_target (in=in1)
-      Subsidy_update_recs (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars Subsidy_Info_Source_ID);
+      Subsidy_target 
+        (where=(not(missing(Subsidy_Info_Source_ID)))
+         in=in1)
+      Subsidy_update_recs 
+        (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars Subsidy_Info_Source_ID
+         where=(not(missing(Subsidy_Info_Source_ID)))
+         in=in2);
     by Subsidy_Info_Source_ID;
     
     In_Subsidy_target = in1;
@@ -209,7 +215,7 @@
 
     ** Write observations **;
     
-    if not In_subsidy_target then output Subsidy_update_nomatch;
+    if not( In_subsidy_target ) and in2 then output Subsidy_update_nomatch;
     else output Subsidy_target_update_a;
 
     drop _POA_end_hold;
@@ -261,7 +267,9 @@
     by ssl;
     id ssl;
     var nlihc_id Project_status Poa_start Units_assist Subsidy_Info_Source_ID &Project_address &Project_zip;
+    title2 'data=Id_to_ssl';
   run;
+  title2;
   
   
   
@@ -281,7 +289,7 @@
         Update.*
       from Id_to_ssl as Update
       left join
-      PresCat.Subsidy (where=(portfolio='LIHTC')) as Subsidy
+      /*PresCat.Subsidy (where=(portfolio='LIHTC'))*/ Subsidy_target as Subsidy
       on Update.Nlihc_id = Subsidy.Nlihc_id and year( Subsidy.Poa_start ) = year( Update.Poa_start )
       order by Nlihc_id, Subsidy_id;
     quit;
@@ -293,21 +301,64 @@ proc print data=Subsidy_rec_match;
   var Subsidy_poa_start Poa_start Subsidy_units_assist Units_assist Subsidy_Info_Source_ID;
   title2 'data=Subsidy_rec_match';
 run;
+title2;
 
   data Subsidy_target_update_a2 Subsidy_update_nomatch_2;
   
     set Subsidy_rec_match;
     
-    Subsidy_id = &NO_SUBSIDY_ID;
-    
-    if not( missing( nlihc_id ) ) then output Subsidy_target_update_a2;
-    else output Subsidy_update_nomatch_2;
+    if not( missing( nlihc_id ) ) then do;
+      if missing( subsidy_id ) then Subsidy_id = &NO_SUBSIDY_ID;
+      output Subsidy_target_update_a2;
+    end;
+    else do;
+      output Subsidy_update_nomatch_2;
+    end;
     
   run;
   
   proc sort data=Subsidy_target_update_a2;
     by Nlihc_id Subsidy_id poa_start poa_end Subsidy_Info_Source_ID;
   run;
+  
+  data Subsidy_other_2;
+  
+    merge 
+      Subsidy_other 
+      Subsidy_target_update_a2 (keep=nlihc_id subsidy_id in=in2);
+    by Nlihc_id Subsidy_id;
+    
+    if not in2;
+    
+  run;
+
+proc print data=Subsidy_target_update_a;
+  where nlihc_id = 'NL000186';
+  id nlihc_id subsidy_id;
+  by nlihc_id;
+  var Poa_start Units_assist Subsidy_Info_Source_ID;
+  title2 'data=Subsidy_target_update_a';
+run;
+title2;
+
+proc print data=Subsidy_target_update_a2;
+  where nlihc_id = 'NL000186';
+  id nlihc_id subsidy_id;
+  by nlihc_id;
+  var Subsidy_poa_start Poa_start Subsidy_units_assist Units_assist Subsidy_Info_Source_ID;
+  title2 'data=Subsidy_target_update_a2';
+run;
+title2;
+
+proc print data=Subsidy_other_2;
+  where nlihc_id = 'NL000186';
+  id nlihc_id subsidy_id;
+  by nlihc_id;
+  var Poa_start Units_assist Subsidy_Info_Source_ID;
+  title2 'data=Subsidy_other_2';
+run;
+title2;
+
 
 
 ************************************************************************************;
@@ -322,14 +373,19 @@ run;
     set 
       Subsidy_target_update_a (in=in1)
       Subsidy_target_update_a2 (in=in2)
-      Subsidy_other;
+      Subsidy_other_2;
     by nlihc_id Subsidy_id;
     
     retain Subsidy_id_ret;
     
+    _new_subsidy = 0;
+    
     if first.nlihc_id then Subsidy_id_ret = 0;
     
-    if Subsidy_id = &NO_SUBSIDY_ID then Subsidy_id = Subsidy_id_ret + 1;
+    if Subsidy_id = &NO_SUBSIDY_ID then do;
+      Subsidy_id = Subsidy_id_ret + 1;
+      _new_subsidy = 1;
+    end;
     
     Subsidy_id_ret = Subsidy_id;
     
@@ -342,7 +398,7 @@ run;
   proc print data=Subsidy_target_update_b;
     id nlihc_id subsidy_id;
     by nlihc_id;
-    var units_assist poa_start poa_end Subsidy_Info_Source: ;
+    var _new_subsidy units_assist poa_start poa_end Subsidy_Info_Source Subsidy_Info_Source_id Subsidy_Info_Source_date;
     title2 'data=Subsidy_target_update_b';
   run;
   title2;
@@ -468,6 +524,26 @@ run;
     end;
 
   run;
+  
+  title2 "DUP_CHECK: data=Subsidy_Update_&Update_file";
+  
+  %Dup_check(
+    data=Subsidy_Update_&Update_file,
+    by=nlihc_id subsidy_id,
+    id=portfolio poa_start units_assist subsidy_info_source subsidy_info_source_id,
+    listdups=Y
+  )
+
+  title2;
+
+proc print data=Subsidy_Update_&Update_file;
+  where nlihc_id = 'NL000186';
+  id nlihc_id subsidy_id;
+  by nlihc_id;
+  var &Subsidy_final_vars;
+  title2 "data=Subsidy_Update_&Update_file";
+run;
+title2;
 
 
   **************************************************************************
@@ -503,6 +579,8 @@ run;
 
   **************************************************************************
   ** Create update report;
+  
+  ** Prepare data **;
 
   proc sort data=Update_subsidy_result_except_tr;
     by Category_code nlihc_id subsidy_id;
@@ -535,6 +613,30 @@ run;
          Var Old_value New_value Except_value;
     
   run;
+  
+  proc summary data=Subsidy_Update_&Update_file;
+    by nlihc_id;
+    var _new_subsidy;
+    output out=Subsidy_update_new_subsidy_proj max=_new_subsidy_project;
+  run;
+  
+  data New_subsidy_report;
+  
+    merge
+      Subsidy_Update_&Update_file
+      Subsidy_update_new_subsidy_proj;
+    by nlihc_id;
+    
+  run;
+  
+  proc print data=New_subsidy_report (obs=5);
+    id nlihc_id;
+    title2 'data=New_subsidy_report';
+  run;
+  title2;
+  
+
+  ** Write report **;
 
   options orientation=landscape;
  
@@ -565,13 +667,21 @@ run;
    
   ods proclabel "New subsidy records";
 
-  proc report data=Subsidy_target_update_b nowd;
-    where not In_Subsidy_target and not( missing( nlihc_id ) );
-    column nlihc_id Subsidy_id Subsidy_Info_Source_ID &Subsidy_update_vars;
+  proc report data=New_subsidy_report nowd;
+    where _new_subsidy_project;
+    column nlihc_id _new_subsidy _new Subsidy_id Subsidy_Info_Source_ID &Subsidy_update_vars;
     define nlihc_id / order noprint;
+    define _new_subsidy / display noprint;
+    define _new / computed noprint;
     define Subsidy_id / display "Subsidy ID" style=[textalign=center];
     define Subsidy_Info_Source_ID / display "Project ID" style=[textalign=center];
+    define Program / display format=$progshrt.;
     break before nlihc_id / ;
+    compute _new;
+      if _new_subsidy = 1 then do;
+        call define(_row_, "style", "style=[background=yellow font_weight=bold]");
+      end;
+    endcomp;
     compute before nlihc_id / style=[textalign=left fontweight=bold];
       line nlihc_id $nlihcid_proj.;
     endcomp;
