@@ -32,7 +32,8 @@ proc format library=PresCat;
     "3" = "Recent Failing REAC Score"
     "4" = "More Info Needed"
     "5" = "Other Subsidized Property"
-    "6" = "Lost Rental";
+    "6" = "Lost Rental"
+    "7" = "Replaced";
   
   value $Categrn
     "1" = "1 - At-Risk or Flagged for Follow-up"
@@ -40,7 +41,8 @@ proc format library=PresCat;
     "3" = "3 - Recent Failing REAC Score"
     "4" = "4 - More Info Needed"
     "5" = "5 - Other Subsidized Property"
-    "6" = "6 - Lost Rental";
+    "6" = "6 - Lost Rental"
+    "7" = "7 - Replaced";
   
   value $Infosrc
     "HUD/MFA" = "HUD/Multifamily Assistance and Section 8 Contracts"
