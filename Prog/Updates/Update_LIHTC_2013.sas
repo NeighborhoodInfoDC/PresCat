@@ -31,7 +31,7 @@
     if proj_add = "3400 C J BARNEY DR NE" then proj_add = "3400 CJ BARNEY DR NE";
 )
 
-
+/*
 proc compare base=PresCat.Subsidy compare=Subsidy_Update_Lihtc_2013 listall maxprint=(40,32000);
   id nlihc_id subsidy_id;
 run;

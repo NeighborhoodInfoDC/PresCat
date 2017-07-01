@@ -27,7 +27,7 @@
     Last_update_date Last_update_date_fmt
     Assisted_units_src POA_start_src POA_end_src Compl_end_src Is_inactive_src
     Program_src Subsidy_Info_Source_ID_src Subsidy_info_source_property_src
-    POA_end_actual_src Rent_to_fmr_description_src Project_address Project_zip
+    POA_end_actual_src Rent_to_fmr_description_src Project_name Project_address Project_zip
     ownership_effective_date_src owner_organization_name_src owner_individual_full_name_src
     Hud_Own_Type_src mgmt_agent_org_name_src mgmt_agent_full_name_src Hud_Mgr_Type_src;
     
@@ -48,6 +48,7 @@
   %let Rent_to_fmr_description_src = left( compress( put( inc_ceil, lihtc_inc_ceil. ), '.' ) );
   %let Project_address = proj_add;
   %let Project_zip = proj_zip;
+  %let Project_name = project;
   
   %let ownership_effective_date_src = .;
   %let owner_organization_name_src = "";
@@ -78,7 +79,7 @@
   %let Subsidy_tech_vars = Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date subsidy_info_source_property Update_Dtm;
   
   %let Subsidy_missing_info_vars =       
-      &Project_address &Project_zip;
+      &Project_name &Project_address &Project_zip;
       
   %let Subsidy_dupcheck_id_vars = &Subsidy_Info_Source_ID_src;
   

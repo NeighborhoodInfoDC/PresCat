@@ -122,6 +122,10 @@
     
     &Address_correct
     
+    %if %length( &project_name ) > 0 %then %do;
+      %Project_name_clean( &project_name, &project_name )
+    %end;
+    
     /*
     if missing( Program ) then do;
       %warn_put( msg="Missing program type: " _n_= property_id= contract_number= &Assisted_units_src= program_type_name= )
@@ -345,6 +349,7 @@ TITLE2;
       output Subsidy_target_update_a2;
     end;
     else do;
+      if missing( poa_end_actual ) then poa_end_actual = .;
       output Subsidy_update_nomatch_2;
     end;
     
@@ -815,14 +820,10 @@ TITLE2;
 
   ods proclabel "Nonmatching subsidy records";
 
-  proc print data=Subsidy_target_update_a label;
-    where not In_Subsidy_target and missing( nlihc_id ) and 
-      ( Subsidy_active or intck( 'year', poa_end_actual, date() ) <= 10 );
-    /*id Subsidy_Info_Source_ID;*/
-    var nlihc_id &Subsidy_missing_info_vars Subsidy_active Units_assist poa_start poa_end poa_end_actual;
-    ****label 
-      address_line1_text = "Address"
-      program_type_name = "Program";
+  proc print data=Subsidy_update_nomatch_2 label;
+    where subsidy_active or intck( 'year', poa_end_actual, date() ) <= &NONMATCH_YEARS_CUTOFF;
+    id Subsidy_Info_Source_ID;
+    var &Subsidy_missing_info_vars Subsidy_active Units_assist poa_start poa_end poa_end_actual;
     title3 "PresCat.Subsidy - Nonmatching subsidy records in &Update_file (NOT added to Catalog)";
   run;
 
@@ -832,7 +833,62 @@ TITLE2;
   options orientation=portrait;
 
   title2;
-    
+  
+  
+  **************************************************************************
+  ** Export nonmatching subsidy records for adding to Catalog;
+  
+  ** Main file **;
+  
+  proc sql noprint;
+    create table Export_main as
+    select &Project_name as Proj_Name, "Washington" as Bldg_City, "DC" as Bldg_ST, &Project_zip as Bldg_Zip,
+      &Project_address._std as Bldg_Addre from 
+      Subsidy_update_nomatch_2 
+        (where=(subsidy_active or intck( 'year', poa_end_actual, date() ) <= &NONMATCH_YEARS_CUTOFF));
+  quit;
+
+  filename fexport "&_dcdata_r_path\PresCat\Raw\New\Update_&Update_file._main.csv" lrecl=2000;
+
+  proc export data=Export_main
+      outfile=fexport
+      dbms=csv replace;
+
+  run;
+
+  filename fexport clear;
+  
+  
+  ** Subsidy file **;
+  
+  proc sql noprint;
+    create table Export_subsidy as
+    select Address_id as MARID, Units_assist, Poa_start as Current_Affordability_Start,
+           Poa_end as Affordability_End, rent_to_fmr_description as Fair_Market_Rent_Ratio,
+           Subsidy_Info_Source_ID, Subsidy_Info_Source, Subsidy_Info_Source_Date, 
+           Update_Dtm as Update_Date_Time, Program, Compl_end as Compliance_End_Date, 
+           Poa_end_prev as Previous_Affordability_end, Agency, Portfolio, 
+           Poa_end_actual as Date_Affordability_Ended
+    from 
+      Subsidy_update_nomatch_2 
+        (where=(subsidy_active or intck( 'year', poa_end_actual, date() ) <= &NONMATCH_YEARS_CUTOFF));
+  quit;
+
+  filename fexport "&_dcdata_r_path\PresCat\Raw\New\Update_&Update_file._subsidy.csv" lrecl=2000;
+
+  proc export data=Export_subsidy
+      outfile=fexport
+      dbms=csv replace;
+
+  run;
+
+  filename fexport clear;
+  
+  
+  
+  
+
+
 
   **************************************************************************
   ** End of macro;
