@@ -20,6 +20,9 @@
   Finalize=Y,
   Project_except=Project_except,
   Subsidy_except=Subsidy_except,
+  Manual_subsidy_match=,
+  Manual_project_match=,
+  Address_correct=,
   Quiet=Y,
   Final_compare=Y
   );
@@ -33,7 +36,7 @@
 
   %if &Last_update_date = or &Last_update_date < &Subsidy_Info_Source_Date %then %do;
   
-    %Update_LIHTC_subsidy( Update_file=&Update_file, Subsidy_except=&Subsidy_except, Quiet=&Quiet )
+    %Update_LIHTC_subsidy( Update_file=&Update_file, Subsidy_except=&Subsidy_except, Manual_subsidy_match=&Manual_subsidy_match, Manual_project_match=&Manual_project_match, Address_correct=&Address_correct, Quiet=&Quiet )
     /*
     %Update_LIHTC_project( Update_file=&Update_file, Project_except=&Project_except, Quiet=&Quiet )
     

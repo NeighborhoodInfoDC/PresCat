@@ -45,7 +45,7 @@
   %let POA_end_actual_src = .;
   %let Program_src = put( credit, lihtc_credit2prog. );
   %let Subsidy_info_source_property_src = ' ';
-  %let Rent_to_fmr_description_src = ' ';
+  %let Rent_to_fmr_description_src = left( compress( put( inc_ceil, lihtc_inc_ceil. ), '.' ) );
   %let Project_address = proj_add;
   %let Project_zip = proj_zip;
   
@@ -137,7 +137,7 @@
     Contents=N
     )
     
-  ** Create $nlihcid_proj. format to add project ID and names to update report **;
+  ** Create $nlihcid_proj. format to add project ID, names, and unit counts to update report **;
 
   %Data_to_format(
     FmtLib=work,
@@ -145,7 +145,7 @@
     Desc=,
     Data=PresCat.Project (where=(not(missing(nlihc_id)))),
     Value=nlihc_id,
-    Label=trim(nlihc_id)||' / '||left(proj_name),
+    Label=trim(nlihc_id)||' / '||trim(left(proj_name))||' / Total units = '||left(put(proj_units_tot,comma8.)),
     OtherLabel='** Unidentified project **',
     DefaultLen=.,
     MaxLen=.,

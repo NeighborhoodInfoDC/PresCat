@@ -20,7 +20,16 @@
 %DCData_lib( MAR )
 
 
-%Update_LIHTC( Update_file=Lihtc_2013, quiet=n )
+%Update_LIHTC( Update_file=Lihtc_2013, quiet=n,
+  manual_subsidy_match=
+    if nlihc_id = 'NL001005' and subsidy_id = 5 then do;
+      subsidy_info_source_id = 'DCB2009020';
+      subsidy_info_source = 'HUD/LIHTC';
+    end;
+  ,
+  address_correct=
+    if proj_add = "3400 C J BARNEY DR NE" then proj_add = "3400 CJ BARNEY DR NE";
+)
 
 
 proc compare base=PresCat.Subsidy compare=Subsidy_Update_Lihtc_2013 listall maxprint=(40,32000);
