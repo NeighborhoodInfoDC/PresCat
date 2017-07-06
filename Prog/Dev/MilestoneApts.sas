@@ -306,8 +306,6 @@ run;
 
 ** Project **;
 
-%Create_project_subsidy_update( data=Subsidy, out=Project_subsidy_update )
-
 data Project_a;
 
   set PresCat.Project;
@@ -340,6 +338,8 @@ run;
 
 proc sort data=Project_a;
   by nlihc_id;
+
+%Create_project_subsidy_update( data=Subsidy, out=Project_subsidy_update, project_file=Project_a )
 
 data Project;
 
@@ -386,7 +386,7 @@ run;
 proc print data=Project;
   where nlihc_id in ( &cat_id_list );
   id nlihc_id;
-  var proj_name proj_addre proj_units_tot bldg_count status subsidized;
+  *var proj_name proj_addre proj_units_tot bldg_count status subsidized;
 run;
 
 
