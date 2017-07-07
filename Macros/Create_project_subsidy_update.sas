@@ -72,13 +72,13 @@
     end;
     
     label
-      proj_units_assist_max = "Total assisted housing units in project (maximum) [derived from PresCat.Subsidy]"
-      proj_units_assist_min = "Total assisted housing units in project (minimum) [derived from PresCat.Subsidy]"
+      proj_units_assist_max = "Maximum active assisted housing units in project [derived from PresCat.Subsidy]"
+      proj_units_assist_min = "Minimum active assisted housing units in project [derived from PresCat.Subsidy]"
       subsidized = "Project is subsidized [derived from PresCat.Subsidy]"
-      subsidy_end_first = "First subsidy end date"
-      subsidy_end_last = "Last subsidy end date"
-      subsidy_start_first = "First subsidy start date"
-      subsidy_start_last = "Last subsidy start date";
+      subsidy_end_first = "First active subsidy end date [derived from PresCat.Subsidy]"
+      subsidy_end_last = "Last active subsidy end date [derived from PresCat.Subsidy]"
+      subsidy_start_first = "First active subsidy start date [derived from PresCat.Subsidy]"
+      subsidy_start_last = "Last active subsidy start date [derived from PresCat.Subsidy]";
     
     format Subsidized dyesno.;
     

@@ -88,6 +88,7 @@
   %let Subsidy_char_diff_vars = ;
   
   %let Subsidy_final_vars = 
+    Nlihc_id Subsidy_id
     Agency Compl_end Nlihc_id POA_end POA_end_actual
     POA_end_prev POA_start POA_start_orig Portfolio Program
     Subsidy_Active Subsidy_Info_Source Subsidy_Info_Source_Date
