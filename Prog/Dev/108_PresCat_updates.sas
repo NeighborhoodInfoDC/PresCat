@@ -75,34 +75,33 @@ proc print data=Subsidy_a;
 run;
 
 
-** Check projects with subsidies from "HUD - Active 202/811 Loans (10/08/10)" **;
+** Add owner category to Project **;
 
-proc format;
-  value $sel_source
-    "HUD - Active 202/811 Loans" = "*"
-    "HUD/MFA" = "HUD/MFA"
-    other = " ";
+proc summary data=PresCat.Parcel nway;
+  class nlihc_id parcel_owner_type;
+  output out=Project_owner;
 run;
 
-proc print data=Subsidy_a;
-  where subsidy_info_source = "HUD - Active 202/811 Loans";
-  id nlihc_id subsidy_id;
-  var subsidy_info_source_date program units_assist poa_: ;
+proc sort data=Project_owner;
+  by nlihc_id descending _freq_;
 run;
 
-proc sql noprint;
-  create table Has_HUD_active_202 as
-  select a.nlihc_id, b.* from Subsidy_a (where=(subsidy_info_source = "HUD - Active 202/811 Loans")) as a left join Subsidy_a as b
-  on a.nlihc_id = b.nlihc_id
-  order by nlihc_id, subsidy_id;
-quit;
+data Project_owner_nodup;
 
-proc print data=Has_HUD_active_202;
-  id nlihc_id subsidy_id;
+  set Project_owner;
   by nlihc_id;
-  var subsidy_info_source program units_assist poa_start_orig poa_start_orig_new poa_start ayb eyb;
-  format subsidy_info_source $sel_source.;
-run;
-
+  
+  if first.nlihc_id;
 
 run;
+
+proc print data=Project_owner;
+  by nlihc_id;
+  id nlihc_id;
+run;
+
+proc print data=Project_owner_nodup;
+  id nlihc_id;
+run;
+
+  
