@@ -20,6 +20,12 @@
 %DCData_lib( HUD )
 %DCData_lib( RealProp )
 
+
+** Initialize PresCat global macro vars **;
+
+%PresCat_global_mvars()
+
+
 ** Add year built to Project **;
 
 proc sql noprint;
@@ -41,8 +47,8 @@ data Parcel_yb_2;
 
   set Parcel_yb;
   
-  if ayb = 0 then ayb = .;
-  if eyb = 0 then eyb = .;
+  if ayb < 1900 then ayb = .u;
+  if eyb < 1900 then eyb = .u;
 
 run;
 
@@ -72,6 +78,23 @@ proc print data=Subsidy_a;
   where subsidy_info_source = 'HUD/MFA';
   id nlihc_id subsidy_id;
   var program units_assist poa_start: ayb eyb;
+run;
+
+data Subsidy;
+
+  set Subsidy_a;
+  
+  ** Check original subsidy start date against new version and year property was built **;
+  ** Don't use year built before 1/1/1910 (probably not accurate) **;
+  
+  if max( '01jan1910'd, mdy( 1, 1, ayb ) ) <= Poa_start_orig_new < Poa_start_orig then Poa_start_orig = Poa_start_orig_new;
+  
+  keep &_pc_subsidy_vars;
+  
+run;
+
+proc compare base=PresCat.Subsidy compare=Subsidy listall maxprint=(40,32000);
+  id nlihc_id subsidy_id;
 run;
 
 
@@ -104,4 +127,69 @@ proc print data=Project_owner_nodup;
   id nlihc_id;
 run;
 
+
+** Create updated Project table **;
+
+data Project;
+
+  merge
+    PresCat.Project 
+    Project_yb 
+     (keep=nlihc_id ayb eyb
+      rename=(ayb=Proj_ayb eyb=Proj_eyb))
+    Project_owner_nodup
+      (keep=nlihc_id Parcel_owner_type
+       rename=(Parcel_owner_type=Proj_owner_type))
+  ;
+  by nlihc_id;
   
+  label
+    Proj_ayb = "Project year built (original)"
+    Proj_eyb = "Project year built (improvements)"
+    Proj_owner_type = "Project owner type (majority of parcels)";
+  
+  keep &_pc_project_vars;
+  
+run;
+ 
+proc compare base=PresCat.Project compare=Project listall maxprint=(40,32000);
+  id nlihc_id;
+run;
+
+
+** Finalize data sets **;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Project,
+  out=Project,
+  outlib=PresCat,
+  label=&_pc_project_dslb,
+  sortby=&_pc_project_sort,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(Add Proj_ayb, Proj_eyb, Proj_owner_type vars.),
+  /** File info parameters **/
+  printobs=0,
+  freqvars=Proj_owner_type,
+  stats=n sum mean stddev min max
+)
+
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Subsidy,
+  out=Subsidy,
+  outlib=PresCat,
+  label=&_pc_subsidy_dslb,
+  sortby=&_pc_subsidy_sort,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(Update POA_start_orig with older data for Sec8MF subsidies.),
+  /** File info parameters **/
+  printobs=0,
+  freqvars=,
+  stats=n sum mean stddev min max
+)
+
+

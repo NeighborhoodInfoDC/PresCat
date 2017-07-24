@@ -26,7 +26,8 @@
   Hud_Mgr_Type Proj_Name_old Proj_Addre_old PBCA Update_Dtm Subsidy_info_source_property contract_number Subsidy_Start_First 
   Subsidy_End_First Subsidy_Start_Last Subsidy_End_Last Subsidized Proj_Units_Assist_Min Proj_Units_Assist_Max Anc2012 
   Psa2012 Geo2010 Cluster_tr2000 Cluster_tr2000_name Ward2012 Proj_addre Proj_zip Zip Proj_image_url Proj_streetview_url 
-  Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Bldg_count;
+  Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Bldg_count
+  Proj_ayb Proj_eyb Proj_owner_type;
 
   %let _PC_project_dslb = "Preservation Catalog, Projects";
 
@@ -97,7 +98,7 @@
 
   %global _PC_reac_score_vars _PC_reac_score_dslb _PC_reac_score_sort;
 
-  %let _PC_reac_score_vars = Nlihc_id REAC_date REAC_score REAC_score_num REAC_score%letter REAC_score_star;
+  %let _PC_reac_score_vars = Nlihc_id REAC_date REAC_score REAC_score_num REAC_score_letter REAC_score_star;
 
   %let _PC_reac_score_dslb = "Preservation Catalog, REAC scores";
 
@@ -161,6 +162,6 @@
 
   %let _PC_subsidy_update_history_sort = Nlihc_id Subsidy_id;
 
-%mend PresCat%global_mvars;
+%mend PresCat_global_mvars;
 
 
