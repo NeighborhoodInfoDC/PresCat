@@ -117,7 +117,7 @@ run;
 
 ** Finalize data set **;
 
-%Finalize_dataset(
+%Finalize_data_set(
   data=Parcel,
   out=Parcel,
   outlib=PresCat,
