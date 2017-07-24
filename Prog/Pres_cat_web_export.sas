@@ -181,10 +181,7 @@ proc sql noprint;
     Proj_Streetview_url as Streetview_url,
     Proj_Image_url as Image_url
   from
-    ( select * from 
-      PresCat.Project (drop=Category_code) as Project 
-      left join PresCat.Project_category (keep=nlihc_id Category_code) as Category
-      on Project.Nlihc_id = Category.Nlihc_id ) as Project_category
+    PresCat.Project_category_view as Project_category
     left join Subsidy_project as Subsidy
   on Project_category.Nlihc_id = Subsidy.Nlihc_id 
   where not( missing( Proj_lat ) ) and not( missing( Proj_lon ) ) 

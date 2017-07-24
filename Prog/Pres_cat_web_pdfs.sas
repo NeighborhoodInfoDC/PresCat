@@ -35,11 +35,8 @@
 
   data Project;
 
-    merge 
-      PresCat.Project (drop=Category_code Cat_At_Risk Cat_More_Info Cat_Lost Cat_Replaced)
-      PresCat.Project_category (drop=Proj_Name);
-    by NLIHC_ID;
-    where NLIHC_ID = "&proj_select";
+    set PresCat.Project_category_view;
+    if Nlihc_id = "&proj_select";
       
     length Subsidy_range $ 80;
     
@@ -241,7 +238,7 @@ x "del /q &output_path\public\*.pdf";
 data _null_;
 
   set PresCat.Project (keep=NLIHC_ID);
-  ***UNCOMMENT FOR TESTING***WHERE NLIHC_ID IN ( "NL000027", "NL000208", "NL000319" ); 
+  ***UNCOMMENT FOR TESTING***WHERE NLIHC_ID IN ( "NL000027", "NL000208", "NL000319", "NL001035" ); 
   
   call execute ( '%Create_pdf( ' || NLIHC_ID || ', public )' );
 
