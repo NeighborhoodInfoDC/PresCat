@@ -23,15 +23,14 @@ proc sql noprint;
     select * from 
       PresCat.Project 
         (drop=Category_code Cat_at_risk Cat_lost Cat_more_info Cat_replaced 
-              Proj_Name_old Proj_Addre_old) as Project 
+              Proj_Name Proj_Name_old Proj_Addre_old) as Project 
       left join 
       PresCat.Project_category 
-        (keep=nlihc_id Category_code Cat_at_risk Cat_lost Cat_more_info Cat_replaced) 
+        (keep=nlihc_id Proj_Name Category_code Cat_at_risk Cat_lost Cat_more_info Cat_replaced) 
           as Category
       on Project.Nlihc_id = Category.Nlihc_id
      order by Project.Nlihc_id;
   quit;
-
 
 run;
 
