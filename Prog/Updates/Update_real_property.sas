@@ -262,7 +262,7 @@ proc sql noprint;
 
 ** Finalize data set **;
 
-%Finalize_dataset(
+%Finalize_data_set(
   data=Real_property,
   out=Real_property,
   outlib=PresCat,

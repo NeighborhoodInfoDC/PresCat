@@ -37,7 +37,7 @@
       id &sortby;
     run;
     
-    %Finalize_dataset( 
+    %Finalize_data_set( 
       data=&data._del, 
       out=&data, 
       outlib=PresCat, 
