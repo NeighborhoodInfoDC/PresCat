@@ -71,12 +71,12 @@ data Subsidy;
   Sub_all_units = Units_assist;
   
   select ( Portfolio );
-    when ( "Community Development Block Grants" ) do; 
+    when ( "CDBG" ) do; 
       Sub_CDBG_proj = 1;
       Sub_CDBG_units = Units_assist;
     end;
 
-    when ( "DC Housing Production Trust Fund" ) do; 
+    when ( "DC HPTF" ) do; 
       Sub_HPTF_proj = 1;
       Sub_HPTF_units = Units_assist;
     end;
@@ -91,67 +91,37 @@ data Subsidy;
       Sub_LIHTC_units = Units_assist;
     end;
 
-    when ( "McKinney Vento Act loan" ) do; 
+    when ( "MCKINNEY" ) do; 
       Sub_McKinney_proj = 1;
       Sub_McKinney_units = Units_assist;
     end;
 
-    when ( "Other" ) do; 
+    when ( "PBV", "HUDMORT", "HOPE VI", "FHLB" ) do; 
       Sub_Other_proj = 1;
       Sub_Other_units = Units_assist;
     end;
 
-    when ( "Project Rental Assistance Contract (PRAC)" ) do; 
+    when ( "PRAC" ) do; 
       Sub_ProjectBased_proj = 1;
       Sub_ProjectBased_units = Units_assist;
     end;
 
-    when ( "Project-based Section 8" ) do;
+    when ( "PB8" ) do;
       Sub_ProjectBased_proj = 1;
       Sub_ProjectBased_units = Units_assist;
     end;
 
-    when ( "Public Housing" ) do; 
+    when ( "PUBHSNG" ) do; 
       Sub_PublicHsng_proj = 1;
       Sub_PublicHsng_units = Units_assist;
       end;
 
-    when ( "Section 202/811" ) do;
+    when ( "202/811" ) do;
       Sub_ProjectBased_proj = 1;
       Sub_ProjectBased_units = Units_assist;
     end;
 
-    when ( "Section 221(d)(3) below market rate interest (BMIR)" ) do;
-      Sub_ProjectBased_proj = 1;
-      Sub_ProjectBased_units = Units_assist;
-    end;
-
-    when ( "Section 221(d)(3)&(4) with affordability restrictions" ) do;
-      Sub_ProjectBased_proj = 1;
-      Sub_ProjectBased_units = Units_assist;
-    end;
-
-    when ( "Section 223" ) do;
-      Sub_ProjectBased_proj = 1;
-      Sub_ProjectBased_units = Units_assist;
-    end;
-
-    when ( "Section 232" ) do;
-      Sub_ProjectBased_proj = 1;
-      Sub_ProjectBased_units = Units_assist;
-    end;
-
-    when ( "Section 236" ) do;
-      Sub_ProjectBased_proj = 1;
-      Sub_ProjectBased_units = Units_assist;
-    end;
-
-    when ( "Section 542(b)&(c)" ) do;
-      Sub_ProjectBased_proj = 1;
-      Sub_ProjectBased_units = Units_assist;
-    end;
-
-    when ( "Tax exempt bond" ) do; 
+    when ( "TEBOND" ) do; 
       Sub_TEBond_proj = 1;
       Sub_TEBond_units = Units_assist;
       end;
