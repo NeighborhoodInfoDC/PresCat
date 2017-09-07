@@ -1,8 +1,8 @@
 /**************************************************************************
- Program:  Update_MFIS_yyyy_mm.sas
+ Program:  Update_MFIS_2017_07.sas
  Library:  PresCat
  Project:  NeighborhoodInfo DC
- Author:   
+ Author:   Noah Strayer
  Created:  
  Version:  SAS 9.2
  Environment:  Local Windows session (desktop)
@@ -20,6 +20,6 @@
 %DCData_lib( HUD )
 
 
-%Update_MFIS( Update_file=MFIS_yyyy_mm )
+%Update_MFIS( Update_file=MFIS_2017_07 )
 
 
