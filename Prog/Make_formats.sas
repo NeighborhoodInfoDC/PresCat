@@ -259,6 +259,7 @@ proc format library=PresCat;
     'DC-HPTF' = 'DC HPTF'
     'HOME' = 'HOME'
 
+    'LIHTC',
     'LIHTC/UNKWN', 
     'LIHTC/4PCT', 
     'LIHTC/9PCT', 
@@ -467,6 +468,7 @@ proc format library=PresCat;
     'CDBG' = 'CDBG'
     'DC-HPTF' = 'DC HPTF'
     'HOME' = 'HOME'
+    'LIHTC' = 'LIHTC (old program code)'
     'LIHTC/UNKWN' = 'LIHTC unknown pct'
     'LIHTC/4PCT' = 'LIHTC 4%'
     'LIHTC/9PCT' = 'LIHTC 9%'
