@@ -15,73 +15,21 @@
 %include "L:\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
-%DCData_lib( PresCat, local=n )
+%DCData_lib( PresCat )
+%DCData_lib( RealProp )
 
-/** Import project info and match to NLIHC_ID (Probably won't need to import, if this will be run from one large program **
-	filename fimport "D:\DCData\Libraries\PresCat\Raw\Buildings_for_geocoding_2016-08-01_status.csv" lrecl=2000;
-
-data WORK.PROJECT_STATUS    ;
-%let _EFIERR_ = 0; * set the ERROR detection macro variable *
-infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
-informat Proj_Name $20. ;
-informat NLIHC_ID $8. ;
-informat MARID best32. ;
-informat At_Risk 3. ;
-informat Failing_Inspection 3. ;
-informat More_Info 3. ;
-informat Lost 3. ;
-informat Replaced 3. ;
-informat Own_Name $60. ;
-informat Own_Type $20. ;
-informat Mgr_Name $60. ;
-informat Mgr_Type $20. ;
-format Proj_Name $20. ;
-format NLIHC_ID $8. ;
-format MARID best12. ;
-format At_Risk DYESNO3. ;
-format Failing_Inspection DYESNO3. ;
-format More_Info DYESNO3. ;
-format Lost DYESNO3. ;
-format Replaced DYESNO3. ;
-format Own_Name $60. ;
-format Own_Type $20. ;
-format Mgr_Name $60. ;
-format Mgr_Type $20. ;
-input
-Proj_Name $
-NLIHC_ID $
-Bldg_SSL $
-Bldg_City $
-Bldg_ST $
-MARID
-At_Risk 
-Failing_Inspection 
-More_Info 
-Lost 
-Replaced $
-Own_Name $
-Own_Type $
-Mgr_Name $
-Mgr_Type $
-     ;
-if _ERROR_ then call symputx('_EFIERR_',1);  * set ERROR detection macro variable *
+proc sort data=project_geocode;
+by proj_address_id;
 run;
 
-filename fimport clear;*/
-
-proc sort data=project_status;
-by marid;
-run;
-
-proc sort data=tmp1.building_geocode;
+proc sort data=building_geocode;
 by bldg_address_id;
 run;
 
 data Project_Status;
-
-	merge Project_Status (rename=(marid=Proj_address_id)) 
-	prescat.Building_Geocode (keep = nlihc_id bldg_address_id rename=(bldg_address_id=proj_address_id));
-	by Proj_address_id;
+	merge building_geocode (keep = nlihc_id bldg_address_id rename=(bldg_address_id=proj_address_id))
+		project_geocode;
+	by proj_address_id;
 	if proj_name = "" then delete;
 	run;
 
@@ -93,70 +41,15 @@ proc sort data=Project_Status out=Status;
 
 %Create_project_subsidy_update( data=Subsidy ) 
 
-** Get min/max assisted units **;
-
-proc summary data=PresCat.Subsidy nway;
-  class Nlihc_id Program;
-  var units_assist poa_start poa_end Subsidy_active;
-  output out=Subsidy_a 
-    sum(units_assist)=
-    min(poa_start poa_end)=Subsidy_Start_First Subsidy_End_First
-    max(poa_start poa_end)=Subsidy_Start_Last Subsidy_End_Last
-    max(Subsidy_active)=Subsidized;
-run;
-
-proc summary data=Subsidy_a;
-  by Nlihc_id;
-  var units_assist Subsidy_Start_First Subsidy_End_First Subsidy_Start_Last Subsidy_End_Last Subsidized;
-  output out=Subsidy 
-    min(units_assist Subsidy_Start_First Subsidy_End_First)=Proj_Units_Assist_Min Subsidy_Start_First Subsidy_End_First
-    max(units_assist Subsidy_Start_Last Subsidy_End_Last)=Proj_Units_Assist_Max Subsidy_Start_Last Subsidy_End_Last
-    max(Subsidized)=;
-run;
 
 data Project_New (label="Preservation Catalog, projects update");
 
-  */length
-    Nlihc_id $ 8
-    Status $ 1
-    Subsidized 3
-    Category_Code $ 1 
-    Cat_At_Risk 3
-    Cat_Expiring 3
-    Cat_Failing_Insp 3
-    Cat_More_Info 3
-    Cat_Lost 3
-    Cat_Replaced 3
-    Proj_Name $ 80
-    Proj_Addre $ 160
-    Proj_City $ 80
-    Proj_ST $ 2
-    Proj_Zip $ 5
-    Proj_Units_Tot 8
-    Proj_Units_Assist_Min 8
-    Proj_Units_Assist_Max 8
-    Subsidy_Start_First 8
-    Subsidy_Start_Last 8
-    Subsidy_End_First 8
-    Subsidy_End_Last 8
-	Ward2012 $ 1
-	own_name $60
-	own_type $20
-	mgr_name $60
-	mgr_type $20
-    */;
-
   merge 
-	PresCat.Project_geocode
-    Subsidy (keep=Nlihc_id Proj_Units_Assist_: Subsidy_Start_: Subsidy_End_: Subsidized)
-	Status (keep=nlihc_id at_risk failing_inspection more_info lost replaced own_name own_type mgr_name mgr_type 
-					rename=(at_risk=cat_at_risk failing_inspection=cat_failing_insp more_info=cat_more_info lost=cat_lost replaced=cat_replaced))
-            ;
+	Status 
+	Project_Subsidy_update (keep=Nlihc_id Proj_Units_Assist_: Subsidy_Start_: Subsidy_End_: Subsidized);
+	
   by Nlihc_id;
   
-  ***if in1;
-  
-  **%Project_name_clean( Proj_name_old, Proj_name );
   run;
 
   Data new_project;
@@ -175,7 +68,7 @@ data Project_New (label="Preservation Catalog, projects update");
 
   if cat_at_risk = . then cat_at_risk = 0;
   if cat_failing_insp = . then cat_failing_insp = 0;
-  if cat_more_info = . then cat_more_info = 1;
+  if cat_more_info = . then cat_more_info = 0;
   if cat_lost = . then cat_lost = 0;
   if cat_replaced = . then cat_replaced = 0;
 
@@ -183,6 +76,11 @@ data Project_New (label="Preservation Catalog, projects update");
   
   if category_code = "6" then status = "I";
   else status = "A";
+
+
+  ** Set project units **;
+  if proj_units_assist_max = proj_units_assist_min then proj_units_tot = proj_units_assist_max;
+  else proj_units_tot=.;
 
   ** Mark projects with subsidy less than one year away as expiring **;
   
@@ -312,6 +210,85 @@ data Project_New (label="Preservation Catalog, projects update");
   
 run;
 
+** Add year built to Project **;
+
+proc sql noprint;
+  create table Parcel_yb as
+    select a.nlihc_id, coalesce( a.ssl, b.ssl ) as ssl, coalesce( a.ayb, b.ayb ) as ayb, coalesce( a.eyb, b.eyb ) as eyb
+    from RealProp.Camarespt_2014_03 as b right join (
+      select a.nlihc_id, coalesce( a.ssl, b.ssl ) as ssl, coalesce( a.ayb, b.ayb ) as ayb, coalesce( a.eyb, b.eyb ) as eyb
+      from RealProp.camacondopt_2013_08 as b right join (
+        select a.nlihc_id, coalesce( a.ssl, b.ssl ) as ssl, b.ayb, b.eyb
+        from RealProp.camacommpt_2013_08 as b right join 
+        Parcel as a   
+        on a.ssl = b.ssl ) as a 
+      on a.ssl = b.ssl ) as a
+    on a.ssl = b.ssl
+    order by nlihc_id, ssl;
+  quit;
+
+data Parcel_yb_2;
+
+  set Parcel_yb;
+  
+  if ayb < 1900 then ayb = .u;
+  if eyb < 1900 then eyb = .u;
+
+  label
+    ayb = "Project year built (original)"
+    eyb = "Project year built (improvements)";
+
+  keep nlihc_id ayb eyb; 
+
+  rename ayb=Proj_ayb eyb=Proj_eyb;
+
+run;
+
+proc summary data=Parcel_yb_2;
+  by nlihc_id;
+  var Proj_ayb Proj_eyb;
+  output out=Project_yb (drop=_type_ _freq_) min=;
+run;
+
+** Add owner category to Project **;
+
+proc summary data=Parcel nway; 
+  class nlihc_id parcel_owner_type;
+  output out=Project_owner;
+run;
+
+proc sort data=Project_owner;
+  by nlihc_id descending _freq_;
+run;
+
+data Project_owner_nodup;
+
+  set Project_owner;
+  by nlihc_id;
+  
+  if first.nlihc_id;
+
+  label
+    Parcel_owner_type = "Project owner type (majority of parcels)";
+
+  keep nlihc_id Parcel_owner_type; 
+
+  rename Parcel_owner_type=Proj_owner_type;
+
+run;
+
+data add_project;
+
+  merge
+    add_project (in=in1)
+    Project_yb
+    Project_owner_nodup;
+  by nlihc_id;
+  
+  if in1;
+  
+run;
+
 data Project;
 set PresCat.Project Add_Project;
 run;
@@ -356,8 +333,6 @@ proc freq data=Project;
 run;
 
 **** Compare with earlier version ****;
-
-libname comp 'D:\DCData\Libraries\PresCat\Data\Old';
 
 proc compare base=Prescat.project compare=Project listall maxprint=(40,32000);
   id nlihc_id;

@@ -26,8 +26,7 @@ data parcel_old;
 
 data Building_geocode;
 
-  set 
-   Prescat.Building_geocode;
+  set Building_geocode;
   by Nlihc_id;
 
 run;

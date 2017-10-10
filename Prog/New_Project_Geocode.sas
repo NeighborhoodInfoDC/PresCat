@@ -17,8 +17,9 @@
 
 ** Define libraries **;
 %DCData_lib( PresCat )
+%DCData_lib( MAR )
 
-%let input_file_pre = Buildings_for_geocoding_2016-08-01;
+%let input_file_pre = Buildings_for_geocoding_2017-05-25;
 
 %let MAX_PROJ_ADDRE = 3;   /** Maximum number of addresses to include in Proj_addre field in PresCat.Project_geo **/
 
@@ -26,7 +27,7 @@
 
 ** Main sheet info **;
 
-filename fimport "&_dcdata_r_path\PresCat\Raw\New\&input_file_pre._main.csv" lrecl=2000;
+filename fimport "&_dcdata_r_path\PresCat\Raw\&input_file_pre._main.csv" lrecl=2000;
 
 proc import out=New_Proj_Geocode
     datafile=fimport
@@ -58,9 +59,10 @@ data NLIHC_ID;
 	if lastid = 0 then delete;
 	run;
 
-proc sort data=nlihc_id;
+	****unnecessary if we have already dropped all other observations except the last. Test without this proc*;
+/*proc sort data=nlihc_id;
 	by nlihc_num;
-	run;
+	run;*/
 
 proc sort data = New_Proj_Geocode;
 	by proj_name;
@@ -72,10 +74,10 @@ data New_Proj_Geocode;
 	firstproj = first.proj_name;
 	run;
 
-
+*** Current format of nlihc_id is $16. Test with the new format***;
 data New_Proj_Geocode;
   retain proj_name nlihc_id;
-  format nlihc_id $8.;
+  format nlihc_id $16.;
 	set Nlihc_id New_Proj_Geocode;
 	  retain nlihc_hold;
 	  if nlihc_num > nlihc_hold then nlihc_hold = nlihc_num;
@@ -94,11 +96,11 @@ data New_Proj_Geocode;
 
   ** MAR address info sheet **;
 
-filename fimport "&_dcdata_r_path\PresCat\Raw\New\&input_file_pre._mar_address.csv" lrecl=2000;
+/*filename fimport "&_dcdata_r_path\PresCat\Raw\&input_file_pre._mar_address.csv" lrecl=2000;
 
 data WORK.MAR_ADDRESS    ;
 %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
-infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+/*infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
 informat ADDRESS_ID best32. ;
 informat STATUS $6. ;
 informat FULLADDRESS $19. ;
@@ -240,58 +242,75 @@ ADDRESS_ID
                    CONFIDENCELEVEL $
        ;
        if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
-       run;
+       /*run;
 
 filename fimport clear;
-
+*/
 proc sort data=New_Proj_Geocode;
   by marid;
   
-proc sort data=Mar_address;
-  by address_id;
+/*proc sort data=Mar_address;
+  by address_id;*/
+
+
+options spool;
+
+%DC_mar_geocode(
+  data = New_Proj_Geocode,
+  staddr = bldg_addre,
+  zip = bldg_zip,
+  out = New_Proj_Geocode,
+  geo_match = Y,
+  debug = N,
+  mprint = Y
+);
 
 **Merge project info and address info for new projects**;
 
+  *****Geographies are not showing up in the project_geocode file;
+
 data DC_info_geocode_mar;
 
-  merge New_Proj_Geocode (rename=(marid=address_id) in=in1) Mar_address /*Mar_intersection (rename=(marid=address_id))*/;
-  by address_id;
-  
-  if in1;
+ /* if in1;*/
   
   format _all_ ;
   informat _all_ ;
   
+    ** Image url **;
+  
+  length Image_url $ 255;
+
+  format Image_url $ 255.;
   
   ** Standard geos **;
   
   length Ward2012 $ 1;
   
-  Ward2012 = substr( Ward_2012, 6, 1 );
+  *Ward2012 = substr( Ward_2012, 6, 1 );
   
   format Ward2012 $ward12a.;
   
   length Anc2012 $ 2;
   
-  Anc2012 = substr( Anc_2012, 5, 2 );
+  *Anc2012 = substr( Anc_2012, 5, 2 );
   
   format Anc2012 $anc12a.;
   
   length Psa2012 $ 3;
   
-  Psa2012 = substr( Psa, 21, 3 ); 
+  *Psa2012 = substr( Psa, 21, 3 ); 
   
   format Psa2012 $psa12a.;
   
   length Geo2010 $ 11;
   
-  if Census_tract ~= . then Geo2010 = "11001" || put( Census_tract, z6. );
+  *if Census_tract ~= . then Geo2010 = "11001" || put( Census_tract, z6. );
   
   format Geo2010 $geo10a.;
   
   length Cluster_tr2000 $ 2 Cluster_tr2000_name $ 80;
   
-  if Cluster_ ~= "" then Cluster_tr2000 = put( 1 * substr( Cluster_, 9, 2 ), z2. );
+  *if Cluster_ ~= "" then Cluster_tr2000 = put( 1 * substr( Cluster_, 9, 2 ), z2. );
   
   format Cluster_tr2000 $clus00a.;
   
@@ -306,16 +325,9 @@ data DC_info_geocode_mar;
   
   Cluster_tr2000_name = put( Cluster_tr2000, $clus00b. );
   
-  ** Image url **
-  
-  length Image_url $ 255;
-  
-  if imagename ~= "" and imagename ~=: "No_Image_Available" then 
-    Image_url = trim( imageurl ) || "/" || trim( left( imagedir ) ) || "/" || imagename;
-    
-  rename Streetviewurl=Streetview_url;
-  
   ** Reformat addresses **;
+
+  set New_Proj_Geocode /*(rename=(marid=address_id) in=in1) /*Mar_address Mar_intersection (rename=(marid=address_id))*/;
   
   %address_clean( MAR_MATCHADDRESS, MAR_rMATCHADDRESS );
   
@@ -336,7 +348,7 @@ data
           Proj_addre Proj_zip Proj_image_url Proj_Streetview_url Bldg_count)
   work.Building_geocode_a
     (label="Preservation Catalog, Building-level geocoding info"
-     keep=nlihc_id Proj_Name &geo_vars address_id Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre Zip
+     keep=nlihc_id Proj_Name &geo_vars address_id Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre zip
           image_url Streetview_url ssl_std
      rename=(address_id=Bldg_address_id Zip=Bldg_zip image_url=Bldg_image_url Streetview_url=Bldg_streetview_url
              ssl_std=Ssl));
