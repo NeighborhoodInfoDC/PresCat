@@ -82,12 +82,12 @@ data New_Proj_Geocode;
 	  retain nlihc_hold;
 	  if nlihc_num > nlihc_hold then nlihc_hold = nlihc_num;
 	  select (firstproj);
-	when (1) do;
-	nlihc_hold = nlihc_hold + 1;
- 	end;
-		otherwise
-		nlihc_hold = nlihc_hold;
-		end;
+	    when (1) do;
+	      nlihc_hold = nlihc_hold + 1;
+ 	    end;
+		  otherwise
+		    nlihc_hold = nlihc_hold;
+		  end;
 	  if proj_name = '' then delete;
 	  drop_nlihc = 'NL00';
 	  nlihc_id = cats (drop_nlihc, nlihc_hold);
@@ -248,7 +248,8 @@ filename fimport clear;
 */
 proc sort data=New_Proj_Geocode;
   by marid;
-  
+run;
+ 
 /*proc sort data=Mar_address;
   by address_id;*/
 
@@ -316,6 +317,12 @@ data DC_info_geocode_mar;
   
   length Zip $ 5;
   
+  ** Reformat addresses **;
+
+  set New_Proj_Geocode /*(rename=(marid=address_id) in=in1) /*Mar_address Mar_intersection (rename=(marid=address_id))*/;
+  
+  %address_clean( MAR_MATCHADDRESS, MAR_rMATCHADDRESS );
+  
   if not( missing( MAR_ZIPCODE ) ) then Zip = put( MAR_ZIPCODE, z5.0 );
   else Zip = put( Bldg_zip, z5.0 );
   
@@ -325,17 +332,11 @@ data DC_info_geocode_mar;
   
   Cluster_tr2000_name = put( Cluster_tr2000, $clus00b. );
   
-  ** Reformat addresses **;
-
-  set New_Proj_Geocode /*(rename=(marid=address_id) in=in1) /*Mar_address Mar_intersection (rename=(marid=address_id))*/;
-  
-  %address_clean( MAR_MATCHADDRESS, MAR_rMATCHADDRESS );
-  
 run;
 
 proc sort data=DC_info_geocode_mar;
   by nlihc_id MAR_rMATCHADDRESS;
-  
+run;
 
 ** Create project and building geocode data sets for new projects **;
 
@@ -502,15 +503,13 @@ title2;
 
 data Project_geocode;
 	set Project Project_geocode_a;
+  by nlihc_id;
 	run;
 
 data Building_geocode;
 	set Building Building_geocode_a;
+  by nlihc_id Bldg_addre;
 	run;
-
-proc sort data=building_geocode;
- by nlihc_id Bldg_addre;
- run;
 
 title2 '********************************************************************************************';
 title3 '** 3/ Check for changes in the new Project geocode file that is not related to the new projects';
@@ -550,63 +549,32 @@ run;
 
 title2;
 
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Building_geocode,
+  out=Building_geocode,
+  outlib=PresCat,
+  label="Preservation Catalog, Building-level geocoding info",
+  sortby=Nlihc_id Bldg_addre,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(Add new projects.),
+  /** File info parameters **/
+  printobs=10
+)
 
-** Macro Register_metadata - Start Definition **;
-
-%macro Register_metadata( revisions= );
-
-  %if &_remote_batch_submit %then %do;
-  
-    ** Create permanent data sets **;
-  
-    proc sort 
-     data=Project_geocode 
-     out=PresCat.Project_geocode (label="Preservation Catalog, Project-level geocoding info");
-     by nlihc_id;
-     run;
-
-    proc sort 
-     data=Building_geocode 
-     out=PresCat.Project_geocode (label="Preservation Catalog, Building-level geocoding info");
-     by nlihc_id Bldg_addre;
-     run;
-
-    %File_info( data=&outlib..Project_geocode, freqvars=Ward2012 Bldg_count )
-    %File_info( data=&outlib..Building_geocode, freqvars=Ward2012 )
-
-    ** Register metadata **;
-    
-    %Dc_update_meta_file(
-      ds_lib=PresCat,
-      ds_name=Building_geocode,
-      creator_process=DC_info_geocode.sas,
-      restrictions=None,
-      revisions=%str(&revisions)
-    )
-    
-    %Dc_update_meta_file(
-      ds_lib=PresCat,
-      ds_name=Project_geocode,
-      creator_process=DC_info_geocode.sas,
-      restrictions=None,
-      revisions=%str(&revisions)
-    )
-    
-  %end;  
-  %else %do;
-  
-    %warn_mput( msg=Not final batch submit. Files will not be registered with metadata system. )
-  
-    %File_info( data=Project_geocode, freqvars=Ward2012 Bldg_count )
-    %File_info( data=Building_geocode, freqvars=Ward2012 )
-
-  %end;
-
-%mend Register_metadata;
-
-** End Macro Definition **;
-
-
-%Register_metadata( revisions=%str(New file.) )
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Project_geocode,
+  out=Project_geocode,
+  outlib=PresCat,
+  label="Preservation Catalog, Project-level geocoding info",
+  sortby=Nlihc_id,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(Add new projects.),
+  /** File info parameters **/
+  printobs=10
+)
 
 run;
