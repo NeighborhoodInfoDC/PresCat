@@ -463,6 +463,19 @@ run;
   archive=Y
 )
 
+** Create file with list of new NLIHC_IDs **;
+
+proc sql;
+
+   create table New_nlihc_id as
+   select nlihc_id, proj_name
+   from project_geocode
+   where nlihc_id not in (select distinct nlihc_id from prescat.project)
+   ;
+
+quit;
+
+
 title2 '********************************************************************************************';
 title3 '** 3/ Check for changes in the new Project geocode file that is not related to the new projects';
 
