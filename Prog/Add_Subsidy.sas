@@ -35,8 +35,7 @@ informat Fair_Market_Rent_Ratio $40. ;
 informat Subsidy_Info_Source_ID $40. ;
 informat Subsidy_Info_Source $40. ;
 informat Subsidy_Info_Source_Date mmddyy10. ;
-informat Update_Date_Time DATETIME16. ;
-informat Program $66. ;
+informat Program $32. ;
 informat Compliance_end_date mmddyy10. ;
 informat Previous_Affordability_End mmddyy10. ;
 informat Agency $80. ;
@@ -50,7 +49,6 @@ format Fair_Market_Rent_Ratio $40. ;
 format Subsidy_Info_Source_ID $40. ;
 format Subsidy_Info_Source $40. ;
 format Subsidy_Info_Source_Date 8. ;
-format Update_Date_Time DATETIME16. ;
 format Program $progfull66. ;
 format Compliance_end_date mmddyy10. ;
 format Previous_Affordability_End mmddyy10. ;
@@ -67,7 +65,6 @@ Fair_Market_Rent_Ratio $
 Subsidy_Info_Source_ID $
 Subsidy_Info_Source $
 Subsidy_Info_Source_Date
-Update_Date_Time
 Program $
 Compliance_end_date 
 Previous_Affordability_End 
@@ -105,6 +102,9 @@ data Subsidy_a;
   by address_id;
   if _drop = 1 then delete;
   drop _drop address_id;
+  format _all_ ;
+  informat _all_ ;
+
 run;
 
 proc sort data = Subsidy_a;
@@ -123,6 +123,8 @@ data Subsidy_a;
   
   ** Create Active Subsidy Indicator **;
 
+  length Subsidy_active 3;
+
   if Date_Affordability_Ended = . then Subsidy_Active = 1;
   else Subsidy_Active = 0;
 
@@ -133,26 +135,35 @@ data Subsidy_a;
 
   Update_dtm =datetime();
 
+  rename current_affordability_start=POA_start affordability_end=POA_end 
+								Fair_Market_Rent_Ratio=rent_to_fmr_description Compliance_End_Date=compl_end 
+								Date_Affordability_Ended=POA_End_actual Previous_affordability_end=POA_end_prev;
 run;
 
 data Subsidy;
 
-  set  prescat.subsidy Subsidy_a (rename=(current_affordability_start=POA_start affordability_end=POA_end 
-								Fair_Market_Rent_Ratio=rent_to_fmr_description Compliance_End_Date=compl_end 
-								Date_Affordability_Ended=POA_End_actual Previous_affordability_end=POA_end_prev));
+  set  prescat.subsidy Subsidy_a;
+  by nlihc_id subsidy_id;
 
   ** Remove extraneous formats and informats **;
 
   format units_assist rent_to_fmr_description Subsidy_Info_Source_ID Agency ;
-  informat _all_ ;
 
 run;
 
-proc sort data=Subsidy;
-  by nlihc_id subsidy_id;
-run;
-
-%File_info( data=Subsidy )
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Subsidy,
+  out=Subsidy,
+  outlib=PresCat,
+  label="Preservation Catalog, Project subsidies",
+  sortby=Nlihc_id Subsidy_id,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(Add new projects from &input_file_pre._*.csv.),
+  /** File info parameters **/
+  printobs=0
+)
 
 ** Check against original subsidy file to ensure only new subsidy files have changed**;
 

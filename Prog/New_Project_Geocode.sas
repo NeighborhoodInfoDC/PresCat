@@ -21,8 +21,6 @@
 
 %let input_file_pre = Buildings_for_geocoding_2017-05-25;
 
-%let MAX_PROJ_ADDRE = 3;   /** Maximum number of addresses to include in Proj_addre field in PresCat.Project_geo **/
-
 ** Import geocoded project data **;
 
 ** Main sheet info **;
@@ -72,6 +70,8 @@ data New_Proj_Geocode;
   set New_Proj_Geocode;
 	by proj_name;
 	firstproj = first.proj_name;
+  format _all_ ;
+  informat _all_ ;
 	run;
 
 *** Current format of nlihc_id is $16. Test with the new format***;
@@ -388,6 +388,7 @@ data
     Bldg_lat = "Building latitude";
   
   format Ward2012x $ward12a.;
+  format nlihc_id ;
   
   rename Ward2012x = Ward2012;
   drop Ward2012;
@@ -450,14 +451,14 @@ run;
   sortby=Nlihc_id Bldg_addre,
   archive=Y,
   /** Metadata parameters **/
-  revisions=%str(Add new projects.),
+  revisions=%str(Add new projects from &input_file_pre._*.csv.),
   /** File info parameters **/
   printobs=10
 )
 
 %Create_project_geocode(
   data=Building_geocode, 
-  revisions=%str(Add new projects.),
+  revisions=%str(Add new projects from &input_file_pre._*.csv.),
   compare=N,
   archive=Y
 )

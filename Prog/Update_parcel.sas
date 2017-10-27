@@ -23,7 +23,7 @@
 %Create_parcel( 
   data=Building_geocode, 
   out=Parcel, 
-  revisions=%str(Add new projects.),
+  revisions=%str(Add new projects from &input_file_pre._*.csv.),
   compare=Y,
   archive=Y 
 )
