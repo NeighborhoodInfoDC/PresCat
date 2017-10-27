@@ -32,7 +32,8 @@ proc format library=PresCat;
     "3" = "Recent Failing REAC Score"
     "4" = "More Info Needed"
     "5" = "Other Subsidized Property"
-    "6" = "Lost Rental";
+    "6" = "Lost Rental"
+    "7" = "Replaced";
   
   value $Categrn
     "1" = "1 - At-Risk or Flagged for Follow-up"
@@ -40,7 +41,8 @@ proc format library=PresCat;
     "3" = "3 - Recent Failing REAC Score"
     "4" = "4 - More Info Needed"
     "5" = "5 - Other Subsidized Property"
-    "6" = "6 - Lost Rental";
+    "6" = "6 - Lost Rental"
+    "7" = "7 - Replaced";
   
   value $Infosrc
     "HUD/MFA" = "HUD/Multifamily Assistance and Section 8 Contracts"
@@ -79,9 +81,10 @@ proc format library=PresCat;
   ;
   
   value $rptype
-    "SALE" = "Property sale"
-    "FCLNOT" = "Foreclosure notice"
-    "FCLOUT" = "Foreclosure outcome";
+    "OTR/SALE" = "OTR: Property sale"
+    "ROD/FCLNOT" = "ROD: Foreclosure notice"
+    "NIDC/FCLOUT" = "NIDC: Foreclosure outcome"
+    "DHCD/RCASD" = "DHCD: RCASD notice";
   
   value $ownmgrtype
     "LD" = "Limited dividend"
@@ -112,6 +115,9 @@ proc format library=PresCat;
     '202-DL-E74' = '202/811'
     '202-DL-EH' = '202/811'
     '202/811-CA' = '202/811'
+	'S8-MR' = 'PB8'
+	'PBV' = 'PBV'
+	'HOPEVI' = 'HOPE VI'
 
     /***
     '207/223-PR' = 'OTHER'
@@ -252,10 +258,18 @@ proc format library=PresCat;
     'CDBG' = 'CDBG'
     'DC-HPTF' = 'DC HPTF'
     'HOME' = 'HOME'
-    'LIHTC' = 'LIHTC'
+
+    'LIHTC',
+    'LIHTC/UNKWN', 
+    'LIHTC/4PCT', 
+    'LIHTC/9PCT', 
+    'LIHTC/4+9PCT', 
+    'LIHTC/TCEP' = 'LIHTC'
+    
     'MCKINNEY' = 'MCKINNEY'
     'PUBHSNG' = 'PUBHSNG'
     'TEBOND' = 'TEBOND'
+	'FHLB' = 'FHLB'
     other = ' ';
 
   value $progfull
@@ -275,6 +289,8 @@ proc format library=PresCat;
     'PRAC/202/811' = 'Sec 202/811 project rental assistance contract'
     'S8-NC' = 'Sec 8 new construction'
     'S8-SR' = 'Sec 8 substantial rehabilitation'
+	'S8-MR' = 'Sec 8 moderate rehabilitation'
+	'PBV' = 'Project-based vouchers'
     '202-DL-E74' = 'Sec 202 direct loan/elderly/pre-1974'
     '202-DL-EH' = 'Sec 202/8 direct loan/elderly-handicapped'
     '202/811-CA' = 'Sec 202/811 capital advance'
@@ -392,15 +408,21 @@ proc format library=PresCat;
     "908NTDH" = "Sec 908 National Defense Housing"
     "TX1002LD" = "Title X 1002 Land Development"
     "TXIGRPPR" = "Title XI Group Practice"
+    'LIHTC/UNKWN' = 'Low income housing tax credit: unknown pct'
+    'LIHTC/4PCT' = 'Low income housing tax credit 4%'
+    'LIHTC/9PCT' = 'Low income housing tax credit 9%'
+    'LIHTC/4+9PCT' = 'Low income housing tax credit 4+9%'
+    'LIHTC/TCEP' = 'Low income housing tax credit: TCEP only'
 
     /** Other **/
     'CDBG' = 'Community development block grant'
     'DC-HPTF' = 'DC housing production trust fund'
     'HOME' = 'HOME'
-    'LIHTC' = 'Low income housing tax credit'
     'MCKINNEY' = 'McKinney Vento Act loan'
     'PUBHSNG' = 'Public housing'
-    'TEBOND' = 'Tax exempt bond';
+    'TEBOND' = 'Tax exempt bond'
+	'HOPEVI' = 'HOPE VI'
+	'FHLB' = 'Federal Home Loan Bank';
 
   value $progshrt
     '202/8-NC' = 'Sec 202 NC/SR'
@@ -419,6 +441,8 @@ proc format library=PresCat;
     'PRAC/202/811' = 'Sec 202/811 PRAC'
     'S8-NC' = 'Sec 8 NC/SR'
     'S8-SR' = 'Sec 8 NC/SR'
+	'S8-MR' = 'Sec 8 MR'
+	'PBV' = 'PBV' 
     '202-DL-E74' = 'Sec 202 direct loan pre-1974'
     '202-DL-EH' = 'Sec 202/8 direct loan'
     '202/811-CA' = 'Sec 202/811 capital advance'
@@ -444,10 +468,17 @@ proc format library=PresCat;
     'CDBG' = 'CDBG'
     'DC-HPTF' = 'DC HPTF'
     'HOME' = 'HOME'
-    'LIHTC' = 'LIHTC'
+    'LIHTC' = 'LIHTC (old program code)'
+    'LIHTC/UNKWN' = 'LIHTC unknown pct'
+    'LIHTC/4PCT' = 'LIHTC 4%'
+    'LIHTC/9PCT' = 'LIHTC 9%'
+    'LIHTC/4+9PCT' = 'LIHTC 4+9%'
+    'LIHTC/TCEP' = 'LIHTC TCEP only'
     'MCKINNEY' = 'McKinney Vento'
     'PUBHSNG' = 'Public housing'
-    'TEBOND' = 'Tax exempt bond';
+    'TEBOND' = 'Tax exempt bond'
+	'HOPEVI' = 'HOPE VI'
+	'FHLB' = 'FHLB';
 
   value $portfolio
     '202/811' = 'Section 202/811'
@@ -467,8 +498,18 @@ proc format library=PresCat;
     'PB8' = 'Project-based section 8'
     'PRAC' = 'Project rental assistance contract'
     'PUBHSNG' = 'Public housing'
-    'TEBOND' = 'Tax exempt bond';
+    'TEBOND' = 'Tax exempt bond'
+	'PBV' = 'Project-based vouchers'
+	'HOPEVI' = 'HOPE VI'
+	'FHLB' = 'Federal Home Loan Bank';
 
+  value lihtc_credit2prog
+    . = 'LIHTC/UNKWN'
+    1 = 'LIHTC/4PCT'
+    2 = 'LIHTC/9PCT'
+    3 = 'LIHTC/4+9PCT'
+    4 = 'LIHTC/TCEP';
+ 
 run;
 
 proc catalog catalog=PresCat.Formats;
@@ -484,6 +525,7 @@ proc catalog catalog=PresCat.Formats;
   modify progfull (desc="Catalog program full description") / entrytype=formatc;
   modify progshrt (desc="Catalog program short description") / entrytype=formatc;
   modify portfolio (desc="Catalog subsidy portfolio description") / entrytype=formatc;
+  modify lihtc_credit2prog (desc="HUD LIHTC credit code to program code") / entrytype=format;
   contents;
 quit;
 

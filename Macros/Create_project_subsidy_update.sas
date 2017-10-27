@@ -17,7 +17,7 @@
 
 /** Macro Create_project_subsidy_update - Start Definition **/
 
-%macro Create_project_subsidy_update( data=PresCat.Subsidy, out=Project_subsidy_update );
+%macro Create_project_subsidy_update( data=PresCat.Subsidy, out=Project_subsidy_update, project_file=PresCat.Project );
 
   ** Get min/max assisted units by program **;
 
@@ -50,7 +50,7 @@
   
     merge
       _Project_subsidy_update_b
-      PresCat.Project (keep=nlihc_id proj_units_tot);
+      &project_file (keep=nlihc_id proj_units_tot);
     by nlihc_id;
     
     length Subsidized 3;
@@ -70,6 +70,15 @@
       Subsidy_Start_Last =.n;
       Subsidy_End_Last = .n;
     end;
+    
+    label
+      proj_units_assist_max = "Maximum active assisted housing units in project [derived from PresCat.Subsidy]"
+      proj_units_assist_min = "Minimum active assisted housing units in project [derived from PresCat.Subsidy]"
+      subsidized = "Project is subsidized [derived from PresCat.Subsidy]"
+      subsidy_end_first = "First active subsidy end date [derived from PresCat.Subsidy]"
+      subsidy_end_last = "Last active subsidy end date [derived from PresCat.Subsidy]"
+      subsidy_start_first = "First active subsidy start date [derived from PresCat.Subsidy]"
+      subsidy_start_last = "Last active subsidy start date [derived from PresCat.Subsidy]";
     
     format Subsidized dyesno.;
     

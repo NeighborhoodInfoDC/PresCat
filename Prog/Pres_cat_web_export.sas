@@ -82,7 +82,8 @@ data Subsidy_project;
     
     /** HUD project-based rental assistance **/
     when ( "PB8",
-           "PRAC" ) do;
+           "PRAC",
+           "PBV" ) do;
       if Subsidy_active then Hud_PBRA_Status = "C";
       else Hud_PBRA_Status = "F";
       Hud_PBRA_Year = year( POA_start );
@@ -310,6 +311,8 @@ data Parcel_bis;
   set PresCat.Parcel;
   
   if missing( Parcel_owner_date ) then Parcel_owner_date = .;
+  if missing( Parcel_x ) then Parcel_x = .;
+  if missing( Parcel_y ) then Parcel_y = .;
   
 run;
 
