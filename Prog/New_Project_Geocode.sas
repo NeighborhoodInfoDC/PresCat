@@ -343,13 +343,8 @@ run;
 %let geo_vars = Ward2012 Anc2012 Psa2012 Geo2010 Cluster_tr2000 Cluster_tr2000_name Zip;
 
 data 
-  work.Project_geocode_a 
-    (label="Preservation Catalog, Project-level geocoding info"
-     keep=nlihc_id Proj_Name &geo_vars Proj_address_id Proj_x Proj_y Proj_lat Proj_lon 
-          Proj_addre Proj_zip Proj_image_url Proj_Streetview_url Bldg_count)
   work.Building_geocode_a
-    (label="Preservation Catalog, Building-level geocoding info"
-     keep=nlihc_id Proj_Name &geo_vars address_id Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre zip
+    (keep=nlihc_id Proj_Name &geo_vars address_id Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre zip
           image_url Streetview_url ssl_std
      rename=(address_id=Bldg_address_id Zip=Bldg_zip image_url=Bldg_image_url Streetview_url=Bldg_streetview_url
              ssl_std=Ssl));
@@ -362,64 +357,15 @@ data
   Ward2012x = left( Ward2012 );
   
   length
-    Proj_addre Bldg_addre $ 160
-    Proj_zip $ 5
-    Proj_image_url Proj_streetview_url $ 255
     Ssl_std $ 17;
   
-  retain Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Proj_addre Proj_zip Proj_image_url Bldg_count;
-  
   Ssl_std = left( Ssl );
-  
-  if first.nlihc_id then do;
-    Bldg_count = 0;
-    Proj_address_id = .;
-    Proj_x = .;
-    Proj_y = .;
-    Proj_lat = .;
-    Proj_lon = .;
-    Proj_addre = "";
-    Proj_zip = "";
-    Proj_image_url = "";
-    Proj_streetview_url = "";
-  end;
-    
-  Bldg_count + 1;
   
   Bldg_x = MAR_XCOORD;
   Bldg_y = MAR_YCOORD;
   Bldg_lon = MAR_LONGITUDE;
   Bldg_lat = MAR_LATITUDE;
   Bldg_addre = MAR_rMATCHADDRESS;
-  
- output work.Building_geocode_a;
-  
-  if address_id > 0 and missing( Proj_address_id ) then Proj_address_id = address_id;
-  if Proj_zip = "" then Proj_zip = Zip;
-  
-  Proj_x = sum( Proj_x, MAR_XCOORD );
-  Proj_y = sum( Proj_y, MAR_YCOORD );
-  Proj_lat = sum( Proj_lat, MAR_LATITUDE );
-  Proj_lon = sum( Proj_lon, MAR_LONGITUDE );
-  
-  if image_url ~= "" and Proj_image_url = "" then Proj_image_url = image_url;
-
-  if Streetview_url ~= "" and Proj_streetview_url = "" then Proj_streetview_url = Streetview_url;
-
-  if Bldg_count = 1 then Proj_addre = MAR_rMATCHADDRESS;
-  else if Bldg_count <= &MAX_PROJ_ADDRE then Proj_addre = trim( Proj_addre ) || "; " || MAR_rMATCHADDRESS;
-  else if Bldg_count = %eval( &MAX_PROJ_ADDRE + 1 ) then Proj_addre = trim( Proj_addre ) || "; others";
-    
-  if last.nlihc_id then do;
-  
-    Proj_x = Proj_x / Bldg_count;
-    Proj_y = Proj_y / Bldg_count;
-    Proj_lat = Proj_lat / Bldg_count;
-    Proj_lon = Proj_lon / Bldg_count;
-    
-    output work.Project_geocode_a;
-
-  end;
   
   label
     Ward2012x = "Ward (2012)"
@@ -435,21 +381,11 @@ data
     Cluster_tr2000_name = "Neighborhood cluster names (tract-based, 2000)"
     zip = "ZIP code (5 digit)"
     image_url = "OCTO property image URL"
-    Proj_addre = "Project address(es)"
-    Proj_address_id = "Project MAR address ID"
-    Proj_image_url = "OCTO property image URL"
-    Proj_lat = "Project latitude"
-    Proj_lon = "Project longitude"
-    Proj_streetview_url = "Google Street View URL"
-    Proj_x = "Project longitude (MD State Plane Coord., NAD 1983 meters)"
-    Proj_y = "Project latitude (MD State Plane Coord., NAD 1983 meters)"
-    Proj_zip = "ZIP code (5 digit)"
     Bldg_addre = "Building address"
     Bldg_x = "Building longitude (MD State Plane Coord., NAD 1983 meters)"
     Bldg_y = "Building latitude (MD State Plane Coord., NAD 1983 meters)"
     Bldg_lon = "Building longitude"
-    Bldg_lat = "Building latitude"
-    Bldg_count = "Number of buildings for project";
+    Bldg_lat = "Building latitude";
   
   format Ward2012x $ward12a.;
   
@@ -458,7 +394,6 @@ data
   
 run;
 
-%File_info( data=Project_geocode_a, printobs=100, stats=, contents=n )
 %File_info( data=Building_geocode_a, printobs=100, stats=, contents=n )
 
 **remove projects from geocode datasets that are no longer in project dataset**;
@@ -501,15 +436,31 @@ title2;
 
 ** merge new geocode files onto existing geocode files**;
 
-data Project_geocode;
-	set Project Project_geocode_a;
-  by nlihc_id;
-	run;
-
 data Building_geocode;
 	set Building Building_geocode_a;
   by nlihc_id Bldg_addre;
-	run;
+run;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Building_geocode,
+  out=Building_geocode,
+  outlib=PresCat,
+  label="Preservation Catalog, Building-level geocoding info",
+  sortby=Nlihc_id Bldg_addre,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(Add new projects.),
+  /** File info parameters **/
+  printobs=10
+)
+
+%Create_project_geocode(
+  data=Building_geocode, 
+  revisions=%str(Add new projects.),
+  compare=N,
+  archive=Y
+)
 
 title2 '********************************************************************************************';
 title3 '** 3/ Check for changes in the new Project geocode file that is not related to the new projects';
@@ -548,33 +499,3 @@ title3 '** Building_geocode: Check for duplicate addresses in different projects
 run;
 
 title2;
-
-%Finalize_data_set( 
-  /** Finalize data set parameters **/
-  data=Building_geocode,
-  out=Building_geocode,
-  outlib=PresCat,
-  label="Preservation Catalog, Building-level geocoding info",
-  sortby=Nlihc_id Bldg_addre,
-  archive=Y,
-  /** Metadata parameters **/
-  revisions=%str(Add new projects.),
-  /** File info parameters **/
-  printobs=10
-)
-
-%Finalize_data_set( 
-  /** Finalize data set parameters **/
-  data=Project_geocode,
-  out=Project_geocode,
-  outlib=PresCat,
-  label="Preservation Catalog, Project-level geocoding info",
-  sortby=Nlihc_id,
-  archive=Y,
-  /** Metadata parameters **/
-  revisions=%str(Add new projects.),
-  /** File info parameters **/
-  printobs=10
-)
-
-run;
