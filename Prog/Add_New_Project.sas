@@ -18,6 +18,7 @@
 %DCData_lib( PresCat )
 %DCData_lib( RealProp )
 
+/******************* SEEMS LIKE UNNECESSARY CODE *******************************
 proc sort data=project_geocode;
 by proj_address_id;
 run;
@@ -36,6 +37,7 @@ data Project_Status;
 proc sort data=Project_Status out=Status;
 	by nlihc_id;
 	run;
+********************************************************************************/
 
 ** Create subsidy update data set **;
 
@@ -108,10 +110,19 @@ data Project_owner_nodup;
 
 run;
 
+** Total units from subsidy input file **;
+
+proc summary data=Subsidy_a;
+  by nlihc_id;
+  var Units_tot;
+  output out=Project_units_tot (drop=_type_ _freq_) max=;
+run;
+
 data Project_a /*(label="Preservation Catalog, projects update")*/;
 
   merge 
   New_nlihc_id (keep=nlihc_id in=isNew)
+  Project_units_tot (rename=(Units_tot=Proj_units_tot))
 	Project_geocode /*Status*/
 	Project_Subsidy_update /*(keep=Nlihc_id Proj_Units_Assist_: Subsidy_Start_: Subsidy_End_: Subsidized)*/
   Project_yb
@@ -261,8 +272,34 @@ proc compare base=Prescat.project compare=Project listall maxprint=(40,32000);
 run;
 
 
-*******************************************************************
-*******************************************************************
-***** NEED TO ADD CODE FOR UPDATING PRESCAT.PROJECT_CATEGORY ******
-*******************************************************************
-*******************************************************************;
+**** Update PresCat.Project_category ****;
+
+data Project_category;
+
+  set
+    PresCat.Project_category
+    Project_a (keep=nlihc_id proj_name category_code cat_at_risk cat_more_info cat_lost cat_replaced);
+  by nlihc_id;
+
+run;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Project_category,
+  out=Project_category,
+  outlib=PresCat,
+  label="Preservation Catalog, Project category",
+  sortby=Nlihc_id,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(Add new projects from &input_file_pre._*.csv.),
+  /** File info parameters **/
+  printobs=0,
+  freqvars=
+)
+
+**** Compare with earlier version ****;
+
+proc compare base=Prescat.project_category compare=Project_category listall maxprint=(40,32000);
+  id nlihc_id;
+run;

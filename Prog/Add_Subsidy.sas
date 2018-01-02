@@ -28,6 +28,7 @@ data WORK.NEW_PROJ_SUBS    ;
 %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
 infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
 informat MARID best32. ;
+informat Units_tot 8. ;
 informat Units_assist 8. ;
 informat Current_Affordability_Start mmddyy10. ;
 informat Affordability_End mmddyy10. ;
@@ -42,6 +43,7 @@ informat Agency $80. ;
 informat Portfolio $16. ;
 informat Date_Affordability_Ended mmddyy10. ;
 format MARID best12. ;
+format Units_tot 8. ;
 format Units_assist 8. ;
 format Current_Affordability_Start mmddyy10. ;
 format Affordability_End mmddyy10. ;
@@ -58,6 +60,7 @@ format Date_Affordability_Ended mmddyy10. ;
 
 input
 MARID
+Units_tot
 Units_assist
 Current_Affordability_Start
 Affordability_End
@@ -111,8 +114,8 @@ proc sort data = Subsidy_a;
 by nlihc_id;
 run;
 
-data Subsidy_a;
-  set Subsidy_a;
+data Subsidy_a2;
+  set Subsidy_a (where=(program~=""));
   by nlihc_id;
 
   ** Subsidy ID number **;
@@ -142,8 +145,8 @@ run;
 
 data Subsidy;
 
-  set  prescat.subsidy Subsidy_a;
-  by nlihc_id subsidy_id;
+  set  prescat.subsidy Subsidy_a2 (drop=Units_tot);
+  by nlihc_id subsidy_id;  
 
   ** Remove extraneous formats and informats **;
 
