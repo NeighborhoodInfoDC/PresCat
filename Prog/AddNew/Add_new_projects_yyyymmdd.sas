@@ -1,15 +1,15 @@
 /**************************************************************************
- Program:  Add_new_projects_test.sas
+ Program:  Add_new_projects_yyyymmdd.sas
  Library:  PresCat
  Project:  NeighborhoodInfo DC
- Author:   P. Tatian
- Created:  02/17/18
- Version:  SAS 9.2
+ Author:   
+ Created:  
+ Version:  SAS 9.4
  Environment:  Local Windows session (desktop)
  
  Description:  Add new projects to Preservation Catalog. 
 
- TEST PROGRAM
+ 
 
  Modifications:
 **************************************************************************/
@@ -25,7 +25,7 @@
 
 
 %Add_new_projects(
-  input_file_pre = Buildings_for_geocoding_2017-05-25,
+  input_file_pre = ,
   streetalt_file = 
 )
 
