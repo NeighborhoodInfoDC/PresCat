@@ -18,6 +18,7 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 %DCData_lib( MAR )
+%DCData_lib( RealProp, local=n )
 
 %let input_file_pre = Buildings_for_geocoding_2017-05-25;
 
