@@ -41,9 +41,17 @@
     compare=Y,
     archive=Y 
   )
-
-
-
+  
+  ** Update PresCat.Subsidy **;
+  
+  %Add_new_projects_subsidy( 
+    input_file_pre=&input_file_pre
+  )
+  
+  ** Update PresCat.Project, PresCat.Project_category **;
+  
+  %Add_new_projects_project( )  
+  
 %mend Add_new_projects;
 
 /** End Macro Definition **/
