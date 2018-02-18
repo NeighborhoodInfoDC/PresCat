@@ -58,7 +58,7 @@
   
   ** Update PresCat.Real_property **;
   
-  %Update_real_property( Parcel=Parcel )
+  %Update_real_property( Parcel=Parcel, revisions=%str(Add new projects from &input_file_pre._*.csv.) )
   
 %mend Add_new_projects;
 

@@ -13,8 +13,13 @@
 **************************************************************************/
 
 %macro Update_real_property( 
-  Parcel = PresCat.Parcel  /** Preservation Catalog Parcel file **/  
+  Parcel = PresCat.Parcel,  /** Preservation Catalog Parcel file **/  
+  Revisions =               /** Metadata revisions description **/
   );
+
+  %local fcl_keep_vars;
+  
+  %if %length( &revisions ) = 0 %then %let revisions = %str(Update with latest &Parcel, ROD.Foreclosure, RealProp.Sales, and DHCD.Rcasd_* data.);
 
   ** Create format for selecting SSLs of Catalog properties **;
 
@@ -78,7 +83,7 @@
 
 
   ** Compile ROD foreclosure notice records **;
-
+  
   %let fcl_keep_vars = ssl filingdate ui_instrument documentno grantee grantor verified;
 
   data Foreclosure_notices;
@@ -254,14 +259,14 @@
 
 
   ** Finalize data set **;
-
+  
   %Finalize_data_set(
     data=Real_property,
     out=Real_property,
     outlib=PresCat,
     label="Preservation Catalog, Real property events",
     sortby=nlihc_id descending rp_date rp_type,
-    revisions=%str(Update with latest &Parcel, ROD.Foreclosure, RealProp.Sales, and DHCD.Rcasd_* data.),
+    revisions=%str(&revisions),
     archive=y,
     printobs=0,
     freqvars=rp_type 

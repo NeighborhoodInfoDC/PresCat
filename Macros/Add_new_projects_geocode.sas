@@ -22,6 +22,8 @@
   streetalt_file= /** File containing street name spelling corrections (if omitted, default file is used) **/
   );
   
+  %local geo_vars;
+  
   ** Import geocoded project data **;
 
   ** Main sheet info **;
