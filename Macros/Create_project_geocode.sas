@@ -125,7 +125,8 @@
       label="Preservation Catalog, Project-level geocoding info",
       sortby=nlihc_id,
       revisions=%str(&revisions),
-      archive=&archive 
+      archive=&archive,
+      printobs=0
     )
     
   %end;

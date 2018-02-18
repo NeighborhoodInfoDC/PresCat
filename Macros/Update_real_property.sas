@@ -263,6 +263,7 @@
     sortby=nlihc_id descending rp_date rp_type,
     revisions=%str(Update with latest &Parcel, ROD.Foreclosure, RealProp.Sales, and DHCD.Rcasd_* data.),
     archive=y,
+    printobs=0,
     freqvars=rp_type 
   )
 

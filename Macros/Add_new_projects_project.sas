@@ -11,7 +11,7 @@
  Catalog. 
 
  Macro updates:
-   PresCat.Proect
+   PresCat.Project
    PresCat.Project_category
 
  Modifications:

@@ -15,7 +15,11 @@
  Process updates the following data sets:
    PresCat.Buiding_geocode
    PresCat.Project_geocode
-   PresCat.
+   PresCat.Parcel
+   PresCat.Subsidy
+   PresCat.Project
+   PresCat.Project_category
+   PresCat.Real_property
 
  Modifications:
 **************************************************************************/
