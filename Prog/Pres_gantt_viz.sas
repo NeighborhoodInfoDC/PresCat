@@ -39,13 +39,16 @@ proc format;
     "232" = "Fin"
     "236" = "Fin"
     "542" = "Fin"
+    "HUDMORT" = "Fin"
     "CDBG" = "Oth"
     "DC HPTF" = "Hpt"
     "HOME" = "Oth"
+    "HOPE VI" = "Oth"
     "LIHTC" = "Ltc"
     "MCKINNEY" = "Oth"
     "OTHER" = "Oth"
     "PB8" = "Pb8"
+    "PBV" = "Oth"
     "PRAC" = "Oth"
     "PUBHSNG" = "Pha"
     "TEBOND" = "Oth";
@@ -113,7 +116,7 @@ data Subsidy_sum_a;
 
   merge
     Subsidy_sum (in=in1)
-    PresCat.Project (keep=nlihc_id Proj_name Proj_units_tot);
+    PresCat.Project_category_view (keep=nlihc_id Proj_name Proj_units_tot);
   by nlihc_id;
   
   if in1;
@@ -267,7 +270,7 @@ proc print data=Export_b (obs=100);
   id nlihc_id;
 run;
 
-filename fexport "L:\Libraries\PresCat\Prog\Pres_gantt_viz.csv" lrecl=2000;
+filename fexport "&_dcdata_default_path\PresCat\Prog\Pres_gantt_viz.csv" lrecl=2000;
 
 proc export data=Export_b
     outfile=fexport

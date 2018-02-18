@@ -56,7 +56,7 @@ data Monthly_rpt;
 
   length
     CATEGORY $ 40
-    NLIHC_ID $ 8
+    NLIHC_ID $ 16
     Subsidy_id 8
     Proj_Name $ 80
     PBCA 4

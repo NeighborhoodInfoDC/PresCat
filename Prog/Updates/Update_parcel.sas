@@ -19,6 +19,7 @@
 %DCData_lib( MAR, local=n )
 %DCData_lib( RealProp, local=n )
 
+%let revisions = %str(Update LIHTC projects with DHCD FOIA, 11-09-12.);
 
 data Building_geocode;
 
@@ -75,7 +76,7 @@ proc sort data=Parcel_a2;
   
 data Parcel (label="Preservation Catalog, Real property parcels");
 
-  length Nlihc_id $ 8 Ssl $ 17;
+  length Nlihc_id $ 16 Ssl $ 17;
   
   merge
     Parcel_a2 
@@ -116,13 +117,13 @@ run;
 
 ** Finalize data set **;
 
-%Finalize_dataset(
+%Finalize_data_set(
   data=Parcel,
   out=Parcel,
   outlib=PresCat,
   label="Preservation Catalog, Real property parcels",
   sortby=nlihc_id ssl,
-  revisions=%str(Update with latest PresCat.Building_geocode, RealProp.Parcel_base, and Mar.Address_ssl_xref.),
+  revisions=&revisions,
   archive=y,
   freqvars=parcel_type parcel_owner_type 
 )

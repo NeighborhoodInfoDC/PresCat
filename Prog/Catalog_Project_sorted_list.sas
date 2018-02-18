@@ -20,7 +20,7 @@ number of units.
 
 data Project;
 
-  set PresCat.Project (where=(status='A'));
+  set PresCat.Project_category_view (where=(status='A'));
   
   if 0 < Proj_Units_Tot < Proj_Units_Assist_Max then Proj_Units_Assist_Max = .;
   
@@ -32,7 +32,7 @@ run;
 
 %fdate()
 
-ods pdf file="D:\DCData\Libraries\PresCat\Prog\Project_sorted_list.pdf" style=Printer startpage=no
+ods pdf file="&_dcdata_default_path\PresCat\Prog\Catalog_project_sorted_list.pdf" style=Printer startpage=no
   notoc;
 ods listing close;
 
