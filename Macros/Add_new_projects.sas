@@ -52,6 +52,10 @@
   
   %Add_new_projects_project( )  
   
+  ** Update PresCat.Real_property **;
+  
+  %Update_real_property( Parcel=Parcel )
+  
 %mend Add_new_projects;
 
 /** End Macro Definition **/

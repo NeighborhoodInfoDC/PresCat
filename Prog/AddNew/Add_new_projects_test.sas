@@ -18,8 +18,10 @@
 
 ** Define libraries **;
 %DCData_lib( PresCat )
-%DCData_lib( MAR )
-%DCData_lib( RealProp )
+%DCData_lib( MAR, local=n )
+%DCData_lib( RealProp, local=n )
+%DCData_lib( ROD, local=n )
+%DCData_lib( DHCD, local=n )
 
 
 %Add_new_projects(
