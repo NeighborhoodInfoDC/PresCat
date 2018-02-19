@@ -17,12 +17,13 @@
 **************************************************************************/
 
 %macro Add_new_projects_subsidy( 
-  input_file_pre= /** First part of input file names **/ 
+  input_file_pre=, /** First part of input file names **/ 
+  input_path=  /** Location of input files **/
   );
   
   ** Import subsidy data **;
 
-  filename fimport "&_dcdata_r_path\PresCat\Raw\&input_file_pre._subsidy.csv" lrecl=2000;
+  filename fimport "&input_path\&input_file_pre._subsidy.csv" lrecl=2000;
 
   data WORK.NEW_PROJ_SUBS    ;
   %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
