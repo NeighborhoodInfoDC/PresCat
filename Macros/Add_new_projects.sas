@@ -25,7 +25,8 @@
 **************************************************************************/
 
 %macro Add_new_projects( 
-  input_file_pre=, /** First part of input file names **/ 
+  input_file_pre=, /** First part of input file names **/
+  input_path=&_dcdata_r_path\PresCat\Raw\AddNew,  /** Location of input files **/
   streetalt_file= /** File containing street name spelling corrections (if omitted, default file is used) **/
   );
   
@@ -33,6 +34,7 @@
   
   %Add_new_projects_geocode( 
     input_file_pre=&input_file_pre,
+    input_path=&input_path,
     streetalt_file=&streetalt_file
   )
   
@@ -49,7 +51,8 @@
   ** Update PresCat.Subsidy **;
   
   %Add_new_projects_subsidy( 
-    input_file_pre=&input_file_pre
+    input_file_pre=&input_file_pre,
+    input_path=&input_path
   )
   
   ** Update PresCat.Project, PresCat.Project_category **;

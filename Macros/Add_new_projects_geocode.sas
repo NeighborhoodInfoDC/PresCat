@@ -19,6 +19,7 @@
 
 %macro Add_new_projects_geocode( 
   input_file_pre=, /** First part of input file names **/ 
+  input_path=,  /** Location of input files **/
   streetalt_file= /** File containing street name spelling corrections (if omitted, default file is used) **/
   );
   
@@ -28,7 +29,7 @@
 
   ** Main sheet info **;
 
-  filename fimport "&_dcdata_r_path\PresCat\Raw\&input_file_pre._main.csv" lrecl=2000;
+  filename fimport "&input_path\&input_file_pre._main.csv" lrecl=2000;
 
   proc import out=New_Proj_Geocode
       datafile=fimport
