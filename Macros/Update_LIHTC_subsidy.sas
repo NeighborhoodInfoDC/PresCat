@@ -852,7 +852,7 @@ run;
         (where=(subsidy_active or intck( 'year', poa_end_actual, date() ) <= &NONMATCH_YEARS_CUTOFF));
   quit;
 
-  filename fexport "&_dcdata_r_path\PresCat\Raw\New\Update_&Update_file._main.csv" lrecl=2000;
+  filename fexport "&_dcdata_r_path\PresCat\Raw\AddNew\Update_&Update_file._main.csv" lrecl=2000;
 
   proc export data=Export_main
       outfile=fexport
@@ -878,7 +878,7 @@ run;
         (where=(subsidy_active or intck( 'year', poa_end_actual, date() ) <= &NONMATCH_YEARS_CUTOFF));
   quit;
 
-  filename fexport "&_dcdata_r_path\PresCat\Raw\New\Update_&Update_file._subsidy.csv" lrecl=2000;
+  filename fexport "&_dcdata_r_path\PresCat\Raw\AddNew\Update_&Update_file._subsidy.csv" lrecl=2000;
 
   proc export data=Export_subsidy
       outfile=fexport
