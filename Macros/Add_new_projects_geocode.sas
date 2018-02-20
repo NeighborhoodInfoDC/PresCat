@@ -31,7 +31,7 @@
 
   filename fimport "&input_path\&input_file_pre._main.csv" lrecl=2000;
 
-  proc import out=New_Proj_Geocode
+  proc import out=New_Proj_Geocode_main
       datafile=fimport
       dbms=csv replace;
     datarow=2;
@@ -41,6 +41,202 @@
   run;
 
   filename fimport clear;
+
+  ** MAR Address sheet info **;
+
+  filename fimport "&input_path\&input_file_pre._mar_address.csv" lrecl=2000;
+/*
+  proc import out=New_Proj_Geocode_mar_address
+      datafile=fimport
+      dbms=csv replace;
+    datarow=2;
+    getnames=yes;
+    guessingrows=500;
+
+  run;
+*/
+
+  data WORK.NEW_PROJ_GEOCODE_MAR_ADDRESS    ;
+    %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+    infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+       informat ADDRESS_ID best32. ;
+       informat MARID best32. ;
+       informat STATUS $6. ;
+       informat FULLADDRESS $36. ;
+       informat ADDRNUM best32. ;
+       informat ADDRNUMSUFFIX $1. ;
+       informat STNAME $21. ;
+       informat STREET_TYPE $6. ;
+       informat QUADRANT $2. ;
+       informat CITY $10. ;
+       informat STATE $2. ;
+       informat XCOORD best32. ;
+       informat YCOORD best32. ;
+       informat SSL $17. ;
+       informat ANC $6. ;
+       informat PSA $23. ;
+       informat WARD $6. ;
+       informat NBHD_ACTION $1. ;
+       informat CLUSTER_ $10. ;
+       informat POLDIST $34. ;
+       informat ROC $17. ;
+       informat CENSUS_TRACT best32. ;
+       informat VOTE_PRCNCT $12. ;
+       informat SMD $8. ;
+       informat ZIPCODE best32. ;
+       informat NATIONALGRID $18. ;
+       informat ROADWAYSEGID best32. ;
+       informat FOCUS_IMPROVEMENT_AREA $2. ;
+       informat HAS_ALIAS $1. ;
+       informat HAS_CONDO_UNIT $1. ;
+       informat HAS_RES_UNIT $1. ;
+       informat HAS_SSL $1. ;
+       informat LATITUDE best32. ;
+       informat LONGITUDE best32. ;
+       informat STREETVIEWURL $104. ;
+       informat RES_TYPE $11. ;
+       informat WARD_2002 $6. ;
+       informat WARD_2012 $6. ;
+       informat ANC_2002 $6. ;
+       informat ANC_2012 $6. ;
+       informat SMD_2002 $8. ;
+       informat SMD_2012 $8. ;
+       informat IMAGEURL $38. ;
+       informat IMAGEDIR $8. ;
+       informat IMAGENAME $22. ;
+       informat CONFIDENCELEVEL $1. ;
+       format ADDRESS_ID best12. ;
+       format MARID best12. ;
+       format STATUS $6. ;
+       format FULLADDRESS $36. ;
+       format ADDRNUM best12. ;
+       format ADDRNUMSUFFIX $1. ;
+       format STNAME $21. ;
+       format STREET_TYPE $6. ;
+       format QUADRANT $2. ;
+       format CITY $10. ;
+       format STATE $2. ;
+       format XCOORD best12. ;
+       format YCOORD best12. ;
+       format SSL $17. ;
+       format ANC $6. ;
+       format PSA $23. ;
+       format WARD $6. ;
+       format NBHD_ACTION $1. ;
+       format CLUSTER_ $10. ;
+       format POLDIST $34. ;
+       format ROC $17. ;
+       format CENSUS_TRACT best12. ;
+       format VOTE_PRCNCT $12. ;
+       format SMD $8. ;
+       format ZIPCODE best12. ;
+       format NATIONALGRID $18. ;
+       format ROADWAYSEGID best12. ;
+       format FOCUS_IMPROVEMENT_AREA $2. ;
+       format HAS_ALIAS $1. ;
+       format HAS_CONDO_UNIT $1. ;
+       format HAS_RES_UNIT $1. ;
+       format HAS_SSL $1. ;
+       format LATITUDE best12. ;
+       format LONGITUDE best12. ;
+       format STREETVIEWURL $104. ;
+       format RES_TYPE $11. ;
+       format WARD_2002 $6. ;
+       format WARD_2012 $6. ;
+       format ANC_2002 $6. ;
+       format ANC_2012 $6. ;
+       format SMD_2002 $8. ;
+       format SMD_2012 $8. ;
+       format IMAGEURL $38. ;
+       format IMAGEDIR $8. ;
+       format IMAGENAME $22. ;
+       format CONFIDENCELEVEL $1. ;
+    input
+                ADDRESS_ID
+                MARID
+                STATUS $
+                FULLADDRESS $
+                ADDRNUM
+                ADDRNUMSUFFIX $
+                STNAME $
+                STREET_TYPE $
+                QUADRANT $
+                CITY $
+                STATE $
+                XCOORD
+                YCOORD
+                SSL $
+                ANC $
+                PSA $
+                WARD $
+                NBHD_ACTION $
+                CLUSTER_ $
+                POLDIST $
+                ROC $
+                CENSUS_TRACT
+                VOTE_PRCNCT $
+                SMD $
+                ZIPCODE
+                NATIONALGRID $
+                ROADWAYSEGID
+                FOCUS_IMPROVEMENT_AREA $
+                HAS_ALIAS $
+                HAS_CONDO_UNIT $
+                HAS_RES_UNIT $
+                HAS_SSL $
+                LATITUDE
+                LONGITUDE
+                STREETVIEWURL $
+                RES_TYPE $
+                WARD_2002 $
+                WARD_2012 $
+                ANC_2002 $
+                ANC_2012 $
+                SMD_2002 $
+                SMD_2012 $
+                IMAGEURL $
+                IMAGEDIR $
+                IMAGENAME $
+                CONFIDENCELEVEL $
+    ;
+    if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+  run;
+
+  filename fimport clear;
+
+  ** Combine geocoding information **;
+
+  proc sort data=New_Proj_Geocode_main;
+    by marid;
+  run;
+
+  proc sort data=New_Proj_Geocode_mar_address;
+    by marid;
+  run;
+
+  data New_Proj_Geocode;
+
+    merge 
+      New_Proj_Geocode_main
+      New_Proj_Geocode_mar_address;
+    by marid;
+
+    length Streetview_url Image_url $ 255;
+
+    Streetview_url = left( STREETVIEWURL );
+
+    if imagename ~= "" and upcase( imagename ) ~=: "NO_IMAGE_AVAILABLE" then 
+      Image_url = trim( imageurl ) || "/" || trim( left( imagedir ) ) || "/" || imagename;
+
+    keep 
+      Proj_Name Bldg_City Bldg_ST Bldg_Zip Bldg_Addre
+      MAR_MATCHADDRESS MAR_XCOORD MAR_YCOORD MAR_LATITUDE
+      MAR_LONGITUDE MAR_WARD MAR_CENSUS_TRACT MAR_ZIPCODE MARID
+      MAR_ERROR MAR_SCORE MAR_SOURCEOPERATION MAR_IGNORE
+      SSL Ward_2012 ANC_2012 PSA Census_tract Cluster_
+      Streetview_url Image_url;
+
+  run;
 
   ** Create Unique NLIHC IDs for New Projects **;
 
@@ -88,11 +284,11 @@
           nlihc_hold = nlihc_hold;
         end;
       if proj_name = '' then delete;
-      drop_nlihc = 'NL00';
-      nlihc_id = cats (drop_nlihc, nlihc_hold);
-      drop drop_nlihc firstproj nlihc_num nlihc_sans nlihc_hold lastid _drop_constant;
+      nlihc_id = cats ('NL', put(nlihc_hold,z6.));
+      drop firstproj nlihc_num nlihc_sans nlihc_hold lastid _drop_constant;
   run;
 
+/***************
   ** MAR address info sheet **;
 
   proc sort data=New_Proj_Geocode;
@@ -111,60 +307,57 @@
     debug = N,
     mprint = Y
   );
+************/
 
   **Merge project info and address info for new projects**;
 
   data DC_info_geocode_mar;
-
   
+    set New_Proj_Geocode;
+    
     format _all_ ;
     informat _all_ ;
     
-      ** Image url **;
-    
-    length Image_url $ 255;
+    ** Reformat addresses **;
 
-    format Image_url $ 255.;
+    %address_clean( MAR_MATCHADDRESS, MAR_rMATCHADDRESS );
     
     ** Standard geos **;
     
     length Ward2012 $ 1;
     
-    *Ward2012 = substr( Ward_2012, 6, 1 );
+    Ward2012 = substr( Ward_2012, 6, 1 );
     
     format Ward2012 $ward12a.;
     
     length Anc2012 $ 2;
     
-    *Anc2012 = substr( Anc_2012, 5, 2 );
+    Anc2012 = substr( Anc_2012, 5, 2 );
     
     format Anc2012 $anc12a.;
     
     length Psa2012 $ 3;
     
-    *Psa2012 = substr( Psa, 21, 3 ); 
+    Psa2012 = substr( Psa, 21, 3 ); 
     
     format Psa2012 $psa12a.;
     
     length Geo2010 $ 11;
     
-    *if Census_tract ~= . then Geo2010 = "11001" || put( Census_tract, z6. );
+    if Census_tract ~= . then Geo2010 = "11001" || put( Census_tract, z6. );
     
     format Geo2010 $geo10a.;
+
+    ** Note: This isn't technically the right way to create the 2000 clusters, 
+    **       but we will soon switch to new clusters so this will be obsolete; 
     
     length Cluster_tr2000 $ 2 Cluster_tr2000_name $ 80;
-    
-    *if Cluster_ ~= "" then Cluster_tr2000 = put( 1 * substr( Cluster_, 9, 2 ), z2. );
+        
+    if Cluster_ ~= "" then Cluster_tr2000 = put( 1 * substr( Cluster_, 9, 2 ), z2. );
     
     format Cluster_tr2000 $clus00a.;
     
     length Zip $ 5;
-    
-    ** Reformat addresses **;
-
-    set New_Proj_Geocode;
-    
-    %address_clean( MAR_MATCHADDRESS, MAR_rMATCHADDRESS );
     
     if not( missing( MAR_ZIPCODE ) ) then Zip = put( MAR_ZIPCODE, z5.0 );
     else Zip = put( Bldg_zip, z5.0 );
@@ -174,6 +367,8 @@
     ** Cluster names **;
     
     Cluster_tr2000_name = put( Cluster_tr2000, $clus00b. );
+
+    drop Ward_2012 ANC_2012 PSA Census_tract Cluster_;
     
   run;
 
@@ -187,9 +382,9 @@
 
   data 
     work.Building_geocode_a
-      (keep=nlihc_id Proj_Name &geo_vars address_id Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre zip
+      (keep=nlihc_id Proj_Name &geo_vars marid Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre zip
             image_url Streetview_url ssl_std
-       rename=(address_id=Bldg_address_id Zip=Bldg_zip image_url=Bldg_image_url Streetview_url=Bldg_streetview_url
+       rename=(marid=Bldg_address_id Zip=Bldg_zip image_url=Bldg_image_url Streetview_url=Bldg_streetview_url
                ssl_std=Ssl));
       
     set DC_info_geocode_mar (drop=bldg_addre);
@@ -215,7 +410,7 @@
       Ssl_std = "Property identification number (square/suffix/lot)"
       Proj_Name = "Project name"
       NLIHC_ID = "Preservation Catalog project ID"
-      address_id = "MAR address ID"
+      marid = "MAR address ID"
       streetview_url = "Google Street View URL"
       Anc2012 = "Advisory Neighborhood Commission (2012)"
       Psa2012 = "Police Service Area (2012)"
