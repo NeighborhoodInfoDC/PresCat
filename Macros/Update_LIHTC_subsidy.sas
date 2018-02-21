@@ -153,7 +153,7 @@
       Subsidy_Active Program rent_to_FMR_description 
       Subsidy_info_source_property
       &Subsidy_tech_vars &Subsidy_missing_info_vars &Subsidy_dupcheck_id_vars
-      &Project_address &Project_zip;
+      &Project_address &Project_zip &Proj_units_tot;
 
   run;
 
@@ -209,7 +209,7 @@
   ** Apply update
   ** Subsidy_target_update_a = Initial application of LIHTC update to Catalog subsidy records;
 
-  data Subsidy_target_update_a (drop=_POA_end_hold) Subsidy_update_nomatch_0 (drop=_POA_end_hold Subsidy_id);
+  data Subsidy_target_update_a (drop=_POA_end_hold &Proj_units_tot) Subsidy_update_nomatch_0 (drop=_POA_end_hold Subsidy_id);
 
     update 
       Subsidy_target 
@@ -217,6 +217,7 @@
          in=in1)
       Subsidy_update_recs 
         (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars Subsidy_Info_Source_ID
+              &Proj_units_tot
          where=(not(missing(Subsidy_Info_Source_ID)))
          in=in2);
     by Subsidy_Info_Source_ID;
@@ -847,12 +848,12 @@ run;
   proc sql noprint;
     create table Export_main as
     select &Project_name as Proj_Name, "Washington" as Bldg_City, "DC" as Bldg_ST, &Project_zip as Bldg_Zip,
-      &Project_address._std as Bldg_Addre from 
+      &Project_address._std as Bldg_Addre, &Proj_units_tot as Proj_units_tot from 
       Subsidy_update_nomatch_2 
         (where=(subsidy_active or intck( 'year', poa_end_actual, date() ) <= &NONMATCH_YEARS_CUTOFF));
   quit;
 
-  filename fexport "&_dcdata_r_path\PresCat\Raw\AddNew\Update_&Update_file._main.csv" lrecl=2000;
+  filename fexport "&_dcdata_r_path\PresCat\Raw\AddNew\Update_&Update_file..csv" lrecl=2000;
 
   proc export data=Export_main
       outfile=fexport
