@@ -871,7 +871,7 @@ run;
     select Address_id as MARID, Units_assist, Poa_start as Current_Affordability_Start,
            Poa_end as Affordability_End, rent_to_fmr_description as Fair_Market_Rent_Ratio,
            Subsidy_Info_Source_ID, Subsidy_Info_Source, Subsidy_Info_Source_Date, 
-           Update_Dtm as Update_Date_Time, Program, Compl_end as Compliance_End_Date, 
+           Update_Dtm as Update_Date_Time, Program format=$32., Compl_end as Compliance_End_Date, 
            Poa_end_prev as Previous_Affordability_end, Agency, Portfolio, 
            Poa_end_actual as Date_Affordability_Ended
     from 
