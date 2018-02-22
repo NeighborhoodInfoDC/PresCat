@@ -848,7 +848,7 @@ run;
   proc sql noprint;
     create table Export_main as
     select &Project_name as Proj_Name, "Washington" as Bldg_City, "DC" as Bldg_ST, &Project_zip as Bldg_Zip,
-      &Project_address._std as Bldg_Addre, &Proj_units_tot as Proj_units_tot from 
+      &Project_address._std as Bldg_Addre from 
       Subsidy_update_nomatch_2 
         (where=(subsidy_active or intck( 'year', poa_end_actual, date() ) <= &NONMATCH_YEARS_CUTOFF));
   quit;
@@ -868,11 +868,12 @@ run;
   
   proc sql noprint;
     create table Export_subsidy as
-    select Address_id as MARID, Units_assist, Poa_start as Current_Affordability_Start,
-           Poa_end as Affordability_End, rent_to_fmr_description as Fair_Market_Rent_Ratio,
+    select Address_id as MARID, &Proj_units_tot as Units_tot, Units_assist, 
+           1 as Subsidy_active, Poa_start as Current_Affordability_Start,
+           Poa_end as Affordability_End, rent_to_fmr_description,
            Subsidy_Info_Source_ID, Subsidy_Info_Source, Subsidy_Info_Source_Date, 
-           Update_Dtm as Update_Date_Time, Program format=$32., Compl_end as Compliance_End_Date, 
-           Poa_end_prev as Previous_Affordability_end, Agency, Portfolio, 
+           Program format=$32., Compl_end as Compliance_End_Date, 
+           Poa_end_prev as Previous_Affordability_end, Agency,  
            Poa_end_actual as Date_Affordability_Ended
     from 
       Subsidy_update_nomatch_2 
