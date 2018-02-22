@@ -213,6 +213,10 @@
     freqvars=Status Category_code Proj_City Proj_ST Ward2012 Proj_Zip Hud_Own_type Hud_Mgr_type PBCA
   )
 
+  proc print data=Project n;
+    where put( nlihc_id, $New_nlihc_id. ) ~= "";
+  run;
+
   title2 'File = PresCat.Project';
 
   %Dup_check(
@@ -277,6 +281,10 @@
     printobs=0,
     freqvars=
   )
+
+  proc print data=Project_category n;
+    where put( nlihc_id, $New_nlihc_id. ) ~= "";
+  run;
 
   **** Compare with earlier version ****;
 

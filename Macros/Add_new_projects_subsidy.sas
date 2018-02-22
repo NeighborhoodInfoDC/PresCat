@@ -130,7 +130,12 @@
     else Subsidy_Active = 0;
 
     ** Fill in portfolio **;
+    
     Portfolio = put( Program, $progtoportfolio. );
+    
+    ** First POA start date **;
+
+    POA_start_orig = current_affordability_start;
 
     ** Create Timestamp for Update **;
 
@@ -165,6 +170,10 @@
     /** File info parameters **/
     printobs=0
   )
+
+  proc print data=Subsidy n;
+    where put( nlihc_id, $New_nlihc_id. ) ~= "";
+  run;
 
   ** Check against original subsidy file to ensure only new subsidy files have changed**;
 

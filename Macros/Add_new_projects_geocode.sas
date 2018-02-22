@@ -22,7 +22,7 @@
   input_path=,  /** Location of input files **/
   streetalt_file= /** File containing street name spelling corrections (if omitted, default file is used) **/
   );
-  
+
   %local geo_vars;
   
   ** Import geocoded project data **;
@@ -45,6 +45,7 @@
   ** MAR Address sheet info **;
 
   filename fimport "&input_path\&input_file_pre._mar_address.csv" lrecl=2000;
+
 /*
   proc import out=New_Proj_Geocode_mar_address
       datafile=fimport
@@ -348,7 +349,7 @@
     
     format Geo2010 $geo10a.;
 
-    ** Note: This isn't technically the right way to create the 2000 clusters, 
+    ** Note: This is not technically the right way to create the 2000 clusters, 
     **       but we will soon switch to new clusters so this will be obsolete; 
     
     length Cluster_tr2000 $ 2 Cluster_tr2000_name $ 80;
@@ -478,20 +479,6 @@
     by nlihc_id Bldg_addre;
   run;
 
-  %Finalize_data_set( 
-    /** Finalize data set parameters **/
-    data=Building_geocode,
-    out=Building_geocode,
-    outlib=PresCat,
-    label="Preservation Catalog, Building-level geocoding info",
-    sortby=Nlihc_id Bldg_addre,
-    archive=Y,
-    /** Metadata parameters **/
-    revisions=%str(Add new projects from &input_file_pre._*.csv.),
-    /** File info parameters **/
-    printobs=0
-  )
-
   %Create_project_geocode(
     data=Building_geocode, 
     revisions=%str(Add new projects from &input_file_pre._*.csv.),
@@ -510,6 +497,40 @@
      ;
 
   quit;
+  
+  %Data_to_format(
+    FmtLib=work,
+    FmtName=$New_nlihc_id,
+    Data=New_nlihc_id,
+    Value=Nlihc_id,
+    Label=Nlihc_id,
+    OtherLabel="",
+    Print=N,
+    Contents=N
+    )
+
+  proc print data=Project_geocode n;
+    where put( nlihc_id, $New_nlihc_id. ) ~= "";
+  run;
+
+  
+  %Finalize_data_set( 
+    /** Finalize data set parameters **/
+    data=Building_geocode,
+    out=Building_geocode,
+    outlib=PresCat,
+    label="Preservation Catalog, Building-level geocoding info",
+    sortby=Nlihc_id Bldg_addre,
+    archive=Y,
+    /** Metadata parameters **/
+    revisions=%str(Add new projects from &input_file_pre._*.csv.),
+    /** File info parameters **/
+    printobs=0
+  )
+
+  proc print data=Building_geocode n;
+    where put( nlihc_id, $New_nlihc_id. ) ~= "";
+  run;
 
 
   title2 '********************************************************************************************';

@@ -48,6 +48,10 @@
     archive=Y 
   )
   
+  proc print data=Parcel n;
+    where put( nlihc_id, $New_nlihc_id. ) ~= "";
+  run;
+
   ** Update PresCat.Subsidy **;
   
   %Add_new_projects_subsidy( 
