@@ -869,7 +869,7 @@ run;
   proc sql noprint;
     create table Export_subsidy as
     select Address_id as MARID, &Proj_units_tot as Units_tot, Units_assist, 
-           1 as Subsidy_active, Poa_start as Current_Affordability_Start,
+           Poa_start as Current_Affordability_Start,
            Poa_end as Affordability_End, rent_to_fmr_description,
            Subsidy_Info_Source_ID, Subsidy_Info_Source, Subsidy_Info_Source_Date, 
            Program format=$32., Compl_end as Compliance_End_Date, 
