@@ -27,7 +27,7 @@
   Subsidy_End_First Subsidy_Start_Last Subsidy_End_Last Subsidized Proj_Units_Assist_Min Proj_Units_Assist_Max Anc2012 
   Psa2012 Geo2010 Cluster_tr2000 Cluster_tr2000_name Ward2012 Proj_addre Proj_zip Zip Proj_image_url Proj_streetview_url 
   Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Bldg_count
-  Proj_ayb Proj_eyb Proj_owner_type;
+  Proj_ayb Proj_eyb Proj_owner_type Added_to_catalog;
 
   %let _PC_project_dslb = "Preservation Catalog, Projects";
 
