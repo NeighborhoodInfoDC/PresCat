@@ -157,34 +157,6 @@
     Contents=N
     )
 
-  /******************************
-  ** Create $property_nlihcid. format to add NLIHC ID from HUD property ID **;
-  
-  proc sql noprint;
-    create table property_nlihcid as
-    select Subsidy_info_source_property as property_id, nlihc_id, count(nlihc_id) as N
-      from PresCat.Subsidy (where=(Subsidy_Info_Source=&Subsidy_Info_Source and 
-                                   not(missing(subsidy_info_source_id)) and 
-                                   not(missing(Subsidy_info_source_property))))
-      group by property_id, nlihc_id;
-  quit;
-  
-  %Data_to_format(
-    FmtLib=work,
-    FmtName=$property_nlihcid,
-    Desc=,
-    Data=property_nlihcid,
-    Value=property_id,
-    Label=nlihc_id,
-    OtherLabel="",
-    DefaultLen=.,
-    MaxLen=.,
-    MinLen=.,
-    Print=N,
-    Contents=N
-    )
-  ****************************************/
-  
   ** Traffic-lighting format $except_tl. for update report **;
   
   proc format;
