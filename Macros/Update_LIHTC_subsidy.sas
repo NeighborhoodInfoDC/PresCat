@@ -172,7 +172,11 @@
   run;
 
   ** Apply update
-  ** Subsidy_target_update_a = Initial application of LIHTC update to Catalog subsidy records;
+  ** Subsidy_target_update_a = Initial match of LIHTC update to Catalog Subsidy records by ID
+  ** Subsidy_update_nomatch_0 = LIHTC update records that did not match to Subsidy;
+  
+  ***** NOTE: THIS STEP CURRENTLY OMITS SUBSIDY LIHTC RECORDS WITHOUT A SUBSIDY_INFO_SOURCE_ID;
+  ***** EXAMPLE: NL000085/2;
 
   data Subsidy_target_update_a (drop=_POA_end_hold &Proj_units_tot) Subsidy_update_nomatch_0 (drop=_POA_end_hold Subsidy_id);
 
@@ -203,6 +207,10 @@
   proc sort data=Subsidy_target_update_a;
     by Nlihc_id Subsidy_id;
   run;
+  
+  ** Apply manual matches
+  ** Subsidy_update_nomatch = LIHTC update records that remain unmatched after manual matching
+  ** Subsidy_update_manual_match = Manually matched records;
   
   data Subsidy_update_nomatch Subsidy_update_manual_match;
   
@@ -240,6 +248,8 @@
     quiet=N,
     debug=N
   )
+  
+  ** Id_to_ssl = NLIHC_ID to SSL crosswalk for unmatched LIHTC update records;
 
   proc sql noprint;
     create table Id_to_ssl as
