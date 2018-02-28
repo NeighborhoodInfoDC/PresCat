@@ -264,7 +264,7 @@
   
   
   **************************************************************************
-  ** Match to existing subsidy records;
+  ** Match unmatched update records to existing subsidy records;
   
   proc sql noprint;
     create table Subsidy_rec_match as
@@ -309,6 +309,19 @@
     
   run;
 
+
+  data Subsidy_target_no_update;
+
+    merge
+      Subsidy_target (in=in1)
+      Subsidy_target_update_a (keep=nlihc_id subsidy_id in=in2)
+      Subsidy_target_update_a2 (keep=nlihc_id subsidy_id in=in3);
+    by nlihc_id subsidy_id;
+
+    if in1 and not( in2 or in3 );
+
+  run;
+
   
   ** Subsidy_target_update_b = Add unique Subsidy_ID to any new subsidy records created by update **;
 
@@ -317,6 +330,7 @@
     set 
       Subsidy_target_update_a (in=in1)
       Subsidy_target_update_a2 (in=in2)
+      Subsidy_target_no_update (in=in3)
       Subsidy_other_2;
     by nlihc_id Subsidy_id;
     
@@ -333,7 +347,7 @@
     
     Subsidy_id_ret = Subsidy_id;
     
-    if in1 or in2 then output;
+    if in1 or in2 or in3 then output;
     
     drop Subsidy_id_ret &Subsidy_missing_info_vars;
     
