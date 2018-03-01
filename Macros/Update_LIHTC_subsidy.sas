@@ -269,7 +269,8 @@
         Subsidy.Subsidy_id, Subsidy.poa_start as Subsidy_poa_start, Subsidy.Units_assist as Subsidy_units_assist,
         Subsidy.Poa_start_orig,
         Update.*
-      from Id_to_ssl (keep=nlihc_id &Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars Subsidy_Info_Source_ID
+      from Id_to_ssl (keep=nlihc_id proj_add_std address_id 
+              &Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars Subsidy_Info_Source_ID
               &Proj_units_tot) as Update
       left join
       /*PresCat.Subsidy (where=(portfolio='LIHTC'))*/ Subsidy_target as Subsidy
@@ -307,7 +308,13 @@
     if not in2;
     
   run;
-
+  
+  **************************************************************************
+  ** Subsidy_target_no_update = Subsidy LIHTC records that were not updated;
+  
+  proc sort data=Subsidy_target;
+    by nlihc_id subsidy_id;
+  run;
 
   data Subsidy_target_no_update;
 
@@ -357,12 +364,6 @@
   
   ** Use Proc Compare to summarize update changes **;
   
-  proc sort data=Subsidy_target;
-    by nlihc_id Subsidy_ID;
-
-  proc sort data=Subsidy_target_update_b;
-    by nlihc_id Subsidy_ID;
-
   proc compare base=Subsidy_target compare=Subsidy_target_update_b 
       &Compare_opt outbase outcomp outdif maxprint=(40,32000)
       out=Update_subsidy_result (rename=(_type_=comp_type));
