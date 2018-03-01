@@ -175,9 +175,6 @@
   ** Subsidy_target_update_a = Initial match of LIHTC update to Catalog Subsidy records by ID
   ** Subsidy_update_nomatch_0 = LIHTC update records that did not match to Subsidy;
   
-  ***** NOTE: THIS STEP CURRENTLY OMITS SUBSIDY LIHTC RECORDS WITHOUT A SUBSIDY_INFO_SOURCE_ID;
-  ***** EXAMPLE: NL000085/2;
-
   data Subsidy_target_update_a (drop=_POA_end_hold &Proj_units_tot) Subsidy_update_nomatch_0 (drop=_POA_end_hold Subsidy_id);
 
     update 
@@ -270,8 +267,10 @@
     create table Subsidy_rec_match as
       select coalesce( Update.Nlihc_id, Subsidy.Nlihc_id ) as Nlihc_id, 
         Subsidy.Subsidy_id, Subsidy.poa_start as Subsidy_poa_start, Subsidy.Units_assist as Subsidy_units_assist,
+        Subsidy.Poa_start_orig,
         Update.*
-      from Id_to_ssl as Update
+      from Id_to_ssl (keep=nlihc_id &Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars Subsidy_Info_Source_ID
+              &Proj_units_tot) as Update
       left join
       /*PresCat.Subsidy (where=(portfolio='LIHTC'))*/ Subsidy_target as Subsidy
       on Update.Nlihc_id = Subsidy.Nlihc_id and year( Subsidy.Poa_start ) = year( Update.Poa_start )
@@ -346,6 +345,8 @@
     end;
     
     Subsidy_id_ret = Subsidy_id;
+
+    if missing( POA_start_orig ) then POA_start_orig = POA_start;
     
     if in1 or in2 or in3 then output;
     
