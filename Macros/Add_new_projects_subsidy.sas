@@ -157,6 +157,12 @@
 
   run;
 
+  ** Check against original subsidy file to ensure only new subsidy files have changed**;
+
+  proc compare base=PresCat.Subsidy compare=Subsidy listall maxprint=(40,32000);
+    id nlihc_id subsidy_id;
+  run;
+
   %Finalize_data_set( 
     /** Finalize data set parameters **/
     data=Subsidy,
@@ -173,12 +179,6 @@
 
   proc print data=Subsidy n;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
-  run;
-
-  ** Check against original subsidy file to ensure only new subsidy files have changed**;
-
-  proc compare base=PresCat.Subsidy compare=Subsidy listall maxprint=(40,32000);
-    id nlihc_id subsidy_id;
   run;
 
 %mend Add_new_projects_subsidy;

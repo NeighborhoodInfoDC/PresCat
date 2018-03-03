@@ -198,6 +198,12 @@
   	by nlihc_id;
   run;
 
+  **** Compare with earlier version ****;
+
+  proc compare base=Prescat.project compare=Project listall maxprint=(40,32000);
+    id nlihc_id;
+  run;
+
   %Finalize_data_set( 
     /** Finalize data set parameters **/
     data=Project,
@@ -209,15 +215,14 @@
     /** Metadata parameters **/
     revisions=%str(Add new projects from &input_file_pre._*.csv.),
     /** File info parameters **/
-    printobs=0,
-    freqvars=Status Category_code Proj_City Proj_ST Ward2012 Proj_Zip Hud_Own_type Hud_Mgr_type PBCA
+    printobs=0
   )
 
   proc print data=Project n;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
   run;
 
-  title2 'File = PresCat.Project';
+  title2 'File = PresCat.Project / DUPLICATE NLIHC_IDs';
 
   %Dup_check(
     data=Project,
@@ -241,20 +246,6 @@
   run;
   title2;
 
-  proc freq data=Project;
-    tables Hud_Own_Effect_dt;
-    tables Category_code * Cat_At_Risk * Cat_Expiring * Cat_Failing_Insp * Cat_More_Info * Cat_Lost 
-           * Cat_Replaced 
-      / list missing nocum nopercent;
-    format Hud_Own_Effect_dt year.;
-  run;
-
-  **** Compare with earlier version ****;
-
-  proc compare base=Prescat.project compare=Project listall maxprint=(40,32000);
-    id nlihc_id;
-  run;
-
 
   **** Update PresCat.Project_category ****;
 
@@ -265,6 +256,12 @@
       Project_a (keep=nlihc_id proj_name category_code cat_at_risk cat_more_info cat_lost cat_replaced);
     by nlihc_id;
 
+  run;
+
+  **** Compare with earlier version ****;
+
+  proc compare base=Prescat.project_category compare=Project_category listall maxprint=(40,32000);
+    id nlihc_id;
   run;
 
   %Finalize_data_set( 
@@ -284,12 +281,6 @@
 
   proc print data=Project_category n;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
-  run;
-
-  **** Compare with earlier version ****;
-
-  proc compare base=Prescat.project_category compare=Project_category listall maxprint=(40,32000);
-    id nlihc_id;
   run;
 
 %mend Add_new_projects_project;

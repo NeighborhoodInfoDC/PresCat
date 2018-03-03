@@ -479,10 +479,19 @@
     by nlihc_id Bldg_addre;
   run;
 
+  title2 '********************************************************************************************';
+  title3 '** 3/ Check for changes in the new Building geocode file that is not related to the new projects';
+
+  proc compare base=prescat.building_geocode compare=work.building_geocode listall maxprint=(40,32000);
+   id nlihc_id proj_name Bldg_addre;
+   run;
+   
+  title2;
+   
   %Create_project_geocode(
     data=Building_geocode, 
     revisions=%str(Add new projects from &input_file_pre._*.csv.),
-    compare=N,
+    compare=Y,
     archive=Y
   )
 
@@ -533,20 +542,6 @@
   run;
 
 
-  title2 '********************************************************************************************';
-  title3 '** 3/ Check for changes in the new Project geocode file that is not related to the new projects';
-
-  proc compare base=prescat.project_geocode compare=work.project_geocode listall maxprint=(40,32000);
-   id nlihc_id proj_name;
-   run;
-
-  title2 '********************************************************************************************';
-  title3 '** 4/ Check for changes in the new Building geocode file that is not related to the new projects';
-
-  proc compare base=prescat.building_geocode compare=work.building_geocode listall maxprint=(40,32000);
-   id nlihc_id proj_name Bldg_addre;
-   run;
-   
   title2 '********************************************************************************************';
   title3 '** Project_geocode: Check for duplicate project IDs';
 
