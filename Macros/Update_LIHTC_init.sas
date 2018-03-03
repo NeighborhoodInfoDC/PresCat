@@ -42,7 +42,7 @@
   %let POA_end_src = intnx( 'year', &POA_start_src, 30, 'same' );
   %let Compl_end_src = intnx( 'year', &POA_start_src, 15, 'same' );
   %let Is_inactive_src = ( NONPROG );
-  %let POA_end_actual_src = .;
+  %let POA_end_actual_src = extract_date;
   %let Program_src = put( credit, lihtc_credit2prog. );
   %let Subsidy_info_source_property_src = ' ';
   %let Rent_to_fmr_description_src = left( compress( put( inc_ceil, lihtc_inc_ceil. ), '.' ) );
