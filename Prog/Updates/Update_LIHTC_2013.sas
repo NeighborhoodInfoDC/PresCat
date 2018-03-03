@@ -31,22 +31,3 @@
     if proj_add = "3400 C J BARNEY DR NE" then proj_add = "3400 CJ BARNEY DR NE";
 )
 
-/*
-proc compare base=PresCat.Subsidy compare=Subsidy_Update_Lihtc_2013 listall maxprint=(40,32000);
-  id nlihc_id subsidy_id;
-run;
-
-data _null_;
-  set PresCat.Subsidy (where=(nlihc_id in ('NL000027') and portfolio='LIHTC'));
-  file print;
-  put / '---------PresCat.Subsidy-----------';
-  put (_all_) (= /);
-run;
-
-data _null_;
-  set Subsidy_Update_Lihtc_2013 (where=(nlihc_id in ('NL000027') and portfolio='LIHTC'));
-  file print;
-  put / '----------Subsidy_Update_Lihtc_2013----------';
-  put (_all_) (= /);
-run;
-

@@ -27,7 +27,7 @@
   
   %if %upcase( &typ ) = N %then %do;
   
-    if missing( &var._Compare ) or &var._DIF = 0 then New_value = "-";
+    if missing( &var._Compare ) then New_value = "-";
     else New_value = put( &var._Compare, &fmt );
     
   %end;
@@ -35,7 +35,7 @@
   
     &var._DIF = compress( &var._DIF, '.' );
   
-    if missing( &var._Compare ) or missing( &var._DIF ) then New_value = "-";
+    if missing( &var._Compare ) then New_value = "-";
     else New_value = put( &var._Compare, &fmt );
     
   %end;

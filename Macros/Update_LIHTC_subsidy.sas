@@ -17,8 +17,7 @@
 
 %macro Update_LIHTC_subsidy( Update_file=, Subsidy_except=, Manual_subsidy_match=, Manual_project_match=, Address_correct=, Quiet=Y );
 
-  %LET DEBUG_PROJ_LIST = 'NL000234', 'NL000310', 'NL000096';
-  
+ 
   **************************************************************************
   ** Initial setup and checks;
   
@@ -31,25 +30,6 @@
     %let Compare_opt = noprint;
   %end;
   
-  ** Check for duplicates **;
-  
-  /****************
-  title2 '***** THERE SHOULD NOT BE ANY DUPLICATES OF SUBSIDY_INFO_SOURCE_ID IN PRESCAT.SUBSIDY *****';
-
-  %Dup_check(
-    data=PresCat.Subsidy (where=(Subsidy_Info_Source=&Subsidy_Info_Source)),
-    by=Subsidy_Info_Source_ID,
-    id=nlihc_id contract_number Subsidy_Info_Source portfolio,
-    out=_dup_check,
-    listdups=Y,
-    count=dup_check_count,
-    quiet=N,
-    debug=N
-  )
-
-  title2;
-  *********************/
-  
   ** Normalize exception file;
 
   %Except_norm( data=&Subsidy_except, by=nlihc_id subsidy_id )
@@ -61,15 +41,6 @@
   data Subsidy_update_recs;
 
     set Hud.&Update_file._dc;
-    
-    
-    **************************************************************************************;
-    **************************************************************************************;
-    **** TEMPORARY CODE FOR DEBUGGING - DELETE LATER!!! ****;
-/********    IF HUD_ID IN ( 'DCB2011808', 'DCB2011805', 'DCB2011806', 'DCB2011807' ) THEN DELETE; ***********/
-    **************************************************************************************;
-    **************************************************************************************;
-    
     
     ** Create update variables **;
 
@@ -127,12 +98,6 @@
       %Project_name_clean( &project_name, &project_name )
     %end;
     
-    /*
-    if missing( Program ) then do;
-      %warn_put( msg="Missing program type: " _n_= property_id= contract_number= &Assisted_units_src= program_type_name= )
-    end;
-    */
-    
     /********** SKIP FOR NOW ************
     length Agency $ 80;
     
@@ -153,7 +118,7 @@
       Subsidy_Active Program rent_to_FMR_description 
       Subsidy_info_source_property
       &Subsidy_tech_vars &Subsidy_missing_info_vars &Subsidy_dupcheck_id_vars
-      &Project_address &Project_zip;
+      &Project_address &Project_zip &Proj_units_tot;
 
   run;
 
@@ -194,7 +159,6 @@
     
     _POA_end_hold = POA_end;
     
-    /**if Subsidy_Info_Source=&Subsidy_Info_Source and not( missing( Subsidy_Info_Source_ID ) ) then **/
     if Portfolio = 'LIHTC' then
       output Subsidy_target;
     else 
@@ -207,9 +171,10 @@
   run;
 
   ** Apply update
-  ** Subsidy_target_update_a = Initial application of LIHTC update to Catalog subsidy records;
-
-  data Subsidy_target_update_a (drop=_POA_end_hold) Subsidy_update_nomatch_0 (drop=_POA_end_hold Subsidy_id);
+  ** Subsidy_target_update_a = Initial match of LIHTC update to Catalog Subsidy records by ID
+  ** Subsidy_update_nomatch_0 = LIHTC update records that did not match to Subsidy;
+  
+  data Subsidy_target_update_a (drop=_POA_end_hold &Proj_units_tot) Subsidy_update_nomatch_0 (drop=_POA_end_hold Subsidy_id);
 
     update 
       Subsidy_target 
@@ -217,6 +182,7 @@
          in=in1)
       Subsidy_update_recs 
         (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars Subsidy_Info_Source_ID
+              &Proj_units_tot
          where=(not(missing(Subsidy_Info_Source_ID)))
          in=in2);
     by Subsidy_Info_Source_ID;
@@ -238,14 +204,10 @@
     by Nlihc_id Subsidy_id;
   run;
   
-PROC PRINT DATA=SUBSIDY_TARGET_UPDATE_A;
-  ID NLIHC_ID SUBSIDY_ID;
-  BY NLIHC_ID;
-  VAR POA_START POA_END UNITS_ASSIST SUBSIDY_INFO_SOURCE SUBSIDY_INFO_SOURCE_ID;
-  TITLE2 'DATA=SUBSIDY_TARGET_UPDATE_A';
-RUN;
-TITLE2;
-
+  ** Apply manual matches
+  ** Subsidy_update_nomatch = LIHTC update records that remain unmatched after manual matching
+  ** Subsidy_update_manual_match = Manually matched records;
+  
   data Subsidy_update_nomatch Subsidy_update_manual_match;
   
     set Subsidy_update_nomatch_0;
@@ -256,20 +218,6 @@ TITLE2;
     else output Subsidy_update_manual_match;
     
   run;
-
-PROC PRINT DATA=Subsidy_update_manual_match N;
-  ID SUBSIDY_INFO_SOURCE_ID;
-  VAR NLIHC_ID POA_START POA_END UNITS_ASSIST SUBSIDY_INFO_SOURCE;
-  TITLE2 'DATA=Subsidy_update_manual_match';
-RUN;
-TITLE2;
-
-PROC PRINT DATA=Subsidy_update_nomatch N;
-  ID SUBSIDY_INFO_SOURCE_ID;
-  VAR NLIHC_ID POA_START POA_END UNITS_ASSIST SUBSIDY_INFO_SOURCE;
-  TITLE2 'DATA=Subsidy_update_nomatch';
-RUN;
-TITLE2;
 
 
   **************************************************************************
@@ -296,6 +244,8 @@ TITLE2;
     quiet=N,
     debug=N
   )
+  
+  ** Id_to_ssl = NLIHC_ID to SSL crosswalk for unmatched LIHTC update records;
 
   proc sql noprint;
     create table Id_to_ssl as
@@ -308,24 +258,19 @@ TITLE2;
     order by ssl, nlihc_id;
   quit;
   
-  PROC PRINT DATA=ID_TO_SSL;
-    BY SSL;
-    ID SSL;
-    VAR NLIHC_ID PROJECT_STATUS POA_START UNITS_ASSIST SUBSIDY_INFO_SOURCE_ID &PROJECT_ADDRESS &PROJECT_ZIP;
-    TITLE2 'DATA=ID_TO_SSL';
-  RUN;
-  TITLE2;
-  
   
   **************************************************************************
-  ** Match to existing subsidy records;
+  ** Match unmatched update records to existing subsidy records;
   
   proc sql noprint;
     create table Subsidy_rec_match as
       select coalesce( Update.Nlihc_id, Subsidy.Nlihc_id ) as Nlihc_id, 
         Subsidy.Subsidy_id, Subsidy.poa_start as Subsidy_poa_start, Subsidy.Units_assist as Subsidy_units_assist,
+        Subsidy.Poa_start_orig,
         Update.*
-      from Id_to_ssl as Update
+      from Id_to_ssl (keep=nlihc_id proj_add_std address_id 
+              &Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars Subsidy_Info_Source_ID
+              &Proj_units_tot) as Update
       left join
       /*PresCat.Subsidy (where=(portfolio='LIHTC'))*/ Subsidy_target as Subsidy
       on Update.Nlihc_id = Subsidy.Nlihc_id and year( Subsidy.Poa_start ) = year( Update.Poa_start )
@@ -333,14 +278,6 @@ TITLE2;
     quit;
       
   
-PROC PRINT DATA=SUBSIDY_REC_MATCH;
-  ID NLIHC_ID SUBSIDY_ID;
-  BY NLIHC_ID;
-  VAR SUBSIDY_POA_START POA_START SUBSIDY_UNITS_ASSIST UNITS_ASSIST SUBSIDY_INFO_SOURCE_ID;
-  TITLE2 'DATA=SUBSIDY_REC_MATCH';
-RUN;
-TITLE2;
-
   data Subsidy_target_update_a2 Subsidy_update_nomatch_2;
   
     set Subsidy_rec_match Subsidy_update_manual_match;
@@ -370,48 +307,26 @@ TITLE2;
     if not in2;
     
   run;
+  
+  **************************************************************************
+  ** Subsidy_target_no_update = Subsidy LIHTC records that were not updated;
+  
+  proc sort data=Subsidy_target;
+    by nlihc_id subsidy_id;
+  run;
 
-PROC PRINT DATA=SUBSIDY_TARGET_UPDATE_A;
-  WHERE NLIHC_ID IN ( &DEBUG_PROJ_LIST );
-  ID NLIHC_ID SUBSIDY_ID;
-  BY NLIHC_ID;
-  VAR POA_START UNITS_ASSIST SUBSIDY_INFO_SOURCE_ID;
-  TITLE2 'DATA=SUBSIDY_TARGET_UPDATE_A';
-RUN;
-TITLE2;
+  data Subsidy_target_no_update;
 
-PROC PRINT DATA=SUBSIDY_TARGET_UPDATE_A2;
-  WHERE NLIHC_ID IN ( &DEBUG_PROJ_LIST );
-  ID NLIHC_ID SUBSIDY_ID;
-  BY NLIHC_ID;
-  VAR SUBSIDY_POA_START POA_START SUBSIDY_UNITS_ASSIST UNITS_ASSIST SUBSIDY_INFO_SOURCE_ID;
-  TITLE2 'DATA=SUBSIDY_TARGET_UPDATE_A2';
-RUN;
-TITLE2;
+    merge
+      Subsidy_target (in=in1)
+      Subsidy_target_update_a (keep=nlihc_id subsidy_id in=in2)
+      Subsidy_target_update_a2 (keep=nlihc_id subsidy_id in=in3);
+    by nlihc_id subsidy_id;
 
-PROC PRINT DATA=SUBSIDY_OTHER_2;
-  WHERE NLIHC_ID IN ( &DEBUG_PROJ_LIST );
-  ID NLIHC_ID SUBSIDY_ID;
-  BY NLIHC_ID;
-  VAR POA_START UNITS_ASSIST SUBSIDY_INFO_SOURCE_ID;
-  TITLE2 'DATA=SUBSIDY_OTHER_2';
-RUN;
-TITLE2;
+    if in1 and not( in2 or in3 );
 
-PROC PRINT DATA=SUBSIDY_UPDATE_NOMATCH_2;
-  ***WHERE NLIHC_ID IN ( &DEBUG_PROJ_LIST );
-  ***ID NLIHC_ID SUBSIDY_ID;
-  ***BY NLIHC_ID;
-  ***VAR POA_START UNITS_ASSIST SUBSIDY_INFO_SOURCE_ID;
-  TITLE2 'DATA=SUBSIDY_UPDATE_NOMATCH_2';
-RUN;
-TITLE2;
+  run;
 
-
-************************************************************************************;
-************************************************************************************;
-************************************************************************************;
-************************************************************************************;
   
   ** Subsidy_target_update_b = Add unique Subsidy_ID to any new subsidy records created by update **;
 
@@ -420,6 +335,7 @@ TITLE2;
     set 
       Subsidy_target_update_a (in=in1)
       Subsidy_target_update_a2 (in=in2)
+      Subsidy_target_no_update (in=in3)
       Subsidy_other_2;
     by nlihc_id Subsidy_id;
     
@@ -435,43 +351,18 @@ TITLE2;
     end;
     
     Subsidy_id_ret = Subsidy_id;
+
+    if missing( POA_start_orig ) then POA_start_orig = POA_start;
     
-    if in1 or in2 then output;
+    if in1 or in2 or in3 then output;
     
     drop Subsidy_id_ret &Subsidy_missing_info_vars;
     
   run;
   
-  PROC PRINT DATA=SUBSIDY_TARGET_UPDATE_B;
-    WHERE NLIHC_ID IN ( &DEBUG_PROJ_LIST );
-    ID NLIHC_ID SUBSIDY_ID;
-    BY NLIHC_ID;
-    VAR _NEW_SUBSIDY UNITS_ASSIST POA_START POA_END SUBSIDY_INFO_SOURCE SUBSIDY_INFO_SOURCE_ID SUBSIDY_INFO_SOURCE_DATE;
-    TITLE2 'DATA=SUBSIDY_TARGET_UPDATE_B';
-  RUN;
-
-%DUP_CHECK(
-  DATA=SUBSIDY_TARGET_UPDATE_B,
-  BY=SUBSIDY_INFO_SOURCE_ID,
-  ID=NLIHC_ID SUBSIDY_ID _NEW_SUBSIDY UNITS_ASSIST POA_START SUBSIDY_INFO_SOURCE_DATE,
-  OUT=_DUP_CHECK,
-  LISTDUPS=Y,
-  COUNT=DUP_CHECK_COUNT,
-  QUIET=N,
-  DEBUG=N
-)
-
-  TITLE2;
-
   
   ** Use Proc Compare to summarize update changes **;
   
-  proc sort data=Subsidy_target;
-    by nlihc_id Subsidy_ID;
-
-  proc sort data=Subsidy_target_update_b;
-    by nlihc_id Subsidy_ID;
-
   proc compare base=Subsidy_target compare=Subsidy_target_update_b 
       &Compare_opt outbase outcomp outdif maxprint=(40,32000)
       out=Update_subsidy_result (rename=(_type_=comp_type));
@@ -479,12 +370,6 @@ TITLE2;
     var &Subsidy_update_vars;
   run;
   
-  PROC PRINT DATA=UPDATE_SUBSIDY_RESULT;
-    WHERE NLIHC_ID IN ( &DEBUG_PROJ_LIST );
-    ID NLIHC_ID SUBSIDY_ID;
-    TITLE2 'DATA=UPDATE_SUBSIDY_RESULT';
-  RUN;
-
   ** Format Proc Compare output file;
   
   data Update_subsidy_result_b;
@@ -504,15 +389,6 @@ TITLE2;
     mprint=Y
   )
   
-  PROC PRINT DATA=UPDATE_SUBSIDY_RESULT_TR;
-    WHERE NLIHC_ID IN ( &DEBUG_PROJ_LIST );
-    ID NLIHC_ID SUBSIDY_ID;
-    BY NLIHC_ID;
-    VAR UNITS_ASSIST: ;
-    TITLE2 'DATA=UPDATE_SUBSIDY_RESULT_TR';
-  RUN;
-  TITLE2;
-
   
   **************************************************************************
   ** Apply exception file;
@@ -526,22 +402,6 @@ TITLE2;
     
   run;
   
-  PROC PRINT DATA=&SUBSIDY_EXCEPT._NORM;
-    WHERE NLIHC_ID IN ( &DEBUG_PROJ_LIST );
-    ID NLIHC_ID SUBSIDY_ID;
-    BY NLIHC_ID;
-    TITLE2 "DATA=&SUBSIDY_EXCEPT._NORM";
-  RUN;
-  TITLE2;
-
-  PROC PRINT DATA=SUBSIDY_TARGET_EXCEPT;
-    WHERE NLIHC_ID IN ( &DEBUG_PROJ_LIST );
-    ID NLIHC_ID SUBSIDY_ID;
-    BY NLIHC_ID;
-    TITLE2 'DATA=SUBSIDY_TARGET_EXCEPT';
-  RUN;
-  TITLE2;
-
   ** Transpose exception file for change report **;
 
   data &Subsidy_except._b;
@@ -560,15 +420,6 @@ TITLE2;
     by=nlihc_id Subsidy_ID,
     mprint=Y
   )
-
-  PROC PRINT DATA=&SUBSIDY_EXCEPT._TR;
-    WHERE NLIHC_ID IN ( &DEBUG_PROJ_LIST );
-    ID NLIHC_ID SUBSIDY_ID;
-    BY NLIHC_ID;
-    VAR UNITS_ASSIST: ;
-    TITLE2 "DATA=&SUBSIDY_EXCEPT._TR";
-  RUN;
-  TITLE2;
 
 
   **************************************************************************
@@ -599,15 +450,6 @@ TITLE2;
     
   run;
   
-  PROC PRINT DATA=UPDATE_SUBSIDY_RESULT_EXCEPT_TR;
-    WHERE NLIHC_ID IN ( &DEBUG_PROJ_LIST );
-    ID NLIHC_ID SUBSIDY_ID;
-    BY NLIHC_ID;
-    VAR UNITS_ASSIST: SUBSIDY_INFO: ;
-    TITLE2 'DATA=UPDATE_SUBSIDY_RESULT_EXCEPT_TR';
-  RUN;
-  TITLE2;
-
 
   **************************************************************************
   ** Recombine with other subsidy data **;
@@ -653,29 +495,12 @@ TITLE2;
 
   title2;
 
-PROC PRINT DATA=SUBSIDY_UPDATE_&UPDATE_FILE;
-  WHERE NLIHC_ID IN ( &DEBUG_PROJ_LIST );
-  ID NLIHC_ID SUBSIDY_ID;
-  BY NLIHC_ID;
-  VAR &SUBSIDY_FINAL_VARS;
-  TITLE2 "DATA=SUBSIDY_UPDATE_&UPDATE_FILE";
-RUN;
-TITLE2;
-
 
   **************************************************************************
   ** Update Subsidy_update_history data set;
 
   %Update_history_recs( data=Update_subsidy_result_except_tr, out=Subsidy_update_history_recs, Update_vars=&Subsidy_update_vars )
   
-PROC PRINT DATA=SUBSIDY_UPDATE_HISTORY_RECS;
-  WHERE NLIHC_ID IN ( &DEBUG_PROJ_LIST );
-  ID NLIHC_ID SUBSIDY_ID;
-  BY NLIHC_ID;
-  TITLE2 "DATA=SUBSIDY_UPDATE_HISTORY_RECS";
-RUN;
-TITLE2;
-
   data Subsidy_update_history_del;
 
     set PresCat.Subsidy_update_history;
@@ -701,10 +526,9 @@ TITLE2;
     by Nlihc_id Subsidy_id descending Update_dtm;
   run;
 
-proc compare base=PresCat.SUBSIDY_UPDATE_HISTORY compare=SUBSIDY_UPDATE_HISTORY_NEW listall maxprint=(40,32000);
-  id nlihc_id subsidy_id descending update_dtm;
-run;
-
+  proc compare base=PresCat.SUBSIDY_UPDATE_HISTORY compare=SUBSIDY_UPDATE_HISTORY_NEW listall maxprint=(40,32000);
+    id nlihc_id subsidy_id descending update_dtm;
+  run;
 
 
   **************************************************************************
@@ -760,13 +584,6 @@ run;
     
   run;
   
-  proc print data=New_subsidy_report (obs=5);
-    id nlihc_id;
-    title2 'data=New_subsidy_report';
-  run;
-  title2;
-  
-
   ** Write report **;
 
   options orientation=landscape;
@@ -852,7 +669,7 @@ run;
         (where=(subsidy_active or intck( 'year', poa_end_actual, date() ) <= &NONMATCH_YEARS_CUTOFF));
   quit;
 
-  filename fexport "&_dcdata_r_path\PresCat\Raw\New\Update_&Update_file._main.csv" lrecl=2000;
+  filename fexport "&_dcdata_r_path\PresCat\Raw\AddNew\Update_&Update_file..csv" lrecl=2000;
 
   proc export data=Export_main
       outfile=fexport
@@ -867,18 +684,19 @@ run;
   
   proc sql noprint;
     create table Export_subsidy as
-    select Address_id as MARID, Units_assist, Poa_start as Current_Affordability_Start,
-           Poa_end as Affordability_End, rent_to_fmr_description as Fair_Market_Rent_Ratio,
+    select Address_id as MARID, &Proj_units_tot as Units_tot, Units_assist, 
+           Poa_start as Current_Affordability_Start,
+           Poa_end as Affordability_End, rent_to_fmr_description,
            Subsidy_Info_Source_ID, Subsidy_Info_Source, Subsidy_Info_Source_Date, 
-           Update_Dtm as Update_Date_Time, Program, Compl_end as Compliance_End_Date, 
-           Poa_end_prev as Previous_Affordability_end, Agency, Portfolio, 
+           Program format=$32., Compl_end as Compliance_End_Date, 
+           Poa_end_prev as Previous_Affordability_end, Agency,  
            Poa_end_actual as Date_Affordability_Ended
     from 
       Subsidy_update_nomatch_2 
         (where=(subsidy_active or intck( 'year', poa_end_actual, date() ) <= &NONMATCH_YEARS_CUTOFF));
   quit;
 
-  filename fexport "&_dcdata_r_path\PresCat\Raw\New\Update_&Update_file._subsidy.csv" lrecl=2000;
+  filename fexport "&_dcdata_r_path\PresCat\Raw\AddNew\Update_&Update_file._subsidy.csv" lrecl=2000;
 
   proc export data=Export_subsidy
       outfile=fexport
