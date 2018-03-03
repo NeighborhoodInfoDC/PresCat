@@ -33,7 +33,7 @@
   informat Units_assist 8. ;
   informat Current_Affordability_Start mmddyy10. ;
   informat Affordability_End mmddyy10. ;
-  informat Fair_Market_Rent_Ratio $40. ;
+  informat rent_to_fmr_description $40. ;
   informat Subsidy_Info_Source_ID $40. ;
   informat Subsidy_Info_Source $40. ;
   informat Subsidy_Info_Source_Date mmddyy10. ;
@@ -41,14 +41,13 @@
   informat Compliance_end_date mmddyy10. ;
   informat Previous_Affordability_End mmddyy10. ;
   informat Agency $80. ;
-  informat Portfolio $16. ;
   informat Date_Affordability_Ended mmddyy10. ;
   format MARID best12. ;
   format Units_tot 8. ;
   format Units_assist 8. ;
   format Current_Affordability_Start mmddyy10. ;
   format Affordability_End mmddyy10. ;
-  format Fair_Market_Rent_Ratio $40. ;
+  format rent_to_fmr_description $40. ;
   format Subsidy_Info_Source_ID $40. ;
   format Subsidy_Info_Source $40. ;
   format Subsidy_Info_Source_Date 8. ;
@@ -56,7 +55,6 @@
   format Compliance_end_date mmddyy10. ;
   format Previous_Affordability_End mmddyy10. ;
   format Agency $80. ;
-  format Portfolio $16. ;
   format Date_Affordability_Ended mmddyy10. ;
 
   input
@@ -65,7 +63,7 @@
   Units_assist
   Current_Affordability_Start
   Affordability_End
-  Fair_Market_Rent_Ratio $
+  rent_to_fmr_description $
   Subsidy_Info_Source_ID $
   Subsidy_Info_Source $
   Subsidy_Info_Source_Date
@@ -73,7 +71,6 @@
   Compliance_end_date 
   Previous_Affordability_End 
   Agency $
-  Portfolio $
   Date_Affordability_Ended
   ;
 
@@ -133,14 +130,19 @@
     else Subsidy_Active = 0;
 
     ** Fill in portfolio **;
+    
     Portfolio = put( Program, $progtoportfolio. );
+    
+    ** First POA start date **;
+
+    POA_start_orig = current_affordability_start;
 
     ** Create Timestamp for Update **;
 
     Update_dtm =datetime();
 
     rename current_affordability_start=POA_start affordability_end=POA_end 
-                  Fair_Market_Rent_Ratio=rent_to_fmr_description Compliance_End_Date=compl_end 
+                  Compliance_End_Date=compl_end 
                   Date_Affordability_Ended=POA_End_actual Previous_affordability_end=POA_end_prev;
   run;
 
@@ -153,6 +155,12 @@
 
     format units_assist rent_to_fmr_description Subsidy_Info_Source_ID Agency ;
 
+  run;
+
+  ** Check against original subsidy file to ensure only new subsidy files have changed**;
+
+  proc compare base=PresCat.Subsidy compare=Subsidy listall maxprint=(40,32000);
+    id nlihc_id subsidy_id;
   run;
 
   %Finalize_data_set( 
@@ -169,10 +177,8 @@
     printobs=0
   )
 
-  ** Check against original subsidy file to ensure only new subsidy files have changed**;
-
-  proc compare base=PresCat.Subsidy compare=Subsidy listall maxprint=(40,32000);
-    id nlihc_id subsidy_id;
+  proc print data=Subsidy n;
+    where put( nlihc_id, $New_nlihc_id. ) ~= "";
   run;
 
 %mend Add_new_projects_subsidy;
