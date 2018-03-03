@@ -17,8 +17,7 @@
 
 %macro Update_LIHTC_subsidy( Update_file=, Subsidy_except=, Manual_subsidy_match=, Manual_project_match=, Address_correct=, Quiet=Y );
 
-  %LET DEBUG_PROJ_LIST = 'NL000234', 'NL000310', 'NL000096';
-  
+ 
   **************************************************************************
   ** Initial setup and checks;
   
