@@ -16,8 +16,7 @@
  Modifications:
 **************************************************************************/
 
-/**%include "L:\SAS\Inc\StdLocal.sas";**/
-%include "C:\DCData\SAS\Inc\StdLocal.sas";
+%include "L:\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( PresCat )
@@ -29,7 +28,7 @@ proc format;
     'U' = 'Unknown';
 run;
 
-filename fimport "C:\DCData\Libraries\PresCat\Raw\ODCA\HPTF-Public-Database.csv" lrecl=2000;
+filename fimport "&_dcdata_r_path\PresCat\Raw\ODCA\HPTF-Public-Database.csv" lrecl=2000;
 
 data ODCA_HPTF_2018;
 
@@ -187,10 +186,20 @@ run;
 
 filename fimport clear;
 
-
-
-%File_info( data=ODCA_HPTF_2018, freqvars=Project_type Award_purpose Property_type Affordability_period_desc )
-
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=ODCA_HPTF_2018,
+  out=ODCA_HPTF_2018,
+  outlib=PresCat,
+  label="Office of the DC Auditor, HTPF-funded properties from 2001-2016",
+  sortby=Odca_record_number,
+  /** Metadata parameters **/
+  restrictions=None,
+  revisions=%str(New file.),
+  /** File info parameters **/
+  printobs=10,
+  freqvars=Project_type Award_purpose Property_type Affordability_period_desc
+)
 
 
 run;
