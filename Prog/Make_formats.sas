@@ -510,6 +510,11 @@ proc format library=PresCat;
     3 = 'LIHTC/4+9PCT'
     4 = 'LIHTC/TCEP';
  
+  value $odca_hptf_project_type
+    'M' = 'Multifamily'
+    'S' = 'Single family'
+    'U' = 'Unknown';
+
 run;
 
 proc catalog catalog=PresCat.Formats;
@@ -526,6 +531,7 @@ proc catalog catalog=PresCat.Formats;
   modify progshrt (desc="Catalog program short description") / entrytype=formatc;
   modify portfolio (desc="Catalog subsidy portfolio description") / entrytype=formatc;
   modify lihtc_credit2prog (desc="HUD LIHTC credit code to program code") / entrytype=format;
+  modify odca_hptf_project_type (desc="ODCA HPTF database project type code") / entrytype=formatc;
   contents;
 quit;
 
