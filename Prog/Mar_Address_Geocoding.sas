@@ -45,7 +45,7 @@ id nlihc_id;
   with proj_units_mar;
 run;
 
-proc import datafile= "D:\Libraries\PresCat\MAR_addresses.csv" 
+proc import datafile= "D:\DCData\Libraries\PresCat" 
 out=property_addr2
 dbms=csv;
 run; 
