@@ -37,19 +37,32 @@ proc summary data=Bldg_units_mar;
   output out=Proj_units_mar (drop=_type_ _freq_) sum=Proj_units_mar;
 run;
 
-proc compare base=PresCat.Project compare=Proj_units_mar 
-    listall maxprint=(400,32000)
+proc compare 
+    base=PresCat.Project (keep=nlihc_id proj_units_tot) 
+    compare=Proj_units_mar (keep=nlihc_id proj_units_mar) 
+    nosummary nodate listall maxprint=(400,32000)
     method=absolute criterion=5 out=Comp_results;
 id nlihc_id;
   var proj_units_tot;
   with proj_units_mar;
 run;
 
-proc import datafile= "D:\DCData\Libraries\PresCat\MAR_addresses.csv" 
+** Read in parcel list **;
+
+proc import datafile= "L:\Libraries\PresCat\Raw\MAR_addresses.csv" 
 out=property_addr2
 dbms=csv;
+guessingrows=max;
 run; 
-options dkricond=nowarning dkrocond=nowarning ;
-%Rcasd_address_parse( data= property_addr2, out=property_addr_parsed, addr=premiseadd, debug=N, id=ssl )
 
-%DC_mar_geocode( data=property_addr_parsed, staddr=Address, out=proprety_addr_parsed_geo )
+** Parse out individual addresses from parcel address ranges **;
+
+%Rcasd_address_parse( data=property_addr2, out=property_addr_parsed, addr=premiseadd, keepin=, id=ssl ownername )
+
+proc print data=property_addr_parsed;
+run;
+
+** Run geocoder to verify addresses against MAR **;
+
+%DC_mar_geocode( data=property_addr_parsed, staddr=Address, out=property_addr_parsed_geo )
+
