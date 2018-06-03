@@ -422,7 +422,7 @@
   options orientation=landscape;
  
   ods listing close;
-  ods pdf file="&_dcdata_r_path\PresCat\Prog\Updates\Update_&Update_file._subsidy.pdf" 
+  ods pdf file="&_dcdata_default_path\PresCat\Prog\Updates\Update_&Update_file._subsidy.pdf" 
     style=Styles.Rtf_arial_9pt pdftoc=2 bookmarklist=hide uniform;
     
   ods proclabel "Updated variables";
@@ -462,7 +462,7 @@
   run;
 
   ods pdf close;
-  ods tagsets.excelxp file="&_dcdata_r_path\PresCat\Prog\Updates\Update_&Update_file._subsidy_nonmatch.xls" style=Minimal options(sheet_interval='Proc' );
+  ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\Updates\Update_&Update_file._subsidy_nonmatch.xls" style=Minimal options(sheet_interval='Proc' );
 
   ods proclabel "Nonmatching subsidy records";
 
