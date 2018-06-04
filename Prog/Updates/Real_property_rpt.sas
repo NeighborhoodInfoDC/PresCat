@@ -17,7 +17,7 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 
-%let Start_date = today()-60;  %** Look for events two months prior **;
+%let Start_date = today()-90;  %** Look for events three months prior **;
 
 ** Create report **;
 
@@ -30,9 +30,9 @@ data Real_property_rpt;
       (keep=nlihc_id proj_name category_code);
   by nlihc_id;
   
-  if in1;
+  if in1 and category_code ~= '6';
   
-  rpt_id = nlihc_id || ' / ' || proj_name;
+  rpt_id = trim( nlihc_id ) || ' / ' || proj_name;
   
 run;
 
@@ -44,10 +44,15 @@ run;
 
 %fdate()
 
+options LeftMargin=.5in RightMargin=.5in TopMargin=.5in BottomMargin=.5in;
+
 ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\Updates\Real_property_rpt_&rpt_suffix..xls" 
   style=Normal 
   options(sheet_interval='None' sheet_name="Real_property" orientation='landscape'
-          absolute_column_width='40,12,80' row_height_fudge='16' );
+          absolute_column_width='40,12,80' row_height_fudge='16'
+          pages_fitwidth='1' pages_fitheight='10'
+          embedded_titles='yes' embedded_footnotes='yes' embed_titles_once='yes' );
+
 ods listing close;
 
 proc report data=Real_property_rpt nowd
@@ -60,8 +65,9 @@ proc report data=Real_property_rpt nowd
   define rp_desc / "Description" display;
   break before rpt_id /;
   label category_code = 'Category';
-  title1;
+  title1 "DC Preservation Catalog: Real Property Events Report (previous three months)";
   footnote1 height=9pt "Prepared by NeighborhoodInfo DC (www.NeighborhoodInfoDC.org), &fdate..";
+  footnote2 height=9pt "Sources: OTR=Office of Tax and Revenue, RCASD=DHCD Rental Conversion and Sale Division, ROD=Recorder of Deeds.";
 run;
 
 ods tagsets.excelxp close;

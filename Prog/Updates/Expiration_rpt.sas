@@ -34,6 +34,8 @@ data Expiration_rpt;
   
   if in1 and category_code ~= '6';
   
+  if program = 'TEBOND' then delete;
+  
   rpt_id = trim( nlihc_id ) || ' / ' || proj_name;
   
 run;
@@ -46,10 +48,15 @@ run;
 
 %fdate()
 
+options LeftMargin=.5in RightMargin=.5in TopMargin=.5in BottomMargin=.5in;
+
 ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\Updates\Expiration_rpt_&rpt_suffix..xls" 
   style=Normal 
-  options(sheet_interval='None' sheet_name="Real_property" orientation='landscape'
-          absolute_column_width='40,12,80' row_height_fudge='16' );
+  options(sheet_interval='None' sheet_name="Expiration" orientation='landscape'
+          absolute_column_width='60,12,40' row_height_fudge='16' 
+          pages_fitwidth='1' pages_fitheight='10'
+          embedded_titles='yes' embedded_footnotes='yes' embed_titles_once='yes' );
+
 ods listing close;
 
 proc report data=Expiration_rpt nowd
@@ -58,12 +65,12 @@ proc report data=Expiration_rpt nowd
   by Category_code;
   column rpt_id poa_end program;
   define rpt_id / "Project" display;
-  define poa_end / display order;
+  define poa_end / display;
   define program / display;
-/*  break before rpt_id /;*/
   label category_code = 'Category';
-  title1;
+  title1 "DC Preservation Catalog: Upcoming Subsidy Expiration Report (within next year)";
   footnote1 height=9pt "Prepared by Urban-Greater DC (GreaterDC.urban.org), &fdate..";
+  footnote2 height=9pt "Includes subsidies expiring within past year. Tax exempt bonds excluded.";
 run;
 
 ods tagsets.excelxp close;
