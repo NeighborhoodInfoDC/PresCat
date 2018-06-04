@@ -50,7 +50,7 @@ run;
 
 options LeftMargin=.5in RightMargin=.5in TopMargin=.5in BottomMargin=.5in;
 
-ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\Updates\Expiration_rpt_&rpt_suffix..xls" 
+ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\Reports\Expiration_rpt_&rpt_suffix..xls" 
   style=Normal 
   options(sheet_interval='None' sheet_name="Expiration" orientation='landscape'
           absolute_column_width='60,12,40' row_height_fudge='16' 

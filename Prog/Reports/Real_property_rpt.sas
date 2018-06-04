@@ -46,7 +46,7 @@ run;
 
 options LeftMargin=.5in RightMargin=.5in TopMargin=.5in BottomMargin=.5in;
 
-ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\Updates\Real_property_rpt_&rpt_suffix..xls" 
+ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\Reports\Real_property_rpt_&rpt_suffix..xls" 
   style=Normal 
   options(sheet_interval='None' sheet_name="Real_property" orientation='landscape'
           absolute_column_width='40,12,80' row_height_fudge='16'

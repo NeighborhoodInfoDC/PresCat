@@ -161,7 +161,7 @@ run;
 
 options missing=' ';
 
-filename fexport "L:\Libraries\PresCat\Raw\MonthlyReport.csv" lrecl=2000;
+filename fexport "&_dcdata_default_path\PresCat\Prog\Reports\MonthlyReport.csv" lrecl=2000;
 
 proc export data=Monthly_rpt
     outfile=fexport
