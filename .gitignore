@@ -1,6 +1,7 @@
 *.bak
 
 # DCData subfolders
+Data/
 Maps/
 Raw/
 Prog/Temp/
@@ -52,3 +53,7 @@ Prog/Images/
 # Archives
 *.zip
 *.rar
+
+# Other
+*.bat
+Thumbs.db

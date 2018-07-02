@@ -1,14 +1,15 @@
 /**************************************************************************
- Program:  Update_real_property.sas
+ Program:  Add_new_projects_yyyymmdd.sas
  Library:  PresCat
  Project:  NeighborhoodInfo DC
- Author:   P. Tatian
- Created:  10/09/16
- Version:  SAS 9.1
+ Author:   
+ Created:  
+ Version:  SAS 9.4
  Environment:  Local Windows session (desktop)
  
- Description:  Create Real_Property table for Preservation Catalog
- (real property events such as sales, foreclosures).
+ Description:  Add new projects to Preservation Catalog. 
+
+ 
 
  Modifications:
 **************************************************************************/
@@ -17,11 +18,16 @@
 
 ** Define libraries **;
 %DCData_lib( PresCat )
+%DCData_lib( MAR, local=n )
 %DCData_lib( RealProp, local=n )
 %DCData_lib( ROD, local=n )
 %DCData_lib( DHCD, local=n )
 
 
-%Update_real_property( )
+%Add_new_projects(
+  input_file_pre = ,
+  streetalt_file = 
+)
+
 
 run;

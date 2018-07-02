@@ -71,6 +71,15 @@
       Subsidy_End_Last = .n;
     end;
     
+    label
+      proj_units_assist_max = "Maximum active assisted housing units in project [derived from PresCat.Subsidy]"
+      proj_units_assist_min = "Minimum active assisted housing units in project [derived from PresCat.Subsidy]"
+      subsidized = "Project is subsidized [derived from PresCat.Subsidy]"
+      subsidy_end_first = "First active subsidy end date [derived from PresCat.Subsidy]"
+      subsidy_end_last = "Last active subsidy end date [derived from PresCat.Subsidy]"
+      subsidy_start_first = "First active subsidy start date [derived from PresCat.Subsidy]"
+      subsidy_start_last = "Last active subsidy start date [derived from PresCat.Subsidy]";
+    
     format Subsidized dyesno.;
     
     drop _Subsidized _units_assist_sum _units_assist_max proj_units_tot;

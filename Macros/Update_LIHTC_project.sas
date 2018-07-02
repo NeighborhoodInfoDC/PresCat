@@ -1,21 +1,21 @@
 /**************************************************************************
- Program:  Update_MFIS_project.sas
+ Program:  Update_LIHTC_project.sas
  Library:  PresCat
  Project:  NeighborhoodInfo DC
  Author:   P. Tatian
- Created:  09/19/15
+ Created:  07/03/17
  Version:  SAS 9.2
  Environment:  -
  
  Description:  Autocall macro to update PresCat.Project 
- with MFIS data set.
+ with LIHTC data set.
 
  Modifications:
 **************************************************************************/
 
-/** Macro Update_MFIS_project - Start Definition **/
+/** Macro Update_LIHTC_project - Start Definition **/
 
-%macro Update_MFIS_project( Update_file=, Project_except=, Quiet=Y );
+%macro Update_LIHTC_project( Update_file=, Project_except=, Quiet=Y );
 
   
   **************************************************************************
@@ -58,7 +58,7 @@
   **************************************************************************
   ** Get data for updating project file;
   
-  data MFIS_project_update;
+  data LIHTC_project_update;
 
     set Hud.&Update_file._dc;
 
@@ -115,14 +115,14 @@
 
   run;
 
-  proc sort data=MFIS_project_update;
+  proc sort data=LIHTC_project_update;
     by Subsidy_Info_Source_ID;
   run;
 
   title2 '**** THERE SHOULD NOT BE ANY DUPLICATE RECORDS IN THE UPDATE FILE ****';
 
   %Dup_check(
-    data=MFIS_project_update,
+    data=LIHTC_project_update,
     by=Subsidy_Info_Source_ID,
     id=&Project_missing_info_vars
   )
@@ -132,13 +132,13 @@
   ** Create updates from Subsidy file **;
 
   %Create_project_subsidy_update( data=Subsidy_update_&Update_file )
-  
+
 
   **************************************************************************
   ** Apply update to Catalog data;
   
   ** Separate Catalog records to be updated
-  ** Project_target = All Catalog project records with subsidies flagged with MFIS as source 
+  ** Project_target = All Catalog project records with subsidies flagged with LIHTC as source 
   ** Project_other = All other Catalog project records;
 
   data Project_target Project_other; 
@@ -162,17 +162,19 @@
   run;
 
   ** Apply update
-  ** Project_target_update_a = Initial application of MFIS update to Catalog project records;
+  ** Project_target_update_a = Initial application of LIHTC update to Catalog project records;
 
   data Project_target_update_a;
 
     update 
       Project_target (in=in_Project)
-      MFIS_project_update 
+      LIHTC_project_update 
         (keep=&Project_src_update_vars &Project_missing_info_vars &Subsidy_tech_vars Update_dtm);
     by Subsidy_Info_Source_ID;
     
     if in_Project;
+    
+    attrib &Project_subsidy_update_vars label=' ';
     
   run;
 
@@ -287,7 +289,7 @@
     where not( missing( nlihc_id ) );
     
     drop Subsidy_Info_Source_ID Subsidy_Info_Source Subsidy_Info_Source_Date
-         &Subsidy_missing_info_vars; 
+         &Project_missing_info_vars; 
     
   run;
 
@@ -371,13 +373,6 @@
 
     length Var $ 32 Old_value New_value Except_value $ 80;
     
-    /*
-    %Update_rpt_write_var( var=Hud_Own_Effect_dt, fmt=mmddyy10., lbl="Date owner acquired property" )
-    %Update_rpt_write_var( var=Hud_Own_Name, fmt=$80., lbl="Owner name", typ=c )
-    %Update_rpt_write_var( var=Hud_Own_Type, fmt=$ownmgrtype., lbl="Owner type", typ=c )
-    %Update_rpt_write_var( var=Hud_Mgr_Name, fmt=$80., lbl="Manager name", typ=c )
-    %Update_rpt_write_var( var=Hud_Mgr_Type, fmt=$ownmgrtype., lbl="Manager type", typ=c )
-    */
     %Update_rpt_write_var( var=Subsidized, fmt=dyesno., lbl="Subsidized", except=n ) 
     %Update_rpt_write_var( var=Proj_Units_Assist_Min, lbl="Assisted units (min)", except=n ) 
     %Update_rpt_write_var( var=Proj_Units_Assist_Max, lbl="Assisted units (max)", except=n ) 
@@ -425,7 +420,7 @@
   
   
 
-%mend Update_MFIS_project;
+%mend Update_LIHTC_project;
 
 /** End Macro Definition **/
 
