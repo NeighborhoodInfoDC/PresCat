@@ -18,8 +18,7 @@
 %macro Update_REAC( 
   Update_file=, 
   Finalize=Y,
-  Project_except=Project_except,
-  Subsidy_except=Subsidy_except,
+  /*Reac_Score_except=Reac_Score_except,*/
   Quiet=Y,
   Final_compare=Y
   );
@@ -36,21 +35,21 @@
 
   %Update_REAC_init( Update_file=&Update_file )
   
-  *%if &Last_update_date = or &Last_update_date < &Subsidy_Info_Source_Date %then %do;
+  /*%if &Last_update_date = or &Last_update_date < &Subsidy_Info_Source_Date %then %do;*/
   
-    %Update_REAC_score( Update_file=&Update_file, Subsidy_except=&Subsidy_except, Quiet=&Quiet )
+    %Update_REAC_score( Update_file=&Update_file, /*REAC_Score_except=&REAC_Score_except,*/ Quiet=&Quiet )
     
-    *%Update_Sec8mf_finish( Update_file=&Update_file, Finalize=&Finalize, Subsidy_except=&Subsidy_except, Project_except=&Project_except, Final_compare=&Final_compare );
+    %Update_REAC_finish( Update_file=&Update_file, Finalize=&Finalize, /*REAC_Score_except=&REAC_Score_except,*/ Final_compare=&Final_compare );
     
-  *%end;
+  /*%end;
   %else %do;
   
     %err_mput( macro=Update_REAC, msg=%str(Update file &Update_file is not after last update for this data source (&Last_update_date_fmt).) )
     %err_mput( macro=Update_REAC, msg=%str(Update will NOT be applied to Catalog.) )
 
-  %end;
+  %end;*/
 
-  %note_mput( macro=Update_REAC, msg=%str(Macro exiting.) )
+  /*%note_mput( macro=Update_REAC, msg=%str(Macro exiting.) )*/
     
 %mend Update_REAC;
 
