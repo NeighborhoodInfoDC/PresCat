@@ -19,8 +19,7 @@
 
 %macro Add_new_projects_geocode( 
   input_file_pre=, /** First part of input file names **/ 
-  input_path=,  /** Location of input files **/
-  streetalt_file= /** File containing street name spelling corrections (if omitted, default file is used) **/
+  input_path=  /** Location of input files **/
   );
 
   %local geo_vars;
@@ -45,17 +44,6 @@
   ** MAR Address sheet info **;
 
   filename fimport "&input_path\&input_file_pre._mar_address.csv" lrecl=2000;
-
-/*
-  proc import out=New_Proj_Geocode_mar_address
-      datafile=fimport
-      dbms=csv replace;
-    datarow=2;
-    getnames=yes;
-    guessingrows=500;
-
-  run;
-*/
 
   data WORK.NEW_PROJ_GEOCODE_MAR_ADDRESS    ;
     %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
@@ -288,27 +276,6 @@
       nlihc_id = cats ('NL', put(nlihc_hold,z6.));
       drop firstproj nlihc_num nlihc_sans nlihc_hold lastid _drop_constant;
   run;
-
-/***************
-  ** MAR address info sheet **;
-
-  proc sort data=New_Proj_Geocode;
-    by marid;
-  run;
-   
-  options spool;
-
-  %DC_mar_geocode(
-    data = New_Proj_Geocode,
-    staddr = bldg_addre,
-    zip = bldg_zip,
-    streetalt_file = &streetalt_file,
-    out = New_Proj_Geocode,
-    geo_match = Y,
-    debug = N,
-    mprint = Y
-  );
-************/
 
   **Merge project info and address info for new projects**;
 
