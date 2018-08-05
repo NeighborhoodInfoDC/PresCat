@@ -521,10 +521,10 @@
   run;
 
   title2 '********************************************************************************************';
-  title3 '** Building_geocode: Check for duplicate addresses in different projects';
+  title3 '** Building_geocode_a: Check for duplicate addresses in projects being added';
 
   %Dup_check(
-    data=Building_geocode,
+    data=Building_geocode_a,
     by=Bldg_address_id,
     id=nlihc_id Proj_name Bldg_addre 
   )
