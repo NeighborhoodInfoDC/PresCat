@@ -19,8 +19,7 @@
 
 %macro Add_new_projects_geocode( 
   input_file_pre=, /** First part of input file names **/ 
-  input_path=,  /** Location of input files **/
-  streetalt_file= /** File containing street name spelling corrections (if omitted, default file is used) **/
+  input_path=  /** Location of input files **/
   );
 
   %local geo_vars;
@@ -45,17 +44,6 @@
   ** MAR Address sheet info **;
 
   filename fimport "&input_path\&input_file_pre._mar_address.csv" lrecl=2000;
-
-/*
-  proc import out=New_Proj_Geocode_mar_address
-      datafile=fimport
-      dbms=csv replace;
-    datarow=2;
-    getnames=yes;
-    guessingrows=500;
-
-  run;
-*/
 
   data WORK.NEW_PROJ_GEOCODE_MAR_ADDRESS    ;
     %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
@@ -289,27 +277,6 @@
       drop firstproj nlihc_num nlihc_sans nlihc_hold lastid _drop_constant;
   run;
 
-/***************
-  ** MAR address info sheet **;
-
-  proc sort data=New_Proj_Geocode;
-    by marid;
-  run;
-   
-  options spool;
-
-  %DC_mar_geocode(
-    data = New_Proj_Geocode,
-    staddr = bldg_addre,
-    zip = bldg_zip,
-    streetalt_file = &streetalt_file,
-    out = New_Proj_Geocode,
-    geo_match = Y,
-    debug = N,
-    mprint = Y
-  );
-************/
-
   **Merge project info and address info for new projects**;
 
   data DC_info_geocode_mar;
@@ -433,6 +400,61 @@
     drop Ward2012;
     
   run;
+  
+  ** Check new projects for pre-existing addresses in Catalog **;
+  
+  proc sort data=Building_geocode_a out=Building_geocode_c1;
+    by bldg_address_id nlihc_id;
+  run;
+
+  proc sort data=PresCat.Building_geocode out=Building_geocode_c2;
+    by bldg_address_id nlihc_id;
+  run;
+
+  proc compare base=Building_geocode_c1 compare=Building_geocode_c2 noprint outbase outcomp out=Building_geocode_comp;
+    id bldg_address_id;
+    var nlihc_id proj_name bldg_addre;
+  run;
+
+  proc sort data=Building_geocode_comp;
+    by bldg_address_id _type_ nlihc_id;
+  run;
+
+  data Building_geocode_comp_rpt;
+
+    retain _hold_bldg_address_id .a;
+
+    set Building_geocode_comp;
+    by bldg_address_id;
+
+    if _type_ = 'BASE' then do;
+      _hold_bldg_address_id = bldg_address_id;
+    end;
+
+    if _hold_bldg_address_id = bldg_address_id then do;
+      output;
+    end;
+    else do;
+      _hold_bldg_address_id = .a;
+    end;
+
+    drop _hold_bldg_address_id;
+
+  run;
+
+  title2 '********************************************************************************************';
+  title3 '** Addresses in new projects that match those in existing Catalog projects';
+  title4 '** Check to make sure these projects are not already in Catalog';
+  title5 '** New project to be added to the Catalog is listed first';
+
+  proc print data=Building_geocode_comp_rpt noobs label;
+    by bldg_address_id;
+    id nlihc_id;
+    var proj_name bldg_addre;
+  run;
+  
+  title2; 
+  
 
   **remove projects from geocode datasets that are no longer in project dataset**;
 
@@ -554,10 +576,10 @@
   run;
 
   title2 '********************************************************************************************';
-  title3 '** Building_geocode: Check for duplicate addresses in different projects';
+  title3 '** Building_geocode_a: Check for duplicate addresses in projects being added';
 
   %Dup_check(
-    data=Building_geocode,
+    data=Building_geocode_a,
     by=Bldg_address_id,
     id=nlihc_id Proj_name Bldg_addre 
   )

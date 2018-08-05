@@ -1,14 +1,13 @@
 /**************************************************************************
- Program:  Add_new_projects_yyyymmdd.sas
+ Program:  New_projects_issue_nnn.sas
  Library:  PresCat
- Project:  NeighborhoodInfo DC
+ Project:  Urban-Greater DC
  Author:   
  Created:  
  Version:  SAS 9.4
  Environment:  Local Windows session (desktop)
  
  Description:  Add new projects to Preservation Catalog. 
-
  
 
  Modifications:
@@ -25,8 +24,7 @@
 
 
 %Add_new_projects(
-  input_file_pre = ,
-  streetalt_file = 
+  input_file_pre = 
 )
 
 

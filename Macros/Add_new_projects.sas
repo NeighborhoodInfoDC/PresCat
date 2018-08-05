@@ -26,16 +26,14 @@
 
 %macro Add_new_projects( 
   input_file_pre=, /** First part of input file names **/
-  input_path=&_dcdata_r_path\PresCat\Raw\AddNew,  /** Location of input files **/
-  streetalt_file= /** File containing street name spelling corrections (if omitted, default file is used) **/
+  input_path=&_dcdata_r_path\PresCat\Raw\AddNew  /** Location of input files **/
   );
   
   ** Update PresCat.Building_geocode, PresCat.Project_geocode **;
   
   %Add_new_projects_geocode( 
     input_file_pre=&input_file_pre,
-    input_path=&input_path,
-    streetalt_file=&streetalt_file
+    input_path=&input_path
   )
   
   ** Create PresCat.Parcel **;
@@ -44,7 +42,7 @@
     data=Building_geocode, 
     out=Parcel, 
     revisions=%str(Add new projects from &input_file_pre._*.csv.),
-    compare=Y,
+    compare=N,
     archive=Y 
   )
   

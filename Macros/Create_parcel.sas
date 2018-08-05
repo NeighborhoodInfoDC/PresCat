@@ -136,6 +136,7 @@
       sortby=nlihc_id ssl,
       revisions=%str(&revisions),
       archive=&archive,
+      printobs=0,
       freqvars=parcel_type parcel_owner_type 
     )
     
