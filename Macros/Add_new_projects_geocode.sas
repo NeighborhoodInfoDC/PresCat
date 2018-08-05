@@ -400,6 +400,61 @@
     drop Ward2012;
     
   run;
+  
+  ** Check new projects for pre-existing addresses in Catalog **;
+  
+  proc sort data=Building_geocode_a out=Building_geocode_c1;
+    by bldg_address_id nlihc_id;
+  run;
+
+  proc sort data=PresCat.Building_geocode out=Building_geocode_c2;
+    by bldg_address_id nlihc_id;
+  run;
+
+  proc compare base=Building_geocode_c1 compare=Building_geocode_c2 noprint outbase outcomp out=Building_geocode_comp;
+    id bldg_address_id;
+    var nlihc_id proj_name bldg_addre;
+  run;
+
+  proc sort data=Building_geocode_comp;
+    by bldg_address_id _type_ nlihc_id;
+  run;
+
+  data Building_geocode_comp_rpt;
+
+    retain _hold_bldg_address_id .a;
+
+    set Building_geocode_comp;
+    by bldg_address_id;
+
+    if _type_ = 'BASE' then do;
+      _hold_bldg_address_id = bldg_address_id;
+    end;
+
+    if _hold_bldg_address_id = bldg_address_id then do;
+      output;
+    end;
+    else do;
+      _hold_bldg_address_id = .a;
+    end;
+
+    drop _hold_bldg_address_id;
+
+  run;
+
+  title2 '********************************************************************************************';
+  title3 '** Addresses in new projects that match those in existing Catalog projects';
+  title4 '** Check to make sure these projects are not already in Catalog';
+  title5 '** New project to be added to the Catalog is listed first';
+
+  proc print data=Building_geocode_comp_rpt noobs label;
+    by bldg_address_id;
+    id nlihc_id;
+    var proj_name bldg_addre;
+  run;
+  
+  title2; 
+  
 
   **remove projects from geocode datasets that are no longer in project dataset**;
 

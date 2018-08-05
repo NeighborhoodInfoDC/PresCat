@@ -83,7 +83,7 @@
     
   data NLIHC_ID;
 
-    set building_geocode
+    set building_geocode_a
     (keep=NLIHC_id bldg_address_id);
     _drop = 1;
     run;
