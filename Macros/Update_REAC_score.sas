@@ -39,7 +39,9 @@
   **************************************************************************
   ** Get data for updating REAC_score file;
 
-  data Update_&Update_file;
+  data 
+    Update_&Update_file._a (keep=nlihc_id REAC_:)
+    Nomatch_&Update_file (keep=REAC_: property_name);
 
 	set Hud.&Update_file._dc;
 
@@ -57,7 +59,7 @@
 
   	DO num = 1 to 3 ;
     date = arelease_date(num);
-	reac_score = ascore(num);
+	reac_score = lowcase(ascore(num));
 
 	j = indexc( reac_score, 'abcdefghijklmnopqrstuvwxyz' );
       
@@ -68,12 +70,10 @@
 	  REAC_ID = rems_property_id;
 	  put reac_date mmddyy10.;
 
-    OUTPUT;
+    if not( missing( nlihc_id ) ) then output Update_&Update_file._a;
+    else output Nomatch_&Update_file;
+    
   END;
-
-  DROP release_date_1 release_date_2 release_date_3 inspec_id_1 inspec_id_2 inspec_id_3
-	   inspec_score_1 inspec_score_2 inspec_score_3 num;
-
 
 	label
     Nlihc_id = "Preservation Catalog project ID"
@@ -84,11 +84,20 @@
     REAC_score_star = "REAC inspection score, star (*) part"
 	REAC_ID = "REMS Property ID";
       
-  keep nlihc_id REAC_: ;
-  
   format REAC_date mmddyy10.;
 
 run;
+
+title2 '**** Nonmatching REAC records';
+title3 '**** Where possible, add matching NLIHC_ID to $reac_nlihcid. format in Macros\Update_REAC_init.sas';
+
+proc print data=Nomatch_&Update_file;
+  id REAC_id property_name;
+  by REAC_id property_name;
+  var REAC_date REAC_score;
+run;
+
+title2;
 
 /*  title2 '**** THERE SHOULD NOT BE ANY DUPLICATE RECORDS IN THE UPDATE FILE ****';
 
@@ -100,21 +109,17 @@ run;
   
   title2;*/
 
-data reac_score_test;
-set prescat.reac_score;
-run;
-
-  proc sort data=Update_&Update_file;
-  by nlihc_id reac_date;
+  proc sort data=Update_&Update_file._a;
+  by nlihc_id descending reac_date;
   run;
 
-  proc sort data=reac_score_test;
-  by nlihc_id reac_date;
+  proc sort data=prescat.reac_score out=reac_score_test;
+  by nlihc_id descending reac_date;
   run;
 
 data Update_&Update_file;
-update reac_score_test Update_&Update_file;
-by nlihc_id reac_date;
+update reac_score_test Update_&Update_file._a;
+by nlihc_id descending reac_date;
 run;
 
   **************************************************************************

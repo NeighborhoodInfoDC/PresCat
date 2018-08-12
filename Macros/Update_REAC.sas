@@ -17,17 +17,9 @@
 
 %macro Update_REAC( 
   Update_file=, 
-  Finalize=Y,
-  /*Reac_Score_except=Reac_Score_except,*/
   Quiet=Y,
   Final_compare=Y
   );
-  
-  %if %upcase( &Finalize ) = Y and not &_remote_batch_submit %then %do;
-    %warn_mput( macro=Update_REAC, msg=%str(Not a remote batch submit session. Finalize will be set to N.) )
-    %let Finalize = N;
-  %end;
-
 
   /*This program will look very different because it's updating the REAC_score dataset
 
@@ -37,9 +29,9 @@
   
   /*%if &Last_update_date = or &Last_update_date < &Subsidy_Info_Source_Date %then %do;*/
   
-    %Update_REAC_score( Update_file=&Update_file, /*REAC_Score_except=&REAC_Score_except,*/ Quiet=&Quiet )
+    %Update_REAC_score( Update_file=&Update_file, Quiet=&Quiet )
     
-    %Update_REAC_finish( Update_file=&Update_file, Finalize=&Finalize, /*REAC_Score_except=&REAC_Score_except,*/ Final_compare=&Final_compare );
+    %Update_REAC_finish( Update_file=&Update_file, Final_compare=&Final_compare );
     
   /*%end;
   %else %do;
