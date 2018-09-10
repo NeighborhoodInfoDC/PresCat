@@ -1,5 +1,5 @@
 /**************************************************************************
- Program:  Update_MFIS_yyyy_mm.sas
+ Program:  Update_MFIS_2018_07.sas
  Library:  PresCat
  Project:  NeighborhoodInfo DC
  Author:   
@@ -20,6 +20,6 @@
 %DCData_lib( HUD )
 
 
-%Update_MFIS( Update_file=MFIS_yyyy_mm )
+%Update_MFIS( Update_file=MFIS_2018_07 )
 
 
