@@ -193,7 +193,9 @@
     
     set 
       Dhcd.Rcasd_2015
-      Dhcd.Rcasd_2016;
+      Dhcd.Rcasd_2016
+	  Dhcd.Rcasd_2017
+	  Dhcd.Rcasd_2018;
     by nidc_rcasd_id;
     
     where put( ssl, $sslsel. ) ~= "";
