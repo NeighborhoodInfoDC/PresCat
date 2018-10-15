@@ -24,7 +24,7 @@
 
 
 %Add_new_projects(
-  input_file_pre = New_projects_issue_119_main
+  input_file_pre = New_projects_issue_119
 )
 
 
