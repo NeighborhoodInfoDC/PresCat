@@ -477,7 +477,7 @@
     where not In_Subsidy_target and missing( nlihc_id ) and 
       ( Subsidy_active or intck( 'year', poa_end_actual, date() ) <= 10 );
     /*id Subsidy_Info_Source_ID;*/
-    var nlihc_id &Subsidy_missing_info_vars Subsidy_active Units_assist poa_start poa_end poa_end_actual;
+    var nlihc_id Subsidy_Info_Source_ID &Subsidy_missing_info_vars &Project_missing_info_vars Subsidy_active Units_assist poa_start poa_end poa_end_actual;
     ****label 
       address_line1_text = "Address"
       program_type_name = "Program";
