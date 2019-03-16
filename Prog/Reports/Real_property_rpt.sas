@@ -66,7 +66,7 @@ proc report data=Real_property_rpt nowd
   break before rpt_id /;
   label category_code = 'Category';
   title1 "DC Preservation Catalog: Real Property Events Report (previous three months)";
-  footnote1 height=9pt "Prepared by NeighborhoodInfo DC (www.NeighborhoodInfoDC.org), &fdate..";
+  footnote1 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
   footnote2 height=9pt "Sources: OTR=Office of Tax and Revenue, RCASD=DHCD Rental Conversion and Sale Division, ROD=Recorder of Deeds.";
 run;
 

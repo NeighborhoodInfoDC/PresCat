@@ -50,7 +50,7 @@ proc gchart data=Project;
   label Proj_units_tot=' ' Proj_Units_Assist_Max=' '; 
   title1 height=12pt j=l ' ';
   title2 height=14pt j=c 'Number of Active Projects by Assisted Units';
-  footnote1 height=9pt j=l "Prepared by NeighborhoodInfo DC (www.NeighborhoodInfoDC.org)";
+  footnote1 height=9pt j=l "Prepared by Urban-Greater DC (greaterdc.urban.org)";
 run;
 
 options label missing='?';
@@ -63,7 +63,7 @@ proc print data=Project noobs label;
     Proj_Units_Assist_Max = 'Assisted units';
   title1 height=12pt j=l 'DC Preservation Catalog';
   title2 height=14pt j=c 'List of Active Projects by Total and Assisted Units';
-  footnote1 height=9pt j=l "Prepared by NeighborhoodInfo DC (www.NeighborhoodInfoDC.org)";
+  footnote1 height=9pt j=l "Prepared by Urban-Greater DC (greaterdc.urban.org)";
 run;
 
 ods pdf close;
