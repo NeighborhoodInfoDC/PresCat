@@ -81,6 +81,16 @@
     freqvars=,
     stats=n sum mean stddev min max
   )
+  
+  ** Update metadata for Project_category_view **;
+
+  %Dc_update_meta_file(
+    ds_lib=PresCat,
+    ds_name=Project_category_view,
+    creator_process=&_program,
+    restrictions=None,
+    revisions=%str(Update with &Update_file..)
+  )
 
   %if %mparam_is_yes( &Final_compare ) %then %do;
 
