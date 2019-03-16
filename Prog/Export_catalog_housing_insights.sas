@@ -112,7 +112,7 @@ options msglevel=n;
         label = 'Description';
       title1 bold "Data dictionary for file: &k..csv";
       title2 bold "&desc";
-      title3 height=10pt "Prepared by NeighborhoodInfo DC on %left(%qsysfunc(date(),worddate.)).";
+      title3 height=10pt "Prepared by Urban-Greater DC on %left(%qsysfunc(date(),worddate.)).";
       footnote1;
     run;
 

@@ -101,6 +101,14 @@
 
     %Dc_update_meta_file(
       ds_lib=PresCat,
+      ds_name=Project_category_view,
+      creator_process=Update_&Update_file..sas,
+      restrictions=None,
+      revisions=%str(Update with &Update_file..)
+    )
+
+    %Dc_update_meta_file(
+      ds_lib=PresCat,
       ds_name=Project_update_history,
       creator_process=Update_&Update_file..sas,
       restrictions=None,

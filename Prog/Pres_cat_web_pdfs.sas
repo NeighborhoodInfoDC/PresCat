@@ -83,7 +83,7 @@
     define Proj_Addre / width=120 ' ' display;
     define Proj_ZIP / ' ' display;
     title1 "DC Preservation Catalog Project Profile - &ver Version - &proj_select";
-    footnote1 height=9pt "Prepared by NeighborhoodInfo DC (www.NeighborhoodInfoDC.org), &fdate..";
+    footnote1 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
   run;
 
   proc report data=Project list nowd /*noheader*/

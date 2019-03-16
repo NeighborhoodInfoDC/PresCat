@@ -283,6 +283,16 @@
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
   run;
 
+  ** Update metadata for Project_category_view **;
+
+  %Dc_update_meta_file(
+    ds_lib=PresCat,
+    ds_name=Project_category_view,
+    creator_process=&_program,
+    restrictions=None,
+    revisions=%str(Add new projects from &input_file_pre._*.csv.)
+  )
+
 %mend Add_new_projects_project;
 
 /** End Macro Definition **/

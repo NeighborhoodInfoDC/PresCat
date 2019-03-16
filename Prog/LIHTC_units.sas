@@ -95,7 +95,7 @@ proc tabulate data=LIHTC_units format=comma12.0 noseps missing;
   title2 " ";
   title3 "LIHTC-assisted units by 15-year compliance end date and ward";
   footnote1 height=9pt "Source: DC Preservation Catalog";
-  footnote2 height=9pt "Prepared by NeighborhoodInfo DC (www.NeighborhoodInfoDC.org), &fdate..";
+  footnote2 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
   footnote3 height=9pt j=r '{Page}\~{\field{\*\fldinst{\pard\b\i0\chcbpat8\qc\f1\fs19\cf1{PAGE }\cf0\chcbpat0}}}';
 
 run;
