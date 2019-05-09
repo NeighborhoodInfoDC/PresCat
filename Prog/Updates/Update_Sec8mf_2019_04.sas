@@ -14,7 +14,7 @@
  Modifications:
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocalC.sas";
+%include "L:\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( PresCat )
