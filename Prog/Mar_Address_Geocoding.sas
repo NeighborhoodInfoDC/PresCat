@@ -51,7 +51,7 @@ run;
 
 proc import datafile= "L:\Libraries\PresCat\Raw\MAR_addresses.csv" 
 out=property_addr2
-dbms=csv;
+dbms=csv replace;
 guessingrows=max;
 run; 
 
@@ -66,3 +66,21 @@ run;
 
 %DC_mar_geocode( data=property_addr_parsed, staddr=Address, out=property_addr_parsed_geo )
 
+proc sort data=property_addr2 out=property_addr2_nodup nodupkey;
+  by ssl;
+run;
+
+proc sql noprint;
+  create table Full_addr_list as
+    select coalesce( A.Address_id, Mar.Address_id ) as Address_id, 
+        A.premiseadd, A.ownername, A.ssl, Mar.fulladdress
+    from Mar.Address_points_view as Mar
+    right join
+    ( select coalesce( xref.ssl, prop.ssl ) as ssl, xref.Address_id, prop.premiseadd, prop.ownername
+      from Mar.Address_ssl_xref as xref
+      right join 
+      property_addr2_nodup as prop
+    on xref.ssl = prop.ssl ) as A
+  on A.Address_id = Mar.Address_id
+  order by A.ownername, A.premiseadd, A.ssl, A.Address_id;
+quit;
