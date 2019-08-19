@@ -26,7 +26,7 @@ proc sql noprint;
   select coalesce( a.bldg_address_id, b.address_id ) as bldg_address_id, 
     a.nlihc_id, b.active_res_occupancy_count as Bldg_units_mar
   from PresCat.Building_geocode as a 
-  left join Mar.Address_points_2016_01 as b
+  left join Mar.Address_points_view as b
   on a.bldg_address_id = b.address_id
   order by nlihc_id, bldg_addre;
 quit;
@@ -49,15 +49,21 @@ run;
 
 ** Read in parcel list **;
 
-proc import datafile= "L:\Libraries\PresCat\Raw\MAR_addresses.csv" 
+proc import datafile= "L:\Libraries\PresCat\Raw\MAR_addresses_rev_20190819.csv" 
 out=property_addr2
 dbms=csv replace;
 guessingrows=max;
 run; 
 
+data property_addr2_b;
+
+  set property_addr2 (where=(not(missing(nlihc_id))));
+
+run;
+
 ** Parse out individual addresses from parcel address ranges **;
 
-%Rcasd_address_parse( data=property_addr2, out=property_addr_parsed, addr=premiseadd, keepin=, id=ssl ownername )
+%Rcasd_address_parse( data=property_addr2_b, out=property_addr_parsed, addr=premiseadd, keepin=, id=nlihc_id ssl ownername )
 
 proc print data=property_addr_parsed;
 run;
@@ -66,17 +72,17 @@ run;
 
 %DC_mar_geocode( data=property_addr_parsed, staddr=Address, out=property_addr_parsed_geo )
 
-proc sort data=property_addr2 out=property_addr2_nodup nodupkey;
+proc sort data=property_addr2_b out=property_addr2_nodup nodupkey;
   by ssl;
 run;
 
 proc sql noprint;
   create table Full_addr_list as
     select coalesce( A.Address_id, Mar.Address_id ) as Address_id, 
-        A.premiseadd, A.ownername, A.ssl, Mar.fulladdress
+        A.premiseadd, A.ownername, A.ssl, A.nlihc_id, Mar.fulladdress
     from Mar.Address_points_view as Mar
     right join
-    ( select coalesce( xref.ssl, prop.ssl ) as ssl, xref.Address_id, prop.premiseadd, prop.ownername
+    ( select coalesce( xref.ssl, prop.ssl ) as ssl, xref.Address_id, prop.premiseadd, prop.ownername, prop.nlihc_id
       from Mar.Address_ssl_xref as xref
       right join 
       property_addr2_nodup as prop
