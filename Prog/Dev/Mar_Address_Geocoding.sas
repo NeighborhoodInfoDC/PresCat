@@ -106,7 +106,11 @@ run;
 proc sql noprint;
   create table Full_addr_list as
     select coalesce( A.Address_id, Mar.Address_id ) as Address_id, A.*,
-        Mar.fulladdress, Mar.status, Mar.active_res_occupancy_count as Bldg_units_mar
+        Mar.fulladdress, Mar.status, Mar.active_res_occupancy_count as Bldg_units_mar,
+        Mar.latitude as Bldg_lat, Mar.longitude as Bldg_lon, Mar.x as Bldg_x, Mar.y as Bldg_y,
+        Mar.zip as Bldg_zip, Mar.anc2012, Mar.cluster_tr2000, 
+        put( Cluster_tr2000, $clus00b. ) as Cluster_tr2000_name,
+        Mar.geo2010, Mar.psa2012, Mar.ward2012
     from Mar.Address_points_view as Mar
     right join
     ( select coalesce( xref.ssl, prop.ssl ) as ssl, xref.Address_id, prop.*
@@ -152,6 +156,7 @@ quit;
 )
 
 proc sort data=Full_addr_list out=Full_addr_list_nodup_addr nodupkey;
+  where not( missing( address_id ) or missing( nlihc_id ) ) and in_last_ownerpt;
   by nlihc_id address_id;
 run;
 
@@ -166,6 +171,62 @@ proc tabulate data=Full_addr_list_nodup_addr format=comma10.0 noseps missing;
     n sum=' '*bldg_units_mar
     / indent=2
   ;
+run;
+
+** Add missing addresses to Catalog **;
+
+proc sort data=PresCat.Building_geocode out=PresCat_Building_geocode;
+  by nlihc_id bldg_address_id;
+run;
+
+data Building_geocode;
+
+  merge
+    Full_addr_list_nodup_addr 
+      (keep=nlihc_id address_id bldg_: anc2012 cluster_tr2000: geo2010 psa2012 ssl ward2012
+       rename=(address_id=Bldg_address_id))
+    PresCat_Building_geocode;
+  by nlihc_id bldg_address_id;
+
+run;
+
+proc compare base=PresCat_Building_geocode compare=Building_geocode listall maxprint=(40,32000);
+  id nlihc_id bldg_address_id;
+run;
+
+** Compare MAR unit counts with Catalog project unit counts **;
+
+proc sql noprint;
+  create table Bldg_units_mar_2 as
+  select coalesce( a.bldg_address_id, b.address_id ) as bldg_address_id, 
+    a.nlihc_id, a.in_last_ownerpt,
+    b.active_res_occupancy_count as Bldg_units_mar
+/*  from Building_geocode as a */
+  from 
+  ( select Building_geocode.*, Parcel_base.ssl, Parcel_base.in_last_ownerpt
+    from Building_geocode left join RealProp.Parcel_base as Parcel_base
+    on Building_geocode.ssl = Parcel_base.ssl
+  ) as a
+  left join Mar.Address_points_view as b
+  on a.bldg_address_id = b.address_id
+  where in_last_ownerpt
+  order by nlihc_id, bldg_address_id;
+quit;
+
+proc summary data=Bldg_units_mar_2;
+  by nlihc_id;
+  var Bldg_units_mar;
+  output out=Proj_units_mar_2 (drop=_type_ _freq_) sum=Proj_units_mar;
+run;
+
+proc compare 
+    base=PresCat.Project (keep=nlihc_id proj_units_tot) 
+    compare=Proj_units_mar_2 (keep=nlihc_id proj_units_mar) 
+    /*nosummary*/ nodate listall maxprint=(400,32000)
+    method=absolute criterion=5 out=Comp_results;
+id nlihc_id;
+  var proj_units_tot;
+  with proj_units_mar;
 run;
 
 ** Add missing parcels to Catalog **;
