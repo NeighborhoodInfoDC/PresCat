@@ -240,8 +240,6 @@
          (rename=(episode_end=RP_date))
       Rcasd_notices;
     
-    if missing( RP_date ) then delete;
-    
     label
       RP_type = 'Real property event, type'
       RP_desc = 'Real property event, description';
