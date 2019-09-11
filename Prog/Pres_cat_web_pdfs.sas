@@ -238,7 +238,7 @@ x "del /q &output_path\public\*.pdf";
 data _null_;
 
   set PresCat.Project (keep=NLIHC_ID);
-  ***UNCOMMENT FOR TESTING***WHERE NLIHC_ID IN ( "NL000027", "NL000208", "NL000319", "NL001035" ); 
+  ***UNCOMMENT FOR TESTING***WHERE NLIHC_ID IN ( "NL000027", "NL000069", "NL000208", "NL000319", "NL001035" ); 
   
   call execute ( '%Create_pdf( ' || NLIHC_ID || ', public )' );
 
