@@ -47,7 +47,9 @@
   data Transactions;
 
     set Realprop.Sales_master (keep=ssl saledate saleprice ownername_full acceptcode acceptcode_new);
-    where put( ssl, $sslsel. ) ~= "" and not( missing( saledate ) );
+    where put( ssl, $sslsel. ) ~= "";
+
+    if saledate = '01jan1901'd then saledate = .u;
     
     %Owner_name_clean( Ownername_full, Ownername_full )
     
