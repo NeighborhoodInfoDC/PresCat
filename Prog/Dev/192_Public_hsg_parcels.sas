@@ -91,7 +91,7 @@ data
 
 run;
 
-ods tagsets.excelxp file="D:\DCData\Libraries\PresCat\Prog\Dev\Public_hsg_parcels.xls" style=Normal options(sheet_interval='Proc' );
+ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Raw\Dev\Public_hsg_parcels.xls" style=Normal options(sheet_interval='Proc' );
 ods listing close;
 
 ods tagsets.excelxp options( sheet_name="Matches" );
@@ -126,7 +126,7 @@ ods listing;
 
 ** Create mapping files **;
 
-filename fexport "D:\DCData\Libraries\PresCat\Prog\Dev\Public_hsg_parcels_matches.csv" lrecl=1000;
+filename fexport "&_dcdata_default_path\PresCat\Raw\Dev\Public_hsg_parcels_matches.csv" lrecl=1000;
 
 proc export data=Public_hsg_parcels_matches
     outfile=fexport
@@ -135,7 +135,7 @@ run;
 
 filename fexport clear;
 
-filename fexport "D:\DCData\Libraries\PresCat\Prog\Dev\Public_hsg_parcels_notincat.csv" lrecl=1000;
+filename fexport "&_dcdata_default_path\PresCat\Raw\Dev\Public_hsg_parcels_notincat.csv" lrecl=1000;
 
 proc export data=Public_hsg_parcels_notincat
     outfile=fexport
@@ -144,7 +144,7 @@ run;
 
 filename fexport clear;
 
-filename fexport "D:\DCData\Libraries\PresCat\Prog\Dev\Public_hsg_parcels_notincat_oth.csv" lrecl=1000;
+filename fexport "&_dcdata_default_path\PresCat\Raw\Dev\Public_hsg_parcels_notincat_oth.csv" lrecl=1000;
 
 proc export data=Public_hsg_parcels_notincat_oth
     outfile=fexport
@@ -153,7 +153,7 @@ run;
 
 filename fexport clear;
 
-filename fexport "D:\DCData\Libraries\PresCat\Prog\Dev\Public_hsg_parcels_notdcha.csv" lrecl=1000;
+filename fexport "&_dcdata_default_path\PresCat\Raw\Dev\Public_hsg_parcels_notdcha.csv" lrecl=1000;
 
 proc export data=Public_hsg_parcels_notdcha
     outfile=fexport
