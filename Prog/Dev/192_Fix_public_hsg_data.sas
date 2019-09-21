@@ -164,7 +164,7 @@ run;
   data=Parcel,
   out=Parcel,
   outlib=PresCat,
-  label="Preservation Catalog, ",
+  label="Preservation Catalog, Real property parcels",
   sortby=nlihc_id ssl,
   archive=Y,
   /** Metadata parameters **/
@@ -189,12 +189,153 @@ proc compare base=PresCat.Parcel compare=Parcel maxprint=(40,32000);
   id nlihc_id ssl;
 run;
 
-** Verify parcels for CAPITOL QUARTER are all owned by DCHA **;
+** Verify parcels for selected projects **;
 
 proc print data=Parcel;
-  where nlihc_id = 'NL000387';
+  where nlihc_id in ( 'NL000387', 'NL000121', 'NL000353' );
+  by nlihc_id;
   id nlihc_id ssl;
   var parcel_owner_type Parcel_owner_name;
 run;
+
+
+** Create updated address data sets **;
+
+** Addresses to add **;
+
+proc sql noprint;
+  create table Address_add as
+  select Parcel.ssl, Parcel.nlihc_id, Mar.* 
+  from Parcel_add_wchar as Parcel 
+  left join ( 
+    select xref.ssl, xref.address_id, pt.address_id, 
+      pt.fulladdress as bldg_addre, 
+      pt.x as Bldg_x, 
+      pt.y as Bldg_y,
+      pt.zip as Bldg_zip,
+      pt.anc2012, pt.cluster_tr2000, pt.geo2010, pt.psa2012, pt.ward2012
+    from Mar.Address_ssl_xref as xref left join Mar.Address_points_view as pt
+    on xref.address_id = pt.address_id
+  ) as Mar
+  on mar.ssl = Parcel.ssl
+  where not missing( address_id )
+  order by Nlihc_id, bldg_addre;
+quit;
+
+proc sort data=Address_add nodupkey;
+  by Nlihc_id bldg_addre;
+run;
+
+%File_info( data=Address_add, printobs=100 )
+
+/*
+title2 '--
+%Dup_check(
+  data=Address_add,
+  by=nlihc_id ssl,
+  id=address_id bldg_addre
+)
+*/
+
+title2 '--Address_add--';
+%Dup_check(
+  data=Address_add,
+  by=nlihc_id address_id,
+  id=bldg_addre
+)
+title2;
+
+
+** Addresses to remove **;
+
+proc sql noprint;
+  create table Address_del as
+  select coalesce( Mar.ssl, Parcel.ssl ) as ssl, Parcel.nlihc_id, Mar.address_id
+  from Parcel_del as Parcel 
+  left join
+  Mar.Address_ssl_xref as Mar
+  on mar.ssl = Parcel.ssl
+  where not missing( address_id )
+  order by Nlihc_id, address_id;
+quit;
+
+%File_info( data=Address_del, contents=n, stats=, printobs=100 )
+
+%Data_to_format(
+  FmtLib=work,
+  FmtName=$Address_del,
+  Desc=,
+  Data=Address_del,
+  Value=trim( nlihc_id ) || left( put( address_id, z10. ) ),
+  Label='X',
+  OtherLabel=' ',
+  Print=N,
+  Contents=N
+  )
+
+data Building_geocode;
+
+  set
+    Prescat.Building_geocode
+    Address_add (rename=(address_id=bldg_address_id));
+  by nlihc_id bldg_addre;
+  
+  
+  if put( trim( nlihc_id ) || left( put( bldg_address_id, z10. ) ), $Address_del. ) = 'X' then delete;
+  
+run;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Building_geocode,
+  out=Building_geocode,
+  outlib=PresCat,
+  label="Preservation Catalog, Building-level geocoding info",
+  sortby=nlihc_id bldg_addre,
+  archive=Y,
+  /** Metadata parameters **/
+  restrictions=None,
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0,
+  freqvars=Ward2012
+)
+
+** Check for duplicate obs **;
+
+>>>>>>>*********  FIX DUPLICATE ADDRESS IDS WITH DIFFERENT ADDRESSES ***********;
+
+title2 '--Building_geocode--';
+%Dup_check(
+  data=Building_geocode,
+  by=nlihc_id bldg_address_id,
+  id=bldg_addre
+)
+title2;
+
+proc compare base=PresCat.Building_geocode compare=Building_geocode maxprint=(40,32000);
+  id nlihc_id bldg_addre;
+run;
+
+** Verify addresses for selected projects **;
+
+proc print data=Building_geocode;
+  where nlihc_id in ( 'NL000387', 'NL000121', 'NL000353' );
+  by nlihc_id;
+  id nlihc_id;
+  var bldg_addre bldg_address_id;
+run;
+
+
+
+******* NEXT STEPS ********;
+
+** Create updated Project_geocode data set **;
+
+** Update Subsidy data set with APSH IDs **;
+
+** Update Project data set **;
+
+** Update project name for NL000387 to "CAPITOL QUARTER I & II (public housing)" **;
 
 
