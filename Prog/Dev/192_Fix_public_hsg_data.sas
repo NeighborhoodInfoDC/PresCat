@@ -24,7 +24,7 @@
 
 ** Read in parcel corrections **;
 
-filename fimport "D:\DCData\Libraries\PresCat\Prog\Dev\Public_hsg_parcels_notincat_corr.csv" lrecl=1000;
+filename fimport "D:\DCData\Libraries\PresCat\Raw\Dev\Public_hsg_parcels_notincat_corr.csv" lrecl=1000;
 
 proc import out=Notincat_corr
     datafile=fimport
@@ -42,7 +42,7 @@ run;
 
 %File_info( data=Notincat_corr, printobs=0, stats=, freqvars=nlihc_id )
 
-filename fimport "D:\DCData\Libraries\PresCat\Prog\Dev\Public_hsg_parcels_notincat_oth_corr.csv" lrecl=1000;
+filename fimport "D:\DCData\Libraries\PresCat\Raw\Dev\Public_hsg_parcels_notincat_oth_corr.csv" lrecl=1000;
 
 proc import out=Notincat_oth_corr
     datafile=fimport
@@ -185,7 +185,7 @@ title2 '--Parcel--';
 )
 title2;
 
-proc compare base=PresCat.Parcel compare=Parcel maxprint=(40,32000);
+proc compare base=PresCat.Parcel compare=Parcel maxprint=(40,32000) listvar;
   id nlihc_id ssl;
 run;
 
@@ -273,15 +273,50 @@ quit;
   Contents=N
   )
 
+** Correct duplicate address IDs **;
+
+data 
+  Building_geocode_a 
+  Building_geocode_b 
+    (drop=bldg_address_id bldg_x bldg_y bldg_lat bldg_lon anc: psa: geo: cluster: ward:);
+
+  set Prescat.Building_geocode;
+  
+  if ( nlihc_id = 'NL001038' and bldg_address_id = 277581 ) or
+     ( nlihc_id = 'NL001044' and bldg_address_id = 253199 ) then 
+    output Building_geocode_b;
+  else 
+    output Building_geocode_a;
+
+run;
+
+%DC_mar_geocode(
+  data=Building_geocode_b,
+  out=Building_geocode_b_geo,
+  staddr=bldg_addre,
+  zip=bldg_zip,
+  id=nlihc_id,
+  keep_geo=address_id latitude longitude anc2012 cluster_tr2000 geo2010 psa2012 ward2012,
+  listunmatched=Y
+)
+
+proc sort data=Building_geocode_b_geo;
+  by nlihc_id bldg_addre;
+run;
+
 data Building_geocode;
 
   set
-    Prescat.Building_geocode
+    Building_geocode_a
+    Building_geocode_b_geo
+      (drop=m_: _: bldg_addre_std
+       rename=(address_id=bldg_address_id x=Bldg_x y=Bldg_y latitude=Bldg_lat longitude=Bldg_lon))
     Address_add (rename=(address_id=bldg_address_id));
   by nlihc_id bldg_addre;
-  
-  
+    
   if put( trim( nlihc_id ) || left( put( bldg_address_id, z10. ) ), $Address_del. ) = 'X' then delete;
+  
+  if cluster_tr2000_name = '' then cluster_tr2000_name = left( put( cluster_tr2000, clus00b. ) );
   
 run;
 
@@ -303,8 +338,6 @@ run;
 
 ** Check for duplicate obs **;
 
->>>>>>>*********  FIX DUPLICATE ADDRESS IDS WITH DIFFERENT ADDRESSES ***********;
-
 title2 '--Building_geocode--';
 %Dup_check(
   data=Building_geocode,
@@ -313,11 +346,11 @@ title2 '--Building_geocode--';
 )
 title2;
 
-proc compare base=PresCat.Building_geocode compare=Building_geocode maxprint=(40,32000);
+proc compare base=PresCat.Building_geocode compare=Building_geocode maxprint=(40,32000) listvar method=relative;
   id nlihc_id bldg_addre;
 run;
 
-** Verify addresses for selected projects **;
+title2 '-- Verify addresses for selected projects --';
 
 proc print data=Building_geocode;
   where nlihc_id in ( 'NL000387', 'NL000121', 'NL000353' );
@@ -325,6 +358,8 @@ proc print data=Building_geocode;
   id nlihc_id;
   var bldg_addre bldg_address_id;
 run;
+
+title2;
 
 
 
