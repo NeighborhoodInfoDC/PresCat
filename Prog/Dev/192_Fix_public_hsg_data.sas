@@ -22,6 +22,46 @@
 
 %let revisions = Update public housing records (GitHub issue #192).;
 
+
+** Update project name for NL000387 to "CAPITOL QUARTER I & II (public housing)" **;
+
+data Project_category;
+
+  set Prescat.Project_category;
+  
+  if nlihc_id = 'NL000387' then proj_name = "Capitol Quarter I & II (public housing)";
+  
+run;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Project_category,
+  out=Project_category,
+  outlib=PresCat,
+  label="Preservation Catalog, Project category",
+  sortby=nlihc_id,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  contents=Y,
+  printobs=0,
+  freqvars=,
+  stats=
+)
+
+%Data_to_format(
+  FmtLib=work,
+  FmtName=$nlihcid_to_projname,
+  Data=Project_category,
+  Value=nlihc_id,
+  Label=proj_name,
+  OtherLabel=,
+  Print=N,
+  Contents=N
+)
+
+
 ** Read in parcel corrections **;
 
 filename fimport "D:\DCData\Libraries\PresCat\Raw\Dev\Public_hsg_parcels_notincat_corr.csv" lrecl=1000;
@@ -318,6 +358,8 @@ data Building_geocode;
   
   if cluster_tr2000_name = '' then cluster_tr2000_name = left( put( cluster_tr2000, clus00b. ) );
   
+  proj_name = left( put( nlihc_id, $nlihcid_to_projname. ) );
+  
 run;
 
 %Finalize_data_set( 
@@ -362,15 +404,21 @@ run;
 title2;
 
 
+** Create updated Project_geocode data set **;
+
+%Create_project_geocode( data=Building_geocode, revisions=%str(&revisions), compare=n )
+
+proc compare base=PresCat.Project_geocode compare=Project_geocode maxprint=(400,32000) listvar listall method=relative;
+  id nlihc_id;
+run;
+
 
 ******* NEXT STEPS ********;
 
-** Create updated Project_geocode data set **;
+
 
 ** Update Subsidy data set with APSH IDs **;
 
 ** Update Project data set **;
-
-** Update project name for NL000387 to "CAPITOL QUARTER I & II (public housing)" **;
 
 
