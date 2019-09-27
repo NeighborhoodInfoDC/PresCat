@@ -64,7 +64,7 @@ run;
 
 ** Read in parcel corrections **;
 
-filename fimport "D:\DCData\Libraries\PresCat\Raw\Dev\Public_hsg_parcels_notincat_corr.csv" lrecl=1000;
+filename fimport "&_dcdata_default_path\PresCat\Raw\Dev\Public_hsg_parcels_notincat_corr.csv" lrecl=1000;
 
 proc import out=Notincat_corr
     datafile=fimport
@@ -82,7 +82,7 @@ run;
 
 %File_info( data=Notincat_corr, printobs=0, stats=, freqvars=nlihc_id )
 
-filename fimport "D:\DCData\Libraries\PresCat\Raw\Dev\Public_hsg_parcels_notincat_oth_corr.csv" lrecl=1000;
+filename fimport "&_dcdata_default_path\PresCat\Raw\Dev\Public_hsg_parcels_notincat_oth_corr.csv" lrecl=1000;
 
 proc import out=Notincat_oth_corr
     datafile=fimport
@@ -252,6 +252,8 @@ proc sql noprint;
       pt.fulladdress as bldg_addre, 
       pt.x as Bldg_x, 
       pt.y as Bldg_y,
+      pt.latitude as Bldg_lat,
+      pt.longitude as Bldg_lon,
       pt.zip as Bldg_zip,
       pt.anc2012, pt.cluster_tr2000, pt.geo2010, pt.psa2012, pt.ward2012
     from Mar.Address_ssl_xref as xref left join Mar.Address_points_view as pt
@@ -266,7 +268,7 @@ proc sort data=Address_add nodupkey;
   by Nlihc_id bldg_addre;
 run;
 
-%File_info( data=Address_add, printobs=100 )
+%File_info( data=Address_add, printobs=10 )
 
 /*
 title2 '--
@@ -278,13 +280,100 @@ title2 '--
 */
 
 title2 '--Address_add--';
+
 %Dup_check(
   data=Address_add,
   by=nlihc_id address_id,
   id=bldg_addre
 )
+
+proc print data=Address_add;
+  where bldg_addre = '';
+  id nlihc_id ssl;
+  var bldg_addre address_id;
+run;
+
 title2;
 
+** Export new addresses for geocoding **;
+
+filename fexport "&_dcdata_default_path\PresCat\Raw\Dev\192_Address_add.csv" lrecl=256;
+
+proc export data=Address_add (keep=nlihc_id bldg_addre)
+    outfile=fexport
+    dbms=csv replace;
+
+run;
+
+filename fexport clear;
+
+
+************************************************************
+************************************************************
+  At this point, geocoded 192_Address_add.csv addresses
+  in OCTO MAR Geocoder Tool to get DC Atlas and Google
+  Streetview links.
+************************************************************
+************************************************************
+  
+
+** Read geocoding results **;
+
+filename fimport "&_dcdata_default_path\PresCat\Raw\Dev\192_Address_add_geocoded1.csv" lrecl=1000;
+
+proc import out=Address_add_geocoded1
+    datafile=fimport
+    dbms=csv replace;
+  datarow=2;
+  getnames=yes;
+  guessingrows=max;
+run;
+
+filename fimport clear;
+
+filename fimport "&_dcdata_default_path\PresCat\Raw\Dev\192_Address_add_geocoded2.csv" lrecl=1000;
+
+proc import out=Address_add_geocoded2
+    datafile=fimport
+    dbms=csv replace;
+  datarow=2;
+  getnames=yes;
+  guessingrows=max;
+run;
+
+filename fimport clear;
+
+%File_info( data=Address_add_geocoded1, printobs=0 )
+%File_info( data=Address_add_geocoded2, printobs=0 )
+
+proc sql noprint;
+/*
+  create table Address_add_links as
+  select coalesce( Geo1.marid, Geo2.address_id ) as address_id, Geo1.nlihc_id, Geo1.bldg_addre,
+         Geo2.imageurl, Geo2.imagedir, Geo2.imagename, Geo2.streetviewurl
+  from Address_add_geocoded1 as Geo1 left join Address_add_geocoded2 as Geo2
+  on Geo1.marid = Geo2.address_id
+  where not( missing( Geo1.marid ) )
+  order by nlihc_id, bldg_addre;
+*/
+  create table Address_add_w_links as
+  select Address_add.*, Links.*
+  from
+  Address_add (drop=address_id)
+  left join
+  (
+    select coalesce( Geo1.marid, Geo2.address_id ) as address_id, Geo1.nlihc_id, Geo1.bldg_addre,
+           Geo2.imageurl, Geo2.imagedir, Geo2.imagename, Geo2.streetviewurl
+    from Address_add_geocoded1 as Geo1 left join Address_add_geocoded2 as Geo2
+    on Geo1.marid = Geo2.address_id
+    where not( missing( Geo1.marid ) )
+  ) as Links
+  on Address_add.nlihc_id = Links.nlihc_id and Address_add.bldg_addre = Links.bldg_addre
+  where not( missing( Address_add.bldg_addre ) )
+  order by nlihc_id, bldg_addre;
+quit;
+
+%File_info( data=Address_add_w_links, printobs=5 )
 
 ** Addresses to remove **;
 
@@ -330,6 +419,8 @@ data
 
 run;
 
+%File_info( data=Building_geocode_a, printobs=0 )
+
 %DC_mar_geocode(
   data=Building_geocode_b,
   out=Building_geocode_b_geo,
@@ -344,6 +435,9 @@ proc sort data=Building_geocode_b_geo;
   by nlihc_id bldg_addre;
 run;
 
+
+%File_info( data=Building_geocode_b_geo, printobs=0 )
+
 data Building_geocode;
 
   set
@@ -351,7 +445,7 @@ data Building_geocode;
     Building_geocode_b_geo
       (drop=m_: _: bldg_addre_std
        rename=(address_id=bldg_address_id x=Bldg_x y=Bldg_y latitude=Bldg_lat longitude=Bldg_lon))
-    Address_add (rename=(address_id=bldg_address_id));
+    Address_add_w_links (rename=(address_id=bldg_address_id) in=in_add);
   by nlihc_id bldg_addre;
     
   if put( trim( nlihc_id ) || left( put( bldg_address_id, z10. ) ), $Address_del. ) = 'X' then delete;
@@ -359,6 +453,21 @@ data Building_geocode;
   if cluster_tr2000_name = '' then cluster_tr2000_name = left( put( cluster_tr2000, clus00b. ) );
   
   proj_name = left( put( nlihc_id, $nlihcid_to_projname. ) );
+  
+  /***length Bldg_streetview_url Bldg_image_url $ 255;***/
+  
+  if in_add then do;
+
+    Bldg_streetview_url = left( streetviewurl );
+
+    if imagename ~= "" and upcase( imagename ) ~=: "NO_IMAGE_AVAILABLE" then 
+      Bldg_image_url = trim( imageurl ) || "/" || trim( left( imagedir ) ) || "/" || imagename;
+      
+    PUT NLIHC_ID= BLDG_ADDRE= / BLDG_STREETVIEW_URL= / BLDG_IMAGE_URL=;
+      
+  end;
+
+  drop imagename imageurl imagedir streetviewurl;
   
 run;
 
@@ -408,7 +517,7 @@ title2;
 
 %Create_project_geocode( data=Building_geocode, revisions=%str(&revisions), compare=n )
 
-proc compare base=PresCat.Project_geocode compare=Project_geocode maxprint=(400,32000) listvar listall method=relative;
+proc compare base=PresCat.Project_geocode compare=Project_geocode maxprint=(400,32000) listvar listall method=relative criterion=0.01;
   id nlihc_id;
 run;
 
