@@ -22,6 +22,8 @@
 
 %let revisions = Update public housing records (GitHub issue #192).;
 
+%let Update_dtm = %sysfunc( datetime() );
+
 
 ** Update project name for NL000387 to "CAPITOL QUARTER I & II (public housing)" **;
 
@@ -435,7 +437,6 @@ proc sort data=Building_geocode_b_geo;
   by nlihc_id bldg_addre;
 run;
 
-
 %File_info( data=Building_geocode_b_geo, printobs=0 )
 
 data Building_geocode;
@@ -462,8 +463,6 @@ data Building_geocode;
 
     if imagename ~= "" and upcase( imagename ) ~=: "NO_IMAGE_AVAILABLE" then 
       Bldg_image_url = trim( imageurl ) || "/" || trim( left( imagedir ) ) || "/" || imagename;
-      
-    PUT NLIHC_ID= BLDG_ADDRE= / BLDG_STREETVIEW_URL= / BLDG_IMAGE_URL=;
       
   end;
 
@@ -512,7 +511,6 @@ run;
 
 title2;
 
-
 ** Create updated Project_geocode data set **;
 
 %Create_project_geocode( data=Building_geocode, revisions=%str(&revisions), compare=n )
@@ -522,12 +520,152 @@ proc compare base=PresCat.Project_geocode compare=Project_geocode maxprint=(400,
 run;
 
 
-******* NEXT STEPS ********;
-
-
-
 ** Update Subsidy data set with APSH IDs **;
+
+filename fimport "&_dcdata_default_path\PresCat\Raw\Dev\Public_hsg_check_apsh_list.csv" lrecl=1000;
+
+proc import out=Public_hsg_check_apsh_list
+    datafile=fimport
+    dbms=csv replace;
+  datarow=5;
+  getnames=no;
+  guessingrows=max;
+run;
+
+filename fimport clear;
+
+%File_info( data=Public_hsg_check_apsh_list, printobs=10, stats= )
+
+data Public_hsg_check_apsh_list_b;
+
+  set Public_hsg_check_apsh_list;
+  
+  length Nlihc_id $ 16 Subsidy_info_source_id Subsidy_info_source $ 40 Portfolio $16 Program $ 32;
+  
+  retain Subsidy_info_source 'HUD/PSH' Subsidy_info_source_date '01jan2018'd Update_dtm &Update_dtm;
+  
+  Subsidy_info_source_id = left( var1 );
+  
+  i = 1;
+  
+  Nlihc_id = left( scan( var9, i, ' ,(' ) );
+  
+  if Nlihc_id = 'NL000387' then do;
+    Subsidy_id = 4;
+    Subsidy_active = 1;
+    Portfolio = 'PUBHSNG';
+    Program = 'PUBHSNG';
+  end;
+  
+  Units_assist = var4;
+  
+  do while ( Nlihc_id ~= '' );
+  
+    if Nlihc_id =: 'NL' then output;
+    
+    i + 1;
+    
+    Nlihc_id = left( scan( var9, i, ' ,(' ) );
+    
+  end;
+  
+  format subsidy_info_source_date mmddyy10. Update_dtm datetime.;
+  
+  keep Nlihc_id Units_assist Program Portfolio Subsidy_: Update_dtm;
+    
+run;
+
+%File_info( data=Public_hsg_check_apsh_list_b, printobs=100, stats= )
+
+proc sort data=Public_hsg_check_apsh_list_b;
+  by nlihc_id;
+run;
+
+data Subsidy_ph;
+
+  update
+    PresCat.Subsidy (where=(portfolio = 'PUBHSNG'))
+    Public_hsg_check_apsh_list_b;
+  by nlihc_id;
+  
+run;
+
+data Subsidy;
+
+  set
+    Subsidy_ph
+    PresCat.Subsidy (where=(portfolio ~= 'PUBHSNG'));
+  by nlihc_id subsidy_id;
+  
+run;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Subsidy,
+  out=Subsidy,
+  outlib=PresCat,
+  label="Preservation Catalog, Project subsidies",
+  sortby=nlihc_id Subsidy_id,
+  archive=Y,
+  /** Metadata parameters **/
+  restrictions=None,
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0,
+  freqvars=
+)
+
+proc print data=Subsidy;
+  where nlihc_id = 'NL000387';
+  by nlihc_id; 
+  id nlihc_id subsidy_id;
+  var program portfolio units_assist;
+run;
+
+proc compare base=PresCat.Subsidy compare=Subsidy maxprint=(400,32000) listvar listall;
+  id nlihc_id subsidy_id;
+run;
+
 
 ** Update Project data set **;
 
+%Create_project_subsidy_update( data=Subsidy, out=Project_subsidy_update, project_file=PresCat.Project )
+
+data Project_a;
+
+  update
+    PresCat.Project
+    Project_subsidy_update;
+  by nlihc_id;
+  
+run;
+
+data Project;
+
+  update
+    Project_a
+    Project_geocode;
+  by nlihc_id;
+  
+run;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Project,
+  out=Project,
+  outlib=PresCat,
+  label="Preservation Catalog, Projects",
+  sortby=nlihc_id,
+  archive=Y,
+  /** Metadata parameters **/
+  restrictions=None,
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0,
+  freqvars=
+)
+
+proc compare base=PresCat.Project compare=Project maxprint=(400,32000) listvar listall;
+  id nlihc_id;
+run;
 
