@@ -231,14 +231,16 @@ proc compare base=PresCat.Parcel compare=Parcel maxprint=(40,32000) listvar;
   id nlihc_id ssl;
 run;
 
-** Verify parcels for selected projects **;
+title2 '--Verify parcels for selected projects--';
 
 proc print data=Parcel;
-  where nlihc_id in ( 'NL000387', 'NL000121', 'NL000353' );
+  where nlihc_id in ( 'NL000387', 'NL000121', 'NL000353', 'NL000333' );
   by nlihc_id;
   id nlihc_id ssl;
   var parcel_owner_type Parcel_owner_name;
 run;
+
+title2;
 
 
 ** Create updated address data sets **;
@@ -349,15 +351,6 @@ filename fimport clear;
 %File_info( data=Address_add_geocoded2, printobs=0 )
 
 proc sql noprint;
-/*
-  create table Address_add_links as
-  select coalesce( Geo1.marid, Geo2.address_id ) as address_id, Geo1.nlihc_id, Geo1.bldg_addre,
-         Geo2.imageurl, Geo2.imagedir, Geo2.imagename, Geo2.streetviewurl
-  from Address_add_geocoded1 as Geo1 left join Address_add_geocoded2 as Geo2
-  on Geo1.marid = Geo2.address_id
-  where not( missing( Geo1.marid ) )
-  order by nlihc_id, bldg_addre;
-*/
   create table Address_add_w_links as
   select Address_add.*, Links.*
   from
@@ -455,8 +448,6 @@ data Building_geocode;
   
   proj_name = left( put( nlihc_id, $nlihcid_to_projname. ) );
   
-  /***length Bldg_streetview_url Bldg_image_url $ 255;***/
-  
   if in_add then do;
 
     Bldg_streetview_url = left( streetviewurl );
@@ -500,13 +491,24 @@ proc compare base=PresCat.Building_geocode compare=Building_geocode maxprint=(40
   id nlihc_id bldg_addre;
 run;
 
-title2 '-- Verify addresses for selected projects --';
+title2 '-- Verify addresses and unit counts for selected projects --';
 
-proc print data=Building_geocode;
-  where nlihc_id in ( 'NL000387', 'NL000121', 'NL000353' );
+proc sql noprint;
+  create table Building_geocode_check as
+  select Building_geocode.*, Addr.Address_id, Addr.active_res_occupancy_count 
+  from Building_geocode 
+  left join Mar.Address_points_view as Addr
+  on Building_geocode.bldg_address_id = Addr.Address_id
+  where nlihc_id in ( 'NL000387', 'NL000121', 'NL000353', 'NL000145', 'NL000146', 'NL000333', 'NL000191', 
+                      'NL000193', 'NL000194', 'NL000244', 'NL000245' )
+  order by nlihc_id, bldg_addre;
+quit;
+
+proc print data=Building_geocode_check;
   by nlihc_id;
   id nlihc_id;
-  var bldg_addre bldg_address_id;
+  var bldg_addre bldg_address_id active_res_occupancy_count;
+  sum active_res_occupancy_count;
 run;
 
 title2;
@@ -522,6 +524,28 @@ run;
 
 ** Update Subsidy data set with APSH IDs **;
 
+** NL000327 has two records in APSH so add a 2nd PH record **;
+
+data Subsidy_a;
+
+  set PresCat.Subsidy;
+  
+  if nlihc_id = 'NL000327' then do;
+  
+    if subsidy_id = 1 then do;
+      output;
+      subsidy_id = 2;
+    end;
+    else do;
+      subsidy_id = subsidy_id + 1;
+    end;
+    
+  end;
+  
+  output;
+  
+run;
+  
 filename fimport "&_dcdata_default_path\PresCat\Raw\Dev\Public_hsg_check_apsh_list.csv" lrecl=1000;
 
 proc import out=Public_hsg_check_apsh_list
@@ -575,26 +599,35 @@ data Public_hsg_check_apsh_list_b;
     
 run;
 
-%File_info( data=Public_hsg_check_apsh_list_b, printobs=100, stats= )
-
 proc sort data=Public_hsg_check_apsh_list_b;
-  by nlihc_id;
+  by nlihc_id Subsidy_info_source_id;
 run;
 
-data Subsidy_ph;
+** Add subsidy_id values for matching **;
 
-  update
-    PresCat.Subsidy (where=(portfolio = 'PUBHSNG'))
-    Public_hsg_check_apsh_list_b;
+data Public_hsg_check_apsh_list_c;
+
+  merge
+    Public_hsg_check_apsh_list_b
+    Subsidy_a (where=(portfolio = 'PUBHSNG') keep=nlihc_id subsidy_id portfolio);
   by nlihc_id;
   
 run;
 
+%File_info( data=Public_hsg_check_apsh_list_c, printobs=100, stats= )
+
+%Dup_check(
+  data=Public_hsg_check_apsh_list_c,
+  by=nlihc_id,
+  id=subsidy_id Units_assist subsidy_info_source_id
+)
+
+
 data Subsidy;
 
-  set
-    Subsidy_ph
-    PresCat.Subsidy (where=(portfolio ~= 'PUBHSNG'));
+  update
+    Subsidy_a
+    Public_hsg_check_apsh_list_c;
   by nlihc_id subsidy_id;
   
 run;
@@ -616,15 +649,35 @@ run;
 )
 
 proc print data=Subsidy;
-  where nlihc_id = 'NL000387';
+  where nlihc_id in ( 'NL000327', 'NL000387' );
   by nlihc_id; 
   id nlihc_id subsidy_id;
-  var program portfolio units_assist;
+  var program portfolio units_assist Subsidy_info_source_id;
 run;
 
 proc compare base=PresCat.Subsidy compare=Subsidy maxprint=(400,32000) listvar listall;
   id nlihc_id subsidy_id;
 run;
+
+** Export assisted unit differences for review **;
+
+ods listing close;
+ods csvall body="&_dcdata_default_path\PresCat\Raw\Dev\192_Units_assist_compare.csv";
+
+proc compare base=PresCat.Subsidy compare=Subsidy noprint 
+    out=Units_assist_compare outnoequal outbase outcomp outdif;
+  id nlihc_id subsidy_id;
+  var units_assist;
+run;
+
+proc print data=Units_assist_compare;
+  by nlihc_id subsidy_id;
+  id nlihc_id subsidy_id;
+  var _type_ units_assist;
+run;
+
+ods csvall close;
+ods listing;
 
 
 ** Update Project data set **;
