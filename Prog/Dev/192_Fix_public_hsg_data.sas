@@ -25,6 +25,7 @@
 %let Update_dtm = %sysfunc( datetime() );
 
 
+***********************************************************************************
 ** Update project name for NL000387 to "CAPITOL QUARTER I & II (public housing)" **;
 
 data Project_category;
@@ -64,6 +65,9 @@ run;
 )
 
 
+***********************************************************************************
+** Create updated parcel data set **;
+
 ** Read in parcel corrections **;
 
 filename fimport "&_dcdata_default_path\PresCat\Raw\Dev\Public_hsg_parcels_notincat_corr.csv" lrecl=1000;
@@ -97,8 +101,6 @@ run;
 filename fimport clear;
 
 %File_info( data=Notincat_oth_corr, printobs=0, stats=, freqvars=nlihc_id )
-
-** Create updated parcel data set **;
 
 data Parcel_add;
 
@@ -243,6 +245,7 @@ run;
 title2;
 
 
+***********************************************************************************
 ** Create updated address data sets **;
 
 ** Addresses to add **;
@@ -274,15 +277,6 @@ run;
 
 %File_info( data=Address_add, printobs=10 )
 
-/*
-title2 '--
-%Dup_check(
-  data=Address_add,
-  by=nlihc_id ssl,
-  id=address_id bldg_addre
-)
-*/
-
 title2 '--Address_add--';
 
 %Dup_check(
@@ -312,13 +306,13 @@ run;
 filename fexport clear;
 
 
-************************************************************
-************************************************************
+***********************************************************************************
+***********************************************************************************
   At this point, geocoded 192_Address_add.csv addresses
   in OCTO MAR Geocoder Tool to get DC Atlas and Google
   Streetview links.
-************************************************************
-************************************************************
+***********************************************************************************
+***********************************************************************************
   
 
 ** Read geocoding results **;
@@ -444,6 +438,8 @@ data Building_geocode;
     
   if put( trim( nlihc_id ) || left( put( bldg_address_id, z10. ) ), $Address_del. ) = 'X' then delete;
   
+  %Address_clean( bldg_addre, bldg_addre )
+  
   if cluster_tr2000_name = '' then cluster_tr2000_name = left( put( cluster_tr2000, clus00b. ) );
   
   proj_name = left( put( nlihc_id, $nlihcid_to_projname. ) );
@@ -523,6 +519,7 @@ proc compare base=PresCat.Project_geocode compare=Project_geocode maxprint=(400,
 run;
 
 
+***********************************************************************************
 ** Update Subsidy data set with APSH IDs **;
 
 ** Adjustments needed to NL000327 & NL000387. Print original records for reference **;
@@ -665,6 +662,16 @@ run;
 ods csvall close;
 ods listing;
 
+
+***********************************************************************************
+***********************************************************************************
+  At this point, conducted manual review of assisted unit count differences. 
+  Results in Raw\Dev\192_Units_assist_compare.xlsx.
+  Code that follows makes adjustments to unit counts based on review.
+***********************************************************************************
+***********************************************************************************
+
+
 ** Update subsidy exceptions file **;
 
 title2 '-- Prescat.Subsidy_except --';
@@ -799,6 +806,7 @@ proc compare base=PresCat.Subsidy_except compare=Subsidy_except maxprint=(400,32
 run;
 
 
+***********************************************************************************
 ** Update Project data set **;
 
 %Create_project_subsidy_update( data=Subsidy, out=Project_subsidy_update, project_file=PresCat.Project )
@@ -819,7 +827,7 @@ data Project;
     Project_geocode;
   by nlihc_id;
   
-  ** Update project unit totals **;
+  ** Update project unit totals based on manual review **;
   
   select ( nlihc_id );
     when ( 'NL000387' ) proj_units_tot = 91;
