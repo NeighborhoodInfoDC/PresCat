@@ -500,7 +500,8 @@ proc sql noprint;
   left join Mar.Address_points_view as Addr
   on Building_geocode.bldg_address_id = Addr.Address_id
   where nlihc_id in ( 'NL000387', 'NL000121', 'NL000353', 'NL000145', 'NL000146', 'NL000333', 'NL000191', 
-                      'NL000193', 'NL000194', 'NL000244', 'NL000245' )
+                      'NL000193', 'NL000194', 'NL000244', 'NL000245', 'NL000268', 'NL000282', 'NL000419',
+                      'NL000121', 'NL000301', 'NL000317', 'NL000387' )
   order by nlihc_id, bldg_addre;
 quit;
 
@@ -524,6 +525,17 @@ run;
 
 ** Update Subsidy data set with APSH IDs **;
 
+** Adjustments needed to NL000327 & NL000387. Print original records for reference **;
+
+title2 '-- PresCat.Subsidy --';
+proc print data=PresCat.Subsidy;
+  where nlihc_id in ( 'NL000327', 'NL000387' );
+  by nlihc_id; 
+  id nlihc_id subsidy_id;
+  var program portfolio units_assist Subsidy_info_source_id;
+run;
+title2;
+
 ** NL000327 has two records in APSH so add a 2nd PH record **;
 
 data Subsidy_a;
@@ -545,7 +557,9 @@ data Subsidy_a;
   output;
   
 run;
-  
+
+** Read in HUD PSH ID crosswalk **;
+
 filename fimport "&_dcdata_default_path\PresCat\Raw\Dev\Public_hsg_check_apsh_list.csv" lrecl=1000;
 
 proc import out=Public_hsg_check_apsh_list
@@ -622,13 +636,105 @@ run;
   id=subsidy_id Units_assist subsidy_info_source_id
 )
 
-
-data Subsidy;
+data Subsidy_b;
 
   update
     Subsidy_a
     Public_hsg_check_apsh_list_c;
   by nlihc_id subsidy_id;
+  
+run;
+
+** Export assisted unit differences for review **;
+
+ods listing close;
+ods csvall body="&_dcdata_default_path\PresCat\Raw\Dev\192_Units_assist_compare.csv";
+
+proc compare base=PresCat.Subsidy compare=Subsidy_b noprint 
+    out=Units_assist_compare outnoequal outbase outcomp outdif;
+  id nlihc_id subsidy_id;
+  var units_assist;
+run;
+
+proc print data=Units_assist_compare;
+  by nlihc_id subsidy_id;
+  id nlihc_id subsidy_id;
+  var _type_ units_assist;
+run;
+
+ods csvall close;
+ods listing;
+
+** Update subsidy exceptions file **;
+
+title2 '-- Prescat.Subsidy_except --';
+proc print data=Prescat.Subsidy_except;
+  where nlihc_id in ( 'NL000327', 'NL000387' );
+  by nlihc_id; 
+  id nlihc_id subsidy_id;
+  var program units_assist Subsidy_active;
+run;
+title2;
+
+** New exception records based on manual review of assisted units **;
+
+data Subsidy_except_new;
+
+  set Subsidy_b (keep=nlihc_id subsidy_id program);
+  
+  where program = 'PUBHSNG';
+  
+  length Except_init $ 8;
+  
+  retain Except_init 'PAT' Except_date %sysfunc( today() );
+  
+  select ( nlihc_id );
+    when ( 'NL000058' ) units_assist = 60;
+    when ( 'NL000121' ) units_assist = 149;
+    when ( 'NL000145' ) units_assist = 235;
+    when ( 'NL000146' ) units_assist = 215;
+    when ( 'NL000154' ) units_assist = 124;
+    when ( 'NL000193' ) units_assist = 440;
+    when ( 'NL000194' ) units_assist = 20;
+    when ( 'NL000244' ) units_assist = 208;
+    when ( 'NL000245' ) units_assist = 144;
+    when ( 'NL000282' ) units_assist = 133;
+    when ( 'NL000317' ) units_assist = 12;
+    when ( 'NL000333' ) units_assist = 234;
+    when ( 'NL000419' ) units_assist = 114;
+    otherwise
+      delete;
+  end;
+  
+  format Except_date mmddyy10.;
+  
+  drop program;
+  
+run;
+
+%File_info( data=Subsidy_except_new, stats=, printobs=100 )
+
+data Subsidy_except;
+
+  set 
+    Prescat.Subsidy_except (where=(not( missing( nlihc_id ) or missing( subsidy_id ) ) ) )
+    Subsidy_except_new;
+  by nlihc_id subsidy_id except_date;
+  
+  ** Adjust prior exception records **;
+  
+  if nlihc_id = 'NL000327' and subsidy_id = 4 then subsidy_id = 5;
+  
+run;
+
+data Subsidy;
+
+  update
+    Subsidy_b
+    Subsidy_except (where=(Except_date=today()));
+  by Nlihc_id Subsidy_id;
+
+  drop Except_: ;
   
 run;
 
@@ -648,6 +754,7 @@ run;
   freqvars=
 )
 
+title2 '-- Subsidy (updated) --';
 proc print data=Subsidy;
   where nlihc_id in ( 'NL000327', 'NL000387' );
   by nlihc_id; 
@@ -655,29 +762,41 @@ proc print data=Subsidy;
   var program portfolio units_assist Subsidy_info_source_id;
 run;
 
+%Dup_check(
+  data=Subsidy,
+  by=nlihc_id subsidy_id,
+  id=program units_assist update_dtm,
+  out=_dup_check,
+  listdups=Y,
+  count=dup_check_count,
+  quiet=N,
+  debug=N
+)
+title2;
+
 proc compare base=PresCat.Subsidy compare=Subsidy maxprint=(400,32000) listvar listall;
   id nlihc_id subsidy_id;
 run;
 
-** Export assisted unit differences for review **;
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Subsidy_except,
+  out=Subsidy_except,
+  outlib=PresCat,
+  label="Preservation Catalog, Subsidy exception file",
+  sortby=nlihc_id Subsidy_id except_date,
+  archive=Y,
+  /** Metadata parameters **/
+  restrictions=None,
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0,
+  freqvars=
+)
 
-ods listing close;
-ods csvall body="&_dcdata_default_path\PresCat\Raw\Dev\192_Units_assist_compare.csv";
-
-proc compare base=PresCat.Subsidy compare=Subsidy noprint 
-    out=Units_assist_compare outnoequal outbase outcomp outdif;
-  id nlihc_id subsidy_id;
-  var units_assist;
+proc compare base=PresCat.Subsidy_except compare=Subsidy_except maxprint=(400,32000) listvar listall;
+  id nlihc_id subsidy_id except_date;
 run;
-
-proc print data=Units_assist_compare;
-  by nlihc_id subsidy_id;
-  id nlihc_id subsidy_id;
-  var _type_ units_assist;
-run;
-
-ods csvall close;
-ods listing;
 
 
 ** Update Project data set **;
@@ -699,6 +818,14 @@ data Project;
     Project_a
     Project_geocode;
   by nlihc_id;
+  
+  ** Update project unit totals **;
+  
+  select ( nlihc_id );
+    when ( 'NL000387' ) proj_units_tot = 91;
+    when ( 'NL000419' ) proj_units_tot = 114;
+    otherwise /** DO NOTHING **/;
+  end;
   
 run;
 
