@@ -46,7 +46,9 @@ proc format library=PresCat;
   
   value $Infosrc
     "HUD/MFA" = "HUD/Multifamily Assistance and Section 8 Contracts"
-    "HUD/MFIS" = "HUD/Insured Multifamily Mortgages";
+    "HUD/MFIS" = "HUD/Insured Multifamily Mortgages"
+    "HUD/LIHTC" = "HUD/Low Income Housing Tax Credits"
+    "HUD/PSH" = "HUD/Picture of Subsidized Households";
     
   value $mfatoprog
     '202/8 NC' = '202/8-NC'
