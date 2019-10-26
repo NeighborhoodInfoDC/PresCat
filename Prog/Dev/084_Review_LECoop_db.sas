@@ -76,7 +76,7 @@ data Coop_db;
   
   select ( ID );
     when ( 15 ) Address_ref = "3218 Wisconsin Ave NW";
-    when ( 30 ) Address_ref = "230 Bates St NW";
+    when ( 30 ) Address_ref = "24 Bates St NW";
     when ( 38 ) Address_ref = "4270 E. Capitol St NE";
     when ( 70 ) Address_ref = "1701 EUCLID ST NW";
     when ( 91 ) Address_ref = "1413 Half St SW";
@@ -129,3 +129,16 @@ proc print data=Coop_db_geo;
   var address_ref address_ref_std;
 run;
 
+
+** Check data **;
+
+title2 "--- Nonmatching SSLs ---";
+
+proc print data=Coop_db_geo;
+  where compbl( coop_db_ssl ) ~= compbl( ssl );
+  id id;
+  var cooperative address coop_db_ssl ssl;
+run;
+
+title2;
+  
