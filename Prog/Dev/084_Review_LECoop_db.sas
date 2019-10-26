@@ -77,7 +77,7 @@ data Coop_db;
   select ( ID );
     when ( 15 ) Address_ref = "3218 Wisconsin Ave NW";
     when ( 30 ) Address_ref = "24 Bates St NW";
-    when ( 38 ) Address_ref = "4270 E. Capitol St NE";
+    when ( 38 ) Address_ref = "1436 W St NW";
     when ( 70 ) Address_ref = "1701 EUCLID ST NW";
     when ( 91 ) Address_ref = "1413 Half St SW";
     when ( 94 ) Address_ref = "1440 Tuckerman St NW";
@@ -112,7 +112,7 @@ run;
 %DC_mar_geocode(
   geo_match=Y,
   data=Coop_db,
-  out=Coop_db_geo,
+  out=Coop_db_geo_a,
   staddr=Address_ref,
   zip=,
   id=ID Cooperative,
@@ -121,6 +121,20 @@ run;
   match_score_min=65,
   streetalt_file=&_dcdata_default_path\PresCat\Prog\Dev\084_StreetAlt_LECoop.txt
 )
+
+data Coop_db_geo;
+
+  set Coop_db_geo_a;
+  
+  ** Revise selected SSLs **;
+  
+  select ( Id );
+    when ( 39 ) ssl = "3153    2071";
+    when ( 62 ) ssl = "2594    2086";
+    otherwise /** DO NOTHING **/;
+  end;
+ 
+run;
 
 %File_info( data=Coop_db_geo, freqvars=overall_status ward2012 _score_ M_EXACTMATCH )
 
@@ -142,3 +156,51 @@ run;
 
 title2;
   
+
+** Find related parcels by using property owner names **;
+
+proc sql noprint;
+
+  /*
+  create table Coop_ownerlist as 
+  select Coop.Id, coalesce( Coop.SSL, Parcel.SSL ) as SSL, Parcel.Ownername, Parcel.In_last_ownerpt
+  from Coop_db_geo as Coop
+  left join
+  Realprop.Parcel_base as Parcel
+  on Coop.SSL = Parcel.SSL
+  order by id;
+  */
+
+  create table Coop_ssl_by_owner as
+  select coalesce( Parcel.Ownername, Owners.Ownername ) as Ownername, Owners.ID, 
+    Parcel.ssl, Parcel.In_last_ownerpt, Parcel.ui_proptype
+  from RealProp.Parcel_base as Parcel 
+  left join (
+    select Coop.Id, coalesce( Coop.SSL, Parcel.SSL ) as SSL, Parcel.Ownername
+    from Coop_db_geo as Coop
+    left join
+    Realprop.Parcel_base as Parcel
+    on Coop.SSL = Parcel.SSL ) as Owners
+  on Parcel.Ownername = Owners.Ownername
+  where not( missing( Owners.id ) )
+  order by id, ssl;
+ 
+quit;
+
+/*
+proc print data=Coop_ownerlist n;
+  id id;
+  var ssl ownername in_last_ownerpt;
+run;
+*/
+
+title2 "--- Coop_ssl_by_owner ---";
+
+proc print data=Coop_ssl_by_owner;
+  by id;
+  id id ssl;
+  var In_last_ownerpt Ownername ui_proptype;
+run;
+
+title2;
+
