@@ -204,3 +204,40 @@ run;
 
 title2;
 
+
+** Find related addresses **;
+
+proc sql noprint;
+  create table Coop_addresses as
+  select coopfulla.*, parcel.ssl, parcel.in_last_ownerpt, parcel.ownername
+  from (
+    select distinct coopaddr.id, coalesce( coopaddr.address_id, addr.address_id ) as address_id, 
+      addr.fulladdress, addr.ssl
+    from (  
+      select coop.id, xref.address_id, coalesce( coop.ssl, xref.ssl ) as ssl 
+      from Coop_ssl_by_owner as coop 
+      full join
+      Mar.Address_ssl_xref as xref
+      on xref.ssl = coop.ssl
+      where not( missing( id ) or missing( address_id ) )
+      group by id, address_id ) as coopaddr
+    left join
+    Mar.Address_points_view as addr
+    on coopaddr.address_id = addr.address_id ) as coopfulla
+  left join
+  RealProp.Parcel_base as parcel
+  on coopfulla.ssl = parcel.ssl
+  order by id, address_id;
+  
+quit;
+
+title2 "--- Coop_addresses ---";
+
+proc print data=Coop_addresses;
+  by id;
+  id id address_id;
+  var fulladdress ssl in_last_ownerpt ownername;
+run;
+
+title2;
+
