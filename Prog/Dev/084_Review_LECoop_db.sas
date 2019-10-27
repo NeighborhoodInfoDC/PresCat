@@ -196,6 +196,12 @@ run;
 
 title2 "--- Coop_ssl_by_owner ---";
 
+%Dup_check(
+  data=Coop_ssl_by_owner,
+  by=id ssl,
+  id=ownername
+)
+
 proc print data=Coop_ssl_by_owner;
   by id;
   id id ssl;
@@ -219,8 +225,7 @@ proc sql noprint;
       full join
       Mar.Address_ssl_xref as xref
       on xref.ssl = coop.ssl
-      where not( missing( id ) or missing( address_id ) )
-      group by id, address_id ) as coopaddr
+      where not( missing( id ) or missing( address_id ) ) ) as coopaddr
     left join
     Mar.Address_points_view as addr
     on coopaddr.address_id = addr.address_id ) as coopfulla
@@ -233,10 +238,49 @@ quit;
 
 title2 "--- Coop_addresses ---";
 
+%Dup_check(
+  data=Coop_addresses,
+  by=id address_id,
+  id=fulladdress ssl
+)
+
 proc print data=Coop_addresses;
   by id;
   id id address_id;
   var fulladdress ssl in_last_ownerpt ownername;
+run;
+
+title2;
+
+
+** Check for matches with Preservation Catalog **;
+
+proc sql noprint;
+  create table Coop_catalog as
+  select coop.id, coalesce( coop.ssl, prescat.ssl ) as ssl, prescat.nlihc_id
+  from Coop_ssl_by_owner as coop
+  left join
+  Prescat.Parcel as prescat
+  on coop.ssl = prescat.ssl
+  where not( missing( nlihc_id ) )
+  order by id, nlihc_id;
+quit;
+
+proc sort data=Coop_catalog nodupkey;
+  by id nlihc_id;
+run;
+
+title2 "--- Coop_catalog ---";
+
+%Dup_check(
+  data=Coop_catalog,
+  by=id,
+  id=nlihc_id ssl
+)
+
+proc print data=Coop_catalog n;
+  id id;
+  var nlihc_id;
 run;
 
 title2;
