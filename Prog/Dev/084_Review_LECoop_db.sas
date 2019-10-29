@@ -32,7 +32,7 @@ data Coop_db;
 
   input
     ID
-    Cooperative : $40. 
+    Cooperative : $120. 
     Address : $80.
     Address2 : $80.
     Coop_db_SSL : $16.
@@ -218,7 +218,7 @@ proc sql noprint;
   select coopfulla.*, parcel.ssl, parcel.in_last_ownerpt, parcel.ownername
   from (
     select distinct coopaddr.id, coalesce( coopaddr.address_id, addr.address_id ) as address_id, 
-      addr.fulladdress, addr.ssl
+      addr.fulladdress, addr.ssl, addr.active_res_occupancy_count
     from (  
       select coop.id, xref.address_id, coalesce( coop.ssl, xref.ssl ) as ssl 
       from Coop_ssl_by_owner as coop 
@@ -234,6 +234,11 @@ proc sql noprint;
   on coopfulla.ssl = parcel.ssl
   order by id, address_id;
   
+  create table Coop_units as
+  select coop.id, sum( coop.active_res_occupancy_count ) as active_res_occupancy_count
+  from Coop_addresses as coop
+  group by id;
+  
 quit;
 
 title2 "--- Coop_addresses ---";
@@ -248,6 +253,14 @@ proc print data=Coop_addresses;
   by id;
   id id address_id;
   var fulladdress ssl in_last_ownerpt ownername;
+run;
+
+title2 "--- Coop_units ---";
+
+proc print data=Coop_units;
+  id id;
+  var active_res_occupancy_count;
+  sum active_res_occupancy_count;
 run;
 
 title2;
@@ -305,8 +318,92 @@ run;
 
 title2;
 
-/*
+
 ** Export projects to add to Catalog **;
 
-data Coop_export; 
+data 
+  Coop_export_main (keep=Proj_Name Bldg_City Bldg_ST Bldg_Zip Bldg_Addre)
+  Coop_export_subsidy
+    (keep=MARID Units_tot Units_Assist Current_Affordability_Start
+          Affordability_End rent_to_fmr_description
+          Subsidy_Info_Source_ID Subsidy_Info_Source
+          Subsidy_Info_Source_Date Program Compliance_End_Date
+          Previous_Affordability_end Agency Date_Affordability_Ended); 
+  
+  merge
+    Coop_db_geo
+    Coop_catalog (in=in_cat)
+    Coop_units;
+  by id;
+  
+  if not in_cat;
+  
+  ** Main project list **;
+  
+  length Proj_Name $ 120 Bldg_City Bldg_ST $ 40 Bldg_Zip $ 5 Bldg_Addre $ 80;
+  
+  retain Bldg_city 'Washington' Bldg_st 'DC' Bldg_Zip '';
+  
+  i = index( cooperative, '(' );
+  
+  if i > 0 then Proj_name = substr( cooperative, 1, i - 1 );
+  else Proj_name = cooperative;
+  
+  Bldg_addre = Address_ref;
+  
+  ** Project subsidy data **;
+
+  length
+    MARID $ 1 Units_tot Units_Assist Current_Affordability_Start 8
+    Affordability_End rent_to_fmr_description Subsidy_Info_Source_ID $ 1
+    Subsidy_Info_Source $ 40 Subsidy_Info_Source_Date 8 
+    Program $ 40 
+    Compliance_End_Date Previous_Affordability_end Agency Date_Affordability_Ended $ 1;
+ 
+   retain 
+     MARID Affordability_End rent_to_fmr_description Subsidy_Info_Source_ID ' '
+     Subsidy_Info_Source 'CNHED/LECOOP'
+     Subsidy_Info_Source_Date '15oct2019'd 
+     Program 'LECOOP'
+     Compliance_End_Date Previous_Affordability_end Agency Date_Affordability_Ended ' ';
+     
+   Units_tot = active_res_occupancy_count;
+   Units_assist = input( scan( Units, 1 ), 16. );
+   
+   if not( Units_assist > 0 ) then Units_assist = Units_tot;
+
+   if not( Units_tot > 0 ) then Units_tot = Units_assist;
+
+   if Units_tot ~= Units_assist then do;
+     %warn_put( msg="Unit counts do not match: " id= units_tot= units_assist= )
+   end;
+   
+   if index( year_coop_formed, '/' ) then 
+     Current_affordability_start = input( year_coop_formed, mmddyy10. ); 
+   else
+     Current_affordability_start = mdy( 1, 1, input( year_coop_formed, 4. ) );
+     
+   format Subsidy_Info_Source_Date mmddyy10.;
+
+run;
+
+filename fexport "&_dcdata_r_path\PresCat\Raw\AddNew\084_Review_LECoop_db_main.csv" lrecl=1000;
+
+proc export data=Coop_export_main
+    outfile=fexport
+    dbms=csv replace;
+
+run;
+
+filename fexport clear;
+
+filename fexport "&_dcdata_r_path\PresCat\Raw\AddNew\084_Review_LECoop_db_subsidy.csv" lrecl=1000;
+
+proc export data=Coop_export_subsidy
+    outfile=fexport
+    dbms=csv replace;
+
+run;
+
+filename fexport clear;
 
