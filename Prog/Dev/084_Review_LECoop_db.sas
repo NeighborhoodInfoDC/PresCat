@@ -256,6 +256,7 @@ title2;
 ** Check for matches with Preservation Catalog **;
 
 proc sql noprint;
+
   create table Coop_catalog as
   select coop.id, coalesce( coop.ssl, prescat.ssl ) as ssl, prescat.nlihc_id
   from Coop_ssl_by_owner as coop
@@ -264,6 +265,18 @@ proc sql noprint;
   on coop.ssl = prescat.ssl
   where not( missing( nlihc_id ) )
   order by id, nlihc_id;
+  
+  create table Coop_catalog_subsidies as
+  select distinct coop.id, coalesce( coop.nlihc_id, subsidy.nlihc_id ) as nlihc_id, 
+    subsidy.subsidy_id, subsidy.subsidy_active, subsidy.program, subsidy.units_assist,
+    subsidy.poa_start, subsidy.poa_end
+  from Coop_catalog as coop
+  right join
+  Prescat.Subsidy as subsidy
+  on coop.nlihc_id = subsidy.nlihc_id
+  where not( missing( id ) )
+  order by id, nlihc_id, subsidy_id;
+  
 quit;
 
 proc sort data=Coop_catalog nodupkey;
@@ -283,5 +296,17 @@ proc print data=Coop_catalog n;
   var nlihc_id;
 run;
 
+title2 "--- Coop_catalog_subsidies ---";
+
+proc print data=Coop_catalog_subsidies;
+  by id nlihc_id;
+  id id nlihc_id subsidy_id;
+run;
+
 title2;
+
+/*
+** Export projects to add to Catalog **;
+
+data Coop_export; 
 
