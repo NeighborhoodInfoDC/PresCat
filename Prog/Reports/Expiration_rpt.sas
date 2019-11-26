@@ -27,7 +27,7 @@ data Expiration_rpt;
 
   merge
     PresCat.Subsidy
-      (where=(((&Start_date)<=poa_end<(&End_date)) and subsidy_active) in=in1)
+      (where=(((&Start_date)<=compl_end<(&End_date)) and subsidy_active) in=in1)
     Prescat.Project_category_view 
       (keep=nlihc_id proj_name category_code);
   by nlihc_id;
@@ -42,26 +42,7 @@ run;
 proc sort data=Expiration_rpt;
   by category_code poa_end;
 run;
-data Expiration_rpt;
 
-  merge
-    PresCat.Subsidy
-      (where=(((&Start_date)<=compl_end<(&End_date)) and subsidy_active) in=in1)
-    Prescat.Project_category_view 
-      (keep=nlihc_id proj_name category_code);
-  by nlihc_id;
-  
-  if in1 and category_code ~= '6';
-  
-  if program = 'TEBOND' then delete;
-  
-  rpt_id = trim( nlihc_id ) || ' / ' || proj_name;
-  
-run;
-
-proc sort data=Expiration_rpt;
-  by category_code compl_end;
-run;
 
 %let rpt_suffix = %sysfunc( putn( %sysfunc( today() ), yymmddn8. ) );
 
