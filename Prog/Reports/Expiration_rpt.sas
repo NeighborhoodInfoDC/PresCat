@@ -63,8 +63,9 @@ proc report data=Expiration_rpt nowd
       style(header)=[fontsize=2 font_weight=bold textalign=left]
       style(column)=[fontsize=2 textalign=left];
   by Category_code;
-  column rpt_id poa_end program;
+  column rpt_id poa_end compl_end program;
   define rpt_id / "Project" display;
+  define compl_end / display;
   define poa_end / display;
   define program / display;
   label category_code = 'Category';
