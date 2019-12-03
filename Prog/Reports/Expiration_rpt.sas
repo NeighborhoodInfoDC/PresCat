@@ -67,7 +67,7 @@ proc report data=Expiration_rpt nowd
   define rpt_id / "Project" display;
   define compl_end / display;
   define poa_end / display;
-  define program / display;
+  define program / group;
   label category_code = 'Category';
   title1 "DC Preservation Catalog: Upcoming Subsidy Expiration Report (within next year)";
   footnote1 height=9pt "Prepared by Urban-Greater DC (GreaterDC.urban.org), &fdate..";
