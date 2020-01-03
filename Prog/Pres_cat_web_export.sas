@@ -277,7 +277,13 @@ filename fexport clear;
 
 
 ******  REAC  ******;
+data REAC_bis;
 
+  set PresCat.Reac_score;
+  
+  if missing( Reac_date ) then Reac_date = '01jan1900'd;
+  
+run;
 proc sql noprint;
   create table REAC as
   select 
@@ -286,7 +292,7 @@ proc sql noprint;
     Reac_score as score,
     Reac_score_num as scorenum,
     trim( Reac_score_letter ) || Reac_score_star as scoreletter
-  from PresCat.Reac_score
+  from REAC_bis
   order by NLIHC_ID;
 quit;
 
