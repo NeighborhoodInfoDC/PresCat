@@ -212,6 +212,13 @@ proc print data=Coop_ssl_by_owner;
   var In_last_ownerpt Ownername ui_proptype;
 run;
 
+proc sort 
+  data=Coop_ssl_by_owner (where=(not(missing(ownername)))) 
+  out=Coop_ssl_by_owner_unique (keep=id ownername)
+  nodupkey;
+  by id;
+run;
+
 title2;
 
 
@@ -222,7 +229,8 @@ proc sql noprint;
   select coopfulla.*, parcel.ssl, parcel.in_last_ownerpt, parcel.ownername
   from (
     select distinct coopaddr.id, coalesce( coopaddr.address_id, addr.address_id ) as address_id, 
-      addr.fulladdress, addr.ssl, addr.active_res_occupancy_count
+      addr.fulladdress, addr.ssl, addr.active_res_occupancy_count,
+      anc2012, cluster_tr2000, geo2010, psa2012, ward2012, latitude, longitude, x, y, zip
     from (  
       select coop.id, xref.address_id, coalesce( coop.ssl, xref.ssl ) as ssl 
       from Coop_ssl_by_owner as coop 
@@ -313,6 +321,18 @@ proc print data=Coop_catalog n;
   var nlihc_id;
 run;
 
+%Data_to_format(
+  FmtLib=work,
+  FmtName=Coop_catalog,
+  Desc=,
+  Data=Coop_catalog,
+  Value=id,
+  Label=nlihc_id,
+  OtherLabel=' ',
+  Print=Y,
+  Contents=N
+  )
+
 title2 "--- Coop_catalog_subsidies ---";
 
 proc print data=Coop_catalog_subsidies;
@@ -339,7 +359,8 @@ data
   merge
     Coop_db_geo
     Coop_catalog (in=in_cat)
-    Coop_units;
+    Coop_units
+    Coop_ssl_by_owner_unique;
   by id;
   
   ** Main project list **;
@@ -493,7 +514,64 @@ proc compare base=PresCat.Subsidy compare=Subsidy_update listall maxprint=(40,32
 run;
 
 
-/**********************
+** Project-level subsidy info **;
+
+%Create_project_subsidy_update( data=Subsidy_update, out=Project_subsidy_update )
+
+
+** Addresses **;
+
+data Coop_addresses_update;
+
+  length Nlihc_id $ 16 cluster_tr2000_name $ 80;
+
+  set Coop_addresses;
+  
+  Nlihc_id = left( put( id, Coop_catalog. ) );
+  
+  if missing( Nlihc_id ) then delete;
+  
+  %Address_clean( FULLADDRESS, bldg_addre )
+  
+  cluster_tr2000_name = left( put( cluster_tr2000, clus00b. ) );
+  
+  keep Nlihc_id bldg_addre address_id latitude longitude x y zip
+       anc2012 cluster_tr2000 cluster_tr2000_name geo2010 psa2012 ward2012;
+  
+  rename address_id=bldg_address_id latitude=bldg_lat longitude=bldg_lon x=bldg_x y=bldg_y zip=bldg_zip;
+
+run;
+
+proc sort data=Coop_addresses_update nodupkey;
+  by Nlihc_id bldg_addre;
+run;
+
+proc print data=Coop_addresses_update;
+
+data Building_geocode_update;
+
+  update
+    PresCat.Building_geocode
+    Coop_addresses_update;
+  by nlihc_id bldg_addre;
+  
+run;
+
+proc compare base=PresCat.Building_geocode compare=Building_geocode_update listall maxprint=(40,32000) method=percent criterion=0.01;
+  id nlihc_id bldg_addre;
+run;
+
+%Dup_check(
+  data=Building_geocode_update,
+  by=nlihc_id bldg_address_id,
+  id=bldg_addre,
+  out=_dup_check,
+  listdups=Y
+)
+
+
+ENDSAS;
+
 ** Project **;
 
 data Project_update;
@@ -501,8 +579,33 @@ data Project_update;
   merge 
     PresCat.Project
     Coop_db_geo_catalog 
-      (keep=Nlihc_id cooperative management 
+      (keep=Nlihc_id cooperative management ownername
        in=isLEC);
   by Nlihc_id;
   
+  if isLEC then do;
   
+    i = index( cooperative, '(' );
+    
+    if i > 0 then Proj_name = left( substr( cooperative, 1, i - 1 ) );
+    else Proj_name = left( cooperative );
+    
+    i = index( management, '(' );
+    
+    if i > 0 then hud_mgr_name = left( substr( management, 1, i - 1 ) );
+    else hud_mgr_name = left( management );
+    
+    %Project_name_clean( ownername, hud_own_name )
+    
+    hud_own_type = 'NP';
+    
+    status = 'A';
+    
+    subsidized = 1;
+    
+    update_dtm = &UPDATE_DTM;
+    
+  end;
+  
+run;
+
