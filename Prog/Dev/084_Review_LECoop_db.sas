@@ -21,17 +21,20 @@
 %DCData_lib( MAR )
 %DCData_lib( RealProp )
 
+%let SOURCE_DATE = '10jan2020'd;
+%let UPDATE_DTM = %sysfunc( datetime() );
 
 ** Read in LEC database **;
 
-filename fimport "&_dcdata_r_path\PresCat\Raw\Coops\Confirmed Data COPY Coop Database_with ID_LEC or affordable.csv" lrecl=5000;
+filename fimport "&_dcdata_r_path\PresCat\Raw\Coops\LEC_Database_10Jan20_LEC_or_Affordable.csv" lrecl=5000;
 
 data Coop_db;
+
+  retain ID 0;
 
   infile fimport dsd missover firstobs=2;
 
   input
-    ID
     Cooperative : $120. 
     Address : $80.
     Address2 : $80.
@@ -67,21 +70,21 @@ data Coop_db;
     Coop_Contacts : $40.
     Coop_Clinic_2017 : $40.
     Other_Notes : $250.
-    Overall_Status : $80.
   ;
   
-  if missing( ID ) then delete;
+  if missing( Cooperative ) then delete;
+  
+  ID + 1;
   
   length Address_ref $ 80;
   
   select ( ID );
-    when ( 15 ) Address_ref = "3218 Wisconsin Ave NW";
-    when ( 30 ) Address_ref = "24 Bates St NW";
-    when ( 38 ) Address_ref = "1436 W St NW";
-    when ( 70 ) Address_ref = "1701 EUCLID ST NW";
-    when ( 91 ) Address_ref = "1413 Half St SW";
-    when ( 94 ) Address_ref = "1440 Tuckerman St NW";
-    when ( 95 ) Address_ref = "3715 2nd St SE";
+    when (  8 ) Address_ref = "1440 Tuckerman St NW";
+    when ( 16 ) Address_ref = "1413 Half St SW";
+    when ( 54 ) Address_ref = "24 Bates St NW";
+    when ( 61 ) Address_ref = "1436 W St NW";
+    when ( 86 ) Address_ref = "1701 EUCLID ST NW";
+    when ( 93 ) Address_ref = "3715 2nd St SE";
     otherwise Address_ref = Address;
   end;
   
@@ -127,16 +130,17 @@ data Coop_db_geo;
   set Coop_db_geo_a;
   
   ** Revise selected SSLs **;
-  
+  /*
   select ( Id );
     when ( 39 ) ssl = "3153    2071";
     when ( 62 ) ssl = "2594    2086";
-    otherwise /** DO NOTHING **/;
+    otherwise ** DO NOTHING **;
   end;
+  */
  
 run;
 
-%File_info( data=Coop_db_geo, freqvars=overall_status ward2012 _score_ M_EXACTMATCH )
+%File_info( data=Coop_db_geo, freqvars=ward2012 _score_ M_EXACTMATCH )
 
 proc print data=Coop_db_geo;
   id id;
@@ -328,15 +332,15 @@ data
           Affordability_End rent_to_fmr_description
           Subsidy_Info_Source_ID Subsidy_Info_Source
           Subsidy_Info_Source_Date Program Compliance_End_Date
-          Previous_Affordability_end Agency Date_Affordability_Ended); 
+          Previous_Affordability_end Agency Date_Affordability_Ended)
+  Coop_db_geo_catalog
+    (rename=(Current_affordability_start=Poa_start)); 
   
   merge
     Coop_db_geo
     Coop_catalog (in=in_cat)
     Coop_units;
   by id;
-  
-  if not in_cat;
   
   ** Main project list **;
   
@@ -354,19 +358,27 @@ data
   ** Project subsidy data **;
 
   length
-    MARID $ 1 Units_tot Units_Assist Current_Affordability_Start 8
-    Affordability_End rent_to_fmr_description Subsidy_Info_Source_ID $ 1
+    Subsidy_active 3
+    Units_tot Units_Assist Current_Affordability_Start 8
+    Affordability_End Subsidy_Info_Source_ID $ 1
     Subsidy_Info_Source $ 40 Subsidy_Info_Source_Date 8 
-    Program $ 40 
+    Program $ 32 Portfolio $ 16 
+    Rent_to_fmr_description $ 40
     Compliance_End_Date Previous_Affordability_end Agency Date_Affordability_Ended $ 1;
  
    retain 
-     MARID Affordability_End rent_to_fmr_description Subsidy_Info_Source_ID ' '
-     Subsidy_Info_Source 'CNHED/LECOOP'
-     Subsidy_Info_Source_Date '15oct2019'd 
+     Affordability_End Subsidy_Info_Source_ID ' '
+     Subsidy_Info_Source 'VCU-CNHED/LECOOP'
+     Subsidy_Info_Source_Date &SOURCE_DATE 
      Program 'LECOOP'
-     Compliance_End_Date Previous_Affordability_end Agency Date_Affordability_Ended ' ';
+     Portfolio 'LECOOP'
+     Compliance_End_Date Previous_Affordability_end Agency Date_Affordability_Ended ' '
+     Subsidy_id 999
+     Subsidy_active 1
+     Update_dtm &UPDATE_DTM;
      
+   MARID = ADDRESS_ID;
+   
    Units_tot = active_res_occupancy_count;
    Units_assist = input( scan( Units, 1 ), 16. );
    
@@ -382,8 +394,31 @@ data
      Current_affordability_start = input( year_coop_formed, mmddyy10. ); 
    else
      Current_affordability_start = mdy( 1, 1, input( year_coop_formed, 4. ) );
+   
+   if input( AMI_0_30, 10. ) > 0 then
+     Rent_to_fmr_description = trim( left( put( input( AMI_0_30, 10. ), 5. ) ) ) || '@0-30/';
      
-   format Subsidy_Info_Source_Date mmddyy10.;
+   if input( AMI_31_50, 10. ) > 0 then
+     Rent_to_fmr_description = trim( Rent_to_fmr_description ) || trim( left( put( input( AMI_31_50, 10. ), 5. ) ) ) || '@31-50/';
+     
+   if input( AMI_51_60, 10. ) > 0 then
+     Rent_to_fmr_description = trim( Rent_to_fmr_description ) || trim( left( put( input( AMI_51_60, 10. ), 5. ) ) ) || '@51-60/';
+     
+   if input( AMI_61_80, 10. ) > 0 then
+     Rent_to_fmr_description = trim( Rent_to_fmr_description ) || trim( left( put( input( AMI_61_80, 10. ), 5. ) ) ) || '@61-80/';
+     
+   if Rent_to_fmr_description ~= '' then 
+     Rent_to_fmr_description = trim( left( substr( Rent_to_fmr_description, 1, length( Rent_to_fmr_description ) - 1 ) ) ) || ' AMI';
+     
+   format Subsidy_Info_Source_Date Current_Affordability_Start mmddyy10.;
+   
+   if not in_cat then do;
+     output Coop_export_main;
+     output Coop_export_subsidy;
+   end;
+   else do;
+     output Coop_db_geo_catalog;
+   end;
 
 run;
 
@@ -407,3 +442,67 @@ run;
 
 filename fexport clear;
 
+
+** Update existing LEC's in Catalog **;
+
+proc sort data=Coop_db_geo_catalog;
+  by nlihc_id;
+run;
+
+proc print data=Coop_db_geo_catalog;
+  where not missing( Rent_to_fmr_description );
+  id nlihc_id subsidy_id;
+  var units_assist Rent_to_fmr_description;
+run;
+
+** Subsidy **;
+
+data Subsidy_update;
+
+  set 
+    PresCat.Subsidy
+    Coop_db_geo_catalog 
+      (keep=Nlihc_id Subsidy_id Subsidy_active Poa_start Program Portfolio Units_assist 
+            Rent_to_fmr_description Subsidy_Info_Source Subsidy_Info_Source_Date Update_dtm);
+  by Nlihc_id Subsidy_id;
+  
+  retain _hold_subsidy_id;
+  
+  if first.Nlihc_id then do;
+    _hold_subsidy_id = 1;
+  end;
+  else do;
+    _hold_subsidy_id + 1;
+  end;
+  
+  Subsidy_id = _hold_subsidy_id;
+  
+  drop _hold_subsidy_id;
+
+run;
+
+%File_info( data=Subsidy_update, printobs=0, freqvars=program portfolio Subsidy_info_source )
+
+proc print data=subsidy_update;
+  where datepart( update_dtm ) = today();
+  id nlihc_id subsidy_id;
+run;
+
+proc compare base=PresCat.Subsidy compare=Subsidy_update listall maxprint=(40,32000);
+  id Nlihc_id Subsidy_id;
+run;
+
+
+/**********************
+** Project **;
+
+data Project_update;
+
+  merge 
+    PresCat.Project
+    Coop_db_geo_catalog 
+      (keep=Nlihc_id cooperative management 
+       in=isLEC);
+  by Nlihc_id;
+  
+  
