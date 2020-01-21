@@ -165,38 +165,36 @@ title2;
 
 proc sql noprint;
 
-  /*
-  create table Coop_ownerlist as 
-  select Coop.Id, coalesce( Coop.SSL, Parcel.SSL ) as SSL, Parcel.Ownername, Parcel.In_last_ownerpt
-  from Coop_db_geo as Coop
-  left join
-  Realprop.Parcel_base as Parcel
-  on Coop.SSL = Parcel.SSL
-  order by id;
-  */
-
   create table Coop_ssl_by_owner as
   select coalesce( Parcel.Ownername, Owners.Ownername ) as Ownername, Owners.ID, 
-    Parcel.ssl, Parcel.In_last_ownerpt, Parcel.ui_proptype
-  from RealProp.Parcel_base as Parcel 
+    Owners.Address_id, Parcel.ssl, Parcel.In_last_ownerpt, Parcel.ui_proptype,
+    Parcel.ownerpt_extractdat_last, Parcel.saledate, Parcel.ownercat, 
+    Parcel.ownername_full, Parcel.x_coord, Parcel.y_coord
+  from (
+    /** Parcel characteristics **/
+    select Parcel_base.*, Who_owns.ssl, Who_owns.ownercat, Who_owns.ownername_full,
+      Geo.ssl, Geo.x_coord, Geo.y_coord
+    from
+    RealProp.Parcel_base as Parcel_base
+    left join
+    RealProp.Parcel_base_who_owns as Who_owns
+    on Parcel_base.ssl = Who_owns.ssl
+    left join
+    Realprop.Parcel_geo as Geo
+    on Parcel_base.ssl = Geo.ssl
+  ) as Parcel 
   left join (
-    select Coop.Id, coalesce( Coop.SSL, Parcel.SSL ) as SSL, Parcel.Ownername
+    /** List of property owners **/
+    select Coop.Id, coalesce( Coop.SSL, Parcel.SSL ) as SSL, Coop.Address_id, Parcel.Ownername
     from Coop_db_geo as Coop
     left join
     Realprop.Parcel_base as Parcel
     on Coop.SSL = Parcel.SSL ) as Owners
-  on Parcel.Ownername = Owners.Ownername
+  on upcase( Parcel.Ownername ) = upcase( Owners.Ownername )
   where not( missing( Owners.id ) )
   order by id, ssl;
  
 quit;
-
-/*
-proc print data=Coop_ownerlist n;
-  id id;
-  var ssl ownername in_last_ownerpt;
-run;
-*/
 
 title2 "--- Coop_ssl_by_owner ---";
 
@@ -209,7 +207,7 @@ title2 "--- Coop_ssl_by_owner ---";
 proc print data=Coop_ssl_by_owner;
   by id;
   id id ssl;
-  var In_last_ownerpt Ownername ui_proptype;
+  var In_last_ownerpt Ownername ui_proptype ownercat x_coord y_coord;
 run;
 
 proc sort 
@@ -237,7 +235,7 @@ proc sql noprint;
       full join
       Mar.Address_ssl_xref as xref
       on xref.ssl = coop.ssl
-      where not( missing( id ) or missing( address_id ) ) ) as coopaddr
+      where not( missing( coop.id ) or missing( xref.address_id ) ) ) as coopaddr
     left join
     Mar.Address_points_view as addr
     on coopaddr.address_id = addr.address_id ) as coopfulla
@@ -569,6 +567,56 @@ run;
   listdups=Y
 )
 
+
+** Parcels **;
+
+data Coop_parcel_update;
+
+  length Nlihc_id $ 16;
+
+  set Coop_ssl_by_owner;
+  
+  Nlihc_id = left( put( id, Coop_catalog. ) );
+  
+  if missing( Nlihc_id ) then delete;
+  
+  keep Nlihc_id ssl in_last_ownerpt address_id ownerpt_extractdat_last ownername_full ownercat ui_proptype
+       x_coord y_coord;
+  
+  rename address_id=Parcel_address_id ownerpt_extractdat_last=Parcel_info_source_date 
+         ownername_full=Parcel_owner_name ownercat=Parcel_owner_type ui_proptype=Parcel_type
+         x_coord=Parcel_x y_coord=Parcel_y;
+         
+  informat _all_ ;
+
+run;
+
+proc sort data=Coop_parcel_update;
+  by Nlihc_id ssl;
+run;
+
+proc print data=Coop_addresses_update;
+
+data Parcel_update;
+
+  update
+    PresCat.Parcel
+    Coop_parcel_update;
+  by nlihc_id ssl;
+  
+run;
+
+proc compare base=PresCat.Parcel compare=Parcel_update listall maxprint=(40,32000) method=percent criterion=0.01;
+  id nlihc_id ssl;
+run;
+
+%Dup_check(
+  data=Parcel_update,
+  by=nlihc_id ssl,
+  id=,
+  listdups=Y
+)
+  
 
 ENDSAS;
 
