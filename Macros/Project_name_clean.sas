@@ -28,6 +28,7 @@
   &target = tranwrd( &target, 'NEw', 'New' );
   &target = tranwrd( &target, 'NEighborhood', 'Neighborhood' );
   &target = tranwrd( &target, 'NEighbors', 'Neighbors' );
+  &target = tranwrd( &target, 'NEhemiah', 'Nehemiah' );
   &target = tranwrd( &target, 'Nw', 'NW' );
   &target = tranwrd( &target, 'Se', 'SE' );
   &target = tranwrd( &target, 'SEnior', 'Senior' );

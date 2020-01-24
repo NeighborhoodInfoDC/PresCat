@@ -24,6 +24,8 @@
 %let SOURCE_DATE = '10jan2020'd;
 %let UPDATE_DTM = %sysfunc( datetime() );
 
+%let revisions = Apply update from LEC_Database_10Jan20_LEC_or_Affordable.csv; 
+
 ** Read in LEC database **;
 
 filename fimport "&_dcdata_r_path\PresCat\Raw\Coops\LEC_Database_10Jan20_LEC_or_Affordable.csv" lrecl=5000;
@@ -102,6 +104,15 @@ data Coop_db;
   
   label address_ref = "Reference street address";
   
+  length Proj_name $ 80;
+  
+  i = index( cooperative, '(' );
+  
+  if i > 0 then Proj_name = substr( cooperative, 1, i - 1 );
+  else Proj_name = cooperative;
+  
+  %Project_name_clean( Proj_name, Proj_name )
+  
   drop i j;
 
 run;
@@ -167,7 +178,7 @@ proc sql noprint;
 
   create table Coop_ssl_by_owner as
   select coalesce( Parcel.Ownername, Owners.Ownername ) as Ownername, Owners.ID, 
-    Owners.Address_id, Parcel.ssl, Parcel.In_last_ownerpt, Parcel.ui_proptype,
+    Owners.Address_id, Owners.Cooperative, Owners.Proj_name, Parcel.ssl, Parcel.In_last_ownerpt, Parcel.ui_proptype,
     Parcel.ownerpt_extractdat_last, Parcel.saledate, Parcel.ownercat, 
     Parcel.ownername_full, Parcel.x_coord, Parcel.y_coord
   from (
@@ -185,7 +196,8 @@ proc sql noprint;
   ) as Parcel 
   left join (
     /** List of property owners **/
-    select Coop.Id, coalesce( Coop.SSL, Parcel.SSL ) as SSL, Coop.Address_id, Parcel.Ownername
+    select Coop.Id, coalesce( Coop.SSL, Parcel.SSL ) as SSL, Coop.Address_id, 
+      Coop.cooperative, Coop.Proj_name, Parcel.Ownername
     from Coop_db_geo as Coop
     left join
     Realprop.Parcel_base as Parcel
@@ -227,10 +239,10 @@ proc sql noprint;
   select coopfulla.*, parcel.ssl, parcel.in_last_ownerpt, parcel.ownername
   from (
     select distinct coopaddr.id, coalesce( coopaddr.address_id, addr.address_id ) as address_id, 
-      addr.fulladdress, addr.ssl, addr.active_res_occupancy_count,
+      coopaddr.cooperative, coopaddr.Proj_name, addr.fulladdress, addr.ssl, addr.active_res_occupancy_count,
       anc2012, cluster_tr2000, geo2010, psa2012, ward2012, latitude, longitude, x, y, zip
     from (  
-      select coop.id, xref.address_id, coalesce( coop.ssl, xref.ssl ) as ssl 
+      select coop.id, coop.cooperative, coop.Proj_name, xref.address_id, coalesce( coop.ssl, xref.ssl ) as ssl 
       from Coop_ssl_by_owner as coop 
       full join
       Mar.Address_ssl_xref as xref
@@ -363,14 +375,9 @@ data
   
   ** Main project list **;
   
-  length Proj_Name $ 120 Bldg_City Bldg_ST $ 40 Bldg_Zip $ 5 Bldg_Addre $ 80;
+  length Bldg_City Bldg_ST $ 40 Bldg_Zip $ 5 Bldg_Addre $ 80;
   
   retain Bldg_city 'Washington' Bldg_st 'DC' Bldg_Zip '';
-  
-  i = index( cooperative, '(' );
-  
-  if i > 0 then Proj_name = substr( cooperative, 1, i - 1 );
-  else Proj_name = cooperative;
   
   Bldg_addre = Address_ref;
   
@@ -521,7 +528,7 @@ run;
 
 data Coop_addresses_update;
 
-  length Nlihc_id $ 16 cluster_tr2000_name $ 80;
+  length Nlihc_id $ 16 Proj_name cluster_tr2000_name $ 80;
 
   set Coop_addresses;
   
@@ -533,7 +540,7 @@ data Coop_addresses_update;
   
   cluster_tr2000_name = left( put( cluster_tr2000, clus00b. ) );
   
-  keep Nlihc_id bldg_addre address_id latitude longitude x y zip
+  keep Nlihc_id Proj_name bldg_addre address_id latitude longitude x y zip
        anc2012 cluster_tr2000 cluster_tr2000_name geo2010 psa2012 ward2012;
   
   rename address_id=bldg_address_id latitude=bldg_lat longitude=bldg_lon x=bldg_x y=bldg_y zip=bldg_zip;
@@ -568,6 +575,13 @@ run;
 )
 
 
+%Create_project_geocode( 
+  data=Building_geocode_update, 
+  out=Project_geocode, 
+  revisions=%str(&revisions)
+)
+  
+  
 ** Parcels **;
 
 data Coop_parcel_update;
@@ -618,8 +632,6 @@ run;
 )
   
 
-ENDSAS;
-
 ** Project **;
 
 data Project_update;
@@ -627,17 +639,18 @@ data Project_update;
   merge 
     PresCat.Project
     Coop_db_geo_catalog 
-      (keep=Nlihc_id cooperative management ownername
-       in=isLEC);
+      (keep=Nlihc_id Proj_name management ownername
+       in=isLEC)
+    Project_geocode
+      (keep=Nlihc_id anc2012 cluster_tr2000 cluster_tr2000_name geo2010 
+            proj_addre proj_address_id proj_image_url proj_lat proj_lon
+            proj_streetview_url proj_x proj_y proj_zip psa2012 ward2012 zip)
+    Project_subsidy_update
+    ;
   by Nlihc_id;
   
   if isLEC then do;
   
-    i = index( cooperative, '(' );
-    
-    if i > 0 then Proj_name = left( substr( cooperative, 1, i - 1 ) );
-    else Proj_name = left( cooperative );
-    
     i = index( management, '(' );
     
     if i > 0 then hud_mgr_name = left( substr( management, 1, i - 1 ) );
@@ -655,5 +668,11 @@ data Project_update;
     
   end;
   
+  drop i management ownername;
+  
+run;
+
+proc compare base=PresCat.Project compare=Project_update listall maxprint=(40,32000);
+  id Nlihc_id;
 run;
 
