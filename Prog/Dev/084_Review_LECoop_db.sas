@@ -24,7 +24,7 @@
 %let SOURCE_DATE = '10jan2020'd;
 %let UPDATE_DTM = %sysfunc( datetime() );
 
-%let revisions = Apply update from LEC_Database_10Jan20_LEC_or_Affordable.csv; 
+%let revisions = Apply update from LEC_Database_10Jan20_LEC_or_Affordable.csv.; 
 
 ** Read in LEC database **;
 
