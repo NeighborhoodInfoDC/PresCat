@@ -430,8 +430,10 @@
     if _type_ = 'BASE' then do;
       _hold_bldg_address_id = bldg_address_id;
     end;
-
-    if _hold_bldg_address_id = bldg_address_id then do;
+    else if _hold_bldg_address_id = bldg_address_id then do;
+      %warn_put( macro=Add_new_projects_geocode, 
+                 msg="Possible existing Catalog project. " bldg_address_id= 
+                     " See output for details." )
       output;
     end;
     else do;
@@ -445,7 +447,6 @@
   title2 '********************************************************************************************';
   title3 '** Addresses in new projects that match those in existing Catalog projects';
   title4 '** Check to make sure these projects are not already in Catalog';
-  title5 '** New project to be added to the Catalog is listed first';
 
   proc print data=Building_geocode_comp_rpt noobs label;
     by bldg_address_id;
