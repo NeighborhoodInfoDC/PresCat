@@ -46,9 +46,13 @@
     archive=Y 
   )
   
+  title2 'Parcel: New records';
+
   proc print data=Parcel n;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
   run;
+  
+  title2;
 
   ** Update PresCat.Subsidy **;
   
@@ -65,6 +69,14 @@
   
   %Update_real_property( Parcel=Parcel, revisions=%str(Add new projects from &input_file_pre._*.csv.) )
   
+  title2 'Real_property: New records';
+
+  proc print data=Real_property n;
+    where put( nlihc_id, $New_nlihc_id. ) ~= "";
+  run;
+  
+  title2;
+
 %mend Add_new_projects;
 
 /** End Macro Definition **/

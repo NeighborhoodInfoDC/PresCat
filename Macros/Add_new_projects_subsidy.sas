@@ -99,9 +99,19 @@
 
   data Subsidy_a;
 
-    merge NLIHC_ID (rename=(bldg_address_id=address_id)) New_Proj_Subs (rename=(marid=address_id));
+    merge 
+      NLIHC_ID (rename=(bldg_address_id=address_id) in=in_bldg) New_Proj_Subs (rename=(marid=address_id) in=in_subs);
     by address_id;
+
+    if in_subs and not in_bldg then do;
+      %err_put( macro=Add_new_projects_subsidy, msg="Subsidy record with no matching project record. " address_id= program= )
+    end;
+    else if not in_subs and in_bldg then do;
+      %warn_put( macro=Add_new_projects_subsidy, msg="Project record with no matching subsidy records. " address_id= nlihc_id= )
+    end;
+    
     if _drop = 1 then delete;
+    
     drop _drop address_id;
     format _all_ ;
     informat _all_ ;
@@ -159,7 +169,7 @@
 
   ** Check against original subsidy file to ensure only new subsidy files have changed**;
 
-  proc compare base=PresCat.Subsidy compare=Subsidy listall maxprint=(40,32000);
+  proc compare base=PresCat.Subsidy compare=Subsidy maxprint=(40,32000);
     id nlihc_id subsidy_id;
   run;
 
@@ -177,9 +187,13 @@
     printobs=0
   )
 
+  title2 'Subsidy: New records';
+
   proc print data=Subsidy n;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
   run;
+  
+  title2;
 
 %mend Add_new_projects_subsidy;
 

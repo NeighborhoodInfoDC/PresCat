@@ -482,14 +482,14 @@
   title2 '********************************************************************************************';
   title3 '** 1/ Check to see if any projects were removed in previous step';
 
-  proc compare base=prescat.project_geocode compare=work.project listall maxprint=(40,32000);
+  proc compare base=prescat.project_geocode compare=work.project maxprint=(40,32000);
     id nlihc_id;
   run;
 
   title2 '********************************************************************************************';
   title3 '** 2/ Check to see if any buildings were removed in previous step';
 
-  proc compare base=prescat.building_geocode compare=work.building listall maxprint=(40,32000);
+  proc compare base=prescat.building_geocode compare=work.building maxprint=(40,32000);
     id nlihc_id Bldg_addre;
   run;
 
@@ -505,7 +505,7 @@
   title2 '********************************************************************************************';
   title3 '** 3/ Check for changes in the new Building geocode file that is not related to the new projects';
 
-  proc compare base=prescat.building_geocode compare=work.building_geocode listall maxprint=(40,32000);
+  proc compare base=prescat.building_geocode compare=work.building_geocode maxprint=(40,32000);
    id nlihc_id proj_name Bldg_addre;
    run;
    
@@ -541,11 +541,6 @@
     Contents=N
     )
 
-  proc print data=Project_geocode n;
-    where put( nlihc_id, $New_nlihc_id. ) ~= "";
-  run;
-
-  
   %Finalize_data_set( 
     /** Finalize data set parameters **/
     data=Building_geocode,
@@ -559,10 +554,20 @@
     /** File info parameters **/
     printobs=0
   )
+  
+  title2 'Building_geocode: New records';
 
   proc print data=Building_geocode n;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
   run;
+  
+  title2 'Project_geocode: New records';
+
+  proc print data=Project_geocode n;
+    where put( nlihc_id, $New_nlihc_id. ) ~= "";
+  run;
+
+  title2;
 
 
   title2 '********************************************************************************************';
