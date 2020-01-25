@@ -273,6 +273,7 @@ proc format library=PresCat;
     'PUBHSNG' = 'PUBHSNG'
     'TEBOND' = 'TEBOND'
 	'FHLB' = 'FHLB'
+    'LECOOP' = 'LECOOP'
     other = ' ';
 
   value $progfull
