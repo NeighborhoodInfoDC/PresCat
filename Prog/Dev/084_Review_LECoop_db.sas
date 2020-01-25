@@ -676,3 +676,20 @@ proc compare base=PresCat.Project compare=Project_update listall maxprint=(40,32
   id Nlihc_id;
 run;
 
+
+** Project_category **;
+
+data Project_category_update;
+
+  update
+    PresCat.Project_category
+    Coop_db_geo_catalog (keep=Nlihc_id Proj_name);
+  by Nlihc_id;
+  
+run;
+
+proc compare base=PresCat.Project_category compare=Project_category_update listall maxprint=(40,32000);
+  id Nlihc_id;
+run;
+
+    
