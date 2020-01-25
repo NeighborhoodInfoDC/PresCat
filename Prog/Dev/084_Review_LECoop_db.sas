@@ -126,7 +126,7 @@ run;
 %DC_mar_geocode(
   geo_match=Y,
   data=Coop_db,
-  out=Coop_db_geo_a,
+  out=Coop_db_geo,
   staddr=Address_ref,
   zip=,
   id=ID Cooperative,
@@ -135,21 +135,6 @@ run;
   match_score_min=65,
   streetalt_file=&_dcdata_default_path\PresCat\Prog\Dev\084_StreetAlt_LECoop.txt
 )
-
-data Coop_db_geo;
-
-  set Coop_db_geo_a;
-  
-  ** Revise selected SSLs **;
-  /*
-  select ( Id );
-    when ( 39 ) ssl = "3153    2071";
-    when ( 62 ) ssl = "2594    2086";
-    otherwise ** DO NOTHING **;
-  end;
-  */
- 
-run;
 
 %File_info( data=Coop_db_geo, freqvars=ward2012 _score_ M_EXACTMATCH )
 
@@ -507,7 +492,20 @@ data Subsidy_update;
 
 run;
 
-%File_info( data=Subsidy_update, printobs=0, freqvars=program portfolio Subsidy_info_source )
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Subsidy_update,
+  out=Subsidy,
+  outlib=PresCat,
+  label="Preservation Catalog, Project subsidies",
+  sortby=nlihc_id subsidy_id,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0,
+  freqvars=program portfolio Subsidy_info_source
+)
 
 proc print data=subsidy_update;
   where datepart( update_dtm ) = today();
@@ -562,6 +560,20 @@ data Building_geocode_update;
   
 run;
 
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Building_geocode_update,
+  out=Building_geocode,
+  outlib=PresCat,
+  label="Preservation Catalog, Building-level geocoding info",
+  sortby=nlihc_id bldg_addre,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0
+)
+
 proc compare base=PresCat.Building_geocode compare=Building_geocode_update listall maxprint=(40,32000) method=percent criterion=0.01;
   id nlihc_id bldg_addre;
 run;
@@ -609,7 +621,7 @@ proc sort data=Coop_parcel_update;
   by Nlihc_id ssl;
 run;
 
-proc print data=Coop_addresses_update;
+proc print data=Coop_parcel_update;
 
 data Parcel_update;
 
@@ -619,6 +631,20 @@ data Parcel_update;
   by nlihc_id ssl;
   
 run;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Parcel_update,
+  out=Parcel,
+  outlib=PresCat,
+  label="Preservation Catalog, Real property parcels",
+  sortby=nlihc_id ssl,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0
+)
 
 proc compare base=PresCat.Parcel compare=Parcel_update listall maxprint=(40,32000) method=percent criterion=0.01;
   id nlihc_id ssl;
@@ -672,6 +698,20 @@ data Project_update;
   
 run;
 
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Project_update,
+  out=Project,
+  outlib=PresCat,
+  label="Preservation Catalog, Projects",
+  sortby=nlihc_id,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0
+)
+
 proc compare base=PresCat.Project compare=Project_update listall maxprint=(40,32000);
   id Nlihc_id;
 run;
@@ -688,8 +728,21 @@ data Project_category_update;
   
 run;
 
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Project_category_update,
+  out=Project_category,
+  outlib=PresCat,
+  label="Preservation Catalog, Projects",
+  sortby=nlihc_id,
+  archive=Y,
+  /** Metadata parameters **/
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0
+)
+
 proc compare base=PresCat.Project_category compare=Project_category_update listall maxprint=(40,32000);
   id Nlihc_id;
 run;
 
-    
