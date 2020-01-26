@@ -169,7 +169,7 @@
 
   ** Check against original subsidy file to ensure only new subsidy files have changed**;
 
-  proc compare base=PresCat.Subsidy compare=Subsidy maxprint=(40,32000);
+  proc compare base=PresCat.Subsidy compare=Subsidy listbasevar listcompvar maxprint=(40,32000);
     id nlihc_id subsidy_id;
   run;
 
@@ -189,8 +189,11 @@
 
   title2 'Subsidy: New records';
 
-  proc print data=Subsidy n;
+  proc print data=Subsidy;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
+    by nlihc_id;
+    id nlihc_id subsidy_id;
+    var program portfolio units_assist poa_start poa_end;
   run;
   
   title2;

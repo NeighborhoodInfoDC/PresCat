@@ -200,7 +200,7 @@
 
   **** Compare with earlier version ****;
 
-  proc compare base=Prescat.project compare=Project maxprint=(40,32000);
+  proc compare base=Prescat.project compare=Project listbasevar listcompvar maxprint=(40,32000);
     id nlihc_id;
   run;
 
@@ -222,6 +222,8 @@
 
   proc print data=Project n;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
+    id nlihc_id;
+    var Proj_name; 
   run;
 
   title2 'File = PresCat.Project / DUPLICATE NLIHC_IDs';
@@ -262,7 +264,7 @@
 
   **** Compare with earlier version ****;
 
-  proc compare base=Prescat.project_category compare=Project_category maxprint=(40,32000);
+  proc compare base=Prescat.project_category compare=Project_category listbasevar listcompvar maxprint=(40,32000);
     id nlihc_id;
   run;
 

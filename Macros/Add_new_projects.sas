@@ -29,31 +29,13 @@
   input_path=&_dcdata_r_path\PresCat\Raw\AddNew  /** Location of input files **/
   );
   
-  ** Update PresCat.Building_geocode, PresCat.Project_geocode **;
+  ** Update PresCat.Building_geocode, PresCat.Project_geocode, PresCat.Parcel **;
   
   %Add_new_projects_geocode( 
     input_file_pre=&input_file_pre,
     input_path=&input_path
   )
   
-  ** Create PresCat.Parcel **;
-  
-  %Create_parcel( 
-    data=Building_geocode, 
-    out=Parcel, 
-    revisions=%str(Add new projects from &input_file_pre._*.csv.),
-    compare=N,
-    archive=Y 
-  )
-  
-  title2 'Parcel: New records';
-
-  proc print data=Parcel n;
-    where put( nlihc_id, $New_nlihc_id. ) ~= "";
-  run;
-  
-  title2;
-
   ** Update PresCat.Subsidy **;
   
   %Add_new_projects_subsidy( 
@@ -73,6 +55,7 @@
 
   proc print data=Real_property n;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
+    id nlihc_id;
   run;
   
   title2;

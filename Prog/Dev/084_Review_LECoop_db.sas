@@ -24,7 +24,7 @@
 %let SOURCE_DATE = '10jan2020'd;
 %let UPDATE_DTM = %sysfunc( datetime() );
 
-%let revisions = Apply update from LEC_Database_10Jan20_LEC_or_Affordable.csv.; 
+%let revisions = Update existing projects with LEC_Database_10Jan20_LEC_or_Affordable.csv.; 
 
 ** Read in LEC database **;
 
@@ -350,7 +350,27 @@ data
           Previous_Affordability_end Agency Date_Affordability_Ended)
   Coop_db_geo_catalog
     (rename=(Current_affordability_start=Poa_start)); 
-  
+
+  length
+    Subsidy_active 3
+    MARID Units_tot Units_Assist Current_Affordability_Start 8    
+    Affordability_End rent_to_fmr_description Subsidy_Info_Source_ID Subsidy_Info_Source $ 40
+    Subsidy_Info_Source_Date 8 
+    Program $ 32 Portfolio $ 16 
+    Compliance_End_Date Previous_Affordability_end Agency Date_Affordability_Ended $ 1;
+
+  retain 
+    Affordability_End ' '
+    Subsidy_Info_Source_ID ' '
+    Subsidy_Info_Source 'VCU-CNHED/LECOOP'
+    Subsidy_Info_Source_Date &SOURCE_DATE 
+    Program 'LECOOP'
+    Portfolio 'LECOOP'
+    Compliance_End_Date Previous_Affordability_end Agency Date_Affordability_Ended ' '
+    Subsidy_id 999
+    Subsidy_active 1
+    Update_dtm &UPDATE_DTM;
+     
   merge
     Coop_db_geo
     Coop_catalog (in=in_cat)
@@ -368,26 +388,6 @@ data
   
   ** Project subsidy data **;
 
-  length
-    Subsidy_active 3
-    Units_tot Units_Assist Current_Affordability_Start 8
-    Affordability_End Subsidy_Info_Source_ID $ 1
-    Subsidy_Info_Source $ 40 Subsidy_Info_Source_Date 8 
-    Program $ 32 Portfolio $ 16 
-    Rent_to_fmr_description $ 40
-    Compliance_End_Date Previous_Affordability_end Agency Date_Affordability_Ended $ 1;
- 
-   retain 
-     Affordability_End Subsidy_Info_Source_ID ' '
-     Subsidy_Info_Source 'VCU-CNHED/LECOOP'
-     Subsidy_Info_Source_Date &SOURCE_DATE 
-     Program 'LECOOP'
-     Portfolio 'LECOOP'
-     Compliance_End_Date Previous_Affordability_end Agency Date_Affordability_Ended ' '
-     Subsidy_id 999
-     Subsidy_active 1
-     Update_dtm &UPDATE_DTM;
-     
    MARID = ADDRESS_ID;
    
    Units_tot = active_res_occupancy_count;
@@ -433,7 +433,7 @@ data
 
 run;
 
-filename fexport "&_dcdata_r_path\PresCat\Raw\AddNew\084_Review_LECoop_db_main.csv" lrecl=1000;
+filename fexport "&_dcdata_r_path\PresCat\Raw\AddNew\084_Review_LECoop_db_main (source).csv" lrecl=1000;
 
 proc export data=Coop_export_main
     outfile=fexport
@@ -657,6 +657,11 @@ run;
   listdups=Y
 )
   
+  
+** Real property **; 
+
+%Update_real_property( Parcel=Parcel_update, revisions=%str(&revisions) )
+
 
 ** Project **;
 
