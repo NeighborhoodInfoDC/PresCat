@@ -97,7 +97,7 @@ run;
   ds_name=Project_category_view,
   creator_process=Project_category_view.sas,
   restrictions=None,
-  revisions=%str(Revise view query. Update Cat_at_risk, Cat_more_info, Cat_lost, and Cat_replaced.)
+  revisions=%str(Apply update from LEC_Database_10Jan20_LEC_or_Affordable.csv.)
 )
 
 /*****************************************

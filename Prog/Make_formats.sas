@@ -48,7 +48,8 @@ proc format library=PresCat;
     "HUD/MFA" = "HUD/Multifamily Assistance and Section 8 Contracts"
     "HUD/MFIS" = "HUD/Insured Multifamily Mortgages"
     "HUD/LIHTC" = "HUD/Low Income Housing Tax Credits"
-    "HUD/PSH" = "HUD/Picture of Subsidized Households";
+    "HUD/PSH" = "HUD/Picture of Subsidized Households"
+    "VCU-CNHED/LECOOP" = "VCU-CNHED/Limited equity cooperative database";
     
   value $mfatoprog
     '202/8 NC' = '202/8-NC'
@@ -272,6 +273,7 @@ proc format library=PresCat;
     'PUBHSNG' = 'PUBHSNG'
     'TEBOND' = 'TEBOND'
 	'FHLB' = 'FHLB'
+    'LECOOP' = 'LECOOP'
     other = ' ';
 
   value $progfull
@@ -424,7 +426,8 @@ proc format library=PresCat;
     'PUBHSNG' = 'Public housing'
     'TEBOND' = 'Tax exempt bond'
 	'HOPEVI' = 'HOPE VI'
-	'FHLB' = 'Federal Home Loan Bank';
+	'FHLB' = 'Federal Home Loan Bank'
+    'LECOOP' = 'Limited equity cooperative';
 
   value $progshrt
     '202/8-NC' = 'Sec 202 NC/SR'
@@ -480,7 +483,8 @@ proc format library=PresCat;
     'PUBHSNG' = 'Public housing'
     'TEBOND' = 'Tax exempt bond'
 	'HOPEVI' = 'HOPE VI'
-	'FHLB' = 'FHLB';
+	'FHLB' = 'FHLB'
+    'LECOOP' = 'Limited equity coop';
 
   value $portfolio
     '202/811' = 'Section 202/811'
@@ -503,7 +507,8 @@ proc format library=PresCat;
     'TEBOND' = 'Tax exempt bond'
 	'PBV' = 'Project-based vouchers'
 	'HOPEVI' = 'HOPE VI'
-	'FHLB' = 'Federal Home Loan Bank';
+	'FHLB' = 'Federal Home Loan Bank'
+    'LECOOP' = 'Limited equity cooperative';
 
   value lihtc_credit2prog
     . = 'LIHTC/UNKWN'

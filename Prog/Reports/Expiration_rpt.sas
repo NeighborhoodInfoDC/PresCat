@@ -27,7 +27,7 @@ data Expiration_rpt;
 
   merge
     PresCat.Subsidy
-      (where=(((&Start_date)<=poa_end<(&End_date)) and subsidy_active) in=in1)
+		(where= ((&Start_date)<=compl_end<(&End_date) and subsidy_active OR (&Start_date)<=poa_end<(&End_date) and subsidy_active ) in=in1)
     Prescat.Project_category_view 
       (keep=nlihc_id proj_name category_code);
   by nlihc_id;
@@ -39,10 +39,10 @@ data Expiration_rpt;
   rpt_id = trim( nlihc_id ) || ' / ' || proj_name;
   
 run;
-
 proc sort data=Expiration_rpt;
   by category_code poa_end;
 run;
+
 
 %let rpt_suffix = %sysfunc( putn( %sysfunc( today() ), yymmddn8. ) );
 
@@ -63,10 +63,11 @@ proc report data=Expiration_rpt nowd
       style(header)=[fontsize=2 font_weight=bold textalign=left]
       style(column)=[fontsize=2 textalign=left];
   by Category_code;
-  column rpt_id poa_end program;
+  column rpt_id poa_end compl_end program;
   define rpt_id / "Project" display;
+  define compl_end / display;
   define poa_end / display;
-  define program / display;
+  define program / group;
   label category_code = 'Category';
   title1 "DC Preservation Catalog: Upcoming Subsidy Expiration Report (within next year)";
   footnote1 height=9pt "Prepared by Urban-Greater DC (GreaterDC.urban.org), &fdate..";
