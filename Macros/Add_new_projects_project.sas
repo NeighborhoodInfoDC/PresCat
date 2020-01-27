@@ -200,7 +200,7 @@
 
   **** Compare with earlier version ****;
 
-  proc compare base=Prescat.project compare=Project listall maxprint=(40,32000);
+  proc compare base=Prescat.project compare=Project listbasevar listcompvar maxprint=(40,32000);
     id nlihc_id;
   run;
 
@@ -218,8 +218,12 @@
     printobs=0
   )
 
+  title2 'Project: New records';
+
   proc print data=Project n;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
+    id nlihc_id;
+    var Proj_name; 
   run;
 
   title2 'File = PresCat.Project / DUPLICATE NLIHC_IDs';
@@ -260,7 +264,7 @@
 
   **** Compare with earlier version ****;
 
-  proc compare base=Prescat.project_category compare=Project_category listall maxprint=(40,32000);
+  proc compare base=Prescat.project_category compare=Project_category listbasevar listcompvar maxprint=(40,32000);
     id nlihc_id;
   run;
 
@@ -279,9 +283,13 @@
     freqvars=
   )
 
+  title2 'Project_category: New records';
+
   proc print data=Project_category n;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
   run;
+  
+  title2;
 
   ** Update metadata for Project_category_view **;
 

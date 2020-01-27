@@ -401,9 +401,105 @@
     
   run;
   
+  ** Find related parcels by using property owner names **;
+
+  proc sql noprint;
+
+    create table Ssl_by_owner as
+    select coalesce( Parcel.Ownername, Owners.Ownername ) as Ownername, Owners.Nlihc_id, 
+      Owners.Bldg_address_id, Owners.Proj_name, Parcel.ssl, Parcel.In_last_ownerpt, Parcel.ui_proptype as Parcel_type,
+      Parcel.ownerpt_extractdat_last as Parcel_info_source_date, Parcel.saledate as Parcel_owner_date, 
+      Parcel.ownercat as Parcel_owner_type, 
+      Parcel.ownername_full as Parcel_owner_name, Parcel.x_coord as Parcel_x, Parcel.y_coord as Parcel_y
+    from (
+      /** Parcel characteristics **/
+      select Parcel_base.*, Who_owns.ssl, Who_owns.ownercat, Who_owns.ownername_full,
+        Geo.ssl, Geo.x_coord, Geo.y_coord
+      from
+      RealProp.Parcel_base as Parcel_base
+      left join
+      RealProp.Parcel_base_who_owns as Who_owns
+      on Parcel_base.ssl = Who_owns.ssl
+      left join
+      Realprop.Parcel_geo as Geo
+      on Parcel_base.ssl = Geo.ssl
+    ) as Parcel 
+    left join (
+      /** List of property owners **/
+      select Bldg.Nlihc_id, coalesce( Bldg.SSL, Parcel.SSL ) as SSL, Bldg.Bldg_address_id, 
+        Bldg.Proj_name, Parcel.Ownername
+      from Building_geocode_a as Bldg
+      left join
+      Realprop.Parcel_base as Parcel
+      on Bldg.SSL = Parcel.SSL ) as Owners
+    on upcase( Parcel.Ownername ) = upcase( Owners.Ownername )
+    where not( missing( Owners.Nlihc_id ) ) and not ( missing( Owners.Ownername ) ) and
+      Parcel.ownercat not in ( '040', '045', '050', '060', '070', '080', '090', '100', '120', '130' )
+    order by nlihc_id, ssl;
+   
+  quit;
+  
+  /*
+  title2 'SSL_BY_OWNER';
+
+  proc print data=ssl_by_owner;
+    by nlihc_id;
+    id nlihc_id ssl;
+    var ownername Parcel_owner_type;
+  run;
+  
+  title2;
+  */
+  
+  ** Find additional addresses using updated parcel list **;
+  
+  proc sql noprint;
+    create table Building_geocode_b as
+    select coopfulla.*, parcel.ssl, parcel.in_last_ownerpt, parcel.ownername
+    from (
+      select distinct bldgaddr.nlihc_id, bldgaddr.Proj_name, coalesce( bldgaddr.address_id, addr.address_id ) as Bldg_address_id, 
+        addr.fulladdress as Bldg_addre, addr.ssl, addr.active_res_occupancy_count,
+        anc2012, cluster_tr2000, geo2010, psa2012, ward2012, latitude as Bldg_lat, longitude as Bldg_lon, 
+        x as Bldg_x, y as Bldg_y, zip as Bldg_zip
+      from (  
+        select Ssl_by_owner.nlihc_id, Ssl_by_owner.Proj_name, xref.address_id, coalesce( Ssl_by_owner.ssl, xref.ssl ) as ssl 
+        from Ssl_by_owner 
+        full join
+        Mar.Address_ssl_xref as xref
+        on xref.ssl = Ssl_by_owner.ssl
+        where not( missing( Ssl_by_owner.nlihc_id ) or missing( xref.address_id ) ) ) as bldgaddr
+      left join
+      Mar.Address_points_view as addr
+      on bldgaddr.address_id = addr.address_id ) as coopfulla
+    left join
+    RealProp.Parcel_base as parcel
+    on coopfulla.ssl = parcel.ssl
+    order by nlihc_id, Bldg_address_id;
+    
+  quit;
+
+  /*
+  title2 'BUILDING_GEOCODE_B';
+
+  proc print data=building_geocode_b;
+    by nlihc_id;
+    id nlihc_id Bldg_address_id;
+    var Bldg_addre;
+  run;
+  
+  title2;
+  */
+  
+  data Building_geocode_c;
+  
+    merge Building_geocode_a Building_geocode_b;
+    by nlihc_id Bldg_address_id;
+    
+  run;
+  
   ** Check new projects for pre-existing addresses in Catalog **;
   
-  proc sort data=Building_geocode_a out=Building_geocode_c1;
+  proc sort data=Building_geocode_c out=Building_geocode_c1;
     by bldg_address_id nlihc_id;
   run;
 
@@ -430,8 +526,10 @@
     if _type_ = 'BASE' then do;
       _hold_bldg_address_id = bldg_address_id;
     end;
-
-    if _hold_bldg_address_id = bldg_address_id then do;
+    else if _hold_bldg_address_id = bldg_address_id then do;
+      %warn_put( macro=Add_new_projects_geocode, 
+                 msg="Possible existing Catalog project. " bldg_address_id= 
+                     " See output for details." )
       output;
     end;
     else do;
@@ -445,7 +543,6 @@
   title2 '********************************************************************************************';
   title3 '** Addresses in new projects that match those in existing Catalog projects';
   title4 '** Check to make sure these projects are not already in Catalog';
-  title5 '** New project to be added to the Catalog is listed first';
 
   proc print data=Building_geocode_comp_rpt noobs label;
     by bldg_address_id;
@@ -481,30 +578,35 @@
   title2 '********************************************************************************************';
   title3 '** 1/ Check to see if any projects were removed in previous step';
 
-  proc compare base=prescat.project_geocode compare=work.project listall maxprint=(40,32000);
+  proc compare base=prescat.project_geocode compare=work.project maxprint=(40,32000);
     id nlihc_id;
   run;
 
   title2 '********************************************************************************************';
   title3 '** 2/ Check to see if any buildings were removed in previous step';
 
-  proc compare base=prescat.building_geocode compare=work.building listall maxprint=(40,32000);
+  proc compare base=prescat.building_geocode compare=work.building maxprint=(40,32000);
     id nlihc_id Bldg_addre;
   run;
 
   title2;
 
   ** merge new geocode files onto existing geocode files**;
+  
+  proc sort data=Building_geocode_c;
+    by nlihc_id Bldg_addre;
+  run;
 
   data Building_geocode;
-    set Building Building_geocode_a;
+    set Building Building_geocode_c;
     by nlihc_id Bldg_addre;
+    drop ACTIVE_RES_OCCUPANCY_COUNT in_last_ownerpt OWNERNAME;
   run;
 
   title2 '********************************************************************************************';
   title3 '** 3/ Check for changes in the new Building geocode file that is not related to the new projects';
 
-  proc compare base=prescat.building_geocode compare=work.building_geocode listall maxprint=(40,32000);
+  proc compare base=prescat.building_geocode compare=work.building_geocode listbasevar listcompvar maxprint=(40,32000);
    id nlihc_id proj_name Bldg_addre;
    run;
    
@@ -513,7 +615,7 @@
   %Create_project_geocode(
     data=Building_geocode, 
     revisions=%str(Add new projects from &input_file_pre._*.csv.),
-    compare=Y,
+    compare=N,
     archive=Y
   )
 
@@ -540,11 +642,6 @@
     Contents=N
     )
 
-  proc print data=Project_geocode n;
-    where put( nlihc_id, $New_nlihc_id. ) ~= "";
-  run;
-
-  
   %Finalize_data_set( 
     /** Finalize data set parameters **/
     data=Building_geocode,
@@ -558,10 +655,25 @@
     /** File info parameters **/
     printobs=0
   )
+  
+  title2 'Building_geocode: New records';
 
-  proc print data=Building_geocode n;
+  proc print data=Building_geocode;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
+    by nlihc_id;
+    id nlihc_id;
+    var bldg_addre;
   run;
+  
+  title2 'Project_geocode: New records';
+
+  proc print data=Project_geocode n;
+    where put( nlihc_id, $New_nlihc_id. ) ~= "";
+    id nlihc_id;
+    var bldg_count proj_addre;
+  run;
+
+  title2;
 
 
   title2 '********************************************************************************************';
@@ -576,16 +688,62 @@
   run;
 
   title2 '********************************************************************************************';
-  title3 '** Building_geocode_a: Check for duplicate addresses in projects being added';
+  title3 '** Building_geocode_c: Check for duplicate addresses in projects being added';
 
   %Dup_check(
-    data=Building_geocode_a,
+    data=Building_geocode_c,
     by=Bldg_address_id,
     id=nlihc_id Proj_name Bldg_addre 
   )
 
   run;
 
+  title2;
+  
+  ** Parcel **;
+  
+  data Parcel;
+  
+    set
+      PresCat.Parcel
+      Ssl_by_owner
+        (keep=nlihc_id ssl in_last_ownerpt bldg_address_id parcel_info_source_date
+              parcel_owner_date parcel_owner_name parcel_owner_type parcel_type
+              parcel_x parcel_y
+         rename=(bldg_address_id=parcel_address_id));
+    by nlihc_id ssl;
+    
+    informat _all_ ;
+    
+  run;
+  
+  %Finalize_data_set( 
+    /** Finalize data set parameters **/
+    data=Parcel,
+    out=Parcel,
+    outlib=PresCat,
+    label="Preservation Catalog, Real property parcels",
+    sortby=nlihc_id ssl,
+    archive=Y,
+    /** Metadata parameters **/
+    revisions=%str(Add new projects from &input_file_pre._*.csv.),
+    /** File info parameters **/
+    printobs=0
+  )
+
+  proc compare base=prescat.Parcel compare=Parcel listbasevar listcompvar maxprint=(40,32000);
+   id nlihc_id ssl;
+  run;
+  
+  title2 'Parcel: New records';
+
+  proc print data=Parcel;
+    where put( nlihc_id, $New_nlihc_id. ) ~= "";
+    by nlihc_id;
+    id nlihc_id ssl;
+    var parcel_owner_name;
+  run;
+  
   title2;
 
 %mend Add_new_projects_geocode;
