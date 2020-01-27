@@ -20,6 +20,8 @@
 %DCData_lib( PresCat )
 %DCData_lib( MAR )
 %DCData_lib( RealProp )
+%DCData_lib( ROD )
+%DCData_lib( DHCD )
 
 %let SOURCE_DATE = '10jan2020'd;
 %let UPDATE_DTM = %sysfunc( datetime() );
@@ -373,7 +375,7 @@ data
      
   merge
     Coop_db_geo
-    Coop_catalog (in=in_cat)
+    Coop_catalog (drop=ssl in=in_cat)
     Coop_units
     Coop_ssl_by_owner_unique;
   by id;
