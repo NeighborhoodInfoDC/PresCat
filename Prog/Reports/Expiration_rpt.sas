@@ -28,7 +28,7 @@ data Expiration_rpt;
 
   merge
     PresCat.Subsidy
-		(where= ((&Start_date)<=compl_end<(&Three_year_end_date) and subsidy_active OR (&Start_date)<=poa_end<(&End_date) and subsidy_active ) in=in1)
+		(where= ((&Start_date)<=compl_end<(&End_date) and subsidy_active and portfolio ~= "LIHTC" OR (&Start_date)<=poa_end<(&End_date) and subsidy_active OR (&Start_date)<=compl_end<(&Three_year_end_date) and subsidy_active and portfolio = "LIHTC" ) in=in1)
     Prescat.Project_category_view 
       (keep=nlihc_id proj_name category_code);
   by nlihc_id;
