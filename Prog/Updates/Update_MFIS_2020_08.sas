@@ -21,6 +21,6 @@
 %DCData_lib( HUD )
 
 
-%Update_MFIS( Update_file=MFIS_2020_08 )
+%Update_MFIS( Update_file=MFIS_2020_07 )
 
 
