@@ -30,7 +30,7 @@
 
 ** Read in LEC database **;
 
-filename fimport "&_dcdata_r_path\PresCat\Raw\IZ\IZ_Projects.csv" lrecl=5000;
+filename fimport "&_dcdata_r_path\DHCD\Raw\IZ\IZ_Projects.csv" lrecl=5000;
 
 data IZ_db;
 
@@ -92,18 +92,6 @@ proc print data=IZ_db_geo;
 run;
 
 
-** Check data **;
-
-title2 "--- Nonmatching SSLs ---";
-
-proc print data=IZ_db_geo;
-  where compbl( IZ_db_ssl ) ~= compbl( ssl );
-  id id;
-  var cooperative address IZ_db_ssl ssl;
-run;
-
-title2;
-  
 
 ** Find related parcels by using property owner names **;
 
@@ -111,7 +99,7 @@ proc sql noprint;
 
   create table IZ_ssl_by_owner as
   select coalesce( Parcel.Ownername, Owners.Ownername ) as Ownername, Owners.ID, 
-    Owners.Address_id, Owners.Cooperative, Owners.Proj_name, Parcel.ssl, Parcel.In_last_ownerpt, Parcel.ui_proptype,
+    Owners.Address_id, Owners.Project, Parcel.ssl, Parcel.In_last_ownerpt, Parcel.ui_proptype,
     Parcel.ownerpt_extractdat_last, Parcel.saledate, Parcel.ownercat, 
     Parcel.ownername_full, Parcel.x_coord, Parcel.y_coord
   from (
@@ -129,35 +117,35 @@ proc sql noprint;
   ) as Parcel 
   left join (
     /** List of property owners **/
-    select Coop.Id, coalesce( Coop.SSL, Parcel.SSL ) as SSL, Coop.Address_id, 
-      Coop.cooperative, Coop.Proj_name, Parcel.Ownername
-    from Coop_db_geo as Coop
+    select IZ.Id, coalesce( IZ.SSL, Parcel.SSL ) as SSL, IZ.Address_id, 
+		   IZ.Project, Parcel.Ownername
+    from IZ_db_geo as IZ
     left join
     Realprop.Parcel_base as Parcel
-    on Coop.SSL = Parcel.SSL ) as Owners
+    on IZ.SSL = Parcel.SSL ) as Owners
   on upcase( Parcel.Ownername ) = upcase( Owners.Ownername )
   where not( missing( Owners.id ) )
   order by id, ssl;
  
 quit;
 
-title2 "--- Coop_ssl_by_owner ---";
+title2 "--- IZ_ssl_by_owner ---";
 
 %Dup_check(
-  data=Coop_ssl_by_owner,
+  data=IZ_ssl_by_owner,
   by=id ssl,
   id=ownername
 )
 
-proc print data=Coop_ssl_by_owner;
+proc print data=IZ_ssl_by_owner;
   by id;
   id id ssl;
   var In_last_ownerpt Ownername ui_proptype ownercat x_coord y_coord;
 run;
 
 proc sort 
-  data=Coop_ssl_by_owner (where=(not(missing(ownername)))) 
-  out=Coop_ssl_by_owner_unique (keep=id ownername)
+  data=IZ_ssl_by_owner (where=(not(missing(ownername)))) 
+  out=IZ_ssl_by_owner_unique (keep=id ownername)
   nodupkey;
   by id;
 run;
@@ -168,51 +156,51 @@ title2;
 ** Find related addresses **;
 
 proc sql noprint;
-  create table Coop_addresses as
-  select coopfulla.*, parcel.ssl, parcel.in_last_ownerpt, parcel.ownername
+  create table IZ_addresses as
+  select IZfulla.*, parcel.ssl, parcel.in_last_ownerpt, parcel.ownername
   from (
-    select distinct coopaddr.id, coalesce( coopaddr.address_id, addr.address_id ) as address_id, 
-      coopaddr.cooperative, coopaddr.Proj_name, addr.fulladdress, addr.ssl, addr.active_res_occupancy_count,
+    select distinct IZaddr.id, coalesce( IZaddr.address_id, addr.address_id ) as address_id, 
+      IZaddr.Project, addr.fulladdress, addr.ssl, addr.active_res_occupancy_count,
       anc2012, cluster_tr2000, geo2010, psa2012, ward2012, latitude, longitude, x, y, zip
     from (  
-      select coop.id, coop.cooperative, coop.Proj_name, xref.address_id, coalesce( coop.ssl, xref.ssl ) as ssl 
-      from Coop_ssl_by_owner as coop 
+      select IZ.id, IZ.Project, xref.address_id, coalesce( IZ.ssl, xref.ssl ) as ssl 
+      from IZ_ssl_by_owner as IZ 
       full join
       Mar.Address_ssl_xref as xref
-      on xref.ssl = coop.ssl
-      where not( missing( coop.id ) or missing( xref.address_id ) ) ) as coopaddr
+      on xref.ssl = IZ.ssl
+      where not( missing( IZ.id ) or missing( xref.address_id ) ) ) as IZaddr
     left join
     Mar.Address_points_view as addr
-    on coopaddr.address_id = addr.address_id ) as coopfulla
+    on IZaddr.address_id = addr.address_id ) as IZfulla
   left join
   RealProp.Parcel_base as parcel
-  on coopfulla.ssl = parcel.ssl
+  on IZfulla.ssl = parcel.ssl
   order by id, address_id;
   
-  create table Coop_units as
-  select coop.id, sum( coop.active_res_occupancy_count ) as active_res_occupancy_count
-  from Coop_addresses as coop
+  create table IZ_units as
+  select IZ.id, sum( IZ.active_res_occupancy_count ) as active_res_occupancy_count
+  from IZ_addresses as IZ
   group by id;
   
 quit;
 
-title2 "--- Coop_addresses ---";
+title2 "--- IZ_addresses ---";
 
 %Dup_check(
-  data=Coop_addresses,
+  data=IZ_addresses,
   by=id address_id,
   id=fulladdress ssl
 )
 
-proc print data=Coop_addresses;
+proc print data=IZ_addresses;
   by id;
   id id address_id;
   var fulladdress ssl in_last_ownerpt ownername;
 run;
 
-title2 "--- Coop_units ---";
+title2 "--- IZ_units ---";
 
-proc print data=Coop_units;
+proc print data=IZ_units;
   id id;
   var active_res_occupancy_count;
   sum active_res_occupancy_count;
@@ -225,50 +213,52 @@ title2;
 
 proc sql noprint;
 
-  create table Coop_catalog as
-  select coop.id, coalesce( coop.ssl, prescat.ssl ) as ssl, prescat.nlihc_id
-  from Coop_ssl_by_owner as coop
+  create table IZ_catalog as
+  select IZ.id, coalesce( IZ.ssl, prescat.ssl ) as ssl, prescat.nlihc_id
+  from IZ_ssl_by_owner as IZ
   left join
   Prescat.Parcel as prescat
-  on coop.ssl = prescat.ssl
+  on IZ.ssl = prescat.ssl
   where not( missing( nlihc_id ) )
   order by id, nlihc_id;
   
-  create table Coop_catalog_subsidies as
-  select distinct coop.id, coalesce( coop.nlihc_id, subsidy.nlihc_id ) as nlihc_id, 
+  create table IZ_catalog_subsidies as
+  select distinct IZ.id, coalesce( IZ.nlihc_id, subsidy.nlihc_id ) as nlihc_id, 
     subsidy.subsidy_id, subsidy.subsidy_active, subsidy.program, subsidy.units_assist,
     subsidy.poa_start, subsidy.poa_end
-  from Coop_catalog as coop
+  from IZ_catalog as IZ
   right join
   Prescat.Subsidy as subsidy
-  on coop.nlihc_id = subsidy.nlihc_id
+  on IZ.nlihc_id = subsidy.nlihc_id
   where not( missing( id ) )
   order by id, nlihc_id, subsidy_id;
   
 quit;
 
-proc sort data=Coop_catalog nodupkey;
+
+
+proc sort data=IZ_catalog nodupkey;
   by id nlihc_id;
 run;
 
-title2 "--- Coop_catalog ---";
+title2 "--- IZ_catalog ---";
 
 %Dup_check(
-  data=Coop_catalog,
+  data=IZ_catalog,
   by=id,
   id=nlihc_id ssl
 )
 
-proc print data=Coop_catalog n;
+proc print data=IZ_catalog n;
   id id;
   var nlihc_id;
 run;
 
 %Data_to_format(
   FmtLib=work,
-  FmtName=Coop_catalog,
+  FmtName=IZ_catalog,
   Desc=,
-  Data=Coop_catalog,
+  Data=IZ_catalog,
   Value=id,
   Label=nlihc_id,
   OtherLabel=' ',
