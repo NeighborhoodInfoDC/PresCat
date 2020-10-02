@@ -59,6 +59,13 @@ data IZ_db;
     otherwise Address_ref = Address;
   end;
   
+  **Create AMI categories**;
+
+  if index (MFI, "30") > 0 then AMI_0_30 = 1;
+  if index (MFI, "50") > 0 then AMI_31_50 = 1;
+  if index (MFI, "60") > 0 then AMI_51_60 = 1;
+  if index (MFI, "80") > 0 then AMI_61_80 = 1;
+
   label address_ref = "Reference street address";
   
   %Project_name_clean( Project, Project )
@@ -266,9 +273,9 @@ run;
   Contents=N
   )
 
-title2 "--- Coop_catalog_subsidies ---";
+title2 "--- IZ_catalog_subsidies ---";
 
-proc print data=Coop_catalog_subsidies;
+proc print data=IZ_catalog_subsidies;
   by id nlihc_id;
   id id nlihc_id subsidy_id;
 run;
@@ -279,14 +286,14 @@ title2;
 ** Export projects to add to Catalog **;
 
 data 
-  Coop_export_main (keep=Proj_Name Bldg_City Bldg_ST Bldg_Zip Bldg_Addre)
-  Coop_export_subsidy
+  IZ_export_main (keep=Project Bldg_City Bldg_ST Bldg_Zip Bldg_Addre)
+  IZ_export_subsidy
     (keep=MARID Units_tot Units_Assist Current_Affordability_Start
           Affordability_End rent_to_fmr_description
           Subsidy_Info_Source_ID Subsidy_Info_Source
           Subsidy_Info_Source_Date Program Compliance_End_Date
           Previous_Affordability_end Agency Date_Affordability_Ended)
-  Coop_db_geo_catalog
+  IZ_db_geo_catalog
     (rename=(Current_affordability_start=Poa_start)); 
 
   length
@@ -300,20 +307,20 @@ data
   retain 
     Affordability_End ' '
     Subsidy_Info_Source_ID ' '
-    Subsidy_Info_Source 'VCU-CNHED/LECOOP'
+    Subsidy_Info_Source 'DHCD Inclusionary Zoning Database'
     Subsidy_Info_Source_Date &SOURCE_DATE 
-    Program 'LECOOP'
-    Portfolio 'LECOOP'
+    Program 'IZ'
+    Portfolio 'IZ'
     Compliance_End_Date Previous_Affordability_end Agency Date_Affordability_Ended ' '
     Subsidy_id 999
     Subsidy_active 1
     Update_dtm &UPDATE_DTM;
      
   merge
-    Coop_db_geo
-    Coop_catalog (drop=ssl in=in_cat)
-    Coop_units
-    Coop_ssl_by_owner_unique;
+    IZ_db_geo
+    IZ_catalog (drop=ssl in=in_cat)
+    IZ_units
+    IZ_ssl_by_owner_unique;
   by id;
   
   ** Main project list **;
@@ -339,10 +346,7 @@ data
      %warn_put( msg="Unit counts do not match: " id= units_tot= units_assist= )
    end;
    
-   if index( year_coop_formed, '/' ) then 
-     Current_affordability_start = input( year_coop_formed, mmddyy10. ); 
-   else
-     Current_affordability_start = mdy( 1, 1, input( year_coop_formed, 4. ) );
+     Current_affordability_start = input( Lottery_date, mmddyy10. ); 
    
    if input( AMI_0_30, 10. ) > 0 then
      Rent_to_fmr_description = trim( left( put( input( AMI_0_30, 10. ), 5. ) ) ) || '@0-30/';
