@@ -45,8 +45,8 @@ data IZ_db;
     Tenure : $40.
     MFI : $40.
     Construction_Status : $20.
-    Lottery_Date : $20.
-    Application : $20.
+    Lottery_Date : $30.
+    Application : $30.
    
   ;
   
@@ -66,7 +66,12 @@ data IZ_db;
   if index (MFI, "60") > 0 then AMI_51_60 = 1;
   if index (MFI, "80") > 0 then AMI_61_80 = 1;
 
+  **Create Agency variables**;
+
+  Agency = "DHCD";
+
   label address_ref = "Reference street address";
+
   
   %Project_name_clean( Project, Project )
 
@@ -100,121 +105,6 @@ run;
 
 
 
-** Find related parcels by using property owner names **;
-
-proc sql noprint;
-
-  create table IZ_ssl_by_owner as
-  select coalesce( Parcel.Ownername, Owners.Ownername ) as Ownername, Owners.ID, 
-    Owners.Address_id, Owners.Project, Parcel.ssl, Parcel.In_last_ownerpt, Parcel.ui_proptype,
-    Parcel.ownerpt_extractdat_last, Parcel.saledate, Parcel.ownercat, 
-    Parcel.ownername_full, Parcel.x_coord, Parcel.y_coord
-  from (
-    /** Parcel characteristics **/
-    select Parcel_base.*, Who_owns.ssl, Who_owns.ownercat, Who_owns.ownername_full,
-      Geo.ssl, Geo.x_coord, Geo.y_coord
-    from
-    RealProp.Parcel_base as Parcel_base
-    left join
-    RealProp.Parcel_base_who_owns as Who_owns
-    on Parcel_base.ssl = Who_owns.ssl
-    left join
-    Realprop.Parcel_geo as Geo
-    on Parcel_base.ssl = Geo.ssl
-  ) as Parcel 
-  left join (
-    /** List of property owners **/
-    select IZ.Id, coalesce( IZ.SSL, Parcel.SSL ) as SSL, IZ.Address_id, 
-		   IZ.Project, Parcel.Ownername
-    from IZ_db_geo as IZ
-    left join
-    Realprop.Parcel_base as Parcel
-    on IZ.SSL = Parcel.SSL ) as Owners
-  on upcase( Parcel.Ownername ) = upcase( Owners.Ownername )
-  where not( missing( Owners.id ) )
-  order by id, ssl;
- 
-quit;
-
-title2 "--- IZ_ssl_by_owner ---";
-
-%Dup_check(
-  data=IZ_ssl_by_owner,
-  by=id ssl,
-  id=ownername
-)
-
-proc print data=IZ_ssl_by_owner;
-  by id;
-  id id ssl;
-  var In_last_ownerpt Ownername ui_proptype ownercat x_coord y_coord;
-run;
-
-proc sort 
-  data=IZ_ssl_by_owner (where=(not(missing(ownername)))) 
-  out=IZ_ssl_by_owner_unique (keep=id ownername)
-  nodupkey;
-  by id;
-run;
-
-title2;
-
-
-** Find related addresses **;
-
-proc sql noprint;
-  create table IZ_addresses as
-  select IZfulla.*, parcel.ssl, parcel.in_last_ownerpt, parcel.ownername
-  from (
-    select distinct IZaddr.id, coalesce( IZaddr.address_id, addr.address_id ) as address_id, 
-      IZaddr.Project, addr.fulladdress, addr.ssl, addr.active_res_occupancy_count,
-      anc2012, cluster_tr2000, geo2010, psa2012, ward2012, latitude, longitude, x, y, zip
-    from (  
-      select IZ.id, IZ.Project, xref.address_id, coalesce( IZ.ssl, xref.ssl ) as ssl 
-      from IZ_ssl_by_owner as IZ 
-      full join
-      Mar.Address_ssl_xref as xref
-      on xref.ssl = IZ.ssl
-      where not( missing( IZ.id ) or missing( xref.address_id ) ) ) as IZaddr
-    left join
-    Mar.Address_points_view as addr
-    on IZaddr.address_id = addr.address_id ) as IZfulla
-  left join
-  RealProp.Parcel_base as parcel
-  on IZfulla.ssl = parcel.ssl
-  order by id, address_id;
-  
-  create table IZ_units as
-  select IZ.id, sum( IZ.active_res_occupancy_count ) as active_res_occupancy_count
-  from IZ_addresses as IZ
-  group by id;
-  
-quit;
-
-title2 "--- IZ_addresses ---";
-
-%Dup_check(
-  data=IZ_addresses,
-  by=id address_id,
-  id=fulladdress ssl
-)
-
-proc print data=IZ_addresses;
-  by id;
-  id id address_id;
-  var fulladdress ssl in_last_ownerpt ownername;
-run;
-
-title2 "--- IZ_units ---";
-
-proc print data=IZ_units;
-  id id;
-  var active_res_occupancy_count;
-  sum active_res_occupancy_count;
-run;
-
-title2;
-
 
 ** Check for matches with Preservation Catalog **;
 
@@ -222,7 +112,7 @@ proc sql noprint;
 
   create table IZ_catalog as
   select IZ.id, coalesce( IZ.ssl, prescat.ssl ) as ssl, prescat.nlihc_id
-  from IZ_ssl_by_owner as IZ
+  from IZ_db_geo as IZ
   left join
   Prescat.Parcel as prescat
   on IZ.ssl = prescat.ssl
@@ -319,8 +209,8 @@ data
   merge
     IZ_db_geo
     IZ_catalog (drop=ssl in=in_cat)
-    IZ_units
-    IZ_ssl_by_owner_unique;
+    /*IZ_units
+    IZ_ssl_by_owner_unique*/;
   by id;
   
   ** Main project list **;
@@ -366,18 +256,18 @@ data
    format Subsidy_Info_Source_Date Current_Affordability_Start mmddyy10.;
    
    if not in_cat then do;
-     output Coop_export_main;
-     output Coop_export_subsidy;
+     output IZ_export_main;
+     output IZ_export_subsidy;
    end;
    else do;
-     output Coop_db_geo_catalog;
+     output IZ_db_geo_catalog;
    end;
 
 run;
 
-filename fexport "&_dcdata_r_path\PresCat\Raw\AddNew\084_Review_LECoop_db_main (source).csv" lrecl=1000;
+filename fexport "&_dcdata_r_path\PresCat\Raw\AddNew\242_Review_IZ_db_main (source).csv" lrecl=1000;
 
-proc export data=Coop_export_main
+proc export data=IZ_export_main
     outfile=fexport
     dbms=csv replace;
 
@@ -385,9 +275,9 @@ run;
 
 filename fexport clear;
 
-filename fexport "&_dcdata_r_path\PresCat\Raw\AddNew\084_Review_LECoop_db_subsidy.csv" lrecl=1000;
+filename fexport "&_dcdata_r_path\PresCat\Raw\AddNew\242_Review_IZ_db_subsidy.csv" lrecl=1000;
 
-proc export data=Coop_export_subsidy
+proc export data=IZ_export_subsidy
     outfile=fexport
     dbms=csv replace;
 
@@ -395,6 +285,10 @@ run;
 
 filename fexport clear;
 
+
+
+
+*******BELOW THIS LINE, SHOULD THERE BE ANY IZ UNITS ALREADY IN THE CATALOG?********:
 
 ** Update existing LEC's in Catalog **;
 
