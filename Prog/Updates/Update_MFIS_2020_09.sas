@@ -20,7 +20,7 @@
 %DCData_lib( PresCat )
 %DCData_lib( HUD )
 
-
+options nominoperator;
 %Update_MFIS( Update_file=MFIS_2020_09 )
 
 
