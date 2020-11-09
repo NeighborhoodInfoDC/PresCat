@@ -20,6 +20,6 @@
 %DCData_lib( PresCat )
 %DCData_lib( HUD )
 
-
+options nominoperator;
 %Update_Sec8mf( Update_file=Sec8mf_2020_10 )
 

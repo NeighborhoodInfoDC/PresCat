@@ -14,12 +14,12 @@
  Modifications:
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( PresCat )
 %DCData_lib( HUD )
 
-
+options nominoperator;
 %Update_Sec8mf( Update_file=Sec8mf_yyyy_mm )
 
