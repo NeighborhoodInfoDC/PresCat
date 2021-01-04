@@ -1,9 +1,9 @@
 /**************************************************************************
- Program:  Update_MFIS_yyyy_mm.sas
+ Program:  Update_MFIS_2020_09.sas
  Library:  PresCat
  Project:  Urban-Greater DC
- Author:   
- Created:  
+ Author:   W.Oliver
+ Created:  10/9/2020
  Version:  SAS 9.4
  Environment:  Local Windows session (desktop)
  GitHub issue:  
@@ -20,7 +20,7 @@
 %DCData_lib( PresCat )
 %DCData_lib( HUD )
 
-
-%Update_REAC( Update_file=REAC_yyyy_mm )
+options nominoperator;
+%Update_MFIS( Update_file=MFIS_2020_09 )
 
 

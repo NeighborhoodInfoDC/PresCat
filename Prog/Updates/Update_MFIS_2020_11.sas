@@ -1,5 +1,5 @@
 /**************************************************************************
- Program:  Update_MFIS_yyyy_mm.sas
+ Program:  Update_MFIS_2020_11.sas
  Library:  PresCat
  Project:  Urban-Greater DC
  Author:   
@@ -20,7 +20,7 @@
 %DCData_lib( PresCat )
 %DCData_lib( HUD )
 
-
-%Update_REAC( Update_file=REAC_yyyy_mm )
+options nominoperator;
+%Update_MFIS( Update_file=MFIS_2020_11 )
 
 
