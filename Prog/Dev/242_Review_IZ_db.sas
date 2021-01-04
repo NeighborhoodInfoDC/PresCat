@@ -1,15 +1,14 @@
 /**************************************************************************
- Program:  084_Review_LECoop_db.sas
+ Program:  242_Review_IZ_db.sas
  Library:  PresCat
  Project:  Urban-Greater DC
- Author:   P. Tatian
- Created:  10/12/19
+ Author:   M. Cohen
+ Created: 9/29/20
  Version:  SAS 9.4
  Environment:  Local Windows session (desktop)
  GitHub issue:  84
  
- Description:  Review the new limited equity cooperative database
- created by CNHED and VCU for the LEC study.  
+ Description:  Review the new iz database.  
 
  Modifications:
 **************************************************************************/
@@ -53,12 +52,7 @@ data IZ_db;
   ID + 1;
   
   length Address_ref $ 80;
-  
-  select ( ID );
-    when (  37 ) Address_ref = "1016 17th PL NE";
-    otherwise Address_ref = Address;
-  end;
-  
+
   **Create AMI categories**;
 
   if index (MFI, "30") > 0 then AMI_0_30 = 1;
@@ -71,6 +65,9 @@ data IZ_db;
   Agency = "DHCD";
 
   label address_ref = "Reference street address";
+
+  if Tenure = "Sale" then delete;
+  if Lottery_Date = "" then delete;
 
   
   %Project_name_clean( Project, Project )
@@ -87,12 +84,13 @@ run;
   geo_match=Y,
   data=IZ_db,
   out=IZ_db_geo,
-  staddr=Address_ref,
-  zip=,
+  staddr=Address,
+  staddr_std=Address_ref,
+  zip=zip,
   id=ID Project,
   ds_label=,
   listunmatched=Y,
-  match_score_min=65,
+  match_score_min=40,
   streetalt_file=&_dcdata_default_path\PresCat\Prog\Dev\084_StreetAlt_LECoop.txt
 )
 
@@ -131,7 +129,6 @@ proc sql noprint;
   order by id, nlihc_id, subsidy_id;
   
 quit;
-
 
 
 proc sort data=IZ_catalog nodupkey;
@@ -284,306 +281,3 @@ proc export data=IZ_export_subsidy
 run;
 
 filename fexport clear;
-
-
-
-
-*******BELOW THIS LINE, SHOULD THERE BE ANY IZ UNITS ALREADY IN THE CATALOG?********:
-
-** Update existing LEC's in Catalog **;
-
-proc sort data=Coop_db_geo_catalog;
-  by nlihc_id;
-run;
-
-proc print data=Coop_db_geo_catalog;
-  where not missing( Rent_to_fmr_description );
-  id nlihc_id subsidy_id;
-  var units_assist Rent_to_fmr_description;
-run;
-
-** Subsidy **;
-
-data Subsidy_update;
-
-  set 
-    PresCat.Subsidy
-    Coop_db_geo_catalog 
-      (keep=Nlihc_id Subsidy_id Subsidy_active Poa_start Program Portfolio Units_assist 
-            Rent_to_fmr_description Subsidy_Info_Source Subsidy_Info_Source_Date Update_dtm);
-  by Nlihc_id Subsidy_id;
-  
-  retain _hold_subsidy_id;
-  
-  if first.Nlihc_id then do;
-    _hold_subsidy_id = 1;
-  end;
-  else do;
-    _hold_subsidy_id + 1;
-  end;
-  
-  Subsidy_id = _hold_subsidy_id;
-  
-  drop _hold_subsidy_id;
-
-run;
-
-%Finalize_data_set( 
-  /** Finalize data set parameters **/
-  data=Subsidy_update,
-  out=Subsidy,
-  outlib=PresCat,
-  label="Preservation Catalog, Project subsidies",
-  sortby=nlihc_id subsidy_id,
-  archive=Y,
-  /** Metadata parameters **/
-  revisions=%str(&revisions),
-  /** File info parameters **/
-  printobs=0,
-  freqvars=program portfolio Subsidy_info_source
-)
-
-proc print data=subsidy_update;
-  where datepart( update_dtm ) = today();
-  id nlihc_id subsidy_id;
-run;
-
-proc compare base=PresCat.Subsidy compare=Subsidy_update listall maxprint=(40,32000);
-  id Nlihc_id Subsidy_id;
-run;
-
-
-** Project-level subsidy info **;
-
-%Create_project_subsidy_update( data=Subsidy_update, out=Project_subsidy_update )
-
-
-** Addresses **;
-
-data Coop_addresses_update;
-
-  length Nlihc_id $ 16 Proj_name cluster_tr2000_name $ 80;
-
-  set Coop_addresses;
-  
-  Nlihc_id = left( put( id, Coop_catalog. ) );
-  
-  if missing( Nlihc_id ) then delete;
-  
-  %Address_clean( FULLADDRESS, bldg_addre )
-  
-  cluster_tr2000_name = left( put( cluster_tr2000, clus00b. ) );
-  
-  keep Nlihc_id Proj_name bldg_addre address_id latitude longitude x y zip
-       anc2012 cluster_tr2000 cluster_tr2000_name geo2010 psa2012 ward2012;
-  
-  rename address_id=bldg_address_id latitude=bldg_lat longitude=bldg_lon x=bldg_x y=bldg_y zip=bldg_zip;
-
-run;
-
-proc sort data=Coop_addresses_update nodupkey;
-  by Nlihc_id bldg_addre;
-run;
-
-proc print data=Coop_addresses_update;
-
-data Building_geocode_update;
-
-  update
-    PresCat.Building_geocode
-    Coop_addresses_update;
-  by nlihc_id bldg_addre;
-  
-run;
-
-%Finalize_data_set( 
-  /** Finalize data set parameters **/
-  data=Building_geocode_update,
-  out=Building_geocode,
-  outlib=PresCat,
-  label="Preservation Catalog, Building-level geocoding info",
-  sortby=nlihc_id bldg_addre,
-  archive=Y,
-  /** Metadata parameters **/
-  revisions=%str(&revisions),
-  /** File info parameters **/
-  printobs=0
-)
-
-proc compare base=PresCat.Building_geocode compare=Building_geocode_update listall maxprint=(40,32000) method=percent criterion=0.01;
-  id nlihc_id bldg_addre;
-run;
-
-%Dup_check(
-  data=Building_geocode_update,
-  by=nlihc_id bldg_address_id,
-  id=bldg_addre,
-  out=_dup_check,
-  listdups=Y
-)
-
-
-%Create_project_geocode( 
-  data=Building_geocode_update, 
-  out=Project_geocode, 
-  revisions=%str(&revisions)
-)
-  
-  
-** Parcels **;
-
-data Coop_parcel_update;
-
-  length Nlihc_id $ 16;
-
-  set Coop_ssl_by_owner;
-  
-  Nlihc_id = left( put( id, Coop_catalog. ) );
-  
-  if missing( Nlihc_id ) then delete;
-  
-  keep Nlihc_id ssl in_last_ownerpt address_id ownerpt_extractdat_last ownername_full ownercat ui_proptype
-       x_coord y_coord;
-  
-  rename address_id=Parcel_address_id ownerpt_extractdat_last=Parcel_info_source_date 
-         ownername_full=Parcel_owner_name ownercat=Parcel_owner_type ui_proptype=Parcel_type
-         x_coord=Parcel_x y_coord=Parcel_y;
-         
-  informat _all_ ;
-
-run;
-
-proc sort data=Coop_parcel_update;
-  by Nlihc_id ssl;
-run;
-
-proc print data=Coop_parcel_update;
-
-data Parcel_update;
-
-  update
-    PresCat.Parcel
-    Coop_parcel_update;
-  by nlihc_id ssl;
-  
-run;
-
-%Finalize_data_set( 
-  /** Finalize data set parameters **/
-  data=Parcel_update,
-  out=Parcel,
-  outlib=PresCat,
-  label="Preservation Catalog, Real property parcels",
-  sortby=nlihc_id ssl,
-  archive=Y,
-  /** Metadata parameters **/
-  revisions=%str(&revisions),
-  /** File info parameters **/
-  printobs=0
-)
-
-proc compare base=PresCat.Parcel compare=Parcel_update listall maxprint=(40,32000) method=percent criterion=0.01;
-  id nlihc_id ssl;
-run;
-
-%Dup_check(
-  data=Parcel_update,
-  by=nlihc_id ssl,
-  id=,
-  listdups=Y
-)
-  
-  
-** Real property **; 
-
-%Update_real_property( Parcel=Parcel_update, revisions=%str(&revisions) )
-
-
-** Project **;
-
-data Project_update;
-
-  merge 
-    PresCat.Project
-    Coop_db_geo_catalog 
-      (keep=Nlihc_id Proj_name management ownername
-       in=isLEC)
-    Project_geocode
-      (keep=Nlihc_id anc2012 cluster_tr2000 cluster_tr2000_name geo2010 
-            proj_addre proj_address_id proj_image_url proj_lat proj_lon
-            proj_streetview_url proj_x proj_y proj_zip psa2012 ward2012 zip)
-    Project_subsidy_update
-    ;
-  by Nlihc_id;
-  
-  if isLEC then do;
-  
-    i = index( management, '(' );
-    
-    if i > 0 then hud_mgr_name = left( substr( management, 1, i - 1 ) );
-    else hud_mgr_name = left( management );
-    
-    %Project_name_clean( ownername, hud_own_name )
-    
-    hud_own_type = 'NP';
-    
-    status = 'A';
-    
-    subsidized = 1;
-    
-    update_dtm = &UPDATE_DTM;
-    
-  end;
-  
-  drop i management ownername;
-  
-run;
-
-%Finalize_data_set( 
-  /** Finalize data set parameters **/
-  data=Project_update,
-  out=Project,
-  outlib=PresCat,
-  label="Preservation Catalog, Projects",
-  sortby=nlihc_id,
-  archive=Y,
-  /** Metadata parameters **/
-  revisions=%str(&revisions),
-  /** File info parameters **/
-  printobs=0
-)
-
-proc compare base=PresCat.Project compare=Project_update listall maxprint=(40,32000);
-  id Nlihc_id;
-run;
-
-
-** Project_category **;
-
-data Project_category_update;
-
-  update
-    PresCat.Project_category
-    Coop_db_geo_catalog (keep=Nlihc_id Proj_name);
-  by Nlihc_id;
-  
-run;
-
-%Finalize_data_set( 
-  /** Finalize data set parameters **/
-  data=Project_category_update,
-  out=Project_category,
-  outlib=PresCat,
-  label="Preservation Catalog, Projects",
-  sortby=nlihc_id,
-  archive=Y,
-  /** Metadata parameters **/
-  revisions=%str(&revisions),
-  /** File info parameters **/
-  printobs=0
-)
-
-proc compare base=PresCat.Project_category compare=Project_category_update listall maxprint=(40,32000);
-  id Nlihc_id;
-run;
-
