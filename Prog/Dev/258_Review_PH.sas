@@ -74,6 +74,10 @@ data Project;
   
 run;
 
+proc compare base=PresCat.Project compare=Project listall maxprint=(40,32000);
+  id nlihc_id;
+run;
+
 %Finalize_data_set( 
   /** Finalize data set parameters **/
   data=Project,
@@ -98,9 +102,12 @@ data Project_category;
   
   if nlihc_id = 'NL000301' then do;
     proj_name = 'Edgewood Commons III';
-    update_dtm = &Update_dtm;
   end;
   
+run;
+
+proc compare base=PresCat.Project_category compare=Project_category listall maxprint=(40,32000);
+  id nlihc_id;
 run;
 
 %Finalize_data_set( 
