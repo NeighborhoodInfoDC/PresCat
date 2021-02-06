@@ -16,7 +16,7 @@
   08/25/16 MAC Added Foreclosure Data 2014, 2015, 2016
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
