@@ -24,7 +24,7 @@ options msglevel=n;
 
 /** Macro Export - Start Definition **/
 
-%macro Export( data=, out=, desc= );
+%macro Export( data=, out=, desc=, where= );
 
   %local lib file;
   
@@ -50,6 +50,9 @@ options msglevel=n;
   filename fexport "&out_folder\&out..csv" lrecl=2000;
 
   proc export data=&data
+  %if %length( &where ) > 0 %then %do;
+    (where=(&where))
+  %end;
       outfile=fexport
       dbms=csv replace;
 
@@ -172,7 +175,7 @@ run;
 
 ** Export individual data sets **;
 %Export( data=PresCat.Project_category_view, out=Project, desc=%str(DC Preservation Catalog, Projects) )
-%Export( data=PresCat.Subsidy )
+%Export( data=PresCat.Subsidy, where=subsidy_active )
 %Export( data=PresCat.Parcel )
 %Export( data=PresCat.Reac_score ) 
 %Export( data=PresCat.Real_property )
