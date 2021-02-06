@@ -15,7 +15,7 @@
   12/31/14 PAT Added $progtoportfolio, $progfull, $progshrt, $portfolio.
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )

@@ -19,7 +19,7 @@
   12/24/14 PAT Added Parcel_Info_Source_Date field.
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
