@@ -27,7 +27,7 @@
   09/03/15 PAT Add PBCA flag to data set.
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
