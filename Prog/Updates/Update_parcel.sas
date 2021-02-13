@@ -19,7 +19,7 @@
 %DCData_lib( MAR, local=n )
 %DCData_lib( RealProp, local=n )
 
-%let revisions = %str(Update LIHTC projects with DHCD FOIA, 11-09-12.);
+%let revisions = %str(Update with latest PresCat.Building_geocode, RealProp.Parcel_base, and Mar.Address_ssl_xref.);
 
 data Building_geocode;
 
