@@ -27,6 +27,8 @@
   
 ** Compile data sources on public housing **;
 
+** PresCat.Subsidy + HUD APSH **;
+
 proc sql noprint;
   create table PH_Subsidy_a as
   select Subsidy1.*, APSH18.code as APSH18_code, n(APSH18.code) as APSH18_in,
@@ -65,10 +67,60 @@ run;
 proc summary data=PH_subsidy_a;
   var units_assist subsidy_active update_dtm apsh18_in apsh20_in APSH18_total_units APSH20_total_units;
   by nlihc_id;
-  id APSH18_std_addr APSH20_std_addr APSH18_name APSH20_name;
-  output out=PH_Subsidy 
+  id APSH18_name APSH20_name;
+  output out=PH_Subsidy_b 
     max(subsidy_active update_dtm apsh18_in apsh20_in)= 
     sum(units_assist APSH18_total_units APSH20_total_units)=;
+run;
+
+data PH_Subsidy;
+
+  length xAPSH18_std_addr xAPSH20_std_addr $ 160;
+  retain xAPSH18_std_addr xAPSH20_std_addr;
+  
+  merge 
+    PH_Subsidy_a (keep=nlihc_id APSH18_std_addr APSH20_std_addr)
+    PH_Subsidy_b;
+  by nlihc_id;
+  
+  if first.nlihc_id then xAPSH18_std_addr = left( APSH18_std_addr );
+  else xAPSH18_std_addr = trim( xAPSH18_std_addr ) || '; ' || left( APSH18_std_addr );
+  
+  if first.nlihc_id then xAPSH20_std_addr = left( APSH20_std_addr );
+  else xAPSH20_std_addr = trim( xAPSH20_std_addr ) || '; ' || left( APSH20_std_addr );
+  
+  if last.nlihc_id then output;
+  
+  drop APSH18_std_addr APSH20_std_addr;
+  rename xAPSH18_std_addr=APSH18_std_addr xAPSH20_std_addr=APSH20_std_addr;
+  
+run;
+
+
+** Parcel data **;
+
+proc summary data=PresCat.Parcel nway; 
+  class nlihc_id parcel_owner_name;
+  output out=Parcel_owners_a;
+run;
+
+proc sort data=Parcel_owners_a;
+  by nlihc_id descending _freq_;
+run;
+
+data Parcel_owners;
+
+  length Owners $ 160;
+  retain Owners;
+  
+  set Parcel_owners_a;
+  by nlihc_id;
+  
+  if first.nlihc_id then Owners = left( parcel_owner_name );
+  else Owners = trim( Owners ) || '; ' || left( parcel_owner_name );
+  
+  if last.nlihc_id then output;
+  
 run;
 
 data PH_Subsidy_Proj;
@@ -76,7 +128,8 @@ data PH_Subsidy_Proj;
   merge 
     PH_Subsidy (in=in_subsidy)
     PresCat.Project_category_view 
-      (keep=nlihc_id ward2012 bldg_count category_code proj_addre proj_name proj_owner_type proj_units_tot status);
+      (keep=nlihc_id ward2012 bldg_count category_code proj_addre proj_name proj_owner_type proj_units_tot status)
+    Parcel_owners;
   by nlihc_id;
   
   if in_subsidy;
@@ -100,12 +153,13 @@ title2 '** Updated Catalog list of ACTIVE public housing **';
 proc print data=PH_Subsidy_Proj n label;
   where subsidy_active;
   id nlihc_id proj_name;
-  var proj_addre ward2012 units_assist status category_code proj_owner_type 
+  var proj_addre ward2012 units_assist status category_code proj_owner_type owners
     apsh18_in apsh18_name apsh18_std_addr apsh20_in apsh20_name apsh20_std_addr ;
   sum units_assist;
   format units_assist comma10. apsh18_in apsh20_in dyesno. category_code ;
   label 
     nlihc_id = "ID"
+    owners = "OTR property owners"
     apsh18_in = "APSH18: Match"
     apsh18_name = "APSH18: Name"
     apsh18_std_addr = "APSH18: Address"
@@ -121,10 +175,19 @@ title2 '** Updated Catalog list of INACTIVE public housing **';
 proc print data=PH_Subsidy_Proj n label;
   where not( subsidy_active );
   id nlihc_id proj_name;
-  var proj_addre ward2012 units_assist status category_code proj_owner_type;
+  var proj_addre ward2012 units_assist status category_code proj_owner_type owners
+    apsh18_in apsh18_name apsh18_std_addr apsh20_in apsh20_name apsh20_std_addr ;
   sum units_assist;
-  format units_assist comma10. category_code ;
-  label nlihc_id = "ID";
+  format units_assist comma10. apsh18_in apsh20_in dyesno. category_code ;
+  label 
+    nlihc_id = "ID"
+    owners = "OTR property owners"
+    apsh18_in = "APSH18: Match"
+    apsh18_name = "APSH18: Name"
+    apsh18_std_addr = "APSH18: Address"
+    apsh20_in = "APSH20: Match"
+    apsh20_name = "APSH20: Name"
+    apsh20_std_addr = "APSH20: Address";
 run;
 
 ods tagsets.excelxp close;
