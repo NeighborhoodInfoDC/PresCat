@@ -33,13 +33,11 @@
   listdups=Y
 )
 
-
-
 proc summary data=PresCat.Subsidy;
   where program = 'PUBHSNG';
   var units_assist subsidy_active update_dtm;
   by nlihc_id program;
-  output out=PH_Subsidy max=subsidy_active update_dtm sum=units_assist;
+  output out=PH_Subsidy max(subsidy_active update_dtm)= sum(units_assist)=;
 run;
 
 data PH_Subsidy_Proj;
