@@ -18,26 +18,57 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 %DCData_lib( RealProp )
+%DCData_lib( HUD )
 
 %let Update_dtm = %sysfunc( datetime() );
 
 %let revisions = ;
 
   
-** Compile data on public housing **;
+** Compile data sources on public housing **;
+
+proc sql noprint;
+  create table PH_Subsidy_a as
+  select Subsidy1.*, APSH18.code as APSH18_code, n(APSH18.code) as APSH18_in,
+      APSH18.std_addr as APSH18_std_addr, APSH18.total_units as APSH18_total_units,
+      APSH18.name as APSH18_name
+    from (
+    select Subsidy.*, APSH20.code as APSH20_code, n(APSH20.code) as APSH20_in,
+        APSH20.std_addr as APSH20_std_addr, APSH20.total_units as APSH20_total_units,
+        APSH20.name as APSH20_name
+      from 
+      PresCat.Subsidy (where=(program = 'PUBHSNG')) as Subsidy 
+      left join 
+      HUD.APSH_project_2020_dc (where=(program='2')) as APSH20
+      on subsidy_info_source_id = APSH20.code and subsidy_info_source = 'HUD/PSH'
+      group by nlihc_id, subsidy_id
+    ) as Subsidy1
+    left join
+    HUD.APSH_project_2018_dc (where=(program='2')) as APSH18
+    on subsidy_info_source_id = APSH18.code and subsidy_info_source = 'HUD/PSH'
+    group by nlihc_id, subsidy_id
+    order by nlihc_id, subsidy_id;
+quit;
+
+proc print data=PH_subsidy_a n;
+  id nlihc_id;
+  var subsidy_active /*subsidy_info_source subsidy_info_source_id*/ apsh18_: apsh20_:;
+run;
 
 %Dup_check(
-  data=PresCat.Subsidy (where=(program = 'PUBHSNG')),
+  data=PH_subsidy_a,
   by=nlihc_id,
-  id=subsidy_id subsidy_active subsidy_info_source subsidy_info_source_date subsidy_info_source_id,
+  id=subsidy_id subsidy_active units_assist apsh18_in apsh20_in apsh18_name apsh20_name subsidy_info_source_id,
   listdups=Y
 )
 
-proc summary data=PresCat.Subsidy;
-  where program = 'PUBHSNG';
-  var units_assist subsidy_active update_dtm;
-  by nlihc_id program;
-  output out=PH_Subsidy max(subsidy_active update_dtm)= sum(units_assist)=;
+proc summary data=PH_subsidy_a;
+  var units_assist subsidy_active update_dtm apsh18_in apsh20_in APSH18_total_units APSH20_total_units;
+  by nlihc_id;
+  id APSH18_std_addr APSH20_std_addr APSH18_name APSH20_name;
+  output out=PH_Subsidy 
+    max(subsidy_active update_dtm apsh18_in apsh20_in)= 
+    sum(units_assist APSH18_total_units APSH20_total_units)=;
 run;
 
 data PH_Subsidy_Proj;
@@ -69,10 +100,18 @@ title2 '** Updated Catalog list of ACTIVE public housing **';
 proc print data=PH_Subsidy_Proj n label;
   where subsidy_active;
   id nlihc_id proj_name;
-  var proj_addre ward2012 units_assist status category_code proj_owner_type;
+  var proj_addre ward2012 units_assist status category_code proj_owner_type 
+    apsh18_in apsh18_name apsh18_std_addr apsh20_in apsh20_name apsh20_std_addr ;
   sum units_assist;
-  format units_assist comma10. category_code ;
-  label nlihc_id = "ID";
+  format units_assist comma10. apsh18_in apsh20_in dyesno. category_code ;
+  label 
+    nlihc_id = "ID"
+    apsh18_in = "APSH18: Match"
+    apsh18_name = "APSH18: Name"
+    apsh18_std_addr = "APSH18: Address"
+    apsh20_in = "APSH20: Match"
+    apsh20_name = "APSH20: Name"
+    apsh20_std_addr = "APSH20: Address";
 run;
 
 ods tagsets.excelxp options( sheet_name="INACTIVE" );
