@@ -21,7 +21,6 @@
   **************************************************************************
   ** Initial setup and checks;
   
-  %let Finalize = %upcase( &Finalize );
   
   
   **************************************************************************
@@ -40,6 +39,88 @@
   %end;
     
 
+  **************************************************************************
+  ** Finalize datasets;
+
+  %Finalize_data_set( 
+    /** Finalize data set parameters **/
+    data=Subsidy_Update_&Update_file,
+    out=Subsidy,
+    outlib=PresCat,
+    label="Preservation Catalog, Project subsidies",
+    sortby=nlihc_id subsidy_id,
+    archive=Y,
+    /*archive_name=,*/
+    /** Metadata parameters **/
+    restrictions=None,
+    revisions=%str(Update with &Update_file..),
+    /** File info parameters **/
+    contents=Y,
+    printobs=0,
+    freqvars=,
+    stats=n sum mean stddev min max
+  )
+
+  %Finalize_data_set( 
+    /** Finalize data set parameters **/
+    data=Project_Update_&Update_file,
+    out=Project,
+    outlib=PresCat,
+    label="Preservation Catalog, Projects",
+    sortby=nlihc_id,
+    archive=Y,
+    /*archive_name=,*/
+    /** Metadata parameters **/
+    restrictions=None,
+    revisions=%str(Update with &Update_file..),
+    /** File info parameters **/
+    contents=Y,
+    printobs=0,
+    freqvars=,
+    stats=n sum mean stddev min max
+  )
+
+  %Finalize_data_set( 
+    /** Finalize data set parameters **/
+    data=Subsidy_update_history_new,
+    out=Subsidy_update_history,
+    outlib=PresCat,
+    label="Preservation Catalog, Subsidy update history",
+    sortby=nlihc_id subsidy_id update_dtm,
+    archive=Y,
+    /*archive_name=,*/
+    /** Metadata parameters **/
+    restrictions=None,
+    revisions=%str(Update with &Update_file..),
+    /** File info parameters **/
+    contents=Y,
+    printobs=0,
+    freqvars=,
+    stats=
+  )
+
+  %Finalize_data_set( 
+    /** Finalize data set parameters **/
+    data=Project_update_history_new,
+    out=Project_update_history,
+    outlib=PresCat,
+    label="Preservation Catalog, Project update history",
+    sortby=nlihc_id update_dtm,
+    archive=Y,
+    /*archive_name=,*/
+    /** Metadata parameters **/
+    restrictions=None,
+    revisions=%str(Update with &Update_file..),
+    /** File info parameters **/
+    contents=Y,
+    printobs=0,
+    freqvars=,
+    stats=
+  )
+
+
+%MACRO SKIP;
+  
   **************************************************************************
   ** Archive past Catalog datasets before finalizing;
 
@@ -130,6 +211,7 @@
     
   %end;
 
+%MEND SKIP;
 
 %mend Update_MFIS_finish;
 
