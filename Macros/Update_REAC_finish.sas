@@ -58,7 +58,9 @@
     
   run;
   
-  ods rtf file="&_dcdata_default_path\PresCat\Prog\Updates\Update_&Update_file._new_scores.rtf" style=Styles.Rtf_arial_9pt;
+  ods pdf file="&_dcdata_default_path\PresCat\Prog\Updates\Update_&Update_file._new_scores.pdf" 
+    style=Styles.Rtf_arial_9pt pdftoc=2 bookmarklist=hide uniform;
+
   ods listing close;
   
   proc print data=New_reac;
@@ -68,7 +70,7 @@
     label nlihc_id = "Project";
   run;
   
-  ods rtf close;
+  ods pdf close;
   ods listing;
     
 %mend Update_REAC_finish;
