@@ -30,22 +30,6 @@
     
   %end;
 
-  %Finalize_data_set( 
-    /** Finalize data set parameters **/
-    data=Update_&Update_file,
-    out=Reac_score,
-    outlib=PresCat,
-    label="Preservation Catalog, REAC scores",
-    sortby=nlihc_id descending reac_date,
-    archive=Y,
-    /** Metadata parameters **/
-    restrictions=None,
-    revisions=%str(Updated with &Update_file..),
-    /** File info parameters **/
-    contents=Y,
-    printobs=0
-  )
-  
   **************************************************************************
   ** List new REAC scores;
   
@@ -93,6 +77,25 @@
     
   %end;
     
+  **************************************************************************
+  ** Finalize datasets;
+
+  %Finalize_data_set( 
+    /** Finalize data set parameters **/
+    data=Update_&Update_file,
+    out=Reac_score,
+    outlib=PresCat,
+    label="Preservation Catalog, REAC scores",
+    sortby=nlihc_id descending reac_date,
+    archive=Y,
+    /** Metadata parameters **/
+    restrictions=None,
+    revisions=%str(Updated with &Update_file..),
+    /** File info parameters **/
+    contents=Y,
+    printobs=0
+  )
+  
 %mend Update_REAC_finish;
 
 /** End Macro Definition **/
