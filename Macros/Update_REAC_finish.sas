@@ -17,6 +17,8 @@
 
 %macro Update_REAC_finish( Update_file=, Final_compare= );
 
+  %local numobs;
+
   **************************************************************************
   ** Final compare of update against current Catalog data sets;
   
@@ -58,20 +60,38 @@
     
   run;
   
-  ods pdf file="&_dcdata_default_path\PresCat\Prog\Updates\Update_&Update_file._new_scores.pdf" 
-    style=Styles.Rtf_arial_9pt pdftoc=2 bookmarklist=hide uniform;
+  proc sql noprint;
+    select count(nlihc_id) into :numobs
+    from New_reac;
+  quit;
+  
+  %if &numobs > 0 %then %do;
+  
+    ods pdf file="&_dcdata_default_path\PresCat\Prog\Updates\Update_&Update_file._new_scores.pdf" 
+      style=Styles.Rtf_arial_9pt pdftoc=2 bookmarklist=hide uniform;
 
-  ods listing close;
+    ods listing close;
+    
+    title2 "Newly reported REAC scores in &Update_file";
+    
+    proc print data=New_reac;
+      by nlihc_id;
+      id reac_date;
+      format nlihc_id $nlihcid_proj.;
+      label nlihc_id = "Project";
+    run;
+    
+    title2;
+    
+    ods pdf close;
+    ods listing;
+    
+  %end;
+  %else %do;
   
-  proc print data=New_reac;
-    by nlihc_id;
-    id reac_date;
-    format nlihc_id $nlihcid_proj.;
-    label nlihc_id = "Project";
-  run;
-  
-  ods pdf close;
-  ods listing;
+    %note_mput( macro=Update_REAC_finish, msg=No new REAC scores in this update. )
+    
+  %end;
     
 %mend Update_REAC_finish;
 

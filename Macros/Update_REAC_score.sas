@@ -31,11 +31,6 @@
   %end;
     
  
-  ** Normalize exception file;
-
-  /*%Except_norm( data=&REAC_score_except, by=nlihc_id reac_date )*/
-
-
   **************************************************************************
   ** Get data for updating REAC_score file;
 
@@ -106,16 +101,6 @@ proc print data=Nomatch_&Update_file;
 run;
 
 title2;
-
-/*  title2 '**** THERE SHOULD NOT BE ANY DUPLICATE RECORDS IN THE UPDATE FILE ****';
-
-  %Dup_check(
-    data=reac_update_recs,
-    by=REAC_id,
-    id=Nlihc_id
-  )
-  
-  title2;*/
 
   proc sort data=Update_&Update_file._a;
   by nlihc_id descending reac_date;
