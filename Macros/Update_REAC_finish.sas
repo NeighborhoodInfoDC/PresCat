@@ -25,7 +25,7 @@
     proc compare base=PresCat.REAC_Score compare=Update_&Update_file maxprint=(40,32000) listall;
     id nlihc_id descending reac_date;
     run;
-
+    
   %end;
 
   %Finalize_data_set( 
@@ -43,6 +43,33 @@
     contents=Y,
     printobs=0
   )
+  
+  **************************************************************************
+  ** List new REAC scores;
+  
+  data New_reac;
+  
+    merge 
+      PresCat.REAC_Score (keep=nlihc_id reac_date in=inBase) 
+      Update_&Update_file (keep=nlihc_id reac_date reac_score in=inUpdate);
+    by nlihc_id descending reac_date;
+
+    if not inBase and inUpdate;
+    
+  run;
+  
+  ods rtf file="&_dcdata_default_path\PresCat\Prog\Updates\Update_&Update_file._new_scores.rtf" style=Styles.Rtf_arial_9pt;
+  ods listing close;
+  
+  proc print data=New_reac;
+    by nlihc_id;
+    id reac_date;
+    format nlihc_id $nlihcid_proj.;
+    label nlihc_id = "Project";
+  run;
+  
+  ods rtf close;
+  ods listing;
     
 %mend Update_REAC_finish;
 
