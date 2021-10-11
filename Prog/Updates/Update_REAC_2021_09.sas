@@ -1,5 +1,5 @@
 /**************************************************************************
- Program:  Update_MFIS_2021_09.sas
+ Program:  Update_REAC_2021_09.sas
  Library:  PresCat
  Project:  Urban-Greater DC
  Author:   W. Oliver
@@ -9,7 +9,7 @@
  GitHub issue:  
  
  Description:  Update Preservation Catalog with latest 
- HUD MFIS update file.
+ HUD REAC scores.
 
  Modifications:
 **************************************************************************/
