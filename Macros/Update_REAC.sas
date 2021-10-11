@@ -21,27 +21,11 @@
   Final_compare=Y
   );
 
-  /*This program will look very different because it's updating the REAC_score dataset
-
-  How do I generate the ID? */
-
   %Update_REAC_init( Update_file=&Update_file )
-  
-  /*%if &Last_update_date = or &Last_update_date < &Subsidy_Info_Source_Date %then %do;*/
-  
-    %Update_REAC_score( Update_file=&Update_file, Quiet=&Quiet )
     
-    %Update_REAC_finish( Update_file=&Update_file, Final_compare=&Final_compare );
-    
-  /*%end;
-  %else %do;
+  %Update_REAC_score( Update_file=&Update_file, Quiet=&Quiet )
   
-    %err_mput( macro=Update_REAC, msg=%str(Update file &Update_file is not after last update for this data source (&Last_update_date_fmt).) )
-    %err_mput( macro=Update_REAC, msg=%str(Update will NOT be applied to Catalog.) )
-
-  %end;*/
-
-  /*%note_mput( macro=Update_REAC, msg=%str(Macro exiting.) )*/
+  %Update_REAC_finish( Update_file=&Update_file, Final_compare=&Final_compare )
     
 %mend Update_REAC;
 
