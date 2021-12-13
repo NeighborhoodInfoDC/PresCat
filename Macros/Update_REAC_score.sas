@@ -66,7 +66,7 @@
       REAC_score_num = input( substr( reac_score, 1, j - 1 ), 3. );
       REAC_score_letter = substr( reac_score, j, 1 );
       REAC_score_star = substr( reac_score, j + 1, 1 );
-	  REAC_date = input(date, mmddyy10.);
+	  REAC_date = input(date, anydtdte21.);
 	  REAC_ID = rems_property_id;
 
     if not( missing( nlihc_id ) ) then output Update_&Update_file._a;
