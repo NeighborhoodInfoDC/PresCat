@@ -1,5 +1,5 @@
 /**************************************************************************
- Program:  Update_REAC_yyyy_mm.sas
+ Program:  Update_MFIS_2021_05.sas
  Library:  PresCat
  Project:  Urban-Greater DC
  Author:   
@@ -8,7 +8,8 @@
  Environment:  Local Windows session (desktop)
  GitHub issue:  
  
- Description:  Update Preservation Catalog with latest HUD REAC scores.
+ Description:  Update Preservation Catalog with latest 
+ HUD MFIS update file.
 
  Modifications:
 **************************************************************************/
@@ -20,6 +21,6 @@
 %DCData_lib( HUD )
 
 
-%Update_REAC( Update_file=REAC_yyyy_mm )
+%Update_REAC( Update_file=REAC_2021_05 )
 
 

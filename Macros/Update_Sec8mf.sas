@@ -17,18 +17,13 @@
 
 %macro Update_Sec8mf( 
   Update_file=, 
-  Finalize=Y,
+  Finalize=,  /** OPTION NO LONGER IN USE **/
   Project_except=Project_except,
   Subsidy_except=Subsidy_except,
   Quiet=Y,
   Final_compare=Y
   );
   
-  %if %upcase( &Finalize ) = Y and not &_remote_batch_submit %then %do;
-    %warn_mput( macro=Update_Sec8mf, msg=%str(Not a remote batch submit session. Finalize will be set to N.) )
-    %let Finalize = N;
-  %end;
-
   %Update_Sec8mf_init( Update_file=&Update_file )
   
   %if &Last_update_date = or &Last_update_date < &Subsidy_Info_Source_Date %then %do;
@@ -37,7 +32,7 @@
     
     %Update_Sec8mf_project( Update_file=&Update_file, Project_except=&Project_except, Quiet=&Quiet )
     
-    %Update_Sec8mf_finish( Update_file=&Update_file, Finalize=&Finalize, Subsidy_except=&Subsidy_except, Project_except=&Project_except, Final_compare=&Final_compare )
+    %Update_Sec8mf_finish( Update_file=&Update_file, Subsidy_except=&Subsidy_except, Project_except=&Project_except, Final_compare=&Final_compare )
     
   %end;
   %else %do;
