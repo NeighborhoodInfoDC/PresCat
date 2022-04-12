@@ -21,7 +21,7 @@
   revisions=, 
   compare=Y,
   finalize=Y, 
-  archive=Y 
+  archive=N 
   );
 
   %local geo_vars MAX_PROJ_ADDRE;

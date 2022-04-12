@@ -24,7 +24,7 @@
   revisions=, 
   compare=Y,
   finalize=Y, 
-  archive=Y 
+  archive=N 
   );
 
   proc sql noprint;

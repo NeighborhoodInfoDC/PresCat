@@ -40,7 +40,7 @@
     outlib=PresCat,
     label="Preservation Catalog, Project subsidies",
     sortby=nlihc_id subsidy_id,
-    archive=Y,
+    archive=N,
     /** Metadata parameters **/
     revisions=%str(Update with &Update_file..),
     /** File info parameters **/
@@ -70,7 +70,7 @@
     outlib=PresCat,
     label="Preservation Catalog, Projects",
     sortby=nlihc_id,
-    archive=Y,
+    archive=N,
     /** Metadata parameters **/
     revisions=%str(Update with &Update_file..),
     /** File info parameters **/
@@ -110,7 +110,7 @@
     outlib=PresCat,
     label="Preservation Catalog, Subsidy update history",
     sortby=nlihc_id subsidy_id descending update_dtm,
-    archive=Y,
+    archive=N,
     /** Metadata parameters **/
     revisions=%str(Update with &Update_file..),
     /** File info parameters **/

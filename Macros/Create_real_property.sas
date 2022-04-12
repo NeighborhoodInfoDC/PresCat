@@ -26,7 +26,7 @@
   revisions=, 
   compare=Y,
   finalize=Y, 
-  archive=Y 
+  archive=N 
   );
 
   ** Create format for selecting SSLs of Catalog properties **;

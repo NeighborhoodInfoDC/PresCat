@@ -87,7 +87,7 @@
     outlib=PresCat,
     label="Preservation Catalog, REAC scores",
     sortby=nlihc_id descending reac_date,
-    archive=Y,
+    archive=N,
     /** Metadata parameters **/
     restrictions=None,
     revisions=%str(Updated with &Update_file..),

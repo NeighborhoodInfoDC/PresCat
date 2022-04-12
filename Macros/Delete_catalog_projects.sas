@@ -43,7 +43,7 @@
       outlib=PresCat, 
       label=&label, 
       sortby=&sortby, 
-      archive=y,
+      archive=N,
       revisions=%str(Delete projects &project_list..),
       printobs=5
     )
