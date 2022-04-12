@@ -616,7 +616,7 @@
     data=Building_geocode, 
     revisions=%str(Add new projects from &input_file_pre._*.csv.),
     compare=N,
-    archive=Y
+    archive=N
   )
 
   ** Create file with list of new NLIHC_IDs **;
@@ -649,7 +649,7 @@
     outlib=PresCat,
     label="Preservation Catalog, Building-level geocoding info",
     sortby=Nlihc_id Bldg_addre,
-    archive=Y,
+    archive=N,
     /** Metadata parameters **/
     revisions=%str(Add new projects from &input_file_pre._*.csv.),
     /** File info parameters **/
@@ -724,7 +724,7 @@
     outlib=PresCat,
     label="Preservation Catalog, Real property parcels",
     sortby=nlihc_id ssl,
-    archive=Y,
+    archive=N,
     /** Metadata parameters **/
     revisions=%str(Add new projects from &input_file_pre._*.csv.),
     /** File info parameters **/

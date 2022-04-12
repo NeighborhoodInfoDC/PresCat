@@ -269,7 +269,7 @@
     label="Preservation Catalog, Real property events",
     sortby=nlihc_id descending rp_date rp_type,
     revisions=%str(&revisions),
-    archive=y,
+    archive=N,
     printobs=0,
     freqvars=rp_type 
   )

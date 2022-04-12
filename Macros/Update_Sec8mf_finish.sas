@@ -49,7 +49,7 @@
     outlib=PresCat,
     label="Preservation Catalog, Project subsidies",
     sortby=nlihc_id subsidy_id,
-    archive=Y,
+    archive=N,
     /*archive_name=,*/
     /** Metadata parameters **/
     restrictions=None,
@@ -68,7 +68,7 @@
     outlib=PresCat,
     label="Preservation Catalog, Projects",
     sortby=nlihc_id,
-    archive=Y,
+    archive=N,
     /*archive_name=,*/
     /** Metadata parameters **/
     restrictions=None,
@@ -87,7 +87,7 @@
     outlib=PresCat,
     label="Preservation Catalog, Subsidy update history",
     sortby=nlihc_id subsidy_id update_dtm,
-    archive=Y,
+    archive=N,
     /*archive_name=,*/
     /** Metadata parameters **/
     restrictions=None,
@@ -106,7 +106,7 @@
     outlib=PresCat,
     label="Preservation Catalog, Project update history",
     sortby=nlihc_id update_dtm,
-    archive=Y,
+    archive=N,
     /*archive_name=,*/
     /** Metadata parameters **/
     restrictions=None,

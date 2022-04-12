@@ -211,7 +211,7 @@
     outlib=PresCat,
     label="Preservation Catalog, Projects",
     sortby=Nlihc_id,
-    archive=Y,
+    archive=N,
     /** Metadata parameters **/
     revisions=%str(Add new projects from &input_file_pre._*.csv.),
     /** File info parameters **/
@@ -275,7 +275,7 @@
     outlib=PresCat,
     label="Preservation Catalog, Project category",
     sortby=Nlihc_id,
-    archive=Y,
+    archive=N,
     /** Metadata parameters **/
     revisions=%str(Add new projects from &input_file_pre._*.csv.),
     /** File info parameters **/
