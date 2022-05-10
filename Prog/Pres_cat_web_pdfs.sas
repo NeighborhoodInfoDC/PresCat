@@ -193,6 +193,22 @@
       define rp_desc / 'Property sales, notices, other events' display;
     run;    
     
+    ** REAC scores **;
+    
+    proc report data=PresCat.Reac_score list nowd
+        style(header)={fontsize=2}
+        style(column)={fontsize=2};
+      where NLIHC_ID = "&proj_select";
+      column
+        ( reac_date
+          reac_score
+        )
+      ;
+      define reac_date / 'Date' display;
+      define reac_score / 'REAC inspection score' display;
+    run;    
+    
+    
   %end;
 
   ods pdf close;
@@ -233,15 +249,12 @@ run;
 options noxwait;
 
 x "del /q &output_path\network\*.pdf";
-x "del /q &output_path\public\*.pdf";
 
 data _null_;
 
   set PresCat.Project (keep=NLIHC_ID);
-  ***UNCOMMENT FOR TESTING***WHERE NLIHC_ID IN ( "NL000027", "NL000069", "NL000208", "NL000319", "NL001035" ); 
+  ***UNCOMMENT FOR TESTING***WHERE NLIHC_ID IN ( "NL000027", "NL000069", "NL000208", "NL000217", "NL000319", "NL001035" ); 
   
-  call execute ( '%Create_pdf( ' || NLIHC_ID || ', public )' );
-
   call execute ( '%Create_pdf( ' || NLIHC_ID || ', network )' );
 
 run;
