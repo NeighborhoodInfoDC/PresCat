@@ -117,7 +117,9 @@ quit;
     %output_score( 2 )
     %output_score( 3 )
     
-    format reac_date mmddyys10.;
+    format reac_date mmddyy10.;
+    
+    label reac_inspec_id = "REAC inspection ID number";
     
     keep file nlihc_id reac_date reac_id reac_score reac_inspec_id reac_score_letter reac_score_num reac_score_star
          property_name;
@@ -175,7 +177,71 @@ proc summary data=unique_inspec nway;
   output out=First_hud_date min()=first_hud_date;
 run;
 
-proc print data=First_hud_date;
+proc print data=First_hud_date (obs=20);
+  id nlihc_id;
 run;
 
+
+** Update Prescat.Reac_score **;
+
+proc sort data=unique_inspec;
+  by nlihc_id descending reac_date;
+run;
+
+data Pre_HUD_scores;
+
+  merge 
+    Prescat.Reac_score 
+    First_hud_date (keep=nlihc_id first_hud_date);
+  by nlihc_id;
+  
+  if not( missing( reac_date ) ) and reac_date < first_hud_date;
+  
+  *drop first_hud_date;
+  
+run;
+
+proc print data=Pre_HUD_scores;
+  where nlihc_id = "NL000217";
+  id nlihc_id reac_date;
+run;
+
+data Reac_score;
+
+  set
+    unique_inspec (where=(not(missing(nlihc_id))))
+    Pre_HUD_scores;
+  by nlihc_id descending reac_date;
+  
+  keep nlihc_id reac_date reac_id reac_inspec_id reac_score: ; 
+  
+run;
+
+proc print data=Reac_score;
+  where nlihc_id = "NL000217";
+  id nlihc_id reac_date;
+run;
+
+proc compare base=Prescat.Reac_score compare=Reac_score listvars maxprint=(40,32000);
+  id nlihc_id descending reac_date;
+run;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Reac_score,
+  out=Reac_score,
+  outlib=PresCat,
+  label="Preservation Catalog, REAC scores",
+  sortby=nlihc_id descending reac_date,
+  /** Metadata parameters **/
+  restrictions=None,
+  revisions=%str(Correct inspection records; add reac_inspec_id var.),
+  /** File info parameters **/
+  contents=Y,
+  printobs=40,
+  printchar=N,
+  printvars=,
+  freqvars=,
+  stats=n sum mean stddev min max
+)
 
