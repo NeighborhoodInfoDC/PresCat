@@ -23,21 +23,7 @@
 
 ** Create REMS - NLIHC_ID cross walk **;
 
-proc sort data=Prescat.Reac_score (where=(not(missing(reac_id)))) out=xwalk nodupkey;
-  by nlihc_id reac_id;
-run;
-
-%Data_to_format(
-  FmtLib=work,
-  FmtName=$reac_id_to_nlihc_id,
-  Desc=,
-  Data=xwalk,
-  Value=reac_id,
-  Label=nlihc_id,
-  OtherLabel=" ",
-  Print=N,
-  Contents=N
-  )
+%Update_reac_init()
 
 
 ** Compile HUD REAC data for DC **;
@@ -125,7 +111,7 @@ quit;
     length nlihc_id $ 16 reac_id $ 9 reac_score reac_inspec_id $ 8 reac_score_letter reac_score_star $ 1;
     
     reac_id = rems_property_id;
-    nlihc_id = left( put( reac_id, $reac_id_to_nlihc_id. ) );
+    nlihc_id = left( put( reac_id, $reac_nlihcid. ) );
     
     %output_score( 1 )
     %output_score( 2 )
@@ -133,7 +119,8 @@ quit;
     
     format reac_date mmddyys10.;
     
-    keep file nlihc_id reac_date reac_id reac_score reac_inspec_id reac_score_letter reac_score_num reac_score_star;
+    keep file nlihc_id reac_date reac_id reac_score reac_inspec_id reac_score_letter reac_score_num reac_score_star
+         property_name;
 
   run;
 
@@ -145,6 +132,50 @@ quit;
 
 %process_files()
 
-
 proc print data=A (obs=100);
 run;
+
+
+** Create unique inspection records **;
+
+proc sort data=A;
+  by nlihc_id reac_inspec_id file;
+run;
+
+data unique_inspec;
+
+  set A;
+  by nlihc_id reac_inspec_id;
+  
+  if last.reac_inspec_id then output;
+  
+run;
+
+proc print data=unique_inspec;
+  where nlihc_id = "NL000217";
+  id nlihc_id reac_inspec_id;
+run;
+
+title2 "Inspections with missing NLIHC_ID";
+
+proc print data=unique_inspec;
+  where missing( nlihc_id );
+  id nlihc_id reac_inspec_id;
+run;
+
+title2;
+
+
+** Find earliest inspection date in HUD data **;
+
+proc summary data=unique_inspec nway;
+  where not( missing( nlihc_id ) );
+  class nlihc_id;
+  var reac_date;
+  output out=First_hud_date min()=first_hud_date;
+run;
+
+proc print data=First_hud_date;
+run;
+
+

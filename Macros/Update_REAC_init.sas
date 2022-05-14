@@ -183,6 +183,8 @@
     "800225184" = "NL000385"
     "800240609" = "NL000303"
     "800243935" = "NL000109"
+    "800227767" = "NL001013"  /** Yale Steam Laundry **/
+    "800234530" = "NL001023"  /** Van Metre Columbia Uptown Apartments **/
     
     other = " ";
 
