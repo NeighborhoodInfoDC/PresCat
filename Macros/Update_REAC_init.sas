@@ -196,7 +196,7 @@
     Desc=,
     Data=PresCat.Project_category_view,
     Value=nlihc_id,
-    Label=trim(nlihc_id)||' / '||left(proj_name),
+    Label=trim(proj_name) || ' - ' || left(proj_addre),
     OtherLabel='** Unidentified project **',
     DefaultLen=.,
     MaxLen=.,
