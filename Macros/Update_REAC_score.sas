@@ -74,11 +74,12 @@
           %err_put( macro=Update_REAC_score, msg="REAC inspection ID missing. " rems_property_id= reac_score= REAC_inspec_id= )
         end;
 
-        if missing( REAC_date ) then do;
+        else if missing( REAC_date ) then do;
           %err_put( macro=Update_REAC_score, msg="REAC date missing. " rems_property_id= reac_score= date= )
         end;
 
-        if not( missing( nlihc_id ) ) then output Update_&Update_file._a;
+        else if not( missing( nlihc_id ) ) then output Update_&Update_file._a;
+
         else output Nomatch_&Update_file;
         
       end;

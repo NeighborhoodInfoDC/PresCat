@@ -99,7 +99,7 @@
     out=Reac_score,
     outlib=PresCat,
     label="Preservation Catalog, REAC scores",
-    sortby=nlihc_id REAC_inspec_id,
+    sortby=nlihc_id REAC_inspec_id reac_date,
     archive=N,
     /** Metadata parameters **/
     restrictions=None,
