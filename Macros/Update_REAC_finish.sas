@@ -18,14 +18,18 @@
 %macro Update_REAC_finish( Update_file=, Final_compare= );
 
   %local numobs;
+  
+  proc sort data=PresCat.REAC_Score out=REAC_Score;
+    by nlihc_id REAC_inspec_id;
+  run;
 
   **************************************************************************
   ** Final compare of update against current Catalog data sets;
   
   %if %upcase( &Final_compare ) = Y %then %do;
 
-    proc compare base=PresCat.REAC_Score compare=Update_&Update_file maxprint=(40,32000) listall;
-    id nlihc_id descending reac_date;
+    proc compare base=REAC_Score compare=Update_&Update_file maxprint=(40,32000);
+    id nlihc_id REAC_inspec_id;
     run;
     
   %end;
@@ -36,11 +40,18 @@
   data New_reac;
   
     merge 
-      PresCat.REAC_Score (keep=nlihc_id reac_date in=inBase) 
-      Update_&Update_file (keep=nlihc_id reac_date reac_score in=inUpdate);
-    by nlihc_id descending reac_date;
+      REAC_Score (keep=nlihc_id REAC_inspec_id in=inBase) 
+      Update_&Update_file (keep=nlihc_id REAC_inspec_id reac_date reac_score in=inUpdate);
+    by nlihc_id REAC_inspec_id;
 
     if not inBase and inUpdate;
+    
+    length Proj_info $ 160;
+    
+    Proj_info = 
+      trim( left( put( nlihc_id, $nlihcid_proj. ) ) ) || ': ' ||
+      trim( reac_score ) || ', ' ||
+      trim( left( put( reac_date, mmddyy10. ) ) );
     
   run;
   
@@ -51,6 +62,10 @@
   
   %if &numobs > 0 %then %do;
   
+    proc sort data=New_reac;
+      by descending Reac_date nlihc_id;
+    run;
+  
     ods pdf file="&_dcdata_default_path\PresCat\Prog\Updates\Update_&Update_file._new_scores.pdf" 
       style=Styles.Rtf_arial_9pt pdftoc=2 bookmarklist=hide uniform;
 
@@ -58,11 +73,9 @@
     
     title2 "Newly reported REAC scores in &Update_file";
     
-    proc print data=New_reac;
-      by nlihc_id;
-      id reac_date;
-      format nlihc_id $nlihcid_proj.;
-      label nlihc_id = "Project";
+    proc print data=New_reac label noobs;
+      var Proj_info;
+      label Proj_info = "Projects with new REAC scores";
     run;
     
     title2;
@@ -86,7 +99,7 @@
     out=Reac_score,
     outlib=PresCat,
     label="Preservation Catalog, REAC scores",
-    sortby=nlihc_id descending reac_date,
+    sortby=nlihc_id REAC_inspec_id reac_date,
     archive=N,
     /** Metadata parameters **/
     restrictions=None,
