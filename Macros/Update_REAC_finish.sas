@@ -18,14 +18,18 @@
 %macro Update_REAC_finish( Update_file=, Final_compare= );
 
   %local numobs;
+  
+  proc sort data=PresCat.REAC_Score out=REAC_Score;
+    by nlihc_id REAC_inspec_id;
+  run;
 
   **************************************************************************
   ** Final compare of update against current Catalog data sets;
   
   %if %upcase( &Final_compare ) = Y %then %do;
 
-    proc compare base=PresCat.REAC_Score compare=Update_&Update_file maxprint=(40,32000) listall;
-    id nlihc_id descending reac_date;
+    proc compare base=REAC_Score compare=Update_&Update_file maxprint=(40,32000) listall;
+    id nlihc_id REAC_inspec_id;
     run;
     
   %end;
@@ -36,9 +40,9 @@
   data New_reac;
   
     merge 
-      PresCat.REAC_Score (keep=nlihc_id reac_date in=inBase) 
-      Update_&Update_file (keep=nlihc_id reac_date reac_score in=inUpdate);
-    by nlihc_id descending reac_date;
+      REAC_Score (keep=nlihc_id REAC_inspec_id in=inBase) 
+      Update_&Update_file (keep=nlihc_id REAC_inspec_id reac_date reac_score in=inUpdate);
+    by nlihc_id REAC_inspec_id;
 
     if not inBase and inUpdate;
     
@@ -60,7 +64,7 @@
     
     proc print data=New_reac;
       by nlihc_id;
-      id reac_date;
+      id REAC_inspec_id;
       format nlihc_id $nlihcid_proj.;
       label nlihc_id = "Project";
     run;
@@ -86,7 +90,7 @@
     out=Reac_score,
     outlib=PresCat,
     label="Preservation Catalog, REAC scores",
-    sortby=nlihc_id descending reac_date,
+    sortby=nlihc_id REAC_inspec_id,
     archive=N,
     /** Metadata parameters **/
     restrictions=None,
