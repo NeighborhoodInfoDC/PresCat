@@ -28,6 +28,7 @@ Prog/Images/
 *.mdbx
 *.pdf
 *.rtf
+*.accdb
 
 # Raw files
 *.csv
