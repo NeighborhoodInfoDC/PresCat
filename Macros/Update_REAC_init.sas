@@ -183,6 +183,8 @@
     "800225184" = "NL000385"
     "800240609" = "NL000303"
     "800243935" = "NL000109"
+    "800227767" = "NL001013"  /** Yale Steam Laundry **/
+    "800234530" = "NL001023"  /** Van Metre Columbia Uptown Apartments **/
     
     other = " ";
 
@@ -194,7 +196,7 @@
     Desc=,
     Data=PresCat.Project_category_view,
     Value=nlihc_id,
-    Label=trim(nlihc_id)||' / '||left(proj_name),
+    Label=trim(proj_name) || ' - ' || left(proj_addre),
     OtherLabel='** Unidentified project **',
     DefaultLen=.,
     MaxLen=.,
