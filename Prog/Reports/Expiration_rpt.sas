@@ -55,8 +55,9 @@ data Expiration_rpt;
   rpt_id = left( put( nlihc_id, $nlihcid_proj. ) );
   
 run;
+
 proc sort data=Expiration_rpt;
-  by category_code poa_end;
+  by poa_end;
 run;
 
 
