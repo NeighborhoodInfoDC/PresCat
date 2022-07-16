@@ -20,7 +20,7 @@
 %DCData_lib( MAR ) 
 %DCData_lib( RealProp )
 
-title2 '** Compare MAR unit counts with Catalog project unit counts (1st) **';
+title2 '** Compare MAR unit counts with ORIGINAL Catalog project unit counts **';
 
 proc sql noprint;
   create table Bldg_units_mar as
@@ -160,7 +160,20 @@ title2;
 
 ***********************************************************************;
 ***********************************************************************;
+***********************************************************************
+
+Next steps:
+- Review Proc tabulate output to clean up list of parcels (remove extraneous parcels)
+- Some projects may no longer be active (e.g., NL000015)
+- If project unit count is missing assign MAR unit count to project
+- Finalize updated data sets
+
 ***********************************************************************;
+***********************************************************************;
+***********************************************************************;
+
+
+title2 '** Compile full set of MAR addresses associated with parcels **';
 
 proc sql noprint;
   create table Full_addr_list as
@@ -233,11 +246,12 @@ proc tabulate data=Full_addr_list_nodup format=comma10.0 noseps missing;
     nlihc_id * (all=' ' Parcel_owner_name=' ' ),
     /** Columns **/
     n sum=' '*bldg_units_mar
-    / indent=2
+    / indent=2 rtspace=60
   ;
 run;
 
-** Add missing addresses to Catalog **;
+
+title2 '** Add missing addresses to Catalog **';
 
 proc sort data=PresCat.Building_geocode out=PresCat_Building_geocode;
   by nlihc_id bldg_address_id;
@@ -254,11 +268,12 @@ data Building_geocode;
 
 run;
 
-proc compare base=PresCat_Building_geocode compare=Building_geocode listall maxprint=(40,32000);
+proc compare base=PresCat_Building_geocode compare=Building_geocode maxprint=(40,32000);
   id nlihc_id bldg_address_id;
 run;
 
-** Compare MAR unit counts with Catalog project unit counts **;
+
+title2 '** Compare MAR unit counts with REVISED Catalog project unit counts **';
 
 proc sql noprint;
   create table Bldg_units_mar_2 as
@@ -293,3 +308,4 @@ id nlihc_id;
   with proj_units_mar;
 run;
 
+title2;
