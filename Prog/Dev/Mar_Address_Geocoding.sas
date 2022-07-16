@@ -12,7 +12,7 @@
  Modifications:
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( DHCD )
@@ -20,7 +20,7 @@
 %DCData_lib( MAR ) 
 %DCData_lib( RealProp )
 
-** Compare MAR unit counts with Catalog project unit counts **;
+title2 '** Compare MAR unit counts with Catalog project unit counts (1st) **';
 
 proc sql noprint;
   create table Bldg_units_mar as
@@ -48,9 +48,11 @@ id nlihc_id;
   with proj_units_mar;
 run;
 
+title2;
+
 ** Read in parcel list: manually created list of associated project parcels **;
 
-proc import datafile= "L:\Libraries\PresCat\Raw\MAR_addresses_rev_20190819.csv" 
+proc import datafile= "&_dcdata_r_path\PresCat\Raw\MAR_addresses_rev_20190819.csv" 
 out=property_addr2
 dbms=csv replace;
 guessingrows=max;
@@ -103,7 +105,7 @@ proc sort data=property_addr2_b out=property_addr2_nodup nodupkey;
 run;
 **********************************/
 
-** Add missing parcels to Catalog **;
+title2 '** Add missing parcels to Catalog **';
 
 proc sql noprint;
   create table New_parcel_list as
@@ -150,11 +152,11 @@ data Parcel;
 
 run;
 
-proc compare base=PresCat.Parcel compare=Parcel listall maxprint=(40,32000);
+proc compare base=PresCat.Parcel compare=Parcel listvar maxprint=(40,32000);
   id nlihc_id ssl;
 run;
 
-
+title2;
 
 ***********************************************************************;
 ***********************************************************************;
