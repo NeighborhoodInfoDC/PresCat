@@ -124,7 +124,7 @@ run;
   label="Preservation Catalog, Real property parcels",
   sortby=nlihc_id ssl,
   revisions=&revisions,
-  archive=y,
+  archive=n,
   freqvars=parcel_type parcel_owner_type 
 )
 

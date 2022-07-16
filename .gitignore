@@ -29,6 +29,7 @@ Prog/Images/
 *.pdf
 *.rtf
 *.accdb
+*.laccdb
 
 # Raw files
 *.csv
