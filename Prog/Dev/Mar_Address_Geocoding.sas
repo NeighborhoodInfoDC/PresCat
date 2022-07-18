@@ -387,9 +387,9 @@ data Project;
   
   if proj_units_tot < 1 and Proj_units_mar > 0 then proj_units_tot = Proj_units_mar;
   
-  ** NL000015	Change to inactive, lost **;
+  ** NL000015 & NL000417	Change to inactive, lost **;
 
-  if nlihc_id = 'NL000015' then do;
+  if nlihc_id in ( 'NL000015', 'NL000417' ) then do;
     status = 'I';
     cat_lost = 1;
     cat_at_risk = 0;
@@ -429,9 +429,9 @@ data Subsidy;
 
   set Prescat.Subsidy;
   
-  ** NL000015	Change to inactive, lost **;
+  ** NL000015 & NL000417	Change to inactive, lost **;
 
-  if nlihc_id = 'NL000015' then do;
+  if nlihc_id in ( 'NL000015', 'NL000417' ) then do;
     subsidy_active = 0;
     update_dtm = &UPDATE_DTM;
   end;
