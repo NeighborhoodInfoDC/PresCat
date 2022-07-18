@@ -174,6 +174,18 @@
 	"800218816" = "NL000103"
 	"800218969" = "NL001000"
 	"800227252" = "NL000054"
+    "800218062" = "NL000351"
+    "800218204" = "NL000066"
+    "800218512" = "NL000276"
+    "800219652" = "NL001033"
+    "800222108" = "NL000153"
+    "800223584" = "NL000326"
+    "800225184" = "NL000385"
+    "800240609" = "NL000303"
+    "800243935" = "NL000109"
+    "800227767" = "NL001013"  /** Yale Steam Laundry **/
+    "800234530" = "NL001023"  /** Van Metre Columbia Uptown Apartments **/
+    
     other = " ";
 
   ** Create $nlihcid_proj. format to add project ID and names to update report **;
@@ -184,7 +196,7 @@
     Desc=,
     Data=PresCat.Project_category_view,
     Value=nlihc_id,
-    Label=trim(nlihc_id)||' / '||left(proj_name),
+    Label=trim(proj_name) || ' - ' || left(proj_addre),
     OtherLabel='** Unidentified project **',
     DefaultLen=.,
     MaxLen=.,

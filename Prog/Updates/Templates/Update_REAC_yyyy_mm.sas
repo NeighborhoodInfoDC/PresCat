@@ -1,5 +1,5 @@
 /**************************************************************************
- Program:  Update_MFIS_yyyy_mm.sas
+ Program:  Update_REAC_yyyy_mm.sas
  Library:  PresCat
  Project:  Urban-Greater DC
  Author:   
@@ -8,13 +8,12 @@
  Environment:  Local Windows session (desktop)
  GitHub issue:  
  
- Description:  Update Preservation Catalog with latest 
- HUD MFIS update file.
+ Description:  Update Preservation Catalog with latest HUD REAC scores.
 
  Modifications:
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( PresCat )

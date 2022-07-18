@@ -28,6 +28,8 @@ Prog/Images/
 *.mdbx
 *.pdf
 *.rtf
+*.accdb
+*.laccdb
 
 # Raw files
 *.csv
@@ -57,3 +59,4 @@ Prog/Images/
 # Other
 *.bat
 Thumbs.db
+*.ps1

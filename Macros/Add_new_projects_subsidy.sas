@@ -180,7 +180,7 @@
     outlib=PresCat,
     label="Preservation Catalog, Project subsidies",
     sortby=Nlihc_id Subsidy_id,
-    archive=Y,
+    archive=N,
     /** Metadata parameters **/
     revisions=%str(Add new projects from &input_file_pre._*.csv.),
     /** File info parameters **/

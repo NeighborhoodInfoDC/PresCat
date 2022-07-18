@@ -31,11 +31,6 @@
   %end;
     
  
-  ** Normalize exception file;
-
-  /*%Except_norm( data=&REAC_score_except, by=nlihc_id reac_date )*/
-
-
   **************************************************************************
   ** Get data for updating REAC_score file;
 
@@ -43,45 +38,63 @@
     Update_&Update_file._a (keep=nlihc_id REAC_:)
     Nomatch_&Update_file (keep=REAC_: property_name);
 
-	set Hud.&Update_file._dc;
+    set Hud.&Update_file._dc;
 
-	length 
-	REAC_date 8 
-	REAC_score $ 8 
-	REAC_score_num 8 
-	REAC_score_letter $ 1 
-	REAC_score_star $ 1
-	REAC_ID $ 9;
+    length 
+    REAC_inspec_id $ 8
+    REAC_date 8 
+    REAC_score $ 8 
+    REAC_score_num 8 
+    REAC_score_letter $ 1 
+    REAC_score_star $ 1
+    REAC_ID $ 9;
 
     nlihc_id = put( rems_property_id, $reac_nlihcid. );
-	array arelease_date(3) release_date_1 release_date_2 release_date_3 ;
-	array ascore(3) inspec_score_1 inspec_score_2 inspec_score_3 ;
+    array arelease_date(3) release_date_1 release_date_2 release_date_3 ;
+    array ascore(3) inspec_score_1 inspec_score_2 inspec_score_3 ;
+    array ainspec_id(3) inspec_id_1 inspec_id_2 inspec_id_3 ;
 
-  	DO num = 1 to 3 ;
-    date = arelease_date(num);
-	reac_score = lowcase(ascore(num));
-
-	j = indexc( reac_score, 'abcdefghijklmnopqrstuvwxyz' );
-      
-      REAC_score_num = input( substr( reac_score, 1, j - 1 ), 3. );
-      REAC_score_letter = substr( reac_score, j, 1 );
-      REAC_score_star = substr( reac_score, j + 1, 1 );
-	  REAC_date = input(date, mmddyy10.);
-	  REAC_ID = rems_property_id;
-
-    if not( missing( nlihc_id ) ) then output Update_&Update_file._a;
-    else output Nomatch_&Update_file;
+    do num = 1 to 3 ;
     
-  END;
+      date = arelease_date(num);
+      reac_score = lowcase(ascore(num));
+      
+      if not missing( reac_score ) then do;
 
-	label
+        j = indexc( reac_score, 'abcdefghijklmnopqrstuvwxyz' );
+        
+        REAC_inspec_id = left( ainspec_id(num) );
+        REAC_score_num = input( substr( reac_score, 1, j - 1 ), 3. );
+        REAC_score_letter = substr( reac_score, j, 1 );
+        REAC_score_star = substr( reac_score, j + 1, 1 );
+        REAC_date = input(date, anydtdte10.);
+        REAC_ID = rems_property_id;
+      
+        if missing( REAC_inspec_id ) then do;
+          %err_put( macro=Update_REAC_score, msg="REAC inspection ID missing. " rems_property_id= reac_score= REAC_inspec_id= )
+        end;
+
+        else if missing( REAC_date ) then do;
+          %err_put( macro=Update_REAC_score, msg="REAC date missing. " rems_property_id= reac_score= date= )
+        end;
+
+        else if not( missing( nlihc_id ) ) then output Update_&Update_file._a;
+
+        else output Nomatch_&Update_file;
+        
+      end;
+    
+  end;
+
+  label
     Nlihc_id = "Preservation Catalog project ID"
+    REAC_inspec_id = "REAC inspection ID number"
     REAC_date = "REAC inspection date"
     REAC_score = "REAC inspection score"
     REAC_score_num = "REAC inspection score, number part"
     REAC_score_letter = "REAC inspection score, letter part"
     REAC_score_star = "REAC inspection score, star (*) part"
-	REAC_ID = "REMS Property ID";
+  REAC_ID = "REMS Property ID";
       
   format REAC_date mmddyy10.;
 
@@ -98,28 +111,20 @@ run;
 
 title2;
 
-/*  title2 '**** THERE SHOULD NOT BE ANY DUPLICATE RECORDS IN THE UPDATE FILE ****';
-
-  %Dup_check(
-    data=reac_update_recs,
-    by=REAC_id,
-    id=Nlihc_id
-  )
-  
-  title2;*/
+  ** Apply REAC update to existing data **;
 
   proc sort data=Update_&Update_file._a;
-  by nlihc_id descending reac_date;
+  by nlihc_id REAC_inspec_id;
   run;
-
+  
   proc sort data=prescat.reac_score out=reac_score_test;
-  by nlihc_id descending reac_date;
+  by nlihc_id REAC_inspec_id;
   run;
 
-data Update_&Update_file;
-update reac_score_test Update_&Update_file._a;
-by nlihc_id descending reac_date;
-run;
+  data Update_&Update_file;
+    update reac_score_test Update_&Update_file._a;
+    by nlihc_id REAC_inspec_id;
+  run;
 
   **************************************************************************
   ** End of macro;

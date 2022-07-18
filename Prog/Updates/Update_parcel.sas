@@ -12,14 +12,14 @@
  Modifications:
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( PresCat )
 %DCData_lib( MAR, local=n )
 %DCData_lib( RealProp, local=n )
 
-%let revisions = %str(Update LIHTC projects with DHCD FOIA, 11-09-12.);
+%let revisions = %str(Update with latest Realprop data.);
 
 data Building_geocode;
 
@@ -124,7 +124,7 @@ run;
   label="Preservation Catalog, Real property parcels",
   sortby=nlihc_id ssl,
   revisions=&revisions,
-  archive=y,
+  archive=n,
   freqvars=parcel_type parcel_owner_type 
 )
 

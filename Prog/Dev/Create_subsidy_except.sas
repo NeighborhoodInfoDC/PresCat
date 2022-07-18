@@ -13,7 +13,7 @@
   07/19/15 PAT Rerun to update variables from latest PresCat.Subsidy.
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
