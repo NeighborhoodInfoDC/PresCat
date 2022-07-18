@@ -21,7 +21,7 @@
   revisions=, 
   compare=Y,
   finalize=Y, 
-  archive=Y 
+  archive=N 
   );
 
   %local geo_vars MAX_PROJ_ADDRE;
@@ -42,10 +42,11 @@
       Proj_zip Zip $ 5
       Proj_image_url Proj_streetview_url $ 255;
     
-    retain Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Proj_addre Proj_zip Proj_image_url Bldg_count;
+    retain Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Proj_addre Proj_zip Proj_image_url Proj_streetview_url Bldg_count _Proj_addre_count;
     
     if first.nlihc_id then do;
       Bldg_count = 0;
+      _Proj_addre_count = 0;
       Proj_address_id = .;
       Proj_x = .;
       Proj_y = .;
@@ -72,10 +73,16 @@
     if Bldg_image_url ~= "" and Proj_image_url = "" then Proj_image_url = Bldg_image_url;
 
     if Bldg_Streetview_url ~= "" and Proj_streetview_url = "" then Proj_streetview_url = Bldg_Streetview_url;
+    
+    if not( missing( Bldg_addre ) ) then do;
+    
+      _Proj_addre_count + 1;
 
-    if Bldg_count = 1 then Proj_addre = Bldg_addre;
-    else if Bldg_count <= &MAX_PROJ_ADDRE then Proj_addre = trim( Proj_addre ) || "; " || Bldg_addre;
-    else if Bldg_count = %eval( &MAX_PROJ_ADDRE + 1 ) then Proj_addre = trim( Proj_addre ) || "; others";
+      if _Proj_addre_count = 1 then Proj_addre = Bldg_addre;
+      else if _Proj_addre_count <= &MAX_PROJ_ADDRE then Proj_addre = trim( Proj_addre ) || "; " || Bldg_addre;
+      else if _Proj_addre_count = %eval( &MAX_PROJ_ADDRE + 1 ) then Proj_addre = trim( Proj_addre ) || "; others";
+    
+    end;
       
     if last.nlihc_id then do;
     
@@ -103,6 +110,8 @@
     ;
     
     format Zip $zipa.;
+    
+    drop _Proj_addre_count;
     
   run;
 
