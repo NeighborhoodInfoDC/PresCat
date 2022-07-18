@@ -23,6 +23,8 @@
 
 %let revisions = Adjust building addresses and parcels based on MAR review.;
 
+%let UPDATE_DTM = %sysfunc( datetime() );
+
 ** Create $nlihcid_proj_name. format to fill in missing project names **;
 
 %Data_to_format(
@@ -78,53 +80,6 @@ out=property_addr2
 dbms=csv replace;
 guessingrows=max;
 run; 
-
-/*
-data property_addr2_b;
-
-  set property_addr2 (where=(not(missing(nlihc_id))));
-
-run;
-*/
-
-/**********************
-proc sql noprint;
-  create table property_addr2_b as
-  select coalesce( addr.ssl, parcel.ssl ) as ssl, addr.nlihc_id, addr.ownername, addr.premiseadd, 
-    parcel.in_last_ownerpt
-  from property_addr2 as addr left join RealProp.Parcel_base_who_owns as parcel
-  on addr.ssl = parcel.ssl
-  where not( missing( nlihc_id ) )
-  order by nlihc_id, ssl;
-quit;
-
-
-** Parse out individual addresses from parcel address ranges **;
-
-%Rcasd_address_parse( data=property_addr2_b, out=property_addr_parsed, addr=premiseadd, keepin=, id=nlihc_id ssl ownername )
-
-proc print data=property_addr_parsed;
-run;
-
-** Run geocoder to verify addresses against MAR **;
-
-%DC_mar_geocode( data=property_addr_parsed, staddr=Address, out=property_addr_parsed_geo )
-
-%Dup_check(
-  data=property_addr2,
-  by=ssl,
-  id=nlihc_id,
-  out=_dup_check,
-  listdups=Y,
-  count=dup_check_count,
-  quiet=N,
-  debug=N
-)
-
-proc sort data=property_addr2_b out=property_addr2_nodup nodupkey;
-  by ssl;
-run;
-**********************************/
 
 title2 '** Add missing parcels to Catalog **';
 
@@ -230,26 +185,6 @@ run;
 
 title2;
 
-***********************************************************************;
-***********************************************************************;
-***********************************************************************
-
-Next steps:
-- Review Proc tabulate output to clean up list of parcels (remove extraneous parcels)
-- Some projects may no longer be active (e.g., NL000015)
-- If project unit count is missing assign MAR unit count to project
-- Finalize updated data sets
-
-Project disposition:
-
-NL000015	Change to inactive, lost
-
-NL000017	Piney Branch House 6411 Piney Branch Road NW 20012	Confirm HPTF/LIHTC status
-
-***********************************************************************;
-***********************************************************************;
-***********************************************************************;
-
 
 title2 '** Compile full set of MAR addresses associated with parcels **';
 
@@ -257,7 +192,7 @@ proc sql noprint;
   create table Full_addr_list as
     select coalesce( A.Address_id, Mar.Address_id ) as Address_id, A.*,
         Mar.fulladdress as Bldg_addre, Mar.status, Mar.active_res_occupancy_count as Bldg_units_mar 
-          label="Number of housing units at the primary address (from MAR)",
+          label="Housing units at the primary address (from MAR)",
         Mar.latitude as Bldg_lat, Mar.longitude as Bldg_lon, Mar.x as Bldg_x, Mar.y as Bldg_y,
         Mar.zip as Bldg_zip, Mar.anc2012, Mar.cluster_tr2000, 
         put( Cluster_tr2000, $clus00b. ) as Cluster_tr2000_name,
@@ -297,19 +232,6 @@ proc sql noprint;
   on A.Address_id = Mar.Address_id
   order by nlihc_id, A.ssl, A.Address_id;
 quit;
-
-/*
-%Dup_check(
-  data=Full_addr_list,
-  by=ssl nlihc_id,
-  id=Address_id,
-  out=_dup_check,
-  listdups=Y,
-  count=dup_check_count,
-  quiet=N,
-  debug=N
-)
-*/
 
 proc sort data=Full_addr_list out=Full_addr_list_nodup nodupkey;
   where not( missing( address_id ) or missing( nlihc_id ) ) and in_last_ownerpt;
@@ -384,7 +306,6 @@ proc sql noprint;
   select coalesce( a.bldg_address_id, b.address_id ) as bldg_address_id, 
     a.nlihc_id, /*a.in_last_ownerpt,*/
     b.active_res_occupancy_count as Bldg_units_mar
-/*  from Building_geocode as a */
   from 
   ( select Building_geocode.*, Parcel_base.ssl/*, Parcel_base.in_last_ownerpt*/
     from Building_geocode left join RealProp.Parcel_base as Parcel_base
@@ -392,7 +313,6 @@ proc sql noprint;
   ) as a
   left join Mar.Address_points_view as b
   on a.bldg_address_id = b.address_id
-  /*where in_last_ownerpt*/
   order by nlihc_id, bldg_address_id;
 quit;
 
@@ -405,7 +325,7 @@ run;
 proc compare 
     base=PresCat.Project (keep=nlihc_id proj_units_tot) 
     compare=Proj_units_mar_2 (keep=nlihc_id proj_units_mar) 
-    /*nosummary*/ nodate listall maxprint=(400,32000)
+    nodate listall maxprint=(400,32000)
     method=absolute criterion=5 out=Comp_results;
 id nlihc_id;
   var proj_units_tot;
@@ -437,4 +357,102 @@ title2;
 ** Project_geocode **;
 
 %Create_project_geocode( data=Building_geocode, revisions=%str(&revisions) )
+
+** Parcel **;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Parcel,
+  out=Parcel,
+  outlib=Prescat,
+  label="Preservation Catalog, Real property parcels",
+  sortby=nlihc_id ssl,
+  /** Metadata parameters **/
+  restrictions=None,
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0
+)
+
+** Project **;
+
+data Project;
+
+  merge 
+    Prescat.Project 
+    Project_geocode (keep=nlihc_id Proj_units_mar); 
+  by nlihc_id;
+  
+  ** Assign MAR unit count if total unit count is missing **;
+  
+  if proj_units_tot < 1 and Proj_units_mar > 0 then proj_units_tot = Proj_units_mar;
+  
+  ** NL000015	Change to inactive, lost **;
+
+  if nlihc_id = 'NL000015' then do;
+    status = 'I';
+    cat_lost = 1;
+    cat_at_risk = 0;
+    cat_expiring = 0;
+    cat_failing_insp = 0;
+    cat_more_info = 0;
+    cat_replaced = 0;
+    subsidized = 0;
+    category_code = 6;
+    update_dtm = &UPDATE_DTM;
+  end;
+  
+  drop Proj_units_mar;
+  
+run;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Project,
+  out=Project,
+  outlib=PresCat,
+  label="Preservation Catalog, Projects",
+  sortby=nlihc_id,
+  /** Metadata parameters **/
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0
+)
+
+proc compare base=PresCat.Project compare=Project listall maxprint=(40,32000);
+  id Nlihc_id;
+run;
+
+** Subsidy **;
+
+data Subsidy;
+
+  set Prescat.Subsidy;
+  
+  ** NL000015	Change to inactive, lost **;
+
+  if nlihc_id = 'NL000015' then do;
+    subsidy_active = 0;
+    update_dtm = &UPDATE_DTM;
+  end;
+  
+run;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Subsidy,
+  out=Subsidy,
+  outlib=PresCat,
+  label="Preservation Catalog, Project subsidies",
+  sortby=nlihc_id subsidy_id,
+  /** Metadata parameters **/
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0,
+  freqvars=
+)
+
+proc compare base=PresCat.Subsidy compare=Subsidy listall maxprint=(40,32000);
+  id Nlihc_id Subsidy_id;
+run;
 

@@ -32,7 +32,7 @@
   data 
     &out 
       (keep=nlihc_id &geo_vars Proj_name Proj_address_id Proj_x Proj_y Proj_lat Proj_lon 
-            Proj_addre Proj_zip Proj_image_url Proj_Streetview_url Bldg_count);
+            Proj_addre Proj_zip Proj_image_url Proj_Streetview_url Bldg_count Proj_units_mar);
       
     set &data;
     by nlihc_id;
@@ -42,7 +42,9 @@
       Proj_zip Zip $ 5
       Proj_image_url Proj_streetview_url $ 255;
     
-    retain Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Proj_addre Proj_zip Proj_image_url Proj_streetview_url Bldg_count _Proj_addre_count;
+    retain 
+      Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Proj_addre Proj_zip Proj_image_url 
+      Proj_streetview_url Bldg_count Proj_units_mar _Proj_addre_count;
     
     if first.nlihc_id then do;
       Bldg_count = 0;
@@ -56,6 +58,7 @@
       Proj_zip = "";
       Proj_image_url = "";
       Proj_streetview_url = "";
+      Proj_units_mar = .;
     end;
       
     Bldg_count + 1;
@@ -69,6 +72,7 @@
     Proj_y = sum( Proj_y, Bldg_y );
     Proj_lat = sum( Proj_lat, Bldg_lat );
     Proj_lon = sum( Proj_lon, Bldg_lon );
+    Proj_units_mar = sum( Proj_units_mar, Bldg_units_mar );
     
     if Bldg_image_url ~= "" and Proj_image_url = "" then Proj_image_url = Bldg_image_url;
 
@@ -106,6 +110,7 @@
       Proj_x = "Project longitude (MD State Plane Coord., NAD 1983 meters)"
       Proj_y = "Project latitude (MD State Plane Coord., NAD 1983 meters)"
       Proj_zip = "ZIP code (5 digit)"
+      Proj_units_mar = "Total housing units at primary addresses (from MAR)"
       Zip = "ZIP code (5 digit)"
     ;
     
