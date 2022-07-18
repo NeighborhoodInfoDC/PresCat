@@ -423,6 +423,42 @@ proc compare base=PresCat.Project compare=Project listall maxprint=(40,32000);
   id Nlihc_id;
 run;
 
+** Project_category **;
+
+data Project_category;
+
+  set Prescat.Project_category;
+
+  ** NL000015 & NL000417	Change to inactive, lost **;
+
+  if nlihc_id in ( 'NL000015', 'NL000417' ) then do;
+    cat_lost = 1;
+    cat_at_risk = 0;
+    cat_more_info = 0;
+    cat_replaced = 0;
+    category_code = 6;
+  end;
+
+run;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Project_category,
+  out=Project_category,
+  outlib=PresCat,
+  label="Preservation Catalog, Project category",
+  sortby=nlihc_id,
+  /** Metadata parameters **/
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0
+)
+
+proc compare base=PresCat.Project_category compare=Project_category listall maxprint=(40,32000);
+  id Nlihc_id;
+run;
+
+
 ** Subsidy **;
 
 data Subsidy;
