@@ -7,7 +7,8 @@
  Version:  SAS 9.2
  Environment:  Local Windows session (desktop)
  
- Description:  Add missing building and parcels for current projects based on MAR unit county
+ Description:  Add missing building and parcels for current projects 
+ based on MAR unit count
 
  Modifications:
 **************************************************************************/
@@ -19,6 +20,26 @@
 %DCData_lib( PresCat ) 
 %DCData_lib( MAR ) 
 %DCData_lib( RealProp )
+
+%let revisions = Adjust building addresses and parcels based on MAR review.;
+
+** Create $nlihcid_proj_name. format to fill in missing project names **;
+
+%Data_to_format(
+  FmtLib=work,
+  FmtName=$nlihcid_proj_name,
+  Desc=,
+  Data=Prescat.Project_category_view,
+  Value=nlihc_id,
+  Label=trim(left(proj_name)),
+  OtherLabel=' ',
+  DefaultLen=.,
+  MaxLen=.,
+  MinLen=.,
+  Print=N,
+  Contents=N
+  )
+
 
 title2 '** Compare MAR unit counts with ORIGINAL Catalog project unit counts **';
 
@@ -137,6 +158,54 @@ proc sort data=New_parcel_list out=New_parcel_list_nodup nodupkey;
   by nlihc_id ssl;
 run;
 
+** Remove these parcels from data ***********************************************
+
+  NL000127
+    5846 0007 2303 Irving St SE Washington Dc 20020 Tawana Fenton
+    5846 0010 2309 Irving St SE Washington Dc 20020 William A Corley
+    5846 0803 2301 Irving St SE Washington Dc 20020 Theodros M Habte
+
+  NL000344
+    0314 0032 1230 11th St NW Washington Dc 20001 Keyvan Ahdut
+    0314 0033 1228 11th St NW Washington Dc 20001 Keyvan Ahdut
+    0314 0034 1226 11th St NW 1226 Eleventh Llc
+
+  NL000360
+    2689 0029 3608 14th St NW Washington Dc 20010 Helen E Lee
+
+  NL000388
+    5755 0830 1655 W St SE # 301 Washington Dc 20020 East River Preservation Partners Llc
+    
+  NL001044
+    2939 0811 6001 13th St NW Washington Dc 20011 Nativity Catholic Church
+    PAR 00870541 6000 13th St NW Washington Dc 20011 Ahmed Inc
+    
+*********************************************************************************;
+
+data Parcel_delete;
+
+  length nlihc_id $ 16 ssl $ 17;
+  
+  infile datalines dsd;
+
+  input nlihc_id ssl;
+  
+datalines;
+    NL000127, 5846    0007
+    NL000127, 5846    0010
+    NL000127, 5846    0803
+    NL000344, 0314    0032
+    NL000344, 0314    0033
+    NL000344, 0314    0034
+    NL000360, 2689    0029
+    NL000388, 5755    0830
+    NL001044, 2939    0811
+    NL001044, PAR 00870541
+run;
+
+proc print data=Parcel_delete;
+run;
+
 data Parcel;
 
   length Nlihc_id $ 16 ssl $ 17;
@@ -144,51 +213,15 @@ data Parcel;
   merge 
     New_parcel_list_nodup 
       (keep=nlihc_id ssl in_last_ownerpt parcel_:)
-    PresCat.Parcel;
+    PresCat.Parcel
+    Parcel_delete (in=in_del);
   by nlihc_id ssl;
 
   format Nlihc_id ;
   informat Nlihc_id ;
   
-  ** Remove these parcels from data ***********************************************
+  if in_del then delete;
   
-    NL000127
-      5846 0007 2303 Irving St SE Washington Dc 20020 Tawana Fenton
-      5846 0010 2309 Irving St SE Washington Dc 20020 William A Corley
-      5846 0803 2301 Irving St SE Washington Dc 20020 Theodros M Habte
-
-    NL000344
-      0314 0032 1230 11th St NW Washington Dc 20001 Keyvan Ahdut
-      0314 0033 1228 11th St NW Washington Dc 20001 Keyvan Ahdut
-      0314 0034 1226 11th St NW 1226 Eleventh Llc
-
-    NL000360
-      2689 0029 3608 14th St NW Washington Dc 20010 Helen E Lee
-
-    NL000388
-      5755 0830 1655 W St SE # 301 Washington Dc 20020 East River Preservation Partners Llc
-      
-    NL001044
-      2939 0811 6001 13th St NW Washington Dc 20011 Nativity Catholic Church
-      PAR 00870541 6000 13th St NW Washington Dc 20011 Ahmed Inc
-      
-  *********************************************************************************;
-  
-  select ( nlihc_id );
-    when ( 'NL000127' )
-      if compbl( ssl ) in ( '5846 0007', '5846 0010', '5846 0803' ) then delete;
-    when ( 'NL000344' )
-      if compbl( ssl ) in ( '0314 0032', '0314 0033', '0314 0034' ) then delete;
-    when ( 'NL000360' )
-      if compbl( ssl ) in ( '2689 0029' ) then delete;
-    when ( 'NL000388' )
-      if compbl( ssl ) in ( '5755 0830' ) then delete;
-    when ( 'NL001044' )
-      if compbl( ssl ) in ( '2939 0811', 'PAR 00870541' ) then delete;
-    otherwise
-      /** Do nothing **/;
-  end;
-
 run;
 
 proc compare base=PresCat.Parcel compare=Parcel listvar maxprint=(40,32000);
@@ -223,7 +256,8 @@ title2 '** Compile full set of MAR addresses associated with parcels **';
 proc sql noprint;
   create table Full_addr_list as
     select coalesce( A.Address_id, Mar.Address_id ) as Address_id, A.*,
-        Mar.fulladdress, Mar.status, Mar.active_res_occupancy_count as Bldg_units_mar,
+        Mar.fulladdress as Bldg_addre, Mar.status, Mar.active_res_occupancy_count as Bldg_units_mar 
+          label="Number of housing units at the primary address (from MAR)",
         Mar.latitude as Bldg_lat, Mar.longitude as Bldg_lon, Mar.x as Bldg_x, Mar.y as Bldg_y,
         Mar.zip as Bldg_zip, Mar.anc2012, Mar.cluster_tr2000, 
         put( Cluster_tr2000, $clus00b. ) as Cluster_tr2000_name,
@@ -302,23 +336,43 @@ proc sort data=PresCat.Building_geocode out=PresCat_Building_geocode;
   by nlihc_id bldg_address_id;
 run;
 
+** Addresses to delete based on deleted parcels **;
+
+proc sql noprint;
+  create table Addr_delete as
+    select coalesce( xref.ssl, Parcel_delete.ssl ) as ssl, xref.Address_id, Parcel_delete.nlihc_id
+      from Mar.Address_ssl_xref as xref
+      right join 
+      Parcel_delete
+      on xref.ssl = Parcel_delete.ssl
+      order by nlihc_id, address_id;
+
+proc print data=Addr_delete;
+run;
+
 data Building_geocode;
 
   merge
     Full_addr_list_nodup 
       (keep=nlihc_id address_id bldg_: anc2012 cluster_tr2000: geo2010 psa2012 ssl ward2012
-       rename=(address_id=Bldg_address_id)
-       in=in1)
-    PresCat_Building_geocode;
+       rename=(address_id=Bldg_address_id))
+    PresCat_Building_geocode
+    Addr_delete (drop=ssl rename=(address_id=bldg_address_id) in=in_del);
   by nlihc_id bldg_address_id;
   
-  ** Only keep addresses that are in revised address file **;
+  ** Delete addresses that are associated with deleted parcels **;
   
-  if in1;
+  if in_del then delete;
+
+  ** Fill in project names **;
+
+  proj_name = left( put( nlihc_id, $nlihcid_proj_name. ) );
+  
+  if Bldg_units_mar < 1 then Bldg_units_mar = .u;
 
 run;
 
-proc compare base=PresCat_Building_geocode compare=Building_geocode maxprint=(40,32000);
+proc compare base=PresCat_Building_geocode compare=Building_geocode maxprint=(40,32000) listvar;
   id nlihc_id bldg_address_id;
 run;
 
@@ -359,4 +413,28 @@ id nlihc_id;
 run;
 
 title2;
+
+
+*************************************************************************************;
+** Finalize new data sets **;
+
+** Building_geocode **;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Building_geocode,
+  out=Building_geocode,
+  outlib=Prescat,
+  label="Preservation Catalog, Building-level geocoding info",
+  sortby=nlihc_id bldg_addre,
+  /** Metadata parameters **/
+  restrictions=None,
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0
+)
+
+** Project_geocode **;
+
+%Create_project_geocode( data=Building_geocode, revisions=%str(&revisions) )
 
