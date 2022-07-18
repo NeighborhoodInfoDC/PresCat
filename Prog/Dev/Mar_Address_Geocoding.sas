@@ -149,6 +149,45 @@ data Parcel;
 
   format Nlihc_id ;
   informat Nlihc_id ;
+  
+  ** Remove these parcels from data ***********************************************
+  
+    NL000127
+      5846 0007 2303 Irving St SE Washington Dc 20020 Tawana Fenton
+      5846 0010 2309 Irving St SE Washington Dc 20020 William A Corley
+      5846 0803 2301 Irving St SE Washington Dc 20020 Theodros M Habte
+
+    NL000344
+      0314 0032 1230 11th St NW Washington Dc 20001 Keyvan Ahdut
+      0314 0033 1228 11th St NW Washington Dc 20001 Keyvan Ahdut
+      0314 0034 1226 11th St NW 1226 Eleventh Llc
+
+    NL000360
+      2689 0029 3608 14th St NW Washington Dc 20010 Helen E Lee
+
+    NL000388
+      5755 0830 1655 W St SE # 301 Washington Dc 20020 East River Preservation Partners Llc
+      
+    NL001044
+      2939 0811 6001 13th St NW Washington Dc 20011 Nativity Catholic Church
+      PAR 00870541 6000 13th St NW Washington Dc 20011 Ahmed Inc
+      
+  *********************************************************************************;
+  
+  select ( nlihc_id );
+    when ( 'NL000127' )
+      if compbl( ssl ) in ( '5846 0007', '5846 0010', '5846 0803' ) then delete;
+    when ( 'NL000344' )
+      if compbl( ssl ) in ( '0314 0032', '0314 0033', '0314 0034' ) then delete;
+    when ( 'NL000360' )
+      if compbl( ssl ) in ( '2689 0029' ) then delete;
+    when ( 'NL000388' )
+      if compbl( ssl ) in ( '5755 0830' ) then delete;
+    when ( 'NL001044' )
+      if compbl( ssl ) in ( '2939 0811', 'PAR 00870541' ) then delete;
+    otherwise
+      /** Do nothing **/;
+  end;
 
 run;
 
@@ -167,6 +206,12 @@ Next steps:
 - Some projects may no longer be active (e.g., NL000015)
 - If project unit count is missing assign MAR unit count to project
 - Finalize updated data sets
+
+Project disposition:
+
+NL000015	Change to inactive, lost
+
+NL000017	Piney Branch House 6411 Piney Branch Road NW 20012	Confirm HPTF/LIHTC status
 
 ***********************************************************************;
 ***********************************************************************;
@@ -262,9 +307,14 @@ data Building_geocode;
   merge
     Full_addr_list_nodup 
       (keep=nlihc_id address_id bldg_: anc2012 cluster_tr2000: geo2010 psa2012 ssl ward2012
-       rename=(address_id=Bldg_address_id))
+       rename=(address_id=Bldg_address_id)
+       in=in1)
     PresCat_Building_geocode;
   by nlihc_id bldg_address_id;
+  
+  ** Only keep addresses that are in revised address file **;
+  
+  if in1;
 
 run;
 
@@ -309,3 +359,4 @@ id nlihc_id;
 run;
 
 title2;
+
