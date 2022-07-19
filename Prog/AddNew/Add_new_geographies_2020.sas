@@ -22,7 +22,8 @@ proc sort data = PresCat.Building_geocode out=Building_geocode;
 	by Bldg_address_id;
 run;
 
-proc sort data = MAR.address_points_2022_07 out=address_points_2022_07(rename=(ADDRESS_ID=bldg_address_id));
+proc sort data = MAR.address_points_2022_07(keep=Geo2020 GeoBg2020 GeoBlk2020 Ward2022 cluster2017 ADDRESS_ID)
+		  out=address_points_2022_07(rename=(ADDRESS_ID=bldg_address_id));
 	by ADDRESS_ID;
 run;
 
@@ -36,7 +37,7 @@ run;
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
-    data=Building_geocode,
+    data=left_join,
     out=Building_geocode,
     outlib=PresCat,
     label="Preservation Catalog, Building-level geocoding info",
