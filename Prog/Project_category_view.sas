@@ -46,22 +46,6 @@ proc sql noprint;
       Project.Subsidized,
       Project.Proj_Units_Assist_Min,
       Project.Proj_Units_Assist_Max,
-      Project.Anc2012,
-      Project.Psa2012,
-      Project.Geo2010,
-      Project.Cluster_tr2000,
-      Project.Cluster_tr2000_name,
-      Project.Ward2012,
-      Project.Proj_zip,
-      Project.Zip,
-      Project.Proj_image_url,
-      Project.Proj_streetview_url,
-      Project.Proj_address_id,
-      Project.Proj_x,
-      Project.Proj_y,
-      Project.Proj_lat,
-      Project.Proj_lon,
-      Project.Bldg_count,
       Project.Proj_ayb,
       Project.Proj_eyb,
       Project.Proj_owner_type,
@@ -71,12 +55,32 @@ proc sql noprint;
       ( Category.Category_Code = '1' ) as Cat_at_risk label="Project at risk" format=dyesno. length=3,
       ( Category.Category_Code = '4' ) as Cat_more_info label="Project flagged for gathering more information" format=dyesno. length=3,
       ( Category.Category_Code = '6' ) as Cat_lost label="Lost affordable housing" format=dyesno. length=3,
-      ( Category.Category_Code = '7' ) as Cat_replaced label="Replaced affordable housing" format=dyesno. length=3
+      ( Category.Category_Code = '7' ) as Cat_replaced label="Replaced affordable housing" format=dyesno. length=3,
+      Geocode.Anc2012,
+      Geocode.Psa2012,
+      Geocode.Geo2010,
+      Geocode.Cluster_tr2000,
+      Geocode.Cluster_tr2000_name,
+      Geocode.Ward2012,
+      Geocode.Proj_zip,
+      Geocode.Zip,
+      Geocode.Proj_image_url,
+      Geocode.Proj_streetview_url,
+      Geocode.Proj_address_id,
+      Geocode.Proj_x,
+      Geocode.Proj_y,
+      Geocode.Proj_lat,
+      Geocode.Proj_lon,
+      Geocode.Bldg_count,
+      Geocode.Proj_units_mar
     from 
       PresCat.Project as Project 
     left join 
       PresCat.Project_category as Category
     on Project.Nlihc_id = Category.Nlihc_id
+    left join
+      PresCat.Project_geocode as Geocode
+    on Project.Nlihc_id = Geocode.Nlihc_id
     order by Project.Nlihc_id;
   quit;
 
@@ -97,7 +101,7 @@ run;
   ds_name=Project_category_view,
   creator_process=Project_category_view.sas,
   restrictions=None,
-  revisions=%str(Apply update from LEC_Database_10Jan20_LEC_or_Affordable.csv.)
+  revisions=%str(Revise query to pull data directly from PresCat.Project_geocode.)
 )
 
 /*****************************************
