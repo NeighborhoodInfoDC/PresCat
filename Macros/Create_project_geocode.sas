@@ -26,7 +26,7 @@
 
   %local geo_vars MAX_PROJ_ADDRE;
 
-  %let geo_vars = Ward2012 Anc2012 Psa2012 Geo2010 Cluster_tr2000 Cluster_tr2000_name Zip;
+  %let geo_vars = Ward2012 Anc2012 Psa2012 Geo2010 Cluster_tr2000 Cluster_tr2000_name Zip Geo2020 GeoBg2020 GeoBlk2020 Ward2022 cluster2017;
   %let MAX_PROJ_ADDRE = 3;   /** Maximum number of addresses to include in Proj_addre field in PresCat.Project_geo **/
 
   data 
