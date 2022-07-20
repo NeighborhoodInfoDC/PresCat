@@ -55,18 +55,7 @@ data Parcel (label="Preservation Catalog, Real property parcels");
   end;
 
   informat _all_ ;
-/*
 
-  label
-    address_id = "Parcel MAR address ID"
-    NLIHC_ID = "Preservation Catalog project ID";
-
-  rename 
-      
-    
-    address_id=Parcel_address_id
-    ;
-*/  
 run;
 
 
@@ -83,6 +72,3 @@ run;
   freqvars=parcel_type parcel_owner_type 
 )
 
-proc compare base=PresCat.Parcel compare=Parcel listall maxprint=(40,32000);
-  id nlihc_id ssl;
-run;
