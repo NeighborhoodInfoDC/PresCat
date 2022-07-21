@@ -78,7 +78,8 @@ proc sql noprint;
 	  Geocode.GeoBg2020,
 	  Geocode.GeoBlk2020,
 	  Geocode.Ward2022,
-	  Geocode.cluster2017
+	  Geocode.cluster2017,
+	  put( Geocode.cluster2017, $clus17b. ) as cluster2017_name length=120 label="Neighborhood cluster names (2017)"
     from 
       PresCat.Project as Project 
     left join 
