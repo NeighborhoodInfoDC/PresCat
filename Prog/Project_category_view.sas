@@ -12,6 +12,7 @@
 
  Modifications:
   03/16/2019 PAT Updated query. GitHub issue #190.
+  07/21/2022 EB updated to include 20 census geos, 17 nbhd cluster, 22 wards. Issue #292
 **************************************************************************/
 
 %include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
@@ -72,7 +73,13 @@ proc sql noprint;
       Geocode.Proj_lat,
       Geocode.Proj_lon,
       Geocode.Bldg_count,
-      Geocode.Proj_units_mar
+      Geocode.Proj_units_mar,
+	  Geocode.Geo2020,
+	  Geocode.GeoBg2020,
+	  Geocode.GeoBlk2020,
+	  Geocode.Ward2022,
+	  Geocode.cluster2017,
+	  put( Geocode.cluster2017, $clus17b. ) as cluster2017_name length=120 label="Neighborhood cluster names (2017)"
     from 
       PresCat.Project as Project 
     left join 
@@ -101,7 +108,7 @@ run;
   ds_name=Project_category_view,
   creator_process=Project_category_view.sas,
   restrictions=None,
-  revisions=%str(Revise query to pull data directly from PresCat.Project_geocode.)
+  revisions=%str(Add new Census geos, neighborhood clusters, and wards.)
 )
 
 /*****************************************
