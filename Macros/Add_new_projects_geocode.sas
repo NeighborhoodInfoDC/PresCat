@@ -86,6 +86,7 @@
        informat RES_TYPE $11. ;
        informat WARD_2002 $6. ;
        informat WARD_2012 $6. ;
+	   informat WARD_2022 $6. ;
        informat ANC_2002 $6. ;
        informat ANC_2012 $6. ;
        informat SMD_2002 $8. ;
@@ -132,6 +133,7 @@
        format RES_TYPE $11. ;
        format WARD_2002 $6. ;
        format WARD_2012 $6. ;
+	   format WARD_2022 $6. ;
        format ANC_2002 $6. ;
        format ANC_2012 $6. ;
        format SMD_2002 $8. ;
@@ -179,6 +181,7 @@
                 RES_TYPE $
                 WARD_2002 $
                 WARD_2012 $
+				WARD_2022 $
                 ANC_2002 $
                 ANC_2012 $
                 SMD_2002 $
@@ -222,7 +225,7 @@
       MAR_MATCHADDRESS MAR_XCOORD MAR_YCOORD MAR_LATITUDE
       MAR_LONGITUDE MAR_WARD MAR_CENSUS_TRACT MAR_ZIPCODE MARID
       MAR_ERROR MAR_SCORE MAR_SOURCEOPERATION MAR_IGNORE
-      SSL Ward_2012 ANC_2012 PSA Census_tract Cluster_
+      SSL Ward_2012 Ward_2022 ANC_2012 PSA Census_tract Cluster_
       Streetview_url Image_url;
 
   run;
@@ -297,7 +300,13 @@
     Ward2012 = substr( Ward_2012, 6, 1 );
     
     format Ward2012 $ward12a.;
+
+    length Ward2022 $ 1;
     
+    Ward2022 = substr( Ward_2022, 6, 1 );
+    
+    format Ward2022 $ward22a.;
+
     length Anc2012 $ 2;
     
     Anc2012 = substr( Anc_2012, 5, 2 );
@@ -315,6 +324,12 @@
     if Census_tract ~= . then Geo2010 = "11001" || put( Census_tract, z6. );
     
     format Geo2010 $geo10a.;
+
+    length Geo2020 $ 11;
+    
+    if Census_tract ~= . then Geo2020 = "11001" || put( Census_tract, z6. );
+    
+    format Geo2020 $geo20a.;
 
     ** Note: This is not technically the right way to create the 2000 clusters, 
     **       but we will soon switch to new clusters so this will be obsolete; 
@@ -336,7 +351,7 @@
     
     Cluster_tr2000_name = put( Cluster_tr2000, $clus00b. );
 
-    drop Ward_2012 ANC_2012 PSA Census_tract Cluster_;
+    drop Ward_2012 Ward_2022 ANC_2012 PSA Census_tract Cluster_;
     
   run;
 
@@ -346,7 +361,7 @@
 
   ** Create project and building geocode data sets for new projects **;
 
-  %let geo_vars = Ward2012 Anc2012 Psa2012 Geo2010 Cluster_tr2000 Cluster_tr2000_name Zip;
+  %let geo_vars = Ward2012 Ward 2022 Anc2012 Psa2012 Geo2010 GeoBg2020 GeoBlk2020 Cluster_2017 Cluster_tr2000 Cluster_tr2000_name Zip;
 
   data 
     work.Building_geocode_a
@@ -375,6 +390,7 @@
     
     label
       Ward2012x = "Ward (2012)"
+	  Ward2022 = "Ward (2022)"
       Ssl_std = "Property identification number (square/suffix/lot)"
       Proj_Name = "Project name"
       NLIHC_ID = "Preservation Catalog project ID"
@@ -383,8 +399,12 @@
       Anc2012 = "Advisory Neighborhood Commission (2012)"
       Psa2012 = "Police Service Area (2012)"
       Geo2010 = "Full census tract ID (2010): ssccctttttt"
+	  Geo2020 = "Full census tract ID (2020): ssccctttttt"
+	  GeoBg2020 = 'Full census block group ID (2020): sscccttttttb'
+	  GeoBlk2020 = 'Full census block ID (2020): sscccttttttbbbb'
       Cluster_tr2000 = "Neighborhood cluster (tract-based, 2000)"
       Cluster_tr2000_name = "Neighborhood cluster names (tract-based, 2000)"
+	  Cluster_2017 = 'Neighborhood cluster (tract-based, 2017)'
       zip = "ZIP code (5 digit)"
       image_url = "OCTO property image URL"
       Bldg_addre = "Building address"
@@ -459,7 +479,7 @@
     from (
       select distinct bldgaddr.nlihc_id, bldgaddr.Proj_name, coalesce( bldgaddr.address_id, addr.address_id ) as Bldg_address_id, 
         addr.fulladdress as Bldg_addre, addr.ssl, addr.active_res_occupancy_count,
-        anc2012, cluster_tr2000, geo2010, psa2012, ward2012, latitude as Bldg_lat, longitude as Bldg_lon, 
+        anc2012, cluster_tr2000, geo2010, Geo2020, GeoBg2020, GeoBlk2020, psa2012, ward2012, ward2022, latitude as Bldg_lat, longitude as Bldg_lon, 
         x as Bldg_x, y as Bldg_y, zip as Bldg_zip
       from (  
         select Ssl_by_owner.nlihc_id, Ssl_by_owner.Proj_name, xref.address_id, coalesce( Ssl_by_owner.ssl, xref.ssl ) as ssl 

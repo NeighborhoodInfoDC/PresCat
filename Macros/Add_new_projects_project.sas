@@ -165,11 +165,16 @@
       Subsidy_End_First = "First subsidy end date"
       Subsidy_End_Last = "Last subsidy end date"
       Ward2012 = 'Ward (2012)'
+	  Ward2022 = 'Ward (2022)'
       Anc2012 = 'Advisory Neighborhood Commission (2012)'
       Psa2012 = 'Police Service Area (2012)'
       Geo2010 = 'Full census tract ID (2010): ssccctttttt'
+	  Geo2020 = 'Full census tract ID (2020): ssccctttttt'
+	  GeoBg2020 = 'Full census block group ID (2020): sscccttttttb'
+	  GeoBlk2020 = 'Full census block ID (2020): sscccttttttbbbb'
       Cluster_tr2000 = 'Neighborhood cluster (tract-based, 2000)'
       Cluster_tr2000_name = 'Neighborhood cluster names (tract-based, 2000)'
+	  Cluster_2017 = 'Neighborhood cluster (tract-based, 2017)'
       Zip = 'ZIP code (5 digit)'
       Proj_image_url = 'OCTO property image URL'
       Proj_streetview_url = 'Google Street View URL'
