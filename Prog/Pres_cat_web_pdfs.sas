@@ -90,17 +90,17 @@
       style(header)={fontsize=2}
       style(column)={fontsize=2};
     column 
-      Ward2012
+      Ward2022
       Anc2012
       Psa2012
-      Geo2010
-      Cluster_tr2000
+      Geo2020
+      Cluster2017
     ;
-    define Ward2012 / ' ' display;
+    define Ward2022 / ' ' display;
     define Anc2012 / ' ' display;
     define Psa2012 / ' ' display;
-    define Geo2010 / ' ' display;
-    define Cluster_tr2000 / ' ' format=$CLUS00F. display;
+    define Geo2020 / ' ' display;
+    define Cluster2017 / ' ' format=$CLUS17F. display;
   run;
 
   proc report data=Project list nowd
@@ -195,7 +195,11 @@
     
     ** REAC scores **;
     
-    proc report data=PresCat.Reac_score list nowd
+    proc sort data=PresCat.Reac_score out=Reac_score;
+      by descending reac_date;
+    run;
+    
+    proc report data=Reac_score list nowd
         style(header)={fontsize=2}
         style(column)={fontsize=2};
       where NLIHC_ID = "&proj_select";
@@ -206,8 +210,7 @@
       ;
       define reac_date / 'Date' display;
       define reac_score / 'REAC inspection score' display;
-    run;    
-    
+    run;
     
   %end;
 
