@@ -195,7 +195,11 @@
     
     ** REAC scores **;
     
-    proc report data=PresCat.Reac_score list nowd
+    proc sort data=PresCat.Reac_score out=Reac_score;
+      by descending reac_date;
+    run;
+    
+    proc report data=Reac_score list nowd
         style(header)={fontsize=2}
         style(column)={fontsize=2};
       where NLIHC_ID = "&proj_select";
@@ -206,8 +210,7 @@
       ;
       define reac_date / 'Date' display;
       define reac_score / 'REAC inspection score' display;
-    run;    
-    
+    run;
     
   %end;
 
