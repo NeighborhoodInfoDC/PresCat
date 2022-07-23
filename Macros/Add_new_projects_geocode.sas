@@ -86,7 +86,6 @@
        informat RES_TYPE $11. ;
        informat WARD_2002 $6. ;
        informat WARD_2012 $6. ;
-	   informat WARD_2022 $6. ;
        informat ANC_2002 $6. ;
        informat ANC_2012 $6. ;
        informat SMD_2002 $8. ;
@@ -133,7 +132,6 @@
        format RES_TYPE $11. ;
        format WARD_2002 $6. ;
        format WARD_2012 $6. ;
-	   format WARD_2022 $6. ;
        format ANC_2002 $6. ;
        format ANC_2012 $6. ;
        format SMD_2002 $8. ;
@@ -181,7 +179,6 @@
                 RES_TYPE $
                 WARD_2002 $
                 WARD_2012 $
-				WARD_2022 $
                 ANC_2002 $
                 ANC_2012 $
                 SMD_2002 $
@@ -206,6 +203,11 @@
     by marid;
   run;
 
+/*****************************************************************************
+  FIX THIS SECTION TO MERGE GEOGRAPHY VARS FROM ADDRESS_POINTS DATA SET, 
+  RATHER THAN USING VALUES FROM THE INPUT GEOCODING FILE. 
+******************************************************************************/
+
   data New_Proj_Geocode;
 
     merge 
@@ -225,7 +227,7 @@
       MAR_MATCHADDRESS MAR_XCOORD MAR_YCOORD MAR_LATITUDE
       MAR_LONGITUDE MAR_WARD MAR_CENSUS_TRACT MAR_ZIPCODE MARID
       MAR_ERROR MAR_SCORE MAR_SOURCEOPERATION MAR_IGNORE
-      SSL Ward_2012 Ward_2022 ANC_2012 PSA Census_tract Cluster_
+      SSL Ward_2012 ANC_2012 PSA Census_tract Cluster_
       Streetview_url Image_url;
 
   run;
@@ -301,12 +303,6 @@
     
     format Ward2012 $ward12a.;
 
-    length Ward2022 $ 1;
-    
-    Ward2022 = substr( Ward_2022, 6, 1 );
-    
-    format Ward2022 $ward22a.;
-
     length Anc2012 $ 2;
     
     Anc2012 = substr( Anc_2012, 5, 2 );
@@ -351,7 +347,7 @@
     
     Cluster_tr2000_name = put( Cluster_tr2000, $clus00b. );
 
-    drop Ward_2012 Ward_2022 ANC_2012 PSA Census_tract Cluster_;
+    drop Ward_2012 ANC_2012 PSA Census_tract Cluster_;
     
   run;
 
@@ -361,7 +357,7 @@
 
   ** Create project and building geocode data sets for new projects **;
 
-  %let geo_vars = Ward2012 Ward 2022 Anc2012 Psa2012 Geo2010 GeoBg2020 GeoBlk2020 Cluster_2017 Cluster_tr2000 Cluster_tr2000_name Zip;
+  %let geo_vars = Ward2012 Ward2022 Anc2012 Psa2012 Geo2010 GeoBg2020 GeoBlk2020 Cluster_2017 Cluster_tr2000 Cluster_tr2000_name Zip;
 
   data 
     work.Building_geocode_a
