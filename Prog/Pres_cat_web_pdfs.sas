@@ -90,17 +90,17 @@
       style(header)={fontsize=2}
       style(column)={fontsize=2};
     column 
-      Ward2012
+      Ward2022
       Anc2012
       Psa2012
-      Geo2010
-      Cluster_tr2000
+      Geo2020
+      Cluster2017
     ;
-    define Ward2012 / ' ' display;
+    define Ward2022 / ' ' display;
     define Anc2012 / ' ' display;
     define Psa2012 / ' ' display;
-    define Geo2010 / ' ' display;
-    define Cluster_tr2000 / ' ' format=$CLUS00F. display;
+    define Geo2020 / ' ' display;
+    define Cluster2017 / ' ' format=$CLUS17F. display;
   run;
 
   proc report data=Project list nowd
