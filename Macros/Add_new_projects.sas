@@ -35,7 +35,7 @@
     input_file_pre=&input_file_pre,
     input_path=&input_path
   )
-  
+/**************  TEMPORARILY COMMENT OUT CODE FOR TESTING
   ** Update PresCat.Subsidy **;
   
   %Add_new_projects_subsidy( 
@@ -59,7 +59,7 @@
   run;
   
   title2;
-
+**********************/
 %mend Add_new_projects;
 
 /** End Macro Definition **/
