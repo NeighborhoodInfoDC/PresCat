@@ -1,3 +1,25 @@
+/**************************************************************************
+ Program:  Update_LIHTC_ID.sas
+ Library:  PresCat
+ Project:  Urban-Greater DC
+ Author:   Peter Tatian 
+ Created:  08/12/2022
+ Version:  SAS 9.4
+ Environment:  Local Windows session (desktop)
+ GitHub issue: #318 
+  
+ Description: Update LIHTC Project IDs in catalog from old format (DCB + 4 digit year + 3 digit number
+ with leading zeroes) to new format (DCB + 4 digit year + 4 digit number with leading zeroes)
+
+ Modifications:
+**************************************************************************/
+
+%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
+
+** Define libraries **;
+%DCData_lib( PresCat )
+
+
 data Subsidy;    /** This is the temporary data set we will create **/
 
   set Prescat.Subsidy;   /** Read in the existing Subsidy data set **/
