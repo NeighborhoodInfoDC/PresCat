@@ -596,18 +596,59 @@
 
   title2;
   
+
   ** Parcel **;
-/****************** TEMPORARY COMMENT OUT *******/
-%MACRO SKIP; 
+
+  proc sort data=all_parcels out=all_parcels_sorted nodupkey;
+    by ssl nlihc_id;
+  run;
+
+  proc sort data=Mar.Address_ssl_xref (where=(not(missing(address_id)))) out=Address_ssl_xref_nodup nodupkey;
+    by ssl;
+  run;
+
+data Parcel_a;
+
+  merge
+    all_parcels_sorted
+      (in=in1)
+    RealProp.Parcel_base 
+      (keep=ssl ui_proptype saledate in_last_ownerpt ownerpt_extractdat_last
+       rename=(ui_proptype=Parcel_type saledate=Parcel_owner_date ownerpt_extractdat_last=Parcel_Info_Source_Date)
+       in=in_Parcel_base)
+    RealProp.Parcel_geo 
+      (keep=ssl x_coord y_coord
+       rename=(x_coord=Parcel_x y_coord=Parcel_y))
+    RealProp.Parcel_base_who_owns
+      (keep=ssl Ownername_full Ownercat
+       rename=(ownername_full=Parcel_owner_name Ownercat=Parcel_owner_type))
+    Address_ssl_xref_nodup (keep=ssl address_id rename=(address_id=parcel_address_id));
+  by ssl;
+  
+  if in1;
+  
+  if Parcel_x = 0 then Parcel_x = .u;
+  if Parcel_y = 0 then Parcel_y = .u;
+  
+  if not in_Parcel_base then do;
+    %warn_put( msg="SSL not found in Parcel_base; will not be saved. " nlihc_id= ssl= )
+    delete;
+  end;
+
+  format nlihc_id ;
+  informat _all_ ;
+
+run;
+
+proc sort data=Parcel_a;
+  by nlihc_id ssl;
+run;
+
   data Parcel;
   
     set
       PresCat.Parcel
-      Ssl_by_owner
-        (keep=nlihc_id ssl in_last_ownerpt bldg_address_id parcel_info_source_date
-              parcel_owner_date parcel_owner_name parcel_owner_type parcel_type
-              parcel_x parcel_y
-         rename=(bldg_address_id=parcel_address_id));
+      Parcel_a;
     by nlihc_id ssl;
     
     informat _all_ ;
@@ -642,8 +683,6 @@
   run;
   
   title2;
-
-%MEND SKIP;
 
 %mend Add_new_projects_geocode;
 
