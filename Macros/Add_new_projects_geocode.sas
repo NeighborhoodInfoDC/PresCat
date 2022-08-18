@@ -348,8 +348,8 @@
 
   ** Create project and building geocode data sets for new projects **;
 
-  %let geo_vars = Anc2012 Cluster2017 Cluster_tr2000 Cluster_tr2000_name Geo2010 GeoBg2010 GeoBlk2010 
-                  Geo2020 GeoBg2020 GeoBlk2020 Psa2012 ssl Ward2012 Ward2022 Zip;
+  %let geo_vars = Anc2012 Cluster2017 Cluster_tr2000 Cluster_tr2000_name Geo2010  
+                  Geo2020 GeoBg2020 GeoBlk2020 Psa2012 ssl Ward2012 Ward2022;
 
   proc sort data=all_addresses nodupkey;
     by address_id nlihc_id;
@@ -361,7 +361,7 @@
 
   data 
     work.Building_geocode_a
-      (keep=nlihc_id address_id Proj_Name &geo_vars marid Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre bldg_zip
+      (keep=nlihc_id address_id Proj_Name &geo_vars Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre bldg_zip
             bldg_units_mar bldg_image_url bldg_Streetview_url ssl
        rename=(address_id=Bldg_address_id));
       
