@@ -103,7 +103,7 @@
     merge 
     New_nlihc_id (keep=nlihc_id in=isNew)
     Project_units_tot (rename=(Units_tot=Proj_units_tot))
-  	Project_geocode /*Status*/
+  	Project_geocode (drop=Proj_units_mar)
   	Project_Subsidy_update /*(keep=Nlihc_id Proj_Units_Assist_: Subsidy_Start_: Subsidy_End_: Subsidized)*/
     Project_yb
     Project_owner_nodup;
@@ -141,53 +141,6 @@
     
     Update_Dtm = datetime();
     
-    label
-      NLIHC_ID = "Preservation Catalog project ID"
-      Status = "Project is active"
-      Subsidized = "Project is subsidized"
-      Category_code = "Preservation Catalog project category"
-      Cat_At_Risk = "Project at risk"
-      Cat_Expiring = "Project has upcoming expiring subsidy"
-      Cat_Failing_Insp = "Project has failed recent REAC inspection"
-      Cat_More_Info = "Project flagged for gathering more information"
-      Cat_Lost = "Lost affordable housing"
-      Cat_Replaced = "Replaced affordable housing"
-      Proj_Name = "Project name"
-      Proj_Addre = "Project main address"
-      Proj_City = "Project city"
-      Proj_ST = "Project state"
-      Proj_Zip = "Project ZIP code"
-      Proj_Units_Tot = "Total housing units in project"
-      Proj_Units_Assist_Min = "Total assisted housing units in project (minimum)"
-      Proj_Units_Assist_Max = "Total assisted housing units in project (maximum)"
-      Subsidy_Start_First = "First subsidy start date"
-      Subsidy_Start_Last = "Last subsidy start date"
-      Subsidy_End_First = "First subsidy end date"
-      Subsidy_End_Last = "Last subsidy end date"
-      Ward2012 = 'Ward (2012)'
-	  Ward2022 = 'Ward (2022)'
-      Anc2012 = 'Advisory Neighborhood Commission (2012)'
-      Psa2012 = 'Police Service Area (2012)'
-      Geo2010 = 'Full census tract ID (2010): ssccctttttt'
-	  Geo2020 = 'Full census tract ID (2020): ssccctttttt'
-	  GeoBg2020 = 'Full census block group ID (2020): sscccttttttb'
-	  GeoBlk2020 = 'Full census block ID (2020): sscccttttttbbbb'
-      Cluster_tr2000 = 'Neighborhood cluster (tract-based, 2000)'
-      Cluster_tr2000_name = 'Neighborhood cluster names (tract-based, 2000)'
-	  Cluster_2017 = 'Neighborhood cluster (tract-based, 2017)'
-      Zip = 'ZIP code (5 digit)'
-      Proj_image_url = 'OCTO property image URL'
-      Proj_streetview_url = 'Google Street View URL'
-      Proj_address_id = 'Project MAR address ID'
-      Proj_x = 'Project longitude (MD State Plane Coord., NAD 1983 meters)'
-      Proj_y = 'Project latitude (MD State Plane Coord., NAD 1983 meters)'
-      Proj_lat = 'Project latitude'
-      Proj_lon = 'Project longitude'
-      Bldg_count = 'Number of buildings for project'
-      Update_Dtm = "Datetime of last project update"
-      PBCA = "Performance-Based Contract Administrator Program property"
-    ;
-
     format Status $Status. Category_code $Categry. 
       Subsidized Cat_At_Risk Cat_Expiring Cat_Failing_Insp Cat_More_Info Cat_Lost Cat_Replaced PBCA dyesno.
       Update_Dtm datetime16.
