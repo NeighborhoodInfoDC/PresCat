@@ -361,7 +361,7 @@
 
   data 
     work.Building_geocode_a
-      (keep=nlihc_id address_id Proj_Name &geo_vars marid Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre zip
+      (keep=nlihc_id address_id Proj_Name &geo_vars marid Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre bldg_zip
             bldg_units_mar bldg_image_url bldg_Streetview_url ssl
        rename=(address_id=Bldg_address_id));
       
