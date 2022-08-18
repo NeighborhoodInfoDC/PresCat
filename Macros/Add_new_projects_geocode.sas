@@ -203,11 +203,6 @@
     by marid;
   run;
 
-/*****************************************************************************
-  FIX THIS SECTION TO MERGE GEOGRAPHY VARS FROM ADDRESS_POINTS DATA SET, 
-  RATHER THAN USING VALUES FROM THE INPUT GEOCODING FILE. 
-******************************************************************************/
-
   data New_Proj_Geocode;
 
     merge 
@@ -282,240 +277,127 @@
       drop firstproj nlihc_num nlihc_sans nlihc_hold lastid _drop_constant;
   run;
 
-  **Merge project info and address info for new projects**;
+  ** Create project name format **;
 
-  data DC_info_geocode_mar;
-  
-    set New_Proj_Geocode;
-    
-    format _all_ ;
-    informat _all_ ;
-    
-    ** Reformat addresses **;
+  %Data_to_format(
+  FmtLib=work,
+  FmtName=$nlihc_id_to_proj_name,
+  Data=New_Proj_Geocode,
+  Value=nlihc_id,
+  Label=proj_name,
+  OtherLabel="",
+  Print=N,
+  Contents=N
+  )
 
-    %address_clean( MAR_MATCHADDRESS, MAR_rMATCHADDRESS );
-    
-    ** Standard geos **;
-    
-    length Ward2012 $ 1;
-    
-    Ward2012 = substr( Ward_2012, 6, 1 );
-    
-    format Ward2012 $ward12a.;
+  ** Compile full lists of addresses and parcels for each project **;
 
-    length Anc2012 $ 2;
-    
-    Anc2012 = substr( Anc_2012, 5, 2 );
-    
-    format Anc2012 $anc12a.;
-    
-    length Psa2012 $ 3;
-    
-    Psa2012 = substr( Psa, 21, 3 ); 
-    
-    format Psa2012 $psa12a.;
-    
-    length Geo2010 $ 11;
-    
-    if Census_tract ~= . then Geo2010 = "11001" || put( Census_tract, z6. );
-    
-    format Geo2010 $geo10a.;
+  proc sql noprint;
 
-    length Geo2020 $ 11;
-    
-    if Census_tract ~= . then Geo2020 = "11001" || put( Census_tract, z6. );
-    
-    format Geo2020 $geo20a.;
+    /** Match geocoded address IDs with MAR address-parcel crosswalk **/
+    create table A as 
+      select distinct New.nlihc_id, New.Proj_name, New.Bldg_addre, coalesce( New.Marid, xref.address_id ) as address_id, xref.lot_type, xref.ssl as xref_ssl from 
+  	  New_proj_geocode as New left join
+  	  Mar.Address_ssl_xref as xref
+  	  on New.Marid = xref.address_id
+  	  where New.Mar_score > 90
+  	  order by nlihc_id, address_id, xref_ssl;
 
-    ** Note: This is not technically the right way to create the 2000 clusters, 
-    **       but we will soon switch to new clusters so this will be obsolete; 
-    
-    length Cluster_tr2000 $ 2 Cluster_tr2000_name $ 80;
-        
-    if Cluster_ ~= "" then Cluster_tr2000 = put( 1 * substr( Cluster_, 9, 2 ), z2. );
-    
-    format Cluster_tr2000 $clus00a.;
-    
-    length Zip $ 5;
-    
-    if not( missing( MAR_ZIPCODE ) ) then Zip = put( MAR_ZIPCODE, z5.0 );
-    else Zip = put( Bldg_zip, z5.0 );
-    
-    format Zip $zipa.;
+    /** Add property owner name and category **/ 
+    create table B as
+      select A.*, Who.ssl as Who_ssl, Who.ownername_full, Who.ownercat from
+  	A left join
+  	Realprop.Parcel_base_who_owns as Who
+  	on Xref_ssl = Who.ssl
+  	order by nlihc_id, address_id, Xref_ssl;
 
-    ** Cluster names **;
-    
-    Cluster_tr2000_name = put( Cluster_tr2000, $clus00b. );
+    /** Add parcels with same owner names **/
+    create table C as
+      select B.*, Who.ssl as Who_ssl2, Who.ownername_full from 
+  	B left join
+  	Realprop.Parcel_base_who_owns as Who
+  	on B.ownername_full = Who.ownername_full
+  	where B.ownername_full ~= "" and B.ownercat in ( '010', '020', '030', '111', '115' )
+  	order by nlihc_id, Address_id, Who.ssl;
 
-    drop Ward_2012 ANC_2012 PSA Census_tract Cluster_;
-    
-  run;
+    /** Compile full list of parcel **/
+    create table all_parcels as
+      select C.nlihc_id, C.who_ssl2 as ssl from C
+      union
+      select A.nlihc_id, A.xref_ssl as ssl from A
+  	order by nlihc_id, ssl;
 
-  proc sort data=DC_info_geocode_mar;
-    by nlihc_id MAR_rMATCHADDRESS;
-  run;
+    /** Match full parcel list with address-parcel crosswalk to get address IDs **/
+    create table D as
+      select distinct all_parcels.nlihc_id, coalesce( all_parcels.ssl, xref.ssl ) as ssl, xref.address_id from
+  	all_parcels left join
+  	Mar.Address_ssl_xref as xref
+  	on all_parcels.ssl = xref.ssl
+  	where not( missing( all_parcels.ssl ) or missing( xref.ssl ) )
+  	order by nlihc_id, ssl, address_id;
+
+    /** Compile full list of address IDs **/
+    create table all_addresses as
+      select D.nlihc_id, D.address_id from D
+      union
+      select A.nlihc_id, A.address_id from A
+  	where not( missing( address_id ) )
+  	order by nlihc_id, address_id;
+
+  quit;
 
   ** Create project and building geocode data sets for new projects **;
 
-  %let geo_vars = Ward2012 Ward2022 Anc2012 Psa2012 Geo2010 GeoBg2020 GeoBlk2020 Cluster_2017 Cluster_tr2000 Cluster_tr2000_name Zip;
+  %let geo_vars = Anc2012 Cluster2017 Cluster_tr2000 Cluster_tr2000_name Geo2010 GeoBg2010 GeoBlk2010 
+                  Geo2020 GeoBg2020 GeoBlk2020 Psa2012 ssl Ward2012 Ward2022 Zip;
+
+  proc sort data=all_addresses nodupkey;
+    by address_id nlihc_id;
+  run;
+
+  proc sort data=New_proj_geocode out=New_proj_geocode_addr_srt;
+    by marid;
+  run;
 
   data 
     work.Building_geocode_a
-      (keep=nlihc_id Proj_Name &geo_vars marid Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre zip
-            image_url Streetview_url ssl_std
-       rename=(marid=Bldg_address_id Zip=Bldg_zip image_url=Bldg_image_url Streetview_url=Bldg_streetview_url
-               ssl_std=Ssl));
+      (keep=nlihc_id address_id Proj_Name &geo_vars marid Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre zip
+            bldg_units_mar bldg_image_url bldg_Streetview_url ssl
+       rename=(address_id=Bldg_address_id));
       
-    set DC_info_geocode_mar (drop=bldg_addre);
-    by nlihc_id;
-    
-    length Ward2012x $ 1;
-    
-    Ward2012x = left( Ward2012 );
-    
-    length
-      Ssl_std $ 17;
-    
-    Ssl_std = left( Ssl );
-    
-    Bldg_x = MAR_XCOORD;
-    Bldg_y = MAR_YCOORD;
-    Bldg_lon = MAR_LONGITUDE;
-    Bldg_lat = MAR_LATITUDE;
-    Bldg_addre = MAR_rMATCHADDRESS;
-    
-    label
-      Ward2012x = "Ward (2012)"
-	  Ward2022 = "Ward (2022)"
-      Ssl_std = "Property identification number (square/suffix/lot)"
-      Proj_Name = "Project name"
-      NLIHC_ID = "Preservation Catalog project ID"
-      marid = "MAR address ID"
-      streetview_url = "Google Street View URL"
-      Anc2012 = "Advisory Neighborhood Commission (2012)"
-      Psa2012 = "Police Service Area (2012)"
-      Geo2010 = "Full census tract ID (2010): ssccctttttt"
-	  Geo2020 = "Full census tract ID (2020): ssccctttttt"
-	  GeoBg2020 = 'Full census block group ID (2020): sscccttttttb'
-	  GeoBlk2020 = 'Full census block ID (2020): sscccttttttbbbb'
-      Cluster_tr2000 = "Neighborhood cluster (tract-based, 2000)"
-      Cluster_tr2000_name = "Neighborhood cluster names (tract-based, 2000)"
-	  Cluster_2017 = 'Neighborhood cluster (tract-based, 2017)'
-      zip = "ZIP code (5 digit)"
-      image_url = "OCTO property image URL"
-      Bldg_addre = "Building address"
-      Bldg_x = "Building longitude (MD State Plane Coord., NAD 1983 meters)"
-      Bldg_y = "Building latitude (MD State Plane Coord., NAD 1983 meters)"
-      Bldg_lon = "Building longitude"
-      Bldg_lat = "Building latitude";
-    
-    format Ward2012x $ward12a.;
-    format nlihc_id ;
-    
-    rename Ward2012x = Ward2012;
-    drop Ward2012;
-    
-  run;
-  
-  ** Find related parcels by using property owner names **;
+    merge 
+      all_addresses (in=in1)
+      Mar.Address_points_view 
+       (rename=(
+          fulladdress=bldg_addre latitude=bldg_lat longitude=bldg_lon active_res_occupancy_count=bldg_units_mar
+		  x=bldg_x y=bldg_y zip=bldg_zip 
+          ))
+      New_proj_geocode_addr_srt 
+        (keep=marid image_url streetview_url 
+         rename=(marid=address_id image_url=bldg_image_url streetview_url=bldg_streetview_url))
+    ;
+    by address_id;
 
-  proc sql noprint;
+	if in1;
 
-    create table Ssl_by_owner as
-    select coalesce( Parcel.Ownername, Owners.Ownername ) as Ownername, Owners.Nlihc_id, 
-      Owners.Bldg_address_id, Owners.Proj_name, Parcel.ssl, Parcel.In_last_ownerpt, Parcel.ui_proptype as Parcel_type,
-      Parcel.ownerpt_extractdat_last as Parcel_info_source_date, Parcel.saledate as Parcel_owner_date, 
-      Parcel.ownercat as Parcel_owner_type, 
-      Parcel.ownername_full as Parcel_owner_name, Parcel.x_coord as Parcel_x, Parcel.y_coord as Parcel_y
-    from (
-      /** Parcel characteristics **/
-      select Parcel_base.*, Who_owns.ssl, Who_owns.ownercat, Who_owns.ownername_full,
-        Geo.ssl, Geo.x_coord, Geo.y_coord
-      from
-      RealProp.Parcel_base as Parcel_base
-      left join
-      RealProp.Parcel_base_who_owns as Who_owns
-      on Parcel_base.ssl = Who_owns.ssl
-      left join
-      Realprop.Parcel_geo as Geo
-      on Parcel_base.ssl = Geo.ssl
-    ) as Parcel 
-    left join (
-      /** List of property owners **/
-      select Bldg.Nlihc_id, coalesce( Bldg.SSL, Parcel.SSL ) as SSL, Bldg.Bldg_address_id, 
-        Bldg.Proj_name, Parcel.Ownername
-      from Building_geocode_a as Bldg
-      left join
-      Realprop.Parcel_base as Parcel
-      on Bldg.SSL = Parcel.SSL ) as Owners
-    on upcase( Parcel.Ownername ) = upcase( Owners.Ownername )
-    where not( missing( Owners.Nlihc_id ) ) and not ( missing( Owners.Ownername ) ) and
-      Parcel.ownercat not in ( '040', '045', '050', '060', '070', '080', '090', '100', '120', '130' )
-    order by nlihc_id, ssl;
-   
-  quit;
-  
-  /*
-  title2 'SSL_BY_OWNER';
+	length Proj_name $ 80;
 
-  proc print data=ssl_by_owner;
-    by nlihc_id;
-    id nlihc_id ssl;
-    var ownername Parcel_owner_type;
-  run;
-  
-  title2;
-  */
-  
-  ** Find additional addresses using updated parcel list **;
-  
-  proc sql noprint;
-    create table Building_geocode_b as
-    select coopfulla.*, parcel.ssl, parcel.in_last_ownerpt, parcel.ownername
-    from (
-      select distinct bldgaddr.nlihc_id, bldgaddr.Proj_name, coalesce( bldgaddr.address_id, addr.address_id ) as Bldg_address_id, 
-        addr.fulladdress as Bldg_addre, addr.ssl, addr.active_res_occupancy_count,
-        anc2012, cluster_tr2000, geo2010, Geo2020, GeoBg2020, GeoBlk2020, psa2012, ward2012, ward2022, latitude as Bldg_lat, longitude as Bldg_lon, 
-        x as Bldg_x, y as Bldg_y, zip as Bldg_zip
-      from (  
-        select Ssl_by_owner.nlihc_id, Ssl_by_owner.Proj_name, xref.address_id, coalesce( Ssl_by_owner.ssl, xref.ssl ) as ssl 
-        from Ssl_by_owner 
-        full join
-        Mar.Address_ssl_xref as xref
-        on xref.ssl = Ssl_by_owner.ssl
-        where not( missing( Ssl_by_owner.nlihc_id ) or missing( xref.address_id ) ) ) as bldgaddr
-      left join
-      Mar.Address_points_view as addr
-      on bldgaddr.address_id = addr.address_id ) as coopfulla
-    left join
-    RealProp.Parcel_base as parcel
-    on coopfulla.ssl = parcel.ssl
-    order by nlihc_id, Bldg_address_id;
+	Proj_name = left( put( nlihc_id, $nlihc_id_to_proj_name. ) );
+
+    ** Cluster names **;
     
-  quit;
+    length Cluster_tr2000_name $ 80;
+	    
+    Cluster_tr2000_name = left( put( Cluster_tr2000, $clus00b. ) );
 
-  /*
-  title2 'BUILDING_GEOCODE_B';
-
-  proc print data=building_geocode_b;
-    by nlihc_id;
-    id nlihc_id Bldg_address_id;
-    var Bldg_addre;
-  run;
-  
-  title2;
-  */
-  
-  data Building_geocode_c;
-  
-    merge Building_geocode_a Building_geocode_b;
-    by nlihc_id Bldg_address_id;
+	format _all_ ;
+	informat _all_ ;
     
   run;
   
   ** Check new projects for pre-existing addresses in Catalog **;
   
-  proc sort data=Building_geocode_c out=Building_geocode_c1;
+  proc sort data=Building_geocode_a out=Building_geocode_c1;
     by bldg_address_id nlihc_id;
   run;
 
@@ -567,7 +449,6 @@
   run;
   
   title2; 
-  
 
   **remove projects from geocode datasets that are no longer in project dataset**;
 
@@ -609,14 +490,13 @@
 
   ** merge new geocode files onto existing geocode files**;
   
-  proc sort data=Building_geocode_c;
+  proc sort data=Building_geocode_a;
     by nlihc_id Bldg_addre;
   run;
 
   data Building_geocode;
-    set Building Building_geocode_c;
+    set Building Building_geocode_a;
     by nlihc_id Bldg_addre;
-    drop ACTIVE_RES_OCCUPANCY_COUNT in_last_ownerpt OWNERNAME;
   run;
 
   title2 '********************************************************************************************';
@@ -704,10 +584,10 @@
   run;
 
   title2 '********************************************************************************************';
-  title3 '** Building_geocode_c: Check for duplicate addresses in projects being added';
+  title3 '** Building_geocode_a: Check for duplicate addresses in projects being added';
 
   %Dup_check(
-    data=Building_geocode_c,
+    data=Building_geocode_a,
     by=Bldg_address_id,
     id=nlihc_id Proj_name Bldg_addre 
   )
@@ -717,7 +597,8 @@
   title2;
   
   ** Parcel **;
-  
+/****************** TEMPORARY COMMENT OUT *******/
+%MACRO SKIP; 
   data Parcel;
   
     set
@@ -761,6 +642,8 @@
   run;
   
   title2;
+
+%MEND SKIP;
 
 %mend Add_new_projects_geocode;
 
