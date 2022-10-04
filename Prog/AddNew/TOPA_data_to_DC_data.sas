@@ -19,7 +19,7 @@
 %DCData_lib( DHCD )
 %DCData_lib( MAR )
 
-%let dsname="\\sas1\dcdata\Libraries\PresCat\Raw\TOPA\TOPA_DOPA_5+.csv";
+%let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA_DOPA_5+.csv";
 filename fixed temp;
 /** Remove carriage return and line feed characters within quoted strings **/
 /*'0D'x is the hexadecimal representation of CR and
@@ -61,7 +61,7 @@ proc import datafile=fixed
 	 guessingrows=max;
 run;
 
-proc print data=TOPA_database; 
+proc print data=TOPA_database (obs=5); 
 run; 
 
 %Rcasd_address_parse(
@@ -69,11 +69,11 @@ run;
 	out=TOPA_addresses,
 	id=ID,
 	addr=All_street_addresses,
-	keepin=CASD_Report_week_ending_date Offer_of_Sale_date__usually_DHCD
+	keepin=CASD_Report_week_ending_date Offer_of_Sale_date__usually_DHCD,
+	keepout=CASD_Report_week_ending_date Offer_of_Sale_date__usually_DHCD
 )
 
-proc print data=TOPA_addresses; 
-run; 
+%File_info( data=TOPA_addresses, printobs=40 )
 
 %DC_mar_geocode(
 	data=TOPA_addresses,
@@ -82,8 +82,7 @@ run;
 	geo_match=yes
 )
 
-proc print data=TOPA_geocoded; 
-run; 
+%File_info( data=TOPA_geocoded, printobs=5 )
 
 /*  %Finalize_data_set( */
 /*    /** Finalize data set parameters **/*/
