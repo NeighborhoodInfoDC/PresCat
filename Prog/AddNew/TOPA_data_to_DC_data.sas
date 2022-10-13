@@ -18,6 +18,7 @@
 %DCData_lib( PresCat )
 %DCData_lib( DHCD )
 %DCData_lib( MAR )
+%DCData_lib( RealProp )
 
 %let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA_DOPA_5+.csv";
 filename fixed temp;
@@ -83,6 +84,24 @@ run;
 )
 
 %File_info( data=TOPA_geocoded, printobs=5 )
+
+proc sql noprint;
+  create table TOPA_SSL as   /** Name of output data set to be created (Parcel_a) **/
+  select
+    coalesce( TOPA_geocoded.ADDRESS_ID, Xref.address_id ) as address_id,    /** Matching variables **/
+    TOPA_geocoded.ID, /** Other vars you want to keep from the two data sets, separated by commas **/
+	TOPA_geocoded.CASD_Report_week_ending_date, TOPA_geocoded.Offer_of_Sale_date__usually_DHCD,
+	TOPA_geocoded.Anc2012, TOPA_geocoded.cluster2017, TOPA_geocoded.Geo2020, 
+	TOPA_geocoded.GeoBg2020, TOPA_geocoded.GeoBlk2020, TOPA_geocoded.Psa2012,
+	TOPA_geocoded.VoterPre2012, TOPA_geocoded.Ward2022, 
+    Xref.ssl
+    from TOPA_geocoded (where=(not(missing(ADDRESS_ID)))) as TOPA_geocoded
+      left join Mar.Address_ssl_xref as xref    /** Left join = only keep obs that are in TOPA_geocoded **/
+  on TOPA_geocoded.ADDRESS_ID = Xref.address_id   /** This is the condition you are matching on **/
+  order by TOPA_geocoded.ID, Xref.ssl;    /** Optional: sorts the output data set **/
+quit;
+
+%File_info( data=TOPA_SSL, printobs=5 )
 
 /*  %Finalize_data_set( */
 /*    /** Finalize data set parameters **/*/
