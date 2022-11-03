@@ -20,6 +20,7 @@
 %DCData_lib( MAR )
 %DCData_lib( RealProp )
 
+** Download and read TOPA dataset into SAS dataset**;
 %let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA_DOPA_5+.csv";
 filename fixed temp;
 /** Remove carriage return and line feed characters within quoted strings **/
@@ -55,27 +56,39 @@ run;
 
 proc import datafile=fixed
             dbms=csv
-            out=TOPA_database
+            out=TOPA_database1
             replace;
 		
      getnames=yes;
 	 guessingrows=max;
 run;
 
-proc print data=TOPA_database (obs=5); 
+proc print data=TOPA_database1 (obs=5); 
 run; 
 
+data TOPA_database;
+    set TOPA_database1;
+    CASD_date = input(CASD_Report_week_ending_date, MMDDYY10.);
+    format CASD_date MMDDYY10.;
+    drop CASD_Report_week_ending_date;
+    offer_sale_date = input(Offer_of_Sale_date__usually_DHCD, MMDDYY10.);
+    format offer_sale_date MMDDYY10.;
+    drop Offer_of_Sale_date__usually_DHCD;
+run;
+
+**parse out individual addresses from TOPA dataset**;
 %Rcasd_address_parse(
 	data=TOPA_database,
 	out=TOPA_addresses,
 	id=ID,
 	addr=All_street_addresses,
-	keepin=CASD_Report_week_ending_date Offer_of_Sale_date__usually_DHCD,
-	keepout=CASD_Report_week_ending_date Offer_of_Sale_date__usually_DHCD
+	keepin=CASD_date offer_sale_date,
+	keepout=CASD_date offer_sale_date
 )
 
 %File_info( data=TOPA_addresses, printobs=40 )
 
+** adding SSLs and GEO ids to the address list**;
 %DC_mar_geocode(
 	data=TOPA_addresses,
 	staddr=Address,
@@ -85,12 +98,13 @@ run;
 
 %File_info( data=TOPA_geocoded, printobs=5 )
 
+** MAR.address_ssl_xref to identify other parcels to match to address **;
 proc sql noprint;
-  create table TOPA_SSL as   /** Name of output data set to be created (Parcel_a) **/
+  create table TOPA_SSL as   /** Name of output data set to be created **/
   select
     coalesce( TOPA_geocoded.ADDRESS_ID, Xref.address_id ) as address_id,    /** Matching variables **/
     TOPA_geocoded.ID, /** Other vars you want to keep from the two data sets, separated by commas **/
-	TOPA_geocoded.CASD_Report_week_ending_date, TOPA_geocoded.Offer_of_Sale_date__usually_DHCD,
+	TOPA_geocoded.CASD_date, TOPA_geocoded.offer_sale_date,
 	TOPA_geocoded.Anc2012, TOPA_geocoded.cluster2017, TOPA_geocoded.Geo2020, 
 	TOPA_geocoded.GeoBg2020, TOPA_geocoded.GeoBlk2020, TOPA_geocoded.Psa2012,
 	TOPA_geocoded.VoterPre2012, TOPA_geocoded.Ward2022, 
@@ -102,6 +116,30 @@ proc sql noprint;
 quit;
 
 %File_info( data=TOPA_SSL, printobs=5 )
+
+%File_info( data=RealProp.Sales_master, printobs=5 )
+
+** match property sales records in realprop.sales_master to TOPA addresses **;
+proc sql noprint;
+  create table TOPA_realprop as   /** Name of output data set to be created **/
+  select
+    coalesce( TOPA_SSL.SSL, RealProp.SSL ) as SSL, /** Matching variables **/
+	/** obs where sale date is after the later of CASD data and offer of sale data **/
+    TOPA_SSL.ID, /** Other vars you want to keep from the two data sets, separated by commas **/
+	TOPA_SSL.CASD_date, TOPA_SSL.offer_sale_date,
+	TOPA_SSL.Anc2012, TOPA_SSL.cluster2017, TOPA_SSL.Geo2020, 
+	TOPA_SSL.GeoBg2020, TOPA_SSL.GeoBlk2020, TOPA_SSL.Psa2012,
+	TOPA_SSL.VoterPre2012, TOPA_SSL.Ward2022, 
+    RealProp.SSL, RealProp.SALEPRICE, RealProp.SALEDATE, RealProp.OWNERNAME, RealProp.ui_proptype,
+	RealProp.address3_prev, RealProp.address3, RealProp.address1_prev
+    from TOPA_SSL (where=(not(missing(SSL)))) as TOPA_SSL
+      left join RealProp.Sales_master as realprop    /** Left join = only keep obs that are in TOPA_geocoded **/
+  on TOPA_SSL.SSL = realprop.SSL   /** This is the condition you are matching on **/
+  where SALEDATE > max(CASD_date, offer_sale_date) /** obs where sale date is after the later of CASD data and offer of sale data **/
+  order by TOPA_SSL.ID, realprop.SSL;    /** Optional: sorts the output data set **/
+quit;
+
+%File_info( data=TOPA_realprop, printobs=5 )
 
 /*  %Finalize_data_set( */
 /*    /** Finalize data set parameters **/*/
