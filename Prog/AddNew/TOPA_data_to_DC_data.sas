@@ -76,8 +76,8 @@ run;
 
 **show missing dates in data**;
 proc print data=TOPA_database; 
-where CASD_date <= 0 OR offer_sale_date <= 0;
-var ID SSL CASD_date offer_sale_date; 
+	where CASD_date <= 0 OR offer_sale_date <= 0;
+	var ID SSL CASD_date offer_sale_date; 
 run; 
 
 **parse out individual addresses from TOPA dataset**;
@@ -158,6 +158,9 @@ ods listing close;  /** Close the regular listing destination **/
 
 proc print data=TOPA_realprop;  /** Create the output for the workbook **/
   where year( casd_date ) = 2007;  /** Only use 2007 data **/
+  var ID SSL CASD_date offer_sale_date SALEPRICE saleprice_prev	SALEDATE saledate_prev 
+	Ownername_full ownername_full_prev ui_proptype ADDRESS1 ADDRESS2 address3
+	address1_prev address2_prev address3_prev; /** drop geographies **/
   by id;   /** BY groups (worksheets) will be for each TOPA ID **/
 run;
 
