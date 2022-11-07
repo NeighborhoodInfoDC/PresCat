@@ -74,6 +74,7 @@ data TOPA_database;
     format offer_sale_date MMDDYY10.;
 run;
 
+**show missing dates in data**;
 proc print data=TOPA_database; 
 where CASD_date <= 0 OR offer_sale_date <= 0;
 var ID SSL CASD_date offer_sale_date; 
@@ -143,6 +144,25 @@ proc sql noprint;
 quit;
 
 %File_info( data=TOPA_realprop, printobs=5 )
+
+
+** Export 2007 TOPA/real property data **;
+
+ods tagsets.excelxp   /** Open the excelxp destination **/
+  file="C:\Users\eburton\Documents\GitHub\PresCat\Prog\AddNew\TOPA_data_to_DC_data_2007.xls"  /** This is where the output will go **/
+  style=Normal    /** This is the ODS style that will be used in the workbook **/
+  options( sheet_interval='bygroup' )   /** This creates a new worksheet for every BY group in the output **/
+;
+
+ods listing close;  /** Close the regular listing destination **/
+
+proc print data=TOPA_realprop;  /** Create the output for the workbook **/
+  where year( casd_date ) = 2007;  /** Only use 2007 data **/
+  by id;   /** BY groups (worksheets) will be for each TOPA ID **/
+run;
+
+ods tagsets.excelxp close;  /** Close the excelxp destination **/
+ods listing;   /** Reopen the listing destination **/
 
 /*  %Finalize_data_set( */
 /*    /** Finalize data set parameters **/*/
