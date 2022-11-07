@@ -70,11 +70,14 @@ data TOPA_database;
     set TOPA_database1;
     CASD_date = input(CASD_Report_week_ending_date, MMDDYY10.);
     format CASD_date MMDDYY10.;
-    drop CASD_Report_week_ending_date;
     offer_sale_date = input(Offer_of_Sale_date__usually_DHCD, MMDDYY10.);
     format offer_sale_date MMDDYY10.;
-    drop Offer_of_Sale_date__usually_DHCD;
 run;
+
+proc print data=TOPA_database; 
+where CASD_date <= 0 OR offer_sale_date <= 0;
+var ID SSL CASD_date offer_sale_date; 
+run; 
 
 **parse out individual addresses from TOPA dataset**;
 %Rcasd_address_parse(
@@ -122,7 +125,7 @@ quit;
 ** match property sales records in realprop.sales_master to TOPA addresses **;
 proc sql noprint;
   create table TOPA_realprop as   /** Name of output data set to be created **/
-  select
+  select unique 
     coalesce( TOPA_SSL.SSL, RealProp.SSL ) as SSL, /** Matching variables **/
 	/** obs where sale date is after the later of CASD data and offer of sale data **/
     TOPA_SSL.ID, /** Other vars you want to keep from the two data sets, separated by commas **/
@@ -130,8 +133,8 @@ proc sql noprint;
 	TOPA_SSL.Anc2012, TOPA_SSL.cluster2017, TOPA_SSL.Geo2020, 
 	TOPA_SSL.GeoBg2020, TOPA_SSL.GeoBlk2020, TOPA_SSL.Psa2012,
 	TOPA_SSL.VoterPre2012, TOPA_SSL.Ward2022, 
-    RealProp.SSL, RealProp.SALEPRICE, RealProp.SALEDATE, RealProp.OWNERNAME, RealProp.ui_proptype,
-	RealProp.address3_prev, RealProp.address3, RealProp.address1_prev
+    RealProp.SSL, RealProp.SALEPRICE, RealProp.saleprice_prev, RealProp.SALEDATE, RealProp.saledate_prev, RealProp.Ownername_full, RealProp.ownername_full_prev, RealProp.ui_proptype,
+	RealProp.address1, RealProp.address2, RealProp.address3, RealProp.address1_prev, RealProp.address2_prev, RealProp.address3_prev  
     from TOPA_SSL (where=(not(missing(SSL)))) as TOPA_SSL
       left join RealProp.Sales_master as realprop    /** Left join = only keep obs that are in TOPA_geocoded **/
   on TOPA_SSL.SSL = realprop.SSL   /** This is the condition you are matching on **/
