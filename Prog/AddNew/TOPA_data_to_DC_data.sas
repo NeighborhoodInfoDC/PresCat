@@ -190,7 +190,7 @@ proc tabulate data=Topa_realprop noseps missing format=comma8.0;
     /** Columns **/
     all='All years' offer_sale_date=' '
   ;
-  format offer_sale_date year4. days_notice_to_sale days_range; 
+  format offer_sale_date year4. days_notice_to_sale days_range.; 
 run;
 
 /*  %Finalize_data_set( */
