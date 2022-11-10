@@ -148,7 +148,7 @@ quit;
 
 ** Export 2007 TOPA/real property data **;
 ods tagsets.excelxp   /** Open the excelxp destination **/
-  file="C:\Users\eburton\Documents\GitHub\PresCat\Prog\AddNew\TOPA_data_to_DC_data_2007.xls"  /** This is where the output will go **/
+  file="&_dcdata_default_path\PresCat\Prog\AddNew\TOPA_data_to_DC_data_2007.xls"  /** This is where the output will go **/
   style=Normal    /** This is the ODS style that will be used in the workbook **/
   options( sheet_interval='bygroup' )   /** This creates a new worksheet for every BY group in the output **/
 ;
@@ -185,10 +185,10 @@ proc tabulate data=Topa_realprop noseps missing format=comma8.0;
   table 
     /** Rows **/
     n='Notices of sale filed'
-    n='Days between notice and property sale' * days_notice_to_sale=' ' 
+    n=' ' * days_notice_to_sale='Days between notice and property sale' 
     ,
     /** Columns **/
-    all='All years' offer_sale_date=' '
+    all='All years' offer_sale_date='By notice year'
   ;
   format offer_sale_date year4. days_notice_to_sale days_range.; 
 run;
