@@ -129,7 +129,8 @@ proc sql noprint;
   select unique 
     coalesce( TOPA_SSL.SSL, RealProp.SSL ) as SSL, /** Matching variables **/
 	/** obs where sale date is after the later of CASD data and offer of sale data **/
-    TOPA_SSL.ID, /** Other vars you want to keep from the two data sets, separated by commas **/
+	saledate - offer_sale_date as days_notice_to_sale,
+	TOPA_SSL.ID, /** Other vars you want to keep from the two data sets, separated by commas **/
 	TOPA_SSL.CASD_date, TOPA_SSL.offer_sale_date,
 	TOPA_SSL.Anc2012, TOPA_SSL.cluster2017, TOPA_SSL.Geo2020, 
 	TOPA_SSL.GeoBg2020, TOPA_SSL.GeoBlk2020, TOPA_SSL.Psa2012,
@@ -140,14 +141,12 @@ proc sql noprint;
       left join RealProp.Sales_master as realprop    /** Left join = only keep obs that are in TOPA_geocoded **/
   on TOPA_SSL.SSL = realprop.SSL   /** This is the condition you are matching on **/
   where SALEDATE > max(CASD_date, offer_sale_date) /** obs where sale date is after the later of CASD data and offer of sale data **/
-  order by TOPA_SSL.ID, realprop.SSL;    /** Optional: sorts the output data set **/
+  order by TOPA_SSL.ID, realprop.SALEDATE;    /** Optional: sorts the output data set **/
 quit;
 
 %File_info( data=TOPA_realprop, printobs=5 )
 
-
 ** Export 2007 TOPA/real property data **;
-
 ods tagsets.excelxp   /** Open the excelxp destination **/
   file="C:\Users\eburton\Documents\GitHub\PresCat\Prog\AddNew\TOPA_data_to_DC_data_2007.xls"  /** This is where the output will go **/
   style=Normal    /** This is the ODS style that will be used in the workbook **/
@@ -161,11 +160,38 @@ proc print data=TOPA_realprop;  /** Create the output for the workbook **/
   var ID SSL CASD_date offer_sale_date SALEPRICE saleprice_prev	SALEDATE saledate_prev 
 	Ownername_full ownername_full_prev ui_proptype ADDRESS1 ADDRESS2 address3
 	address1_prev address2_prev address3_prev; /** drop geographies **/
-  by id;   /** BY groups (worksheets) will be for each TOPA ID **/
+  by ID; /** BY groups (worksheets) will be for each TOPA ID **/
 run;
 
 ods tagsets.excelxp close;  /** Close the excelxp destination **/
 ods listing;   /** Reopen the listing destination **/
+
+proc format;
+  value days_range 
+    0 - 30 = 'Within 30 days'
+    31 - 60 = '31 - 60 days'
+    61 - 90 = '61 - 90'
+    91 - 120 = '91 - 120'
+    121 - 180 = '121 - 180'
+    181 - 240 = '181 - 240'
+     241 - 300 = '241 - 300'
+     301 - 330 = '301 - 330'
+     331 - 365 = '331 - 365'
+     366 - high = 'More than 365 days';
+run;
+
+proc tabulate data=Topa_realprop noseps missing format=comma8.0;
+  class offer_sale_date days_notice_to_sale;
+  table 
+    /** Rows **/
+    n='Notices of sale filed'
+    n='Days between notice and property sale' * days_notice_to_sale=' ' 
+    ,
+    /** Columns **/
+    all='All years' offer_sale_date=' '
+  ;
+  format offer_sale_date year4. days_notice_to_sale days_range; 
+run;
 
 /*  %Finalize_data_set( */
 /*    /** Finalize data set parameters **/*/
