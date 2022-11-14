@@ -68,6 +68,8 @@ run;
 
 data TOPA_database;
     set TOPA_database1;
+	format _all_;
+	informat _all_;
     CASD_date = input(CASD_Report_week_ending_date, MMDDYY10.);
     format CASD_date MMDDYY10.;
     offer_sale_date = input(Offer_of_Sale_date__usually_DHCD, MMDDYY10.);
@@ -97,7 +99,8 @@ run;
 	data=TOPA_addresses,
 	staddr=Address,
 	out=TOPA_geocoded, 
-	geo_match=yes
+	geo_match=yes, 
+	keep_geo= SSL Address_id Ward2012 Anc2012 cluster2017 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2022
 )
 
 %File_info( data=TOPA_geocoded, printobs=5 )
@@ -166,6 +169,7 @@ run;
 ods tagsets.excelxp close;  /** Close the excelxp destination **/
 ods listing;   /** Reopen the listing destination **/
 
+/** days format for saledate **/
 proc format;
   value days_range 
     0 - 30 = 'Within 30 days'
@@ -180,7 +184,25 @@ proc format;
      366 - high = 'More than 365 days';
 run;
 
-proc tabulate data=Topa_realprop noseps missing format=comma8.0;
+/** summarize by notice id first**/
+proc summary data=Topa_realprop;
+  by ID;
+  id ward2022;
+  var offer_sale_date days_notice_to_sale;
+  output out=Topa_realprop_by_id min=;
+run;
+
+** Export Topa_realprop_by_id notices of sales filed**;
+ods tagsets.excelxp   /** Open the excelxp destination **/
+  file="&_dcdata_default_path\PresCat\Prog\AddNew\TOPA_data_days_notice_propsales.xls"  /** This is where the output will go **/
+  style=Normal    /** This is the ODS style that will be used in the workbook **/
+  options( sheet_interval='proc' )   /** This creates a new worksheet for every BY group in the output **/
+;
+
+ods listing close;  /** Close the regular listing destination **/
+
+ods tagsets.excelxp options(sheet_name="By year");
+proc tabulate data=Topa_realprop_by_id noseps missing format=comma8.0;
   class offer_sale_date days_notice_to_sale;
   table 
     /** Rows **/
@@ -188,20 +210,51 @@ proc tabulate data=Topa_realprop noseps missing format=comma8.0;
     n=' ' * days_notice_to_sale='Days between notice and property sale' 
     ,
     /** Columns **/
-    all='All years' offer_sale_date='By notice year'
+    all='All Years' offer_sale_date='By Notice Year'
   ;
   format offer_sale_date year4. days_notice_to_sale days_range.; 
 run;
 
-/*  %Finalize_data_set( */
-/*    /** Finalize data set parameters **/*/
-/*    data=TOPA_database,*/
-/*    out=TOPA_database,*/
-/*    outlib=PresCat,*/
-/*    label="Preservation Catalog, new DC TOPA dataset",*/
-/*    sortby=CHANGE w unique identifier,*/
-/*    /** Metadata parameters **/*/
-/*    revisions=%str(New data set.),*/
-/*    /** File info parameters **/*/
-/*    printobs=10 */
-/*  )*/
+ods tagsets.excelxp options(sheet_name="By ward");
+proc tabulate data=Topa_realprop_by_id noseps missing format=comma8.0;
+  class Ward2022 days_notice_to_sale;
+  table 
+    /** Rows **/
+    n='Notices of sale filed'
+    n=' ' * days_notice_to_sale='Days between notice and property sale' 
+    ,
+    /** Columns **/
+    all='All Wards' Ward2022='By Ward (2022)'
+  ;
+  format Ward2022 $CHAR3. days_notice_to_sale days_range.; 
+run;
+
+ods tagsets.excelxp close;  /** Close the excelxp destination **/
+ods listing;   /** Reopen the listing destination **/
+
+  %Finalize_data_set( 
+    /** Finalize data set parameters **/
+    data=TOPA_database,
+    out=TOPA_database,
+    outlib=PresCat,
+    label="Preservation Catalog, new DC TOPA dataset",
+    sortby=ID,
+    /** Metadata parameters **/
+    revisions=%str(New data set.),
+    /** File info parameters **/
+    printobs=10 
+  )
+
+  %Finalize_data_set( 
+    /** Finalize data set parameters **/
+    data=Topa_realprop,
+    out=Topa_realprop,
+    outlib=PresCat,
+    label="Preservation Catalog, new DC TOPA & Real Property Sales Dataset",
+    sortby=ID SALEDATE,
+    /** Metadata parameters **/
+    revisions=%str(New data set.),
+    /** File info parameters **/
+    printobs=10 
+  )
+
