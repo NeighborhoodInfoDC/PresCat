@@ -171,8 +171,10 @@ ods listing;   /** Reopen the listing destination **/
 
 /** days format for saledate **/
 proc format;
-  value days_range 
-    0 - 30 = 'Within 30 days'
+  value days_range (notsorted)
+    . = 'Missing notice date'
+    .n = 'No sale recorded'
+     0 - 30 = 'Sale within 30 days'
     31 - 60 = '31 - 60 days'
     61 - 90 = '61 - 90'
     91 - 120 = '91 - 120'
@@ -181,8 +183,7 @@ proc format;
      241 - 300 = '241 - 300'
      301 - 330 = '301 - 330'
      331 - 365 = '331 - 365'
-     366 - high = 'More than 365 days'
-     .n = 'No sale recorded';
+     366 - high = 'More than 365 days';
 run;
 
 /** summarize by notice id first**/
@@ -195,6 +196,10 @@ run;
 
 /** add back notices dropped in real prop match **/
 
+proc sort data=Topa_database;
+  by id;
+run;
+
 proc sort data=Topa_geocoded out=Topa_geocoded_by_id nodupkey;
   by id;
 run;
@@ -202,11 +207,12 @@ run;
 data Topa_realprop_by_id_full;
 
   merge
-    Topa_geocoded_by_id (keep=id ward2022 offer_sale_date)
-    Topa_realprop_by_id (in=in2);
+    TOPA_database (keep=id offer_sale_date)
+    Topa_geocoded_by_id (keep=id ward2022)
+    Topa_realprop_by_id (in=in_realprop);
  by id;
  
- if not in2 then days_notice_to_sale = .n;
+ if not in_realprop then days_notice_to_sale = .n;
 
 run;
 
@@ -222,7 +228,8 @@ ods listing close;  /** Close the regular listing destination **/
 
 ods tagsets.excelxp options(sheet_name="By year");
 proc tabulate data=Topa_realprop_by_id_full noseps missing format=comma8.0;
-  class offer_sale_date days_notice_to_sale;
+  class offer_sale_date;
+  class days_notice_to_sale /order=data preloadfmt;
   table 
     /** Rows **/
     n='Notices of sale filed'
@@ -236,7 +243,8 @@ run;
 
 ods tagsets.excelxp options(sheet_name="By ward");
 proc tabulate data=Topa_realprop_by_id_full noseps missing format=comma8.0;
-  class Ward2022 days_notice_to_sale;
+  class Ward2022;
+  class days_notice_to_sale /order=data preloadfmt;
   table 
     /** Rows **/
     n='Notices of sale filed'
