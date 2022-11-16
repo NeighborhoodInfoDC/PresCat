@@ -114,7 +114,7 @@ proc sql noprint;
 	TOPA_geocoded.CASD_date, TOPA_geocoded.offer_sale_date,
 	TOPA_geocoded.Anc2012, TOPA_geocoded.cluster2017, TOPA_geocoded.Geo2020, 
 	TOPA_geocoded.GeoBg2020, TOPA_geocoded.GeoBlk2020, TOPA_geocoded.Psa2012,
-	TOPA_geocoded.VoterPre2012, TOPA_geocoded.Ward2022, 
+	TOPA_geocoded.VoterPre2012, TOPA_geocoded.Ward2022, TOPA_geocoded.Ward2012,
     Xref.ssl
     from TOPA_geocoded (where=(not(missing(ADDRESS_ID)))) as TOPA_geocoded
       left join Mar.Address_ssl_xref as xref    /** Left join = only keep obs that are in TOPA_geocoded **/
@@ -137,7 +137,7 @@ proc sql noprint;
 	TOPA_SSL.CASD_date, TOPA_SSL.offer_sale_date,
 	TOPA_SSL.Anc2012, TOPA_SSL.cluster2017, TOPA_SSL.Geo2020, 
 	TOPA_SSL.GeoBg2020, TOPA_SSL.GeoBlk2020, TOPA_SSL.Psa2012,
-	TOPA_SSL.VoterPre2012, TOPA_SSL.Ward2022, 
+	TOPA_SSL.VoterPre2012, TOPA_SSL.Ward2022, TOPA_SSL.Ward2012,
     RealProp.SSL, RealProp.SALEPRICE, RealProp.saleprice_prev, RealProp.SALEDATE, RealProp.saledate_prev, RealProp.Ownername_full, RealProp.ownername_full_prev, RealProp.ui_proptype,
 	RealProp.address1, RealProp.address2, RealProp.address3, RealProp.address1_prev, RealProp.address2_prev, RealProp.address3_prev  
     from TOPA_SSL (where=(not(missing(SSL)))) as TOPA_SSL
@@ -284,4 +284,31 @@ ods listing;   /** Reopen the listing destination **/
     /** File info parameters **/
     printobs=10 
   )
+
+  %Finalize_data_set( 
+    /** Finalize data set parameters **/
+    data=Topa_addresses,
+    out=Topa_addresses,
+    outlib=PresCat,
+    label="Preservation Catalog, new database with individual addresses parsed out from TOPA dataset",
+    sortby=ID,
+    /** Metadata parameters **/
+    revisions=%str(New data set.),
+    /** File info parameters **/
+    printobs=10 
+  )
+
+  %Finalize_data_set( 
+    /** Finalize data set parameters **/
+    data=Topa_ssl,
+    out=Topa_ssl,
+    outlib=PresCat,
+    label="Preservation Catalog, new database using MAR.address_ssl_xref to identify other parcels to match to addresses",
+    sortby=ID,
+    /** Metadata parameters **/
+    revisions=%str(New data set.),
+    /** File info parameters **/
+    printobs=10 
+  )
+
 
