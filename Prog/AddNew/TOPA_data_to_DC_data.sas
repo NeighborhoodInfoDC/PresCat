@@ -193,7 +193,7 @@ data Topa_realprop_by_id;
   ** Keep the first observation for each notice ID **;
   if first.ID then output; 
   ** List variables to keep in output data set **;
-  keep id offer_sale_date days_notice_to_sale SALEDATE address1 address2 address3;
+  keep id offer_sale_date days_notice_to_sale SALEDATE Ownername_full address1 address3;
 run;
 
 /** add back notices dropped in real prop match **/
@@ -271,7 +271,7 @@ ods tagsets.excelxp   /** Open the excelxp destination **/
 ods listing close;  /** Close the regular listing destination **/
 proc print data=Topa_realprop_by_id_full;  /** Create the output for the workbook **/
   where days_notice_to_sale > 365;  /** sale 365 or longer after notice **/
-  var ID offer_sale_date Ward2022 address address1 address2 address3 SALEDATE days_notice_to_sale; /** kep vars **/
+  var ID offer_sale_date Ward2022 address address1 address3 SALEDATE Ownername_full days_notice_to_sale; /** kep vars **/
 run;
 
 ods tagsets.excelxp close;  /** Close the excelxp destination **/
