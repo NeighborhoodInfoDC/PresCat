@@ -186,12 +186,14 @@ proc format;
      366 - high = 'More than 365 days';
 run;
 
-/** summarize by notice id first**/
-proc summary data=Topa_realprop;
+/** new data set for first obs to be earliest sale date**/
+data Topa_realprop_by_id;
+  set Topa_realprop;
   by ID;
-  id ward2022;
-  var offer_sale_date days_notice_to_sale;
-  output out=Topa_realprop_by_id min=;
+  ** Keep the first observation for each notice ID **;
+  if first.ID then output; 
+  ** List variables to keep in output data set **;
+  keep id offer_sale_date days_notice_to_sale SALEDATE address1 address2 address3;
 run;
 
 /** add back notices dropped in real prop match **/
@@ -208,7 +210,7 @@ data Topa_realprop_by_id_full;
 
   merge
     TOPA_database (keep=id offer_sale_date)
-    Topa_geocoded_by_id (keep=id ward2022)
+    Topa_geocoded_by_id (keep=id ward2022 address)
     Topa_realprop_by_id (in=in_realprop);
  by id;
  
@@ -254,6 +256,22 @@ proc tabulate data=Topa_realprop_by_id_full noseps missing format=comma8.0;
     all='All Wards' Ward2022='By Ward (2022)'
   ;
   format Ward2022 $CHAR3. days_notice_to_sale days_range.; 
+run;
+
+ods tagsets.excelxp close;  /** Close the excelxp destination **/
+ods listing;   /** Reopen the listing destination **/
+
+
+** Export Topa notices with no sale after 365 days**;
+ods tagsets.excelxp   /** Open the excelxp destination **/
+  file="&_dcdata_default_path\PresCat\Prog\AddNew\TOPA_data_notices_nosale_year.xls"  /** This is where the output will go **/
+  style=Normal    /** This is the ODS style that will be used in the workbook **/
+;
+
+ods listing close;  /** Close the regular listing destination **/
+proc print data=Topa_realprop_by_id_full;  /** Create the output for the workbook **/
+  where days_notice_to_sale > 365;  /** sale 365 or longer after notice **/
+  var ID offer_sale_date Ward2022 address address1 address2 address3 SALEDATE days_notice_to_sale; /** kep vars **/
 run;
 
 ods tagsets.excelxp close;  /** Close the excelxp destination **/
