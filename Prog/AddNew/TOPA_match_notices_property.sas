@@ -22,7 +22,7 @@
 
 /*export SSL data to see if same address_id for different notice ids (there are many) */
 proc export data=PresCat.topa_ssl
-    outfile="C:\Users\eburton\Documents\GitHub\PresCat\Prog\AddNew\topa_ssl.csv"
+    outfile="&_dcdata_default_path\PresCat\PresCat\Prog\AddNew\topa_ssl.csv"
     dbms=csv
     replace;
 run;
@@ -35,14 +35,26 @@ run;
 data Topa_address_ssl_realprop;
 
   merge
-    PresCat.TOPA_SSL (keep=id address_id ssl Anc2012 cluster2017 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2022 Ward2012)
-    PresCat.TOPA_realprop (keep=id ADDRESS1 ADDRESS3 Ownername_full SALEDATE offer_sale_date CASD_date days_notice_to_sale ui_proptype)
+    PresCat.TOPA_SSL (keep=id address_id ssl)
+    PresCat.TOPA_realprop (keep=id SALEDATE offer_sale_date CASD_date ADDRESS1 ADDRESS3 Ownername_full days_notice_to_sale ui_proptype Anc2012 cluster2017 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2022 Ward2012)
     PresCat.TOPA_addresses (keep =id address);
  by id;
 
 run;
 
-%File_info( data=Topa_address_ssl_realprop, printobs=5 )
+** trying to create property_id not working**;
+proc sort data=Topa_address_ssl_realprop out=Topa_addressid nodupkey;
+  by address_id id;
+run;
+proc sort data=Topa_addressid out=tempdata nodupkey; 
+  by address_id; 
+run; 
+ data Topa_propertyid;
+  merge Topa_addressid tempdata(keep=address_id id rename=(address_id=property_id)); 
+  by id; 
+run; 
+
+%File_info( data=Topa_addressid, printobs=5 )
 
 ** try #2 to merge three datasets (address_id ssl and real_prop) **;
 proc sql noprint;
@@ -62,13 +74,13 @@ quit;
 %File_info( data=Topa_address_ssl_realprop2)
 
 proc export data=Topa_address_ssl_realprop2
-    outfile="C:\Users\eburton\Documents\GitHub\PresCat\Prog\AddNew\Topa_address_ssl_realprop2.csv"
+    outfile="&_dcdata_default_path\PresCat\Prog\AddNew\Topa_address_ssl_realprop2.csv"
     dbms=csv
     replace;
 run;
 
-proc export data=Topa_address_ssl_realprop
-    outfile="C:\Users\eburton\Documents\GitHub\PresCat\Prog\AddNew\Topa_address_ssl_realprop.csv"
+proc export data=Topa_addressid
+    outfile="&_dcdata_default_path\PresCat\Prog\AddNew\Topa_addressid.csv"
     dbms=csv
     replace;
 run;

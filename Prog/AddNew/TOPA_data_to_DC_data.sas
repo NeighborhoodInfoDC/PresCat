@@ -300,6 +300,19 @@ ods listing;   /** Reopen the listing destination **/
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
+    data=Topa_geocoded,
+    out=Topa_geocoded,
+    outlib=PresCat,
+    label="Preservation Catalog, new database with SSLs and GEO ids added to addresses parsed out from TOPA dataset",
+    sortby=ID,
+    /** Metadata parameters **/
+    revisions=%str(New data set.),
+    /** File info parameters **/
+    printobs=10 
+  )
+
+  %Finalize_data_set( 
+    /** Finalize data set parameters **/
     data=Topa_ssl,
     out=Topa_ssl,
     outlib=PresCat,
