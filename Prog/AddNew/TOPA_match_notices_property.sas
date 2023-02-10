@@ -23,6 +23,7 @@
 %File_info( data=PresCat.TOPA_SSL, printobs=5 )
 %File_info( data=PresCat.TOPA_realprop, printobs=5 ) /** some IDs don't have real_prop info**/
 %File_info( data=PresCat.TOPA_addresses, printobs=5 )
+%File_info( data=PresCat.TOPA_database, printobs=5 ) /** 1699 obs**/
 
 /** merge address_id ssl and real_prop info **/
 
@@ -51,13 +52,14 @@ data Topa_id_x_address;
   rename address_id=address_id_ref;
 run; 
 
-%File_info( data=Topa_id_x_address, printobs=5 )
+%File_info( data=Topa_id_x_address, printobs=5 ) /** 1693 obs**/
 
 /** address_id_ref as property id **/
+
 data Topa_addressid_merge; 
   merge
-    Topa_id_x_address Topa_address_ssl_realprop_sort;
-  by id; 
+    Topa_address_ssl_realprop_sort Topa_id_x_address;
+  by id;
 run; 
 
 %File_info( data=Topa_addressid_merge, printobs=5 )
