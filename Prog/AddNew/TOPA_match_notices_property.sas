@@ -32,6 +32,7 @@ data Topa_address_ssl_realprop;
     PresCat.TOPA_SSL (keep=id address_id ssl)
     PresCat.TOPA_realprop (keep=id SALEDATE offer_sale_date CASD_date ADDRESS1 ADDRESS3 Ownername_full days_notice_to_sale ui_proptype Anc2012 cluster2017 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2022 Ward2012)
     PresCat.TOPA_addresses (keep =id address);
+  by id; 
 run;
 
 %File_info( data=Topa_address_ssl_realprop, printobs=5 )
@@ -61,7 +62,6 @@ proc export data=Topa_id_x_address
 run;
 
 /** address_id_ref as property id **/
-
 data Topa_addressid_merge; 
   set Topa_address_ssl_realprop_sort; 
   set Topa_id_x_address; 
