@@ -54,12 +54,17 @@ run;
 
 %File_info( data=Topa_id_x_address, printobs=5 ) /** 1693 obs**/
 
+proc export data=Topa_id_x_address
+    outfile="&_dcdata_default_path\PresCat\Prog\AddNew\Topa_id_x_address.csv"
+    dbms=csv
+    replace;
+run;
+
 /** address_id_ref as property id **/
 
 data Topa_addressid_merge; 
-  merge
-    Topa_address_ssl_realprop_sort Topa_id_x_address;
-  by id;
+  set Topa_address_ssl_realprop_sort; 
+  set Topa_id_x_address; 
 run; 
 
 %File_info( data=Topa_addressid_merge, printobs=5 )
