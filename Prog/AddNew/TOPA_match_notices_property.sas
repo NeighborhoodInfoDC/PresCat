@@ -57,11 +57,9 @@ run;
 /** Fill in missing ID numbers to match original TOPA database **/
 data Topa_id_x_address; 
   merge 
-    Topa_id_x_address_1 (in=in_x)
+    Topa_id_x_address_1
     Prescat.Topa_database (keep=id all_street_addresses address_for_mapping);
   by id;
-  /** List in LOG notices that are not in crosswalk **/
-  if not in_x then put id= address_id_ref= all_street_addresses= address_for_mapping=;
 run; 
  
 %File_info( data=Topa_id_x_address, printobs=5 ) /** 1693 obs**/
