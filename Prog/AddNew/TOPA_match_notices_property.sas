@@ -62,7 +62,7 @@ data Topa_id_x_address;
   by id;
 run; 
  
-%File_info( data=Topa_id_x_address, printobs=5 ) /** 1693 obs**/
+%File_info( data=Topa_id_x_address, printobs=5 ) /** 1699 obs**/
 
 title2 '** Notices with missing address_id_ref **';
 proc print data=Topa_id_x_address;
