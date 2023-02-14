@@ -29,10 +29,11 @@
 
 data Topa_address_ssl_realprop;
   merge
-    PresCat.TOPA_SSL (keep=id address_id ssl)
-    PresCat.TOPA_realprop (keep=id SALEDATE offer_sale_date CASD_date ADDRESS1 ADDRESS3 Ownername_full days_notice_to_sale ui_proptype Anc2012 cluster2017 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2022 Ward2012)
-    PresCat.TOPA_addresses (keep =id address);
+    PresCat.TOPA_SSL (keep=id address_id ssl in=in_ssl)
+    PresCat.TOPA_addresses (keep =id address casd_date offer_sale_date in=in_addresses);
   by id; 
+  /** List in LOG notices that are not in both data sets **/
+  if not ( in_ssl and in_addresses ) then put in_ssl= in_addresses= id= ssl= address_id= address=;
 run;
 
 %File_info( data=Topa_address_ssl_realprop, printobs=5 )
@@ -45,15 +46,33 @@ run;
 %File_info( data=Topa_address_ssl_realprop_sort, printobs=5 )
 
 /** create ID (notice) x address_id crosswalk **/
-data Topa_id_x_address; 
+data Topa_id_x_address_1; 
   set Topa_address_ssl_realprop_sort;
   by id; 
   if first.id then output; 
-  keep address_id id; 
+  keep address_id id casd_date offer_sale_date; 
   rename address_id=address_id_ref;
 run; 
 
+/** Fill in missing ID numbers to match original TOPA database **/
+data Topa_id_x_address; 
+  merge 
+    Topa_id_x_address_1 (in=in_x)
+    Prescat.Topa_database (keep=id all_street_addresses address_for_mapping);
+  by id;
+  /** List in LOG notices that are not in crosswalk **/
+  if not in_x then put id= address_id_ref= all_street_addresses= address_for_mapping=;
+run; 
+ 
 %File_info( data=Topa_id_x_address, printobs=5 ) /** 1693 obs**/
+
+title2 '** Notices with missing address_id_ref **';
+proc print data=Topa_id_x_address;
+  where missing( address_id_ref );
+  id id;
+  var address_id_ref all_street_addresses address_for_mapping;
+run;
+title2;
 
 proc export data=Topa_id_x_address
     outfile="&_dcdata_default_path\PresCat\Prog\AddNew\Topa_id_x_address.csv"
@@ -61,33 +80,13 @@ proc export data=Topa_id_x_address
     replace;
 run;
 
-/** address_id_ref as property id **/
-data Topa_addressid_merge; 
-  set Topa_address_ssl_realprop_sort; 
-  set Topa_id_x_address; 
-run; 
-
-%File_info( data=Topa_addressid_merge, printobs=5 )
-
-/** sorting by address_id-ref then address id**/
-proc sort data=Topa_addressid_merge out=Topa_propertyid;
-  by address_id_ref;
-run;
-
-%File_info( data=Topa_propertyid, printobs=5 )
-
-proc export data=Topa_propertyid
-    outfile="&_dcdata_default_path\PresCat\Prog\AddNew\Topa_propertyid.csv"
-    dbms=csv
-    replace;
-run;
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
     data=Topa_id_x_address,
     out=Topa_id_x_address,
     outlib=PresCat,
-    label="Preservation Catalog, ID (TOPA notice) and address_id crosswalk",
+    label="Preservation Catalog, ID (TOPA notice) and unique address_id crosswalk",
     sortby=id,
     /** Metadata parameters **/
     revisions=%str(New data set.),
