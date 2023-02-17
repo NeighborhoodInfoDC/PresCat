@@ -78,6 +78,20 @@ proc export data=Topa_id_x_address
     replace;
 run;
 
+proc sort data=Topa_id_x_address;
+  by address_id_ref id;
+run;
+
+data Topa_notice_freq; 
+  set Topa_id_x_address; 
+  by address_id_ref; 
+  retain offer_sale_date address_id_ref; 
+  if first.address_id_ref then fr_offer_sale_date=offer_sale_date; /** I'm trying to create new var that is the first date of notice**/
+  days_btwn_notices = fr_offer_sale_date - offer_sale_date; /** Trying to subtract first notice date to the next obs **/
+  if last.address_id_ref then output; /** Trying to just keep the same info if only one address_id_ref**/
+  run;
+
+%File_info( data=Topa_notice_freq, printobs=5 ) /** 1699 obs**/
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
