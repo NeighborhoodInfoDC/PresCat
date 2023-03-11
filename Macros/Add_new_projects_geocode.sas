@@ -28,9 +28,9 @@
 
   ** Main sheet info **;
 
-  filename fimport "&input_path\&input_file_pre._main.csv" lrecl=2000;
+  filename fimport "&input_path\&input_file_pre..csv" lrecl=2000;
 
-  proc import out=New_Proj_Geocode_main
+  proc import out=New_Proj_projects
       datafile=fimport
       dbms=csv replace;
     datarow=2;
@@ -41,6 +41,26 @@
 
   filename fimport clear;
 
+  %FILE_INFO( DATA=New_Proj_projects )
+
+  ** Geocode new project addresses **;
+
+  %DC_mar_geocode(
+    geo_match=Y,
+    data=New_Proj_projects,
+    out=New_Proj_projects_geocode,
+    staddr=Bldg_addre,
+    zip=Bldg_zip,
+    id=ID,
+	keep_geo=anc2012 latitude longitude cluster2017 cluster_tr2000 geo2010 geo2020
+	  geobg2020 geoblk2020 ward2012 ward2022,
+    ds_label=,
+    listunmatched=Y
+  )
+
+  %FILE_INFO( DATA=New_Proj_projects_geocode )
+
+%MACRO SKIP;
   ** MAR Address sheet info **;
 
   filename fimport "&input_path\&input_file_pre._mar_address.csv" lrecl=2000;
@@ -226,7 +246,9 @@
       Streetview_url Image_url;
 
   run;
+%MEND SKIP;
 
+%MACRO SKIP;
   ** Create Unique NLIHC IDs for New Projects **;
 
   data NLIHC_ID;
@@ -683,6 +705,7 @@ run;
   run;
   
   title2;
+%MEND SKIP;
 
 %mend Add_new_projects_geocode;
 
