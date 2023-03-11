@@ -300,19 +300,20 @@
 
   %FILE_INFO( DATA=New_Proj_projects_geoc_nlihc_id, stats= )
 
-%MACRO SKIP;
   ** Create project name format **;
 
   %Data_to_format(
   FmtLib=work,
   FmtName=$nlihc_id_to_proj_name,
-  Data=New_Proj_Geocode,
+  Data=New_Proj_projects_geoc_nlihc_id,
   Value=nlihc_id,
   Label=proj_name,
   OtherLabel="",
-  Print=N,
+  Print=Y,
   Contents=N
   )
+
+  %MACRO SKIP;
 
   ** Compile full lists of addresses and parcels for each project **;
 
@@ -406,7 +407,8 @@
 
 	length Proj_name $ 80;
 
-	Proj_name = left( put( nlihc_id, $nlihc_id_to_proj_name. ) );
+    **** DOUBLE CHECK THIS STATEMENT. FORMAT HAS ONLY NEW PROJECTS ****;
+    Proj_name = left( put( nlihc_id, $nlihc_id_to_proj_name. ) );
 
     ** Cluster names **;
     
