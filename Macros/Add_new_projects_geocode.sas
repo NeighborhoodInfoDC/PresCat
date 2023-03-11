@@ -248,7 +248,6 @@
   run;
 %MEND SKIP;
 
-%MACRO SKIP;
   ** Create Unique NLIHC IDs for New Projects **;
 
   data NLIHC_ID;
@@ -268,23 +267,23 @@
     if lastid = 0 then delete;
     run;
 
-  proc sort data = New_Proj_Geocode;
+  proc sort data = New_Proj_projects_geocode;
     by proj_name;
     run;
 
-  data New_Proj_Geocode;
-    set New_Proj_Geocode;
+  data New_Proj_projects_geocode;
+    set New_Proj_projects_geocode;
     by proj_name;
     firstproj = first.proj_name;
-    format _all_ ;
+	** Remove unnecessary formats and informats **;
+    format bldg_: proj_name id ;
     informat _all_ ;
     run;
 
   *** Current format of nlihc_id is $16. Test with the new format***;
-  data New_Proj_Geocode;
+  data New_Proj_projects_geoc_nlihc_id;
     retain proj_name nlihc_id;
-    format nlihc_id $16.;
-    set Nlihc_id New_Proj_Geocode;
+    set Nlihc_id New_Proj_projects_geocode;
       retain nlihc_hold;
       if nlihc_num > nlihc_hold then nlihc_hold = nlihc_num;
       select (firstproj);
@@ -299,6 +298,9 @@
       drop firstproj nlihc_num nlihc_sans nlihc_hold lastid _drop_constant;
   run;
 
+  %FILE_INFO( DATA=New_Proj_projects_geoc_nlihc_id, stats= )
+
+%MACRO SKIP;
   ** Create project name format **;
 
   %Data_to_format(
