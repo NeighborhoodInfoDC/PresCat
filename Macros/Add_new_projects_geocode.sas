@@ -387,8 +387,6 @@
 
   %FILE_INFO( DATA=all_addresses, stats= )
   %FILE_INFO( DATA=all_parcels, stats= )
-  RUN;
-  %MACRO SKIP;
 
   ** Create project and building geocode data sets for new projects **;
 
@@ -399,14 +397,14 @@
     by address_id nlihc_id;
   run;
 
-  proc sort data=New_proj_geocode out=New_proj_geocode_addr_srt;
-    by marid;
+  proc sort data=New_Proj_projects_geoc_nlihc_id out=New_proj_geocode_addr_srt;
+    by address_id;
   run;
 
   data 
     work.Building_geocode_a
       (keep=nlihc_id address_id Proj_Name &geo_vars Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre bldg_zip
-            bldg_units_mar bldg_image_url bldg_Streetview_url ssl
+            bldg_units_mar ssl
        rename=(address_id=Bldg_address_id));
       
     merge 
@@ -416,15 +414,12 @@
           fulladdress=bldg_addre latitude=bldg_lat longitude=bldg_lon active_res_occupancy_count=bldg_units_mar
 		  x=bldg_x y=bldg_y zip=bldg_zip 
           ))
-      New_proj_geocode_addr_srt 
-        (keep=marid image_url streetview_url 
-         rename=(marid=address_id image_url=bldg_image_url streetview_url=bldg_streetview_url))
     ;
     by address_id;
 
-	if in1;
+    if in1;
 
-	length Proj_name $ 80;
+    length Proj_name $ 80;
 
     **** DOUBLE CHECK THIS STATEMENT. FORMAT HAS ONLY NEW PROJECTS ****;
     Proj_name = left( put( nlihc_id, $nlihc_id_to_proj_name. ) );
@@ -440,6 +435,8 @@
     
   run;
   
+  %FILE_INFO( DATA=Building_geocode_a, STATS= )
+
   ** Check new projects for pre-existing addresses in Catalog **;
   
   proc sort data=Building_geocode_a out=Building_geocode_c1;
@@ -499,7 +496,7 @@
 
   proc sql;
 
-     create table project as
+     create table project_geocode_b as
      select *
      from prescat.project_geocode
      where nlihc_id in (select distinct nlihc_id from prescat.project)
@@ -509,7 +506,7 @@
 
   proc sql;
 
-     create table building as
+     create table building_geocode_b as
      select *
      from prescat.building_geocode
      where nlihc_id in (select distinct nlihc_id from prescat.project)
@@ -520,14 +517,14 @@
   title2 '********************************************************************************************';
   title3 '** 1/ Check to see if any projects were removed in previous step';
 
-  proc compare base=prescat.project_geocode compare=work.project maxprint=(40,32000);
+  proc compare base=prescat.project_geocode compare=work.project_geocode_b listbaseobs nosummary;
     id nlihc_id;
   run;
 
   title2 '********************************************************************************************';
   title3 '** 2/ Check to see if any buildings were removed in previous step';
 
-  proc compare base=prescat.building_geocode compare=work.building maxprint=(40,32000);
+  proc compare base=prescat.building_geocode compare=work.building_geocode_b listbaseobs nosummary;
     id nlihc_id Bldg_addre;
   run;
 
@@ -540,19 +537,21 @@
   run;
 
   data Building_geocode;
-    set Building Building_geocode_a;
+    set Building_geocode_b Building_geocode_a;
     by nlihc_id Bldg_addre;
   run;
 
   title2 '********************************************************************************************';
-  title3 '** 3/ Check for changes in the new Building geocode file that is not related to the new projects';
+  title3 '** 3/ Check for changes in the new Building geocode file that are not related to the new projects';
 
-  proc compare base=prescat.building_geocode compare=work.building_geocode listbasevar listcompvar maxprint=(40,32000);
+  proc compare base=prescat.building_geocode compare=work.building_geocode nosummary listbasevar listcompvar maxprint=(40,32000);
    id nlihc_id proj_name Bldg_addre;
    run;
    
   title2;
    
+  %MACRO SKIP;
+
   %Create_project_geocode(
     data=Building_geocode, 
     revisions=%str(Add new projects from &input_file_pre._*.csv.),
