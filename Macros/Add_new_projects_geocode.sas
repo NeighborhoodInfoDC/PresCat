@@ -550,8 +550,6 @@
    
   title2;
    
-  %MACRO SKIP;
-
   %Create_project_geocode(
     data=Building_geocode, 
     revisions=%str(Add new projects from &input_file_pre._*.csv.),
@@ -713,7 +711,10 @@ run;
     printobs=0
   )
 
-  proc compare base=prescat.Parcel compare=Parcel listbasevar listcompvar maxprint=(40,32000);
+  title2 '********************************************************************************************';
+  title3 '** 4/ Check for changes in the new Parcel file that are not related to the new projects';
+
+  proc compare base=prescat.Parcel compare=Parcel nosummary listbasevar listcompvar maxprint=(40,32000);
    id nlihc_id ssl;
   run;
   
@@ -727,7 +728,6 @@ run;
   run;
   
   title2;
-%MEND SKIP;
 
 %mend Add_new_projects_geocode;
 
