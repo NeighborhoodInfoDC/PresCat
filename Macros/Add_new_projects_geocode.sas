@@ -40,6 +40,21 @@
   run;
 
   filename fimport clear;
+  
+  ** Convert ZIP code to char var for geocoding **;
+  
+  data New_Proj_projects;
+  
+    set New_Proj_projects;
+    
+    length Bldg_zip_char $ 5;
+    
+    Bldg_zip_char = left( put( Bldg_zip, z5.0 ) );
+    
+    rename Bldg_zip_char=Bldg_zip;
+    drop Bldg_zip;
+    
+  run;
 
   %FILE_INFO( DATA=New_Proj_projects )
 
@@ -52,8 +67,8 @@
     staddr=Bldg_addre,
     zip=Bldg_zip,
     id=ID,
-	keep_geo=anc2012 latitude longitude cluster2017 cluster_tr2000 geo2010 geo2020
-	  geobg2020 geoblk2020 ward2012 ward2022,
+	keep_geo=address_id anc2012 latitude longitude cluster2017 cluster_tr2000 
+	         geo2010 geo2020 geobg2020 geoblk2020 ward2012 ward2022,
     ds_label=,
     listunmatched=Y
   )
@@ -313,7 +328,6 @@
   Contents=N
   )
 
-  %MACRO SKIP;
 
   ** Compile full lists of addresses and parcels for each project **;
 
@@ -321,11 +335,11 @@
 
     /** Match geocoded address IDs with MAR address-parcel crosswalk **/
     create table A as 
-      select distinct New.nlihc_id, New.Proj_name, New.Bldg_addre, coalesce( New.Marid, xref.address_id ) as address_id, xref.lot_type, xref.ssl as xref_ssl from 
-  	  New_proj_geocode as New left join
+      select distinct New.nlihc_id, New.Proj_name, New.Bldg_addre, coalesce( New.address_id, xref.address_id ) as address_id, xref.lot_type, xref.ssl as xref_ssl from 
+  	  New_Proj_projects_geoc_nlihc_id as New left join
   	  Mar.Address_ssl_xref as xref
-  	  on New.Marid = xref.address_id
-  	  where New.Mar_score > 90
+  	  on New.address_id = xref.address_id
+  	  where New.M_exactmatch
   	  order by nlihc_id, address_id, xref_ssl;
 
     /** Add property owner name and category **/ 
@@ -370,6 +384,11 @@
   	order by nlihc_id, address_id;
 
   quit;
+
+  %FILE_INFO( DATA=all_addresses, stats= )
+  %FILE_INFO( DATA=all_parcels, stats= )
+  RUN;
+  %MACRO SKIP;
 
   ** Create project and building geocode data sets for new projects **;
 
