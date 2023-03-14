@@ -46,6 +46,7 @@
   data New_Proj_projects;
   
     set New_Proj_projects;
+    where id > 0;
     
     length Bldg_zip_char $ 5;
     
@@ -54,7 +55,23 @@
     rename Bldg_zip_char=Bldg_zip;
     drop Bldg_zip;
     
+    ** Remove unnecessary formats and informats **;
+    format _all_ ;
+    informat _all_ ;
+
   run;
+
+  title2 '********************************************************************************************';
+  title3 "** Rows in &input_path\&input_file_pre..csv with duplicate values of ID.";
+  title4 '** Each project should have a unique value of ID. Fix in input data.';
+
+  %Dup_check(
+    data=New_Proj_projects,
+    by=id,
+    id=proj_name Bldg_addre
+  )
+
+  title2;
 
   %FILE_INFO( DATA=New_Proj_projects )
 
@@ -283,16 +300,13 @@
     run;
 
   proc sort data = New_Proj_projects_geocode;
-    by proj_name;
+    by id;
     run;
 
   data New_Proj_projects_geocode;
     set New_Proj_projects_geocode;
-    by proj_name;
-    firstproj = first.proj_name;
-	** Remove unnecessary formats and informats **;
-    format bldg_: proj_name id ;
-    informat _all_ ;
+    by id;
+    firstproj = first.id;
     run;
 
   *** Current format of nlihc_id is $16. Test with the new format***;

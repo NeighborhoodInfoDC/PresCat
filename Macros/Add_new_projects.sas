@@ -35,14 +35,14 @@
     input_file_pre=&input_file_pre,
     input_path=&input_path
   )
-/***********
+
   ** Update PresCat.Subsidy **;
   
   %Add_new_projects_subsidy( 
     input_file_pre=&input_file_pre,
     input_path=&input_path
   )
-  
+/***********  
   ** Update PresCat.Project, PresCat.Project_category **;
   
   %Add_new_projects_project( )  

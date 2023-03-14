@@ -21,14 +21,32 @@
   input_path=  /** Location of input files **/
   );
   
+
+  %MACRO SKIP;
   ** Import subsidy data **;
 
   filename fimport "&input_path\&input_file_pre._subsidy.csv" lrecl=2000;
 
-  data WORK.NEW_PROJ_SUBS    ;
+  proc import out=New_Proj_subs
+      datafile=fimport
+      dbms=csv replace;
+    datarow=2;
+    getnames=yes;
+    guessingrows=500;
+
+  run;
+
+  filename fimport clear;
+  %MEND SKIP;
+  
+  ** Import subsidy data **;
+
+  filename fimport "&input_path\&input_file_pre._subsidy.csv" lrecl=2000;
+
+  data WORK.New_proj_subs    ;
   %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
   infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
-  informat MARID best32. ;
+  informat ID best32. ;
   informat Units_tot 8. ;
   informat Units_assist 8. ;
   informat Current_Affordability_Start mmddyy10. ;
@@ -42,7 +60,7 @@
   informat Previous_Affordability_End mmddyy10. ;
   informat Agency $80. ;
   informat Date_Affordability_Ended mmddyy10. ;
-  format MARID best12. ;
+  format ID best12. ;
   format Units_tot 8. ;
   format Units_assist 8. ;
   format Current_Affordability_Start mmddyy10. ;
@@ -58,7 +76,7 @@
   format Date_Affordability_Ended mmddyy10. ;
 
   input
-  MARID
+  ID
   Units_tot
   Units_assist
   Current_Affordability_Start
@@ -81,38 +99,36 @@
 
   filename fimport clear;
     
+  %FILE_INFO( DATA=New_Proj_subs, stats= )
+  
   data NLIHC_ID;
 
-    set building_geocode_a
-    (keep=NLIHC_id bldg_address_id);
-    _drop = 1;
+    set New_Proj_projects_geoc_nlihc_id
+    (keep=NLIHC_id id);
     run;
 
-  proc sort data=nlihc_id nodupkey;
-  by bldg_address_id;
+  proc sort data=nlihc_id;
+  by id;
   run;
 
-  proc sort data=New_Proj_Subs;
-  by marid;
+  proc sort data=New_Proj_Subs (where=(id > 0));
+  by id;
   run;
-
 
   data Subsidy_a;
 
     merge 
-      NLIHC_ID (rename=(bldg_address_id=address_id) in=in_bldg) New_Proj_Subs (rename=(marid=address_id) in=in_subs);
-    by address_id;
+      NLIHC_ID (in=in_bldg) New_Proj_Subs (in=in_subs);
+    by id;
 
     if in_subs and not in_bldg then do;
-      %err_put( macro=Add_new_projects_subsidy, msg="Subsidy record with no matching project record. " address_id= program= )
+      %err_put( macro=Add_new_projects_subsidy, msg="Subsidy record with no matching project record. " id= program= )
     end;
     else if not in_subs and in_bldg then do;
-      %warn_put( macro=Add_new_projects_subsidy, msg="Project record with no matching subsidy records. " address_id= nlihc_id= )
+      %warn_put( macro=Add_new_projects_subsidy, msg="Project record with no matching subsidy records. " id= nlihc_id= )
     end;
     
-    if _drop = 1 then delete;
-    
-    drop _drop address_id;
+    drop _drop id;
     format _all_ ;
     informat _all_ ;
 
@@ -121,6 +137,8 @@
   proc sort data = Subsidy_a;
   by nlihc_id;
   run;
+
+  %FILE_INFO( DATA=Subsidy_a, stats= )
 
   data Subsidy_a2;
     set Subsidy_a (where=(program~=""));
@@ -143,6 +161,8 @@
     
     Portfolio = put( Program, $progtoportfolio. );
     
+    if Portfolio = "" then %warn_put( macro=Add_new_projects_subsidy, msg="Subsidy program code unrecognized. " nlihc_id= program= );
+    
     ** First POA start date **;
 
     POA_start_orig = current_affordability_start;
@@ -156,6 +176,8 @@
                   Date_Affordability_Ended=POA_End_actual Previous_affordability_end=POA_end_prev;
   run;
 
+  %FILE_INFO( DATA=Subsidy_a2, stats= )
+
   data Subsidy;
 
     set  prescat.subsidy Subsidy_a2 (drop=Units_tot);
@@ -167,11 +189,14 @@
 
   run;
 
-  ** Check against original subsidy file to ensure only new subsidy files have changed**;
+  title2 '********************************************************************************************';
+  title3 '** 5/ Check for changes in the new Subsidy file that are not related to the new projects';
 
-  proc compare base=PresCat.Subsidy compare=Subsidy listbasevar listcompvar maxprint=(40,32000);
+  proc compare base=PresCat.Subsidy compare=Subsidy nosummary listbasevar listcompvar maxprint=(40,32000);
     id nlihc_id subsidy_id;
   run;
+  
+  title2;
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
