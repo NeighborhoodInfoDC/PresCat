@@ -73,7 +73,14 @@
 
   title2;
 
-  %FILE_INFO( DATA=New_Proj_projects )
+  title2 '********************************************************************************************';
+  title3 "** New project data read from &input_path\&input_file_pre..csv";
+
+  proc print data=New_Proj_projects noobs;
+    id id;
+  run;
+  
+  title2;
 
   ** Geocode new project addresses **;
 
@@ -91,194 +98,6 @@
   )
 
   %FILE_INFO( DATA=New_Proj_projects_geocode )
-
-%MACRO SKIP;
-  ** MAR Address sheet info **;
-
-  filename fimport "&input_path\&input_file_pre._mar_address.csv" lrecl=2000;
-
-  data WORK.NEW_PROJ_GEOCODE_MAR_ADDRESS    ;
-    %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
-    infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
-       informat ADDRESS_ID best32. ;
-       informat MARID best32. ;
-       informat STATUS $6. ;
-       informat FULLADDRESS $36. ;
-       informat ADDRNUM best32. ;
-       informat ADDRNUMSUFFIX $1. ;
-       informat STNAME $21. ;
-       informat STREET_TYPE $6. ;
-       informat QUADRANT $2. ;
-       informat CITY $10. ;
-       informat STATE $2. ;
-       informat XCOORD best32. ;
-       informat YCOORD best32. ;
-       informat SSL $17. ;
-       informat ANC $6. ;
-       informat PSA $23. ;
-       informat WARD $6. ;
-       informat NBHD_ACTION $1. ;
-       informat CLUSTER_ $10. ;
-       informat POLDIST $34. ;
-       informat ROC $17. ;
-       informat CENSUS_TRACT best32. ;
-       informat VOTE_PRCNCT $12. ;
-       informat SMD $8. ;
-       informat ZIPCODE best32. ;
-       informat NATIONALGRID $18. ;
-       informat ROADWAYSEGID best32. ;
-       informat FOCUS_IMPROVEMENT_AREA $2. ;
-       informat HAS_ALIAS $1. ;
-       informat HAS_CONDO_UNIT $1. ;
-       informat HAS_RES_UNIT $1. ;
-       informat HAS_SSL $1. ;
-       informat LATITUDE best32. ;
-       informat LONGITUDE best32. ;
-       informat STREETVIEWURL $104. ;
-       informat RES_TYPE $11. ;
-       informat WARD_2002 $6. ;
-       informat WARD_2012 $6. ;
-       informat ANC_2002 $6. ;
-       informat ANC_2012 $6. ;
-       informat SMD_2002 $8. ;
-       informat SMD_2012 $8. ;
-       informat IMAGEURL $38. ;
-       informat IMAGEDIR $8. ;
-       informat IMAGENAME $22. ;
-       informat CONFIDENCELEVEL $1. ;
-       format ADDRESS_ID best12. ;
-       format MARID best12. ;
-       format STATUS $6. ;
-       format FULLADDRESS $36. ;
-       format ADDRNUM best12. ;
-       format ADDRNUMSUFFIX $1. ;
-       format STNAME $21. ;
-       format STREET_TYPE $6. ;
-       format QUADRANT $2. ;
-       format CITY $10. ;
-       format STATE $2. ;
-       format XCOORD best12. ;
-       format YCOORD best12. ;
-       format SSL $17. ;
-       format ANC $6. ;
-       format PSA $23. ;
-       format WARD $6. ;
-       format NBHD_ACTION $1. ;
-       format CLUSTER_ $10. ;
-       format POLDIST $34. ;
-       format ROC $17. ;
-       format CENSUS_TRACT best12. ;
-       format VOTE_PRCNCT $12. ;
-       format SMD $8. ;
-       format ZIPCODE best12. ;
-       format NATIONALGRID $18. ;
-       format ROADWAYSEGID best12. ;
-       format FOCUS_IMPROVEMENT_AREA $2. ;
-       format HAS_ALIAS $1. ;
-       format HAS_CONDO_UNIT $1. ;
-       format HAS_RES_UNIT $1. ;
-       format HAS_SSL $1. ;
-       format LATITUDE best12. ;
-       format LONGITUDE best12. ;
-       format STREETVIEWURL $104. ;
-       format RES_TYPE $11. ;
-       format WARD_2002 $6. ;
-       format WARD_2012 $6. ;
-       format ANC_2002 $6. ;
-       format ANC_2012 $6. ;
-       format SMD_2002 $8. ;
-       format SMD_2012 $8. ;
-       format IMAGEURL $38. ;
-       format IMAGEDIR $8. ;
-       format IMAGENAME $22. ;
-       format CONFIDENCELEVEL $1. ;
-    input
-                ADDRESS_ID
-                MARID
-                STATUS $
-                FULLADDRESS $
-                ADDRNUM
-                ADDRNUMSUFFIX $
-                STNAME $
-                STREET_TYPE $
-                QUADRANT $
-                CITY $
-                STATE $
-                XCOORD
-                YCOORD
-                SSL $
-                ANC $
-                PSA $
-                WARD $
-                NBHD_ACTION $
-                CLUSTER_ $
-                POLDIST $
-                ROC $
-                CENSUS_TRACT
-                VOTE_PRCNCT $
-                SMD $
-                ZIPCODE
-                NATIONALGRID $
-                ROADWAYSEGID
-                FOCUS_IMPROVEMENT_AREA $
-                HAS_ALIAS $
-                HAS_CONDO_UNIT $
-                HAS_RES_UNIT $
-                HAS_SSL $
-                LATITUDE
-                LONGITUDE
-                STREETVIEWURL $
-                RES_TYPE $
-                WARD_2002 $
-                WARD_2012 $
-                ANC_2002 $
-                ANC_2012 $
-                SMD_2002 $
-                SMD_2012 $
-                IMAGEURL $
-                IMAGEDIR $
-                IMAGENAME $
-                CONFIDENCELEVEL $
-    ;
-    if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
-  run;
-
-  filename fimport clear;
-
-  ** Combine geocoding information **;
-
-  proc sort data=New_Proj_Geocode_main;
-    by marid;
-  run;
-
-  proc sort data=New_Proj_Geocode_mar_address;
-    by marid;
-  run;
-
-  data New_Proj_Geocode;
-
-    merge 
-      New_Proj_Geocode_main
-      New_Proj_Geocode_mar_address;
-    by marid;
-
-    length Streetview_url Image_url $ 255;
-
-    Streetview_url = left( STREETVIEWURL );
-
-    if imagename ~= "" and upcase( imagename ) ~=: "NO_IMAGE_AVAILABLE" then 
-      Image_url = trim( imageurl ) || "/" || trim( left( imagedir ) ) || "/" || imagename;
-
-    keep 
-      Proj_Name Bldg_City Bldg_ST Bldg_Zip Bldg_Addre
-      MAR_MATCHADDRESS MAR_XCOORD MAR_YCOORD MAR_LATITUDE
-      MAR_LONGITUDE MAR_WARD MAR_CENSUS_TRACT MAR_ZIPCODE MARID
-      MAR_ERROR MAR_SCORE MAR_SOURCEOPERATION MAR_IGNORE
-      SSL Ward_2012 ANC_2012 PSA Census_tract Cluster_
-      Streetview_url Image_url;
-
-  run;
-%MEND SKIP;
 
   ** Create Unique NLIHC IDs for New Projects **;
 
@@ -327,8 +146,6 @@
       drop firstproj nlihc_num nlihc_sans nlihc_hold lastid _drop_constant;
   run;
 
-  %FILE_INFO( DATA=New_Proj_projects_geoc_nlihc_id, stats= )
-
   ** Create project name format **;
 
   %Data_to_format(
@@ -338,10 +155,9 @@
   Value=nlihc_id,
   Label=proj_name,
   OtherLabel="",
-  Print=Y,
+  Print=N,
   Contents=N
   )
-
 
   ** Compile full lists of addresses and parcels for each project **;
 
@@ -399,9 +215,6 @@
 
   quit;
 
-  %FILE_INFO( DATA=all_addresses, stats= )
-  %FILE_INFO( DATA=all_parcels, stats= )
-
   ** Create project and building geocode data sets for new projects **;
 
   %let geo_vars = Anc2012 Cluster2017 Cluster_tr2000 Cluster_tr2000_name Geo2010  
@@ -435,7 +248,6 @@
 
     length Proj_name $ 80;
 
-    **** DOUBLE CHECK THIS STATEMENT. FORMAT HAS ONLY NEW PROJECTS ****;
     Proj_name = left( put( nlihc_id, $nlihc_id_to_proj_name. ) );
 
     ** Cluster names **;
@@ -449,8 +261,6 @@
     
   run;
   
-  %FILE_INFO( DATA=Building_geocode_a, STATS= )
-
   ** Check new projects for pre-existing addresses in Catalog **;
   
   proc sort data=Building_geocode_a out=Building_geocode_c1;
@@ -479,6 +289,7 @@
 
     if _type_ = 'BASE' then do;
       _hold_bldg_address_id = bldg_address_id;
+      output;
     end;
     else if _hold_bldg_address_id = bldg_address_id then do;
       %warn_put( macro=Add_new_projects_geocode, 
@@ -498,12 +309,15 @@
   title3 '** Addresses in new projects that match those in existing Catalog projects';
   title4 '** Check to make sure these projects are not already in Catalog';
 
-  proc print data=Building_geocode_comp_rpt noobs label;
-    by bldg_address_id;
-    id nlihc_id;
-    var proj_name bldg_addre;
-  run;
-  
+  %Dup_check(
+    data=Building_geocode_comp_rpt,
+    by=bldg_address_id,
+    id=nlihc_id proj_name bldg_addre,
+    out=_dup_check,
+    listdups=Y,
+    quiet=Y
+  )
+
   title2; 
 
   **remove projects from geocode datasets that are no longer in project dataset**;

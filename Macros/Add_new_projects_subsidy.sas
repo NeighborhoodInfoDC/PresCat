@@ -21,31 +21,16 @@
   input_path=  /** Location of input files **/
   );
   
-
-  %MACRO SKIP;
-  ** Import subsidy data **;
-
-  filename fimport "&input_path\&input_file_pre._subsidy.csv" lrecl=2000;
-
-  proc import out=New_Proj_subs
-      datafile=fimport
-      dbms=csv replace;
-    datarow=2;
-    getnames=yes;
-    guessingrows=500;
-
-  run;
-
-  filename fimport clear;
-  %MEND SKIP;
-  
   ** Import subsidy data **;
 
   filename fimport "&input_path\&input_file_pre._subsidy.csv" lrecl=2000;
 
   data WORK.New_proj_subs    ;
+
   %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+  
   infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+  
   informat ID best32. ;
   informat Units_tot 8. ;
   informat Units_assist 8. ;
@@ -60,19 +45,12 @@
   informat Previous_Affordability_End mmddyy10. ;
   informat Agency $80. ;
   informat Date_Affordability_Ended mmddyy10. ;
-  format ID best12. ;
-  format Units_tot 8. ;
-  format Units_assist 8. ;
+  
   format Current_Affordability_Start mmddyy10. ;
   format Affordability_End mmddyy10. ;
-  format rent_to_fmr_description $40. ;
-  format Subsidy_Info_Source_ID $40. ;
-  format Subsidy_Info_Source $40. ;
-  format Subsidy_Info_Source_Date 8. ;
-  format Program $progfull66. ;
+  format Subsidy_Info_Source_Date mmddyy10. ;
   format Compliance_end_date mmddyy10. ;
   format Previous_Affordability_End mmddyy10. ;
-  format Agency $80. ;
   format Date_Affordability_Ended mmddyy10. ;
 
   input
@@ -99,8 +77,19 @@
 
   filename fimport clear;
     
-  %FILE_INFO( DATA=New_Proj_subs, stats= )
+  proc sort data=New_Proj_Subs (where=(id > 0));
+  by id;
+  run;
+
+  title2 '********************************************************************************************';
+  title3 "** New subsidy data read from &input_path\&input_file_pre._subsidy.csv";
+
+  proc print data=New_Proj_Subs noobs;
+    id id;
+  run;
   
+  title2;
+
   data NLIHC_ID;
 
     set New_Proj_projects_geoc_nlihc_id
@@ -108,10 +97,6 @@
     run;
 
   proc sort data=nlihc_id;
-  by id;
-  run;
-
-  proc sort data=New_Proj_Subs (where=(id > 0));
   by id;
   run;
 
@@ -137,8 +122,6 @@
   proc sort data = Subsidy_a;
   by nlihc_id;
   run;
-
-  %FILE_INFO( DATA=Subsidy_a, stats= )
 
   data Subsidy_a2;
     set Subsidy_a (where=(program~=""));
@@ -175,8 +158,6 @@
                   Compliance_End_Date=compl_end 
                   Date_Affordability_Ended=POA_End_actual Previous_affordability_end=POA_end_prev;
   run;
-
-  %FILE_INFO( DATA=Subsidy_a2, stats= )
 
   data Subsidy;
 
