@@ -76,7 +76,7 @@
   title2 '********************************************************************************************';
   title3 "** New project data read from &input_path\&input_file_pre..csv";
 
-  proc print data=New_Proj_projects noobs;
+  proc print data=New_Proj_projects noobs n;
     id id;
   run;
   
@@ -96,8 +96,6 @@
     ds_label=,
     listunmatched=Y
   )
-
-  %FILE_INFO( DATA=New_Proj_projects_geocode )
 
   ** Create Unique NLIHC IDs for New Projects **;
 
@@ -289,30 +287,35 @@
 
     if _type_ = 'BASE' then do;
       _hold_bldg_address_id = bldg_address_id;
+      in_catalog = 0;
       output;
     end;
     else if _hold_bldg_address_id = bldg_address_id then do;
       %warn_put( macro=Add_new_projects_geocode, 
                  msg="Possible existing Catalog project. " bldg_address_id= 
                      " See output for details." )
+      in_catalog = 1;
       output;
     end;
     else do;
       _hold_bldg_address_id = .a;
     end;
+    
+    format in_catalog dyesno.;
 
     drop _hold_bldg_address_id;
 
   run;
 
   title2 '********************************************************************************************';
-  title3 '** Addresses in new projects that match those in existing Catalog projects';
-  title4 '** Check to make sure these projects are not already in Catalog';
+  title3 '** Addresses in new projects that match existing Catalog projects OR';
+  title4 '** New projects with common addresses';
+  title4 '** Check to make sure these projects are not already in Catalog or dedulicate in input data';
 
   %Dup_check(
     data=Building_geocode_comp_rpt,
     by=bldg_address_id,
-    id=nlihc_id proj_name bldg_addre,
+    id=nlihc_id in_catalog proj_name bldg_addre,
     out=_dup_check,
     listdups=Y,
     quiet=Y

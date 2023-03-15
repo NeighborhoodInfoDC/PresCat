@@ -84,7 +84,7 @@
   title2 '********************************************************************************************';
   title3 "** New subsidy data read from &input_path\&input_file_pre._subsidy.csv";
 
-  proc print data=New_Proj_Subs noobs;
+  proc print data=New_Proj_Subs noobs n;
     id id;
   run;
   

@@ -24,7 +24,8 @@
 
 
 %Add_new_projects(
-  input_file_pre = New_projects_geocode_test_issue_339
+  /*input_file_pre = New_projects_geocode_test_issue_339*/
+  input_file_pre = New_projects_issue_300_bis
 )
 
 
