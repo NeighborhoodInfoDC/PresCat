@@ -42,7 +42,7 @@
     input_file_pre=&input_file_pre,
     input_path=&input_path
   )
-/***********  
+  
   ** Update PresCat.Project, PresCat.Project_category **;
   
   %Add_new_projects_project( )  
@@ -59,7 +59,7 @@
   run;
   
   title2;
-*****************/
+
 %mend Add_new_projects;
 
 /** End Macro Definition **/
