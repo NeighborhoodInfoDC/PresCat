@@ -25,21 +25,8 @@
 %File_info( data=PresCat.TOPA_addresses, printobs=5 )
 %File_info( data=PresCat.TOPA_database, printobs=5 ) /** 1699 obs**/
 
-/** merge address_id ssl and real_prop info **/
-
-data Topa_address_ssl_realprop;
-  merge
-    PresCat.TOPA_SSL (keep=id address_id ssl in=in_ssl)
-    PresCat.TOPA_addresses (keep =id address casd_date offer_sale_date in=in_addresses);
-  by id; 
-  /** List in LOG notices that are not in both data sets **/
-  if not ( in_ssl and in_addresses ) then put in_ssl= in_addresses= id= ssl= address_id= address=;
-run;
-
-%File_info( data=Topa_address_ssl_realprop, printobs=5 )
-
 /** sorting by id then address id**/
-proc sort data=Topa_address_ssl_realprop out=Topa_address_ssl_realprop_sort;
+proc sort data=Topa_addresses_full out=Topa_addresses_full_sort;
   by id address_id;
 run;
 
@@ -47,10 +34,10 @@ run;
 
 /** create ID (notice) x address_id crosswalk **/
 data Topa_id_x_address_1; 
-  set Topa_address_ssl_realprop_sort;
+  set Topa_addresses_full_sort;
   by id; 
   if first.id then output; 
-  keep address_id id casd_date offer_sale_date; 
+  *keep address_id id casd_date offer_sale_date; 
   rename address_id=address_id_ref;
 run; 
 
@@ -112,8 +99,5 @@ run;
     /** File info parameters **/
     printobs=10 
   )
-
-
-
 
 

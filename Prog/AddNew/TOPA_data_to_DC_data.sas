@@ -119,6 +119,7 @@ proc sql noprint;
     from TOPA_geocoded (where=(not(missing(ADDRESS_ID)))) as TOPA_geocoded
       left join Mar.Address_ssl_xref as xref    /** Left join = only keep obs that are in TOPA_geocoded **/
   on TOPA_geocoded.ADDRESS_ID = Xref.address_id   /** This is the condition you are matching on **/
+  where not( missing( xref.ssl ) )
   order by TOPA_geocoded.ID, Xref.ssl;    /** Optional: sorts the output data set **/
 quit;
 
@@ -139,7 +140,7 @@ proc sql noprint;
 	TOPA_SSL.GeoBg2020, TOPA_SSL.GeoBlk2020, TOPA_SSL.Psa2012,
 	TOPA_SSL.VoterPre2012, TOPA_SSL.Ward2022, TOPA_SSL.Ward2012,
     RealProp.SSL, RealProp.SALEPRICE, RealProp.saleprice_prev, RealProp.SALEDATE, RealProp.saledate_prev, RealProp.Ownername_full, RealProp.ownername_full_prev, RealProp.ui_proptype,
-	RealProp.address1, RealProp.address2, RealProp.address3, RealProp.address1_prev, RealProp.address2_prev, RealProp.address3_prev  
+	RealProp.address1, RealProp.address2, RealProp.address3, RealProp.address1_prev, RealProp.address2_prev, RealProp.address3_prev, RealProp.premiseadd, RealProp.hstd_code  
     from TOPA_SSL (where=(not(missing(SSL)))) as TOPA_SSL
       left join RealProp.Sales_master as realprop    /** Left join = only keep obs that are in TOPA_geocoded **/
   on TOPA_SSL.SSL = realprop.SSL   /** This is the condition you are matching on **/
@@ -147,7 +148,52 @@ proc sql noprint;
   order by TOPA_SSL.ID, realprop.SALEDATE;    /** Optional: sorts the output data set **/
 quit;
 
+/******** NEED TO DEBUG THIS ***********
+%Parcel_base_who_owns(
+  RegExpFile=&_dcdata_r_path\RealProp\Prog\Updates\Owner type codes reg expr.txt,
+  Diagnostic_file=&_dcdata_default_path\PresCat\Prog\AddNew\TOPA_who_owns_diagnostic.xls,
+  inlib=work,
+  data=TOPA_realprop_a,
+  outlib=work,
+  finalize=N,
+  Revisions=NULL  
+  )
+********************************************/
+
 %File_info( data=TOPA_realprop, printobs=5 )
+
+** Create full list of addresses by rematching SSL file to SSL-address crosswalk **;
+
+proc sql noprint;
+
+  create table _ssl_addr as
+  select unique
+    coalesce( TOPA_SSL.ssl, xref.ssl ) as ssl, TOPA_SSL.id, xref.address_id
+	from TOPA_SSL left join Mar.Address_ssl_xref as xref
+	on TOPA_SSL.ssl = xref.ssl
+    order by id, address_id;
+
+  create table _full_address_list as
+  select address_id, id from Topa_geocoded
+  where not( missing( address_id ) )
+  union
+  select address_id, id from _ssl_addr
+  where not( missing( address_id ) );
+
+  create table TOPA_addresses_full as
+  select unique coalesce( _full_address_list.address_id, mar.address_id ) as address_id,
+    _full_address_list.id, 
+	mar.fulladdress, mar.Anc2012, mar.cluster2017, mar.Geo2020, 
+	mar.GeoBg2020, mar.GeoBlk2020, mar.Psa2012,
+	mar.VoterPre2012, mar.Ward2022, mar.Ward2012, mar.x, mar.y, mar.zip,
+	mar.active_res_occupancy_count, mar.active_res_unit_count
+    from _full_address_list left join 
+  Mar.Address_points_view as mar
+  on _full_address_list.address_id = mar.address_id
+  order by id, address_id;
+
+quit;
+
 
 ** Export 2007 TOPA/real property data **;
 ods tagsets.excelxp   /** Open the excelxp destination **/
@@ -264,7 +310,7 @@ ods listing;   /** Reopen the listing destination **/
     data=TOPA_database,
     out=TOPA_database,
     outlib=PresCat,
-    label="Preservation Catalog, new DC TOPA dataset",
+    label="Preservation Catalog, CNHED DC TOPA notice of sale database, 5+ unit buildings only",
     sortby=ID,
     /** Metadata parameters **/
     revisions=%str(New data set.),
@@ -277,7 +323,7 @@ ods listing;   /** Reopen the listing destination **/
     data=Topa_realprop,
     out=Topa_realprop,
     outlib=PresCat,
-    label="Preservation Catalog, new DC TOPA & Real Property Sales Dataset",
+    label="Preservation Catalog, Real property sales for TOPA database properties",
     sortby=ID SALEDATE,
     /** Metadata parameters **/
     revisions=%str(New data set.),
@@ -287,23 +333,10 @@ ods listing;   /** Reopen the listing destination **/
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
-    data=Topa_addresses,
-    out=Topa_addresses,
+    data=Topa_addresses_full,
+    out=Topa_addresses_full,
     outlib=PresCat,
-    label="Preservation Catalog, new database with individual addresses parsed out from TOPA dataset",
-    sortby=ID,
-    /** Metadata parameters **/
-    revisions=%str(New data set.),
-    /** File info parameters **/
-    printobs=10 
-  )
-
-  %Finalize_data_set( 
-    /** Finalize data set parameters **/
-    data=Topa_geocoded,
-    out=Topa_geocoded,
-    outlib=PresCat,
-    label="Preservation Catalog, new database with SSLs and GEO ids added to addresses parsed out from TOPA dataset",
+    label="Preservation Catalog, full set of addresses for TOPA database properties",
     sortby=ID,
     /** Metadata parameters **/
     revisions=%str(New data set.),
@@ -316,7 +349,7 @@ ods listing;   /** Reopen the listing destination **/
     data=Topa_ssl,
     out=Topa_ssl,
     outlib=PresCat,
-    label="Preservation Catalog, new database using MAR.address_ssl_xref to identify other parcels to match to addresses",
+    label="Preservation Catalog, real property parcels for TOPA database properties",
     sortby=ID,
     /** Metadata parameters **/
     revisions=%str(New data set.),
