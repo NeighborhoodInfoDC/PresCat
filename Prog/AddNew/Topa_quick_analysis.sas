@@ -77,18 +77,45 @@ data Combo;
   set 
     TOPA_by_property 
     (keep=address_id_ref id offer_of_sale_date
-     rename=(offer_of_sale_date=ref_date))
+     rename=(offer_of_sale_date=ref_date)
+     in=is_notice)
     Sales_by_property_nodup
 	  (keep=address_id_ref saledate saleprice ownername_full ui_proptype
 	   rename=(saledate=ref_date));
 	by address_id_ref ref_date;
 
+	if is_notice then desc = "NOTICE OF SALE";
+	else desc = "SALE";
+
 run;
 
-proc print data=Sales_by_property_nodup;
-  where address_id_ref in ( 38674 );
-  id id;
-  var saledate saleprice ownername_full;
+options nodate nonumber;
+
+%fdate()
+
+footnote1 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
+footnote2 height=9pt j=r '{Page}\~{\field{\*\fldinst{\pard\b\i0\chcbpat8\qc\f1\fs19\cf1{PAGE }\cf0\chcbpat0}}}';
+
+ods rtf file="&_dcdata_default_path\Prescat\Prog\Addnew\Quick_analysis.rtf" style=Styles.Rtf_arial_9pt startpage=bygroup;
+
+title2 "TOPA Notices and Property Sales";
+
+proc print data=combo label;
+  where address_id_ref in ( 38674, 16442, 5142, 3190, 13515  );
+  by address_id_ref;
+  id ref_date;
+  var desc id saleprice ownername_full ui_proptype;
+  label
+    address_id_ref = "Property ID (address)"
+	ref_date = "Date"
+	desc = "Type of activity"
+	id = "TOPA notice ID"
+	saleprice = "Sales price"
+	ownername_full = "Buyer"
+	ui_proptype = "Property type (at sale)";
+  format saleprice dollar12.;
 run;
 
+ods rtf close;
 
+footnote1;
