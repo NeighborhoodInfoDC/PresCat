@@ -20,8 +20,10 @@
 %DCData_lib( MAR )
 %DCData_lib( RealProp )
 
+%let revisions = Reformat and update TOPA data sets.;
+
 ** Download and read TOPA dataset into SAS dataset**;
-%let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA_DOPA_5+.csv";
+%let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA_DOPA_5+_with_var_names.csv";
 filename fixed temp;
 /** Remove carriage return and line feed characters within quoted strings **/
 /*'0D'x is the hexadecimal representation of CR and
@@ -59,7 +61,8 @@ proc import datafile=fixed
             out=TOPA_database1
             replace;
 		
-     getnames=yes;
+     getnames=yes;  /** Variable names are in row 1 **/
+     datarow=3;  /** Skip first 2 rows which have variable names and labels **/
 	 guessingrows=max;
 run;
 
@@ -70,38 +73,64 @@ data TOPA_database;
     set TOPA_database1;
 	format _all_;
 	informat _all_;
-    CASD_date = input(CASD_Report_week_ending_date, MMDDYY10.);
-    format CASD_date MMDDYY10.;
-    offer_sale_date = input(Offer_of_Sale_date__usually_DHCD, MMDDYY10.);
-    format offer_sale_date MMDDYY10.;
+	format Date_Contract TA_PS_Contract_Date mmddyy10.;
+      label
+        %include "&_dcdata_r_path\PresCat\Raw\TOPA\TOPA_DOPA_5+_variable_labels.txt";
+      ;
+      
+    ** If addresses are missing, use Address_for_mapping entered in CNHED database **;
+    if lowcase( All_street_addresses ) in ( "lo", "" ) then All_street_addresses = Address_for_mapping;
+    
+    ** Fill in address for Holmead Place Apartments (Holmstead Place is a typo) **;
+    if lowcase( All_street_addresses ) in: ( "holmead place", "holmstead place" ) then
+      All_street_addresses = "3435 Holmead Pl NW";
+    
+    ** Create proper date variables from text input **;
+    u_CASD_date = input(CASD_Report_week_ending_date, anydtdte12.);
+    format u_CASD_date MMDDYY10.;
+    u_offer_sale_date = input(Offer_of_Sale_date, anydtdte12.);
+    format u_offer_sale_date MMDDYY10.;
+    label
+      u_CASD_date = "CASD report week ending date (Urban created var)"
+      u_offer_sale_date = "Notice offer of sale date (Urban created var)";
 run;
 
 **show missing dates in data**;
 proc print data=TOPA_database; 
-	where CASD_date <= 0 OR offer_sale_date <= 0;
-	var ID SSL CASD_date offer_sale_date; 
+	where u_CASD_date <= 0 OR u_offer_sale_date <= 0;
+	var ID SSL u_CASD_date u_offer_sale_date; 
 run; 
 
 **parse out individual addresses from TOPA dataset**;
 %Rcasd_address_parse(
 	data=TOPA_database,
-	out=TOPA_addresses,
+	out=TOPA_addresses_notices,
 	id=ID,
 	addr=All_street_addresses,
-	keepin=CASD_date offer_sale_date,
-	keepout=CASD_date offer_sale_date
+	keepin=u_CASD_date u_offer_sale_date,
+	keepout=u_CASD_date u_offer_sale_date
 )
 
-%File_info( data=TOPA_addresses, printobs=40 )
+%File_info( data=TOPA_addresses_notices, printobs=40 )
 
 ** adding SSLs and GEO ids to the address list**;
 %DC_mar_geocode(
-	data=TOPA_addresses,
+	data=TOPA_addresses_notices,
 	staddr=Address,
 	out=TOPA_geocoded, 
 	geo_match=yes, 
 	keep_geo= SSL Address_id Ward2012 Anc2012 cluster2017 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2022
 )
+
+** Manually fix addresses that are not successfully geocoded (problem with geocoder) **;
+
+data TOPA_geocoded;
+
+  set TOPA_geocoded;
+  
+  if Address_std = "5115 QUEEN'S STROLL PLACE SE" then Address_id = 155975;
+  
+run;
 
 %File_info( data=TOPA_geocoded, printobs=5 )
 
@@ -109,9 +138,9 @@ run;
 proc sql noprint;
   create table TOPA_SSL as   /** Name of output data set to be created **/
   select
-    coalesce( TOPA_geocoded.ADDRESS_ID, Xref.address_id ) as address_id,    /** Matching variables **/
+    coalesce( TOPA_geocoded.ADDRESS_ID, Xref.address_id ) as address_id label="DC MAR address ID",    /** Matching variables **/
     TOPA_geocoded.ID, /** Other vars you want to keep from the two data sets, separated by commas **/
-	TOPA_geocoded.CASD_date, TOPA_geocoded.offer_sale_date,
+	TOPA_geocoded.u_CASD_date, TOPA_geocoded.u_offer_sale_date,
 	TOPA_geocoded.Anc2012, TOPA_geocoded.cluster2017, TOPA_geocoded.Geo2020, 
 	TOPA_geocoded.GeoBg2020, TOPA_geocoded.GeoBlk2020, TOPA_geocoded.Psa2012,
 	TOPA_geocoded.VoterPre2012, TOPA_geocoded.Ward2022, TOPA_geocoded.Ward2012,
@@ -133,9 +162,9 @@ proc sql noprint;
   select unique 
     coalesce( TOPA_SSL.SSL, RealProp.SSL ) as SSL, /** Matching variables **/
 	/** obs where sale date is after the later of CASD data and offer of sale data **/
-	saledate - offer_sale_date as days_notice_to_sale,
+	saledate - u_offer_sale_date as u_days_notice_to_sale label="Number of days from offer of sale to actual sale (Urban created var)",
 	TOPA_SSL.ID, /** Other vars you want to keep from the two data sets, separated by commas **/
-	TOPA_SSL.CASD_date, TOPA_SSL.offer_sale_date,
+	TOPA_SSL.u_CASD_date, TOPA_SSL.u_offer_sale_date,
 	TOPA_SSL.Anc2012, TOPA_SSL.cluster2017, TOPA_SSL.Geo2020, 
 	TOPA_SSL.GeoBg2020, TOPA_SSL.GeoBlk2020, TOPA_SSL.Psa2012,
 	TOPA_SSL.VoterPre2012, TOPA_SSL.Ward2022, TOPA_SSL.Ward2012,
@@ -144,7 +173,7 @@ proc sql noprint;
     from TOPA_SSL (where=(not(missing(SSL)))) as TOPA_SSL
       left join RealProp.Sales_master as realprop    /** Left join = only keep obs that are in TOPA_geocoded **/
   on TOPA_SSL.SSL = realprop.SSL   /** This is the condition you are matching on **/
-  where SALEDATE > max(CASD_date, offer_sale_date) /** obs where sale date is after the later of CASD data and offer of sale data **/
+  where SALEDATE > max(u_CASD_date, u_offer_sale_date) /** obs where sale date is after the later of CASD data and offer of sale data **/
   order by TOPA_SSL.ID, realprop.SALEDATE;    /** Optional: sorts the output data set **/
 quit;
 
@@ -166,6 +195,7 @@ quit;
 
 proc sql noprint;
 
+  /** Get all addresses associated with SSLs in data **/
   create table _ssl_addr as
   select unique
     coalesce( TOPA_SSL.ssl, xref.ssl ) as ssl, TOPA_SSL.id, xref.address_id
@@ -173,27 +203,38 @@ proc sql noprint;
 	on TOPA_SSL.ssl = xref.ssl
     order by id, address_id;
 
+  /** Concatenate addresses from SSLs and notices **/ 
   create table _full_address_list as
-  select address_id, id from Topa_geocoded
-  where not( missing( address_id ) )
-  union
-  select address_id, id from _ssl_addr
-  where not( missing( address_id ) );
+    select address_id, id, 1 as Notice_listed_address from Topa_geocoded
+    where not( missing( address_id ) )
+    union
+    select address_id, id, 0 as Notice_listed_address from _ssl_addr
+    where not( missing( address_id ) );
+  
+  /** Group by address_id and id, combining notice flag **/
+  create table _full_address_list_grp as
+    select address_id, id, 
+      max( Notice_listed_address ) as Notice_listed_address 
+        label="Address was listed on TOPA notice"
+        format=dyesno.
+    from _full_address_list
+    group by address_id, id;
 
-  create table TOPA_addresses_full as
-  select unique coalesce( _full_address_list.address_id, mar.address_id ) as address_id,
-    _full_address_list.id, 
-	mar.fulladdress, mar.Anc2012, mar.cluster2017, mar.Geo2020, 
-	mar.GeoBg2020, mar.GeoBlk2020, mar.Psa2012,
-	mar.VoterPre2012, mar.Ward2022, mar.Ward2012, mar.x, mar.y, mar.zip,
-	mar.active_res_occupancy_count, mar.active_res_unit_count
-    from _full_address_list left join 
-  Mar.Address_points_view as mar
-  on _full_address_list.address_id = mar.address_id
-  order by id, address_id;
+  /** Add geographic vars to addresses **/
+  create table TOPA_addresses as
+    select unique coalesce( _full_address_list_grp.address_id, mar.address_id ) as address_id 
+        label = "DC MAR address ID",
+      _full_address_list_grp.id, _full_address_list_grp.Notice_listed_address,
+  	mar.fulladdress, mar.Anc2012, mar.cluster2017, mar.Geo2020, 
+  	mar.GeoBg2020, mar.GeoBlk2020, mar.Psa2012,
+  	mar.VoterPre2012, mar.Ward2022, mar.Ward2012, mar.x, mar.y, mar.zip,
+  	mar.active_res_occupancy_count, mar.active_res_unit_count
+    from _full_address_list_grp left join 
+    Mar.Address_points_view as mar
+    on _full_address_list_grp.address_id = mar.address_id
+    order by id, address_id;
 
 quit;
-
 
 ** Export 2007 TOPA/real property data **;
 ods tagsets.excelxp   /** Open the excelxp destination **/
@@ -205,8 +246,8 @@ ods tagsets.excelxp   /** Open the excelxp destination **/
 ods listing close;  /** Close the regular listing destination **/
 
 proc print data=TOPA_realprop;  /** Create the output for the workbook **/
-  where year( casd_date ) = 2007;  /** Only use 2007 data **/
-  var ID SSL CASD_date offer_sale_date SALEPRICE saleprice_prev	SALEDATE saledate_prev 
+  where year( u_CASD_date ) = 2007;  /** Only use 2007 data **/
+  var ID SSL u_CASD_date u_offer_sale_date SALEPRICE saleprice_prev	SALEDATE saledate_prev 
 	Ownername_full ownername_full_prev ui_proptype ADDRESS1 ADDRESS2 address3
 	address1_prev address2_prev address3_prev; /** drop geographies **/
   by ID; /** BY groups (worksheets) will be for each TOPA ID **/
@@ -236,7 +277,7 @@ run;
 proc summary data=Topa_realprop;
   by ID;
   id ward2022;
-  var offer_sale_date days_notice_to_sale;
+  var u_offer_sale_date u_days_notice_to_sale;
   output out=Topa_realprop_by_id min=;
 run;
 
@@ -253,12 +294,12 @@ run;
 data Topa_realprop_by_id_full;
 
   merge
-    TOPA_database (keep=id offer_sale_date)
+    TOPA_database (keep=id u_offer_sale_date)
     Topa_geocoded_by_id (keep=id ward2022)
-    Topa_realprop_by_id (in=in_realprop);
+    Topa_realprop_by_id (in=in_realprop drop=u_offer_sale_date ward2022);
  by id;
  
- if not in_realprop then days_notice_to_sale = .n;
+ if not in_realprop then u_days_notice_to_sale = .n;
 
 run;
 
@@ -274,36 +315,38 @@ ods listing close;  /** Close the regular listing destination **/
 
 ods tagsets.excelxp options(sheet_name="By year");
 proc tabulate data=Topa_realprop_by_id_full noseps missing format=comma8.0;
-  class offer_sale_date;
-  class days_notice_to_sale /order=data preloadfmt;
+  class u_offer_sale_date;
+  class u_days_notice_to_sale /order=data preloadfmt;
   table 
     /** Rows **/
     n='Notices of sale filed'
-    n=' ' * days_notice_to_sale='Days between notice and property sale' 
+    n=' ' * u_days_notice_to_sale='Days between notice and property sale' 
     ,
     /** Columns **/
-    all='All Years' offer_sale_date='By Notice Year'
+    all='All Years' u_offer_sale_date='By Notice Year'
   ;
-  format offer_sale_date year4. days_notice_to_sale days_range.; 
+  format u_offer_sale_date year4. u_days_notice_to_sale days_range.; 
 run;
 
 ods tagsets.excelxp options(sheet_name="By ward");
 proc tabulate data=Topa_realprop_by_id_full noseps missing format=comma8.0;
   class Ward2022;
-  class days_notice_to_sale /order=data preloadfmt;
+  class u_days_notice_to_sale /order=data preloadfmt;
   table 
     /** Rows **/
     n='Notices of sale filed'
-    n=' ' * days_notice_to_sale='Days between notice and property sale' 
+    n=' ' * u_days_notice_to_sale='Days between notice and property sale' 
     ,
     /** Columns **/
     all='All Wards' Ward2022='By Ward (2022)'
   ;
-  format Ward2022 $CHAR3. days_notice_to_sale days_range.; 
+  format Ward2022 $CHAR3. u_days_notice_to_sale days_range.; 
 run;
 
 ods tagsets.excelxp close;  /** Close the excelxp destination **/
 ods listing;   /** Reopen the listing destination **/
+
+** Finalize permanent data sets **;
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
@@ -313,9 +356,10 @@ ods listing;   /** Reopen the listing destination **/
     label="Preservation Catalog, CNHED DC TOPA notice of sale database, 5+ unit buildings only",
     sortby=ID,
     /** Metadata parameters **/
-    revisions=%str(New data set.),
+    revisions=%str(&revisions),
     /** File info parameters **/
-    printobs=10 
+    printobs=10,
+    freqvars=technical_assistance_provider
   )
 
   %Finalize_data_set( 
@@ -326,22 +370,23 @@ ods listing;   /** Reopen the listing destination **/
     label="Preservation Catalog, Real property sales for TOPA database properties",
     sortby=ID SALEDATE,
     /** Metadata parameters **/
-    revisions=%str(New data set.),
+    revisions=%str(&revisions),
     /** File info parameters **/
     printobs=10 
   )
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
-    data=Topa_addresses_full,
-    out=Topa_addresses_full,
+    data=TOPA_addresses,
+    out=TOPA_addresses,
     outlib=PresCat,
     label="Preservation Catalog, full set of addresses for TOPA database properties",
-    sortby=ID,
+    sortby=ID address_id,
     /** Metadata parameters **/
-    revisions=%str(New data set.),
+    revisions=%str(&revisions),
     /** File info parameters **/
-    printobs=10 
+    printobs=10,
+    freqvars=Notice_listed_address
   )
 
   %Finalize_data_set( 
@@ -352,7 +397,7 @@ ods listing;   /** Reopen the listing destination **/
     label="Preservation Catalog, real property parcels for TOPA database properties",
     sortby=ID,
     /** Metadata parameters **/
-    revisions=%str(New data set.),
+    revisions=%str(&revisions),
     /** File info parameters **/
     printobs=10 
   )
