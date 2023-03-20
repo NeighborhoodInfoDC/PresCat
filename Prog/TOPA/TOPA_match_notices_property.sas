@@ -59,11 +59,11 @@ proc print data=Topa_id_x_address;
 run;
 title2;
 
-proc export data=Topa_id_x_address
-    outfile="&_dcdata_default_path\PresCat\Prog\AddNew\Topa_id_x_address.csv"
-    dbms=csv
-    replace;
-run;
+/*proc export data=Topa_id_x_address*/
+/*    outfile="&_dcdata_default_path\PresCat\Prog\AddNew\Topa_id_x_address.csv"*/
+/*    dbms=csv*/
+/*    replace;*/
+/*run;*/
 
 proc sort data=Topa_id_x_address;
   by address_id_ref id;
@@ -72,7 +72,7 @@ run;
 data Topa_notice_freq; 
   set Topa_id_x_address; 
   by address_id_ref; 
-  if first.address_id_ref then fr_offer_sale_date=offer_sale_date; 
+  if first.address_id_ref then fr_offer_sale_date=offer_sale_date;
   retain fr_offer_sale_date;
   days_btwn_notices = offer_sale_date - fr_offer_sale_date;  
   fr_offer_sale_date = offer_sale_date;
@@ -80,6 +80,10 @@ data Topa_notice_freq;
   run;
 
 %File_info( data=Topa_notice_freq, printobs=5 ) /** 1699 obs**/
+
+proc sort data=Topa_notice_freq; 
+  by id; 
+run; 
 
 proc export data=Topa_notice_freq
     outfile="&_dcdata_default_path\PresCat\Prog\AddNew\Topa_notice_freq.csv"
