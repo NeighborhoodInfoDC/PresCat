@@ -65,7 +65,7 @@ data DC_Pipeline_2022_07;
 	set DC_Pipeline;
 	_30__Unit_Sizes_Complete = input(_30__Unit_Sizes_Complete_, 8.);
 	_30_AMI_LRSP = input(_30__AMI___LRSP, 8.);
-/*	drop _30__Unit_Sizes_Complete_ _30__AMI___LRSP;*/
+/*	drop _30__Unit_Sizes_Complete_ _30__AMI___LRSP; putting variables together to drop*/ 
 	TDC_ = input(TDC, comma10.);
 /*	drop TDC;*/
 	TDCUnit = input(TDC_Unit, comma10.);
