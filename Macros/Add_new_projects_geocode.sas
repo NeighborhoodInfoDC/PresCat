@@ -250,7 +250,7 @@
 
     ** Cluster names **;
     
-    length Cluster_tr2000_name $ 80;
+    length Cluster_tr2000_name $ 120;
 	    
     Cluster_tr2000_name = left( put( Cluster_tr2000, $clus00b. ) );
 
@@ -368,6 +368,7 @@
   run;
 
   data Building_geocode;
+    length Cluster_tr2000_name $ 120;
     set Building_geocode_b Building_geocode_a;
     by nlihc_id Bldg_addre;
   run;
