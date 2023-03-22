@@ -95,11 +95,20 @@ data TOPA_database;
       u_offer_sale_date = "Notice offer of sale date (Urban created var)";
 run;
 
-**show missing dates in data**;
+title2 '** Check for duplicate values of ID **';
+%Dup_check(
+  data=TOPA_database,
+  by=ID,
+  id=
+)
+
+title2 '**show missing dates in data**';
 proc print data=TOPA_database; 
 	where u_CASD_date <= 0 OR u_offer_sale_date <= 0;
 	var ID SSL u_CASD_date u_offer_sale_date; 
 run; 
+
+title2;
 
 **parse out individual addresses from TOPA dataset**;
 %Rcasd_address_parse(
@@ -180,7 +189,7 @@ quit;
 /******** NEED TO DEBUG THIS ***********
 %Parcel_base_who_owns(
   RegExpFile=&_dcdata_r_path\RealProp\Prog\Updates\Owner type codes reg expr.txt,
-  Diagnostic_file=&_dcdata_default_path\PresCat\Prog\AddNew\TOPA_who_owns_diagnostic.xls,
+  Diagnostic_file=&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_who_owns_diagnostic.xls,
   inlib=work,
   data=TOPA_realprop_a,
   outlib=work,
@@ -238,7 +247,7 @@ quit;
 
 ** Export 2007 TOPA/real property data **;
 ods tagsets.excelxp   /** Open the excelxp destination **/
-  file="&_dcdata_default_path\PresCat\Prog\AddNew\TOPA_data_to_DC_data_2007.xls"  /** This is where the output will go **/
+  file="&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_data_to_DC_data_2007.xls"  /** This is where the output will go **/
   style=Normal    /** This is the ODS style that will be used in the workbook **/
   options( sheet_interval='bygroup' )   /** This creates a new worksheet for every BY group in the output **/
 ;
@@ -306,7 +315,7 @@ run;
 
 ** Export Topa_realprop_by_id notices of sales filed**;
 ods tagsets.excelxp   /** Open the excelxp destination **/
-  file="&_dcdata_default_path\PresCat\Prog\AddNew\TOPA_data_days_notice_propsales.xls"  /** This is where the output will go **/
+  file="&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_data_days_notice_propsales.xls"  /** This is where the output will go **/
   style=Normal    /** This is the ODS style that will be used in the workbook **/
   options( sheet_interval='proc' )   /** This creates a new worksheet for every BY group in the output **/
 ;
