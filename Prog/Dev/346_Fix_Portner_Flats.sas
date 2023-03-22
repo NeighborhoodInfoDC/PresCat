@@ -175,6 +175,8 @@ data Parcel;
     NL000234_parcel;
   by nlihc_id ssl;
   
+  informat _all_ ;
+  
 run;
 
 %Finalize_data_set( 
