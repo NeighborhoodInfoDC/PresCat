@@ -182,7 +182,6 @@ proc sql noprint;
     from TOPA_SSL (where=(not(missing(SSL)))) as TOPA_SSL
       left join RealProp.Sales_master as realprop    /** Left join = only keep obs that are in TOPA_geocoded **/
   on TOPA_SSL.SSL = realprop.SSL   /** This is the condition you are matching on **/
-  where SALEDATE > max(u_CASD_date, u_offer_sale_date) /** obs where sale date is after the later of CASD data and offer of sale data **/
   order by TOPA_SSL.ID, realprop.SALEDATE;    /** Optional: sorts the output data set **/
 quit;
 
