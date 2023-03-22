@@ -25,8 +25,11 @@
 %DCData_lib( Prescat )
 %DCData_lib( Mar )
 %DCData_lib( Realprop )
+%DCData_lib( Rod )
+%DCData_lib( DHCD )
 
 %let revisions = Fix addresses and parcels for Portner Flats (NL000243).;
+
 
 title2 "Current addresses for Portner Flats";
 
@@ -36,9 +39,18 @@ proc print data=Prescat.Building_geocode;
   var bldg_address_id bldg_addre bldg_units_mar ssl;
 run;
 
-** Create replacement parcel and address data **;
+title2 "Current parcels for Portner Flats";
 
-title2 "NL000234 parcel record";
+proc print data=Prescat.Parcel;
+  where nlihc_id = 'NL000243';
+  id nlihc_id;
+  var ssl in_last_ownerpt parcel_owner_name parcel_type;
+run;
+
+title2;
+
+
+** Create replacement parcel and address data **;
 
 data NL000234_parcel;
 
@@ -70,12 +82,6 @@ data NL000234_parcel;
   ;
 
 run;
-
-proc print data=NL000234_parcel;
-  id ssl;
-run;
-
-title2 "NL000234 address record";
 
 data NL000243_building_geocode;
 
@@ -110,11 +116,6 @@ data NL000243_building_geocode;
   
 run;
 
-proc print data=NL000243_building_geocode;
-  id bldg_address_id;
-run;
-
-title2;
 
 ** Create new Building_geocode data set;
 
@@ -153,66 +154,63 @@ proc print data=Building_geocode;
   var bldg_address_id bldg_addre bldg_units_mar ssl;
 run;
 
+title2;
+
+** Create new Project_geocode data set;
+
+%Create_project_geocode(
+  data=Building_geocode, 
+  revisions=%str(&revisions),
+  compare=N,
+  archive=N
+)
 
 
-ENDSAS;
+** Create new Parcel data set;
 
-title2 "SSLs for reference Address_id (298461)";
+data Parcel;
 
-proc sql;
-  create table NL000234_parcel as
-    select parcel.ssl, 
-      'NL000243' as Nlihc_id length=16,
-      parcel.in_last_ownerpt, 
-      parcel.ownerpt_extractdat_last as Parcel_info_source_date,
-      parcel.ownername, parcel.ownname2,
-      xref.address_id
-    from Realprop.Parcel_base as parcel
-    where parcel.ssl = 298461
-    order by ssl;
-quit;
-
-proc print data=NL000234_parcel;
-  id ssl;
+  set
+    Prescat.Parcel (where=(nlihc_id ~= 'NL000243'))
+    NL000234_parcel;
+  by nlihc_id ssl;
+  
 run;
 
-title2 "Addresses for selected SSLs";
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Parcel,
+  out=Parcel,
+  outlib=PresCat,
+  label="Preservation Catalog, Real property parcels",
+  sortby=nlihc_id ssl,
+  archive=N,
+  /** Metadata parameters **/
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0
+)
 
-/*************
-proc sql;
-  create table A as
-    select * from 
-    Mar.Address_ssl_xref as xref
-    where xref.ssl in (select distinct ssl from NL000234_parcel)
-    order by address_id;
-quit;
+title2 "New parcels for Portner Flats";
 
-proc print data=A;
-****************/
-
-
-proc sql;
-  create table NL000243_building_geocode as
-    select distinct coalesce( xref.address_id, addr.address_id ) as address_id,
-      'NL000243' as Nlihc_id length=16,
-      addr.status,
-      addr.fulladdress as bldg_addr,
-      addr.latitude as bldg_lat,
-      addr.longitude as bldg_lon,
-      active_res_occupancy_count as bldg_units_mar,
-      x as bldg_x,
-      y as bldg_y,
-      zip as bldg_zip,
-      addr.anc2012, addr.cluster2017, addr.cluster_tr2000, addr.geo2010, addr.geo2020, addr.geoblk2020, addr.psa2012, addr.ssl, addr.ward2012, addr.ward2022
-    from Mar.Address_points_view as addr
-    right join
-    Mar.Address_ssl_xref as xref
-    on xref.address_id = addr.address_id
-    where xref.ssl in (select distinct ssl from NL000234_parcel)
-    order by address_id;
-quit;
-
-proc print data=NL000243_building_geocode;
-  id address_id;
+proc print data=Parcel;
+  where nlihc_id = 'NL000243';
+  id nlihc_id;
+  var ssl in_last_ownerpt parcel_owner_name parcel_type;
 run;
+
+title2;
+
+** Create new Realprop data set;
+
+%Update_real_property( Parcel=Parcel, revisions=%str(&revisions) )
+
+title2 'New real property records for Portner Flats';
+
+proc print data=Real_property n;
+  where nlihc_id = 'NL000243';
+  id nlihc_id;
+run;
+
+title2;
 
