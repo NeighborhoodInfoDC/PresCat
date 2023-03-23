@@ -112,13 +112,12 @@ run;
 
 data Topa_notice_flag; 
   set Combo;  
-  if desc="SALE" then temp_flag=1; 
-  else temp_flag=0; 
+  if first.u_address_id_ref then temp_flag=1; 
   retain temp_flag; 
-  if desc="NOTICE OF SALE" then u_dedup_notice = 1; 
-  else u_dedup_notice = 0;
-/*  if first.id then temp_flag=1; */
-/*  retain temp_flag;*/
+  if first.id then u_dedup_notice=1 & u_notice_with_sale=1; /* need to say next observation somehow rather than first.id? */ 
+/*  if desc="SALE" then temp_flag=1; */
+/*  else temp_flag=0; */
+/*  retain temp_flag; */
 
 run; 
    
