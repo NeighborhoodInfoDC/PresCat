@@ -28,19 +28,19 @@
 
 /** Creating an ID for each property **/
 /** sorting by id then address id**/
-proc sort data=Prescat.Topa_ssl out=Topa_ssl_sort;
+proc sort data=Prescat.Topa_addresses out=Topa_addresses_sort;
   by id address_id;
 run;
 
 /** create ID (notice) x address_id crosswalk **/
 data Topa_id_x_address_1; 
-  set Topa_ssl_sort;
+  set Topa_addresses_sort;
   by id; 
   if first.id then output; 
   rename address_id=u_address_id_ref;
 run; 
 
-%File_info( data=Topa_id_x_address_1, printobs=5 ) /** 1699 obs**/
+%File_info( data=Topa_id_x_address_1, printobs=5 ) /** 1738 obs**/
 
 
 /** Fill in missing ID numbers to match original TOPA database **/
@@ -57,7 +57,7 @@ title2 '** Notices with missing u_address_id_ref **';
 proc print data=Topa_id_x_address;
   where missing( u_address_id_ref );
   id id;
-  var u_address_id_ref all_street_addresses address_for_mapping ssl;
+  var u_address_id_ref all_street_addresses address_for_mapping;
 run;
 title2;
 
@@ -75,25 +75,32 @@ data Sales_by_property;
 run;
 
 proc sort data=Sales_by_property out=Sales_by_property_nodup nodupkey;
-  by u_address_id_ref saledate;
+  by u_address_id_ref descending saledate;
 run;
 
-%File_info( data=Sales_by_property_nodup, printobs=5 ) /** 5009 obs**/
+%File_info( data=Sales_by_property_nodup, printobs=5 ) /** 4958 obs**/
 
-proc sort data=Topa_id_x_address;
-  by u_address_id_ref u_offer_sale_date id;
+data TOPA_by_property;
+  merge Prescat.Topa_database Topa_id_x_address;
+  by id;
+run; 
+
+proc sort data=TOPA_by_property;
+  by u_address_id_ref descending u_offer_sale_date id;
 run;
+
+%File_info( data=TOPA_by_property, printobs=5 ) /** 1740 obs**/
 
 data Combo;
   set 
-    Topa_id_x_address 
+    TOPA_by_property 
     (keep=u_address_id_ref id u_offer_sale_date
      rename=(u_offer_sale_date=ref_date)
      in=is_notice)
     Sales_by_property_nodup
 	  (keep=u_address_id_ref saledate saleprice ownername_full ui_proptype
 	   rename=(saledate=ref_date));
-	by u_address_id_ref ref_date;
+	by u_address_id_ref descending ref_date;
 
 	if is_notice then desc = "NOTICE OF SALE";
 	else desc = "SALE";
@@ -106,22 +113,32 @@ run;
 /*Create flags (u_dedup_notice & u_notice_with_sale)*/
 proc sort data=Combo;
   by u_address_id_ref descending ref_date;
-run;
+run; /* I don't know if this is neccessary but I know it always says to sort before using first operator*/
 
-%File_info( data=Combo, printobs=5 ) /** 4050 obs**/
+/* dedup_notice is just the most recent notice of sale for a property; */
 
 data Topa_notice_flag; 
   set Combo;  
-  if first.u_address_id_ref then temp_flag=1; 
-  retain temp_flag; 
-  if first.id then u_dedup_notice=1 & u_notice_with_sale=1; /* need to say next observation somehow rather than first.id? */ 
-/*  if desc="SALE" then temp_flag=1; */
-/*  else temp_flag=0; */
-/*  retain temp_flag; */
-
+  by u_address_id_ref descending ref_date;
+  retain temp1;
+  if first.u_address_id_ref then do; temp1=0; end; 
+  if ID and not(temp1) then do; temp1=1; u_dedup_notice=1;end;else u_dedup_notice=0; 
+/*  drop temp1;*/
 run; 
    
-%File_info( data=Topa_notice_flag) /** 4050 obs**/
+%File_info( data=Topa_notice_flag, printobs=50) /** 4050 obs **/
+
+data Topa_notice_flag_2; 
+  set Topa_notice_flag;  
+  by u_address_id_ref descending ref_date;
+  retain temp2;
+  if first.u_address_id_ref and not(saleprice) then do; temp2=0; end; /** not(saleprice) to show no sale on property**/
+  if ID and not(temp2) then do; temp2=1; u_notice_with_sale=0;end;else u_notice_with_sale=1; 
+  drop temp1 temp2;
+run; 
+
+%File_info( data=Topa_notice_flag_2, printobs=100) /** 4050 obs ID 5559**/
+
 
 /*Create u_days_between_notices & u_days_from_dedup_notice_to_sale*/
 proc sort data=Topa_id_x_address;
