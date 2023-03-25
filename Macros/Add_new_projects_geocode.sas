@@ -19,7 +19,9 @@
 
 %macro Add_new_projects_geocode( 
   input_file_pre=, /** First part of input file names **/ 
-  input_path=  /** Location of input files **/
+  input_path=,  /** Location of input files **/
+  address_data_edits=, /** Address data manual edits **/
+  parcel_data_edits= /** Parcel data manual edits **/
   );
 
   %local geo_vars;
@@ -243,6 +245,10 @@
     by address_id;
 
     if in1;
+    
+    ** Address manual edits **;
+    
+    &Address_data_edits;
 
     length Proj_name $ 80;
 
@@ -371,6 +377,7 @@
     length Cluster_tr2000_name $ 120;
     set Building_geocode_b Building_geocode_a;
     by nlihc_id Bldg_addre;
+    
   run;
 
   title2 '********************************************************************************************';
@@ -501,6 +508,8 @@ data Parcel_a;
   
   if in1;
   
+  %Owner_name_clean( Parcel_owner_name, Parcel_owner_name )
+
   if Parcel_x = 0 then Parcel_x = .u;
   if Parcel_y = 0 then Parcel_y = .u;
   
@@ -526,6 +535,10 @@ run;
     by nlihc_id ssl;
     
     informat _all_ ;
+    
+    ** Parcel data manual edits **;
+    
+    &Parcel_data_edits;
     
   run;
   
