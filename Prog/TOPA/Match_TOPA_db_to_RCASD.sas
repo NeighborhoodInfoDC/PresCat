@@ -20,8 +20,6 @@
 %DCData_lib( Prescat )
 %DCData_lib( DHCD )
 
-%let year = 2020;
-
 ** Combine RCASD data sets **;
 
 data Rcasd_all;
@@ -38,6 +36,8 @@ data Rcasd_all;
   where not( missing( address_id ) or missing( notice_date ) );
     
 run;
+
+** Match with TOPA database **;
 
 proc sql noprint;
   create table Match_TOPA_db_to_RCASD as
@@ -65,12 +65,11 @@ proc sql noprint;
       left join
       Prescat.Topa_addresses as addr
       on topa.id = addr.id
-      where /*year( u_offer_sale_date ) = &year and*/ notice_listed_address = 1 and 
+      where notice_listed_address = 1 and 
         not( missing( u_offer_sale_date ) or missing( address_id ) )
   ) as topa
   on topa.address_id = rcasd.address_id and abs( u_offer_sale_date - notice_date ) <= 3
-  where notice_type in ( '210', '228', '229' ) /*and not( missing( topa.address_id ) or
-    missing( rcasd.address_id ) or missing( u_offer_sale_date ) or missing( notice_date ) )*/
+  where notice_type in ( '210', '228', '229' )
   order by nidc_rcasd_id, u_offer_sale_date, notice_date;
 quit;
 
@@ -176,7 +175,7 @@ data add_notices_export;
  run;
  
 
-filename fexport "&_dcdata_default_path\PresCat\Raw\TOPA\Add_notices_export.csv" lrecl=5000;
+filename fexport "&_dcdata_default_path\PresCat\Raw\TOPA\Add_2015_2020_notices_export.csv" lrecl=5000;
 
 proc export data=Add_notices_export
     outfile=fexport
