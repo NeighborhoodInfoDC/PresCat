@@ -72,6 +72,7 @@ data Sales_by_property;
   merge
     Prescat.Topa_realprop Topa_id_x_address;
   by id;
+  if missing( ssl ) then delete;
 run;
 
 proc sort data=Sales_by_property out=Sales_by_property_nodup nodupkey;
@@ -102,9 +103,14 @@ data Combo;
 	   rename=(saledate=ref_date));
 	by u_address_id_ref descending ref_date;
 
+	length desc $ 40;
+
 	if is_notice then desc = "NOTICE OF SALE";
 	else desc = "SALE";
-  	where ref_date between '01Jan2006'd and '31dec2020'd; /**Limit sale and notice data to 2006-2020**/
+
+    /**Limit sale and notice data to 2006-2020 and do not use obs with missing address or date **/
+    where ref_date between '01Jan2006'd and '31dec2020'd 
+	  and not( missing( u_address_id_ref ) or missing( ref_date ) );
 
 run;
 
@@ -125,6 +131,15 @@ data Topa_notice_flag;
   if ID and not(temp1) then do; temp1=1; u_dedup_notice=1;end;else u_dedup_notice=0; 
 /*  drop temp1;*/
 run; 
+
+/** Temporary Proc Print for checking results **/
+proc print data=Topa_notice_flag;
+  where u_address_id_ref=5142;
+  by u_address_id_ref;
+  id ref_date;
+  var desc id temp1 u_dedup_notice;
+run;
+
    
 %File_info( data=Topa_notice_flag, printobs=50) /** 4050 obs **/
 
