@@ -126,10 +126,11 @@ run; /* I don't know if this is neccessary but I know it always says to sort bef
 data Topa_notice_flag; 
   set Combo;  
   by u_address_id_ref descending ref_date;
-  retain temp1;
-  if first.u_address_id_ref then do; temp1=0; end; 
-  if ID and not(temp1) then do; temp1=1; u_dedup_notice=1;end;else u_dedup_notice=0; 
-/*  drop temp1;*/
+  descsale=desc; 
+  retain descsale; 
+  if first.u_address_id_ref and desc="NOTICE OF SALE" then u_dedup_notice=1;
+  else if descsale="SALE" then u_dedup_notice=1;
+  else u_dedup_notice=0; 
 run; 
 
 /** Temporary Proc Print for checking results **/
@@ -137,12 +138,9 @@ proc print data=Topa_notice_flag;
   where u_address_id_ref=5142;
   by u_address_id_ref;
   id ref_date;
-  var desc id temp1 u_dedup_notice;
+  var desc id u_dedup_notice descsale;
 run;
-
    
-%File_info( data=Topa_notice_flag, printobs=50) /** 4050 obs **/
-
 data Topa_notice_flag_2; 
   set Topa_notice_flag;  
   by u_address_id_ref descending ref_date;
