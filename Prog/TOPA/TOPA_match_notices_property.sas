@@ -96,12 +96,12 @@ data Combo;
   set 
     TOPA_by_property 
     (keep=u_address_id_ref id u_offer_sale_date
-     rename=(u_offer_sale_date=ref_date)
+     rename=(u_offer_sale_date=u_ref_date)
      in=is_notice)
     Sales_by_property_nodup
-	  (keep=u_address_id_ref saledate saleprice ownername_full ui_proptype
-	   rename=(saledate=ref_date));
-	by u_address_id_ref descending ref_date;
+	  (keep=u_address_id_ref saledate saleprice ownername_full ui_proptype ADDRESS1 ADDRESS2 address3
+	   rename=(saledate=u_ref_date));
+	by u_address_id_ref descending u_ref_date;
 
 	length desc $ 40;
 
@@ -109,60 +109,52 @@ data Combo;
 	else desc = "SALE";
 
     /**Limit sale and notice data to 2006-2020 and do not use obs with missing address or date **/
-    where ref_date between '01Jan2006'd and '31dec2020'd 
-	  and not( missing( u_address_id_ref ) or missing( ref_date ) );
+    where u_ref_date between '01Jan2006'd and '31dec2020'd 
+	  and not( missing( u_address_id_ref ) or missing( u_ref_date ) );
 
 run;
 
 %File_info( data=Combo, printobs=5 ) /** 4050 obs**/
 
-/*Create flags (u_dedup_notice & u_notice_with_sale)*/
+/*Create flags (u_dedup_notice & u_notice_with_sale), u_days_between_notices & u_days_from_dedup_notice_to_sale*/
 data Topa_notice_flag; 
   set Combo;  
-  by u_address_id_ref descending ref_date;
+  by u_address_id_ref descending u_ref_date;
   Length prev_desc $14;
+  format u_notice_date MMDDYY10.;
+  format u_sale_date MMDDYY10.;
   if first.u_address_id_ref then prev_desc=""; 
+  if first.u_address_id_ref then u_notice_date="";
   if first.u_address_id_ref and desc="NOTICE OF SALE" then u_dedup_notice=1;
   else if desc="NOTICE OF SALE" and prev_desc="SALE" then u_dedup_notice=1;
   else u_dedup_notice=0; 
   if desc="NOTICE OF SALE" and prev_desc="SALE" then u_notice_with_sale=1;
   else u_notice_with_sale=0; 
+  if u_dedup_notice=1 and u_notice_with_sale=1 then u_days_from_dedup_notice_to_sale=u_sale_date-u_ref_date;
+  if desc="NOTICE OF SALE" then u_days_between_notices=u_notice_date-u_ref_date;
   retain prev_desc;
   prev_desc=desc; 
+  if desc="SALE" then u_sale_date=u_ref_date; 
+  retain u_sale_date; 
+  if desc="NOTICE OF SALE" then u_notice_date=u_ref_date;
+  retain u_notice_date;
+  if desc="SALE" then do; 
+	u_ownername=Ownername_full; u_saleprice=SALEPRICE; u_proptype=ui_proptype; u_address1=ADDRESS1;
+	u_address2=ADDRESS2; u_address3=address3; 
+	end; 
+  retain u_ownername u_saleprice u_proptype u_address1 u_address2 u_address3; 
+  drop Ownername_full SALEPRICE ui_proptype u_ref_date ADDRESS1 ADDRESS2 address3 prev_desc;
 run; 
+
+%File_info( data=Topa_notice_flag, printobs=5 ) /** 4050 obs**/
 
 /** Temporary Proc Print for checking results **/
 proc print data=Topa_notice_flag;
   where u_address_id_ref=5142;
   by u_address_id_ref;
-  id ref_date;
-  var desc id u_dedup_notice u_notice_with_sale;
+  id u_sale_date;
 run;
 
-/*Create u_days_between_notices & u_days_from_dedup_notice_to_sale*/
-proc sort data=Topa_id_x_address;
-  by u_address_id_ref id;
-run;
-
-data Topa_notice_freq; 
-  set Topa_id_x_address; 
-  by u_address_id_ref; 
-  if first.u_address_id_ref then u_fr_offer_sale_date=u_offer_sale_date;
-  retain u_fr_offer_sale_date;
-  u_days_between_notices = u_offer_sale_date - u_fr_offer_sale_date;  
-  u_fr_offer_sale_date = u_offer_sale_date;
-  format u_fr_offer_sale_date MMDDYY10.;
-  run;
-
-proc sort data=Topa_notice_freq; 
-  by id; 
-run; 
-
-proc export data=Topa_notice_freq
-    outfile="&_dcdata_default_path\PresCat\Prog\AddNew\Topa_notice_freq.csv"
-    dbms=csv
-    replace;
-run;
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
