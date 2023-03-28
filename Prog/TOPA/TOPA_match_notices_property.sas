@@ -117,20 +117,18 @@ run;
 %File_info( data=Combo, printobs=5 ) /** 4050 obs**/
 
 /*Create flags (u_dedup_notice & u_notice_with_sale)*/
-proc sort data=Combo;
-  by u_address_id_ref descending ref_date;
-run; /* I don't know if this is neccessary but I know it always says to sort before using first operator*/
-
-/* dedup_notice is just the most recent notice of sale for a property; */
-
 data Topa_notice_flag; 
   set Combo;  
   by u_address_id_ref descending ref_date;
-  descsale=desc; 
-  retain descsale; 
+  Length prev_desc $14;
+  if first.u_address_id_ref then prev_desc=""; 
   if first.u_address_id_ref and desc="NOTICE OF SALE" then u_dedup_notice=1;
-  else if descsale="SALE" then u_dedup_notice=1;
+  else if desc="NOTICE OF SALE" and prev_desc="SALE" then u_dedup_notice=1;
   else u_dedup_notice=0; 
+  if desc="NOTICE OF SALE" and prev_desc="SALE" then u_notice_with_sale=1;
+  else u_notice_with_sale=0; 
+  retain prev_desc;
+  prev_desc=desc; 
 run; 
 
 /** Temporary Proc Print for checking results **/
@@ -138,20 +136,8 @@ proc print data=Topa_notice_flag;
   where u_address_id_ref=5142;
   by u_address_id_ref;
   id ref_date;
-  var desc id u_dedup_notice descsale;
+  var desc id u_dedup_notice u_notice_with_sale;
 run;
-   
-data Topa_notice_flag_2; 
-  set Topa_notice_flag;  
-  by u_address_id_ref descending ref_date;
-  retain temp2;
-  if first.u_address_id_ref and not(saleprice) then do; temp2=0; end; /** not(saleprice) to show no sale on property**/
-  if ID and not(temp2) then do; temp2=1; u_notice_with_sale=0;end;else u_notice_with_sale=1; 
-  drop temp1 temp2;
-run; 
-
-%File_info( data=Topa_notice_flag_2, printobs=100) /** 4050 obs ID 5559**/
-
 
 /*Create u_days_between_notices & u_days_from_dedup_notice_to_sale*/
 proc sort data=Topa_id_x_address;
