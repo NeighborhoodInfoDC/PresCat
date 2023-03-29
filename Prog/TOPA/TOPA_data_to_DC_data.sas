@@ -20,7 +20,7 @@
 %DCData_lib( MAR )
 %DCData_lib( RealProp )
 
-%let revisions = Add missing 2015-2020 notices from RCASD match (TOPA-DOPA 5+_with_var_names_3_20_23_urban_update.csv).;
+%let revisions = Fix address data entry error for notice ID=415.;
 
 ** Download and read TOPA dataset into SAS dataset**;
 %let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA-DOPA 5+_with_var_names_3_20_23_urban_update.csv";
@@ -79,7 +79,7 @@ data TOPA_database;
       ;
       
     ** If addresses are missing, use Address_for_mapping entered in CNHED database **;
-    if lowcase( All_street_addresses ) in ( "lo", "" ) then All_street_addresses = Address_for_mapping;
+    if lowcase( All_street_addresses ) in ( "lo", "", "4a03" ) then All_street_addresses = Address_for_mapping;
     
     ** Fill in address for Holmead Place Apartments (Holmstead Place is a typo) **;
     if lowcase( All_street_addresses ) in: ( "holmead place", "holmstead place" ) then
