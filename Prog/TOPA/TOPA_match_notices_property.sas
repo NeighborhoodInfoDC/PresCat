@@ -96,7 +96,7 @@ run;
 data Combo;
   set 
     TOPA_by_property 
-    (keep=u_address_id_ref id u_offer_sale_date
+    (keep=u_address_id_ref id u_offer_sale_date FULLADDRESS Anc2012 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2012 Ward2022 cluster2017
      rename=(u_offer_sale_date=u_ref_date)
      in=is_notice)
     Sales_by_property_nodup
@@ -132,38 +132,50 @@ data Topa_notice_flag;
   if first.u_address_id_ref and desc="NOTICE OF SALE" then u_dedup_notice=1;
   else if desc="NOTICE OF SALE" and prev_desc="SALE" then u_dedup_notice=1;
   else u_dedup_notice=0; 
+  label u_dedup_notice='Latest notice issued on a property (before a sale or without a sale)';
   
   if desc="NOTICE OF SALE" and prev_desc="SALE" then u_notice_with_sale=1;
   else u_notice_with_sale=0; 
+  label u_notice_with_sale='Property sale occurred after the notice'; 
   
   if u_dedup_notice=1 and u_notice_with_sale=1 then u_days_from_dedup_notice_to_sale=u_sale_date-u_ref_date;
+  label u_days_from_dedup_notice_to_sale='Number of days from the de-duplicated notice to the property sale';
   
   if desc="NOTICE OF SALE" then u_days_between_notices=u_notice_date-u_ref_date;
+  label u_days_between_notices='Number of days between notices for the same property';
   
   retain prev_desc;
   prev_desc=desc; 
   
   if desc="SALE" then u_sale_date=u_ref_date; 
   retain u_sale_date; 
+  label u_sale_date='Property sale date';
   
   if desc="NOTICE OF SALE" then u_notice_date=u_ref_date;
   retain u_notice_date;
+  label u_notice_date='Notice offer of sale date (Urban created var)';
   
   if desc="SALE" then do; 
 	u_ownername=Ownername_full; u_saleprice=SALEPRICE; u_proptype=ui_proptype; u_address1=ADDRESS1;
 	u_address2=ADDRESS2; u_address3=address3; 
 	end; 
   retain u_ownername u_saleprice u_proptype u_address1 u_address2 u_address3; 
+  label u_ownername ='Name(s) of property owners';
+  label u_saleprice='Property sale price($)';
+  label u_proptype='UI property type code';
+  label u_address1='Tax billing address part 1';
+  label u_address2='Tax billing address part 2';
+  label u_address3='Tax billing address part 3 (City, State, ZIP)';
 
   /** Write observation if a notice of sale and reset retained sales data for next observation **/
   if desc="NOTICE OF SALE" then do;
 	output;
 	u_ownername=""; u_saleprice=.; u_proptype=.; u_address1="";
-	u_address2=""; u_address3=""; 
+	u_address2=""; u_address3=""; u_sale_date=.; 
 	end;
   
   /** TEMPORARY CODE - REMOVE BEFORE FINALIZING PROGRAM **/
-  IF DESC="SALE" THEN OUTPUT;
+/*  IF DESC="SALE" THEN OUTPUT;*/
   
   /**REMOVE COMMENT MARKS BEFORE FINALIZING** drop desc;**/
   drop Ownername_full SALEPRICE ui_proptype u_ref_date ADDRESS1 ADDRESS2 address3 prev_desc;
@@ -180,11 +192,11 @@ run;
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
-    data=Topa_id_x_address,
-    out=Topa_id_x_address,
+    data=Topa_notice_flag,
+    out=Topa_notices_saledata,
     outlib=PresCat,
-    label="Preservation Catalog, ID (TOPA notice) and unique address_id crosswalk",
-    sortby=id,
+    label="TOPA notices from CNHED combined with real prop and address data to create new variables for TOPA eval",
+    sortby=u_address_id_ref,
     /** Metadata parameters **/
     revisions=%str(New data set.),
     /** File info parameters **/
