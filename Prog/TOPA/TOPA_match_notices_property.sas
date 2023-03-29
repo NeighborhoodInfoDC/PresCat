@@ -155,7 +155,7 @@ data Topa_notice_flag;
 	end; 
   retain u_ownername u_saleprice u_proptype u_address1 u_address2 u_address3; 
 
-  ** Write observation if a notice of sale and reset retained sales data for next observation **;
+  /** Write observation if a notice of sale and reset retained sales data for next observation **/
   if desc="NOTICE OF SALE" then do;
 	output;
 	u_ownername=""; u_saleprice=.; u_proptype=.; u_address1="";
