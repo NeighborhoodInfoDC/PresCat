@@ -16,6 +16,7 @@
 
 ** Define libraries **;
 %DCData_lib( PresCat )
+%DCData_lib( Realprop )
 
 %File_info( data=PresCat.TOPA_SSL, printobs=5 )
 %File_info( data=PresCat.TOPA_realprop, printobs=5 ) /** some IDs don't have real_prop info**/
@@ -123,6 +124,7 @@ data Topa_notice_flag;
   Length prev_desc $14;
   format u_notice_date MMDDYY10.;
   format u_sale_date MMDDYY10.;
+  format u_proptype $UIPRTYP.;
   if first.u_address_id_ref then prev_desc=""; 
   if first.u_address_id_ref then u_notice_date="";
   if first.u_address_id_ref and desc="NOTICE OF SALE" then u_dedup_notice=1;
@@ -137,22 +139,25 @@ data Topa_notice_flag;
   if desc="SALE" then u_sale_date=u_ref_date; 
   retain u_sale_date; 
   if desc="NOTICE OF SALE" then u_notice_date=u_ref_date;
-  retain u_notice_date;
+  /**retain u_notice_date;**/
   if desc="SALE" then do; 
 	u_ownername=Ownername_full; u_saleprice=SALEPRICE; u_proptype=ui_proptype; u_address1=ADDRESS1;
 	u_address2=ADDRESS2; u_address3=address3; 
 	end; 
   retain u_ownername u_saleprice u_proptype u_address1 u_address2 u_address3; 
+  /** TEMPORARY COMMENT. REMOVE COMMENT MARKS AFTER TESTING
+  if desc="NOTICE OF SALE" then output;
+  drop desc;
+  **/
   drop Ownername_full SALEPRICE ui_proptype u_ref_date ADDRESS1 ADDRESS2 address3 prev_desc;
 run; 
 
 %File_info( data=Topa_notice_flag, printobs=5 ) /** 4050 obs**/
 
 /** Temporary Proc Print for checking results **/
-proc print data=Topa_notice_flag;
-  where u_address_id_ref=5142;
+proc print data=Topa_notice_flag (firstobs=79 obs=94);
+  /**where u_address_id_ref=5142;**/
   by u_address_id_ref;
-  id u_sale_date;
 run;
 
 
