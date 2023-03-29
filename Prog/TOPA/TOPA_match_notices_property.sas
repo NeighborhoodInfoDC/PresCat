@@ -139,7 +139,7 @@ data Topa_notice_flag;
   if desc="SALE" then u_sale_date=u_ref_date; 
   retain u_sale_date; 
   if desc="NOTICE OF SALE" then u_notice_date=u_ref_date;
-  /**retain u_notice_date;**/
+  retain u_notice_date;
   if desc="SALE" then do; 
 	u_ownername=Ownername_full; u_saleprice=SALEPRICE; u_proptype=ui_proptype; u_address1=ADDRESS1;
 	u_address2=ADDRESS2; u_address3=address3; 
