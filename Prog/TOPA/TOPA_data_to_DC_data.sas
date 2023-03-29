@@ -20,7 +20,7 @@
 %DCData_lib( MAR )
 %DCData_lib( RealProp )
 
-%let revisions = Fix address data entry error for notice ID=415.;
+%let revisions = Add u_date_dhcd_received_ta_reg.;
 
 ** Download and read TOPA dataset into SAS dataset**;
 %let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA-DOPA 5+_with_var_names_3_20_23_urban_update.csv";
@@ -69,7 +69,7 @@ run;
 proc print data=TOPA_database1 (obs=5); 
 run; 
 
-data TOPA_database;
+data Topa_database2;
     set TOPA_database1;
 	format _all_;
 	informat _all_;
@@ -97,13 +97,13 @@ run;
 
 title2 '** Check for duplicate values of ID **';
 %Dup_check(
-  data=TOPA_database,
+  data=Topa_database2,
   by=ID,
   id=
 )
 
 title2 '**show missing dates in data**';
-proc print data=TOPA_database; 
+proc print data=Topa_database2; 
 	where u_CASD_date <= 0 OR u_offer_sale_date <= 0;
 	var ID SSL u_CASD_date u_offer_sale_date; 
 run; 
@@ -112,7 +112,7 @@ title2;
 
 **parse out individual addresses from TOPA dataset**;
 %Rcasd_address_parse(
-	data=TOPA_database,
+	data=Topa_database2,
 	out=TOPA_addresses_notices,
 	id=ID,
 	addr=All_street_addresses,
@@ -169,8 +169,7 @@ quit;
 proc sql noprint;
   create table TOPA_realprop as   /** Name of output data set to be created **/
   select unique 
-    coalesce( TOPA_SSL.SSL, RealProp.SSL ) as SSL, /** Matching variables **/
-	/** obs where sale date is after the later of CASD data and offer of sale data **/
+    coalesce( TOPA_SSL.SSL, RealProp.SSL ) as SSL label="Property identification number (square/suffix/lot)", /** Matching variables **/
 	saledate - u_offer_sale_date as u_days_notice_to_sale label="Number of days from offer of sale to actual sale (Urban created var)",
 	TOPA_SSL.ID, /** Other vars you want to keep from the two data sets, separated by commas **/
 	TOPA_SSL.u_CASD_date, TOPA_SSL.u_offer_sale_date,
@@ -244,6 +243,115 @@ proc sql noprint;
 
 quit;
 
+
+*************************************************************************
+** Add revised TA registration date to Topa_database **;
+
+** Combine RCASD data sets **;
+
+data Rcasd_all_TA_reg;
+
+  set
+    Dhcd.Rcasd_2015
+    Dhcd.Rcasd_2016
+    Dhcd.Rcasd_2017
+    Dhcd.Rcasd_2018
+    Dhcd.Rcasd_2019
+    Dhcd.Rcasd_2020
+  ;
+  
+  where not( missing( address_id ) or missing( notice_date ) ) and
+    notice_type in ( '207' );
+    
+run;
+
+** Match TA registrations from RCASD data that are within one year after notice date **;
+
+proc sql noprint;
+  create table Match_TOPA_db_to_RCASD_TA as
+  select 
+    coalesce( topa.address_id, rcasd.address_id ) as address_id,
+    topa.u_offer_sale_date, topa.id, topa.date_dhcd_received_ta_reg,
+    topa.all_street_addresses, topa.u_casd_date,
+    rcasd.notice_date, rcasd.notice_type, rcasd.nidc_rcasd_id,
+    rcasd.orig_address
+  from Rcasd_all_TA_reg as rcasd
+  left join 
+  (
+    select 
+      coalesce( topa.id, addr.id ) as id,
+      topa.u_offer_sale_date, topa.date_dhcd_received_ta_reg,
+      topa.all_street_addresses, topa.u_casd_date,
+      addr.address_id, addr.notice_listed_address
+    from 
+      Topa_database2 as topa
+      left join
+      Topa_addresses as addr
+      on topa.id = addr.id
+      where notice_listed_address = 1 and 
+        not( missing( u_offer_sale_date ) or missing( address_id ) )
+  ) as topa
+  on topa.address_id = rcasd.address_id and 0 <= notice_date - u_offer_sale_date <= 365
+  order by id, notice_date;
+quit;
+
+data Match_TOPA_db_to_RCASD_TA_unq;
+
+  merge 
+    Topa_database2 (keep=id u_offer_sale_date date_dhcd_received_ta_reg u_casd_date all_street_addresses)
+    Match_TOPA_db_to_RCASD_TA (where=(not( missing( id ) or missing( nidc_rcasd_id ))));
+  by id;
+  
+  if first.id;
+  
+  ** For 2015-2020, use Urban RCASD data to fill in TA registration date **;
+  
+  if 2015 <= year( u_offer_sale_date ) <= 2020 then u_date_dhcd_received_ta_reg = notice_date;
+  
+  ** If Urban TA registration date is missing (i.e., not 2015-2020 or CNHED had date we do not have)
+  ** then use CNHED database date;
+
+  if missing( u_date_dhcd_received_ta_reg ) then do; 
+  
+    u_date_dhcd_received_ta_reg = input( scan( date_dhcd_received_ta_reg, 1, ',; ' ), anydtdte20. );
+    if not( missing( date_dhcd_received_ta_reg ) ) and missing( u_date_dhcd_received_ta_reg ) then do;
+      %warn_put( msg="Could not read TA reg date: " date_dhcd_received_ta_reg= )
+    end;
+  end;
+  
+  format u_date_dhcd_received_ta_reg mmddyy10.;
+  
+  label u_date_dhcd_received_ta_reg = "Date DHCD received TA registration (Urban created var)";
+  
+run;
+
+title2 "TOPA TA REGISTRATIONS 2006-2014";
+proc print data=Match_TOPA_db_to_RCASD_TA_unq (obs=40);
+  where 2006 <= year( u_offer_sale_date ) <= 2014;
+  id id;
+  var u_date_dhcd_received_ta_reg nidc_rcasd_id u_offer_sale_date date_dhcd_received_ta_reg notice_date notice_type;
+run;
+
+title2 "TOPA TA REGISTRATIONS 2015-2020";
+proc print data=Match_TOPA_db_to_RCASD_TA_unq (obs=40);
+  where 2015 <= year( u_offer_sale_date ) <= 2020;
+  id id;
+  var u_date_dhcd_received_ta_reg nidc_rcasd_id u_offer_sale_date date_dhcd_received_ta_reg notice_date notice_type;
+run;
+
+title2;
+
+** Add u_date_dhcd_received_ta_reg to main Topa_database **;
+
+data Topa_database;
+
+  merge Topa_database2 Match_TOPA_db_to_RCASD_TA_unq (keep=id u_date_dhcd_received_ta_reg);
+  by id;
+  
+run;
+
+
+*************************************************************************
 ** Export 2007 TOPA/real property data **;
 ods tagsets.excelxp   /** Open the excelxp destination **/
   file="&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_data_to_DC_data_2007.xls"  /** This is where the output will go **/

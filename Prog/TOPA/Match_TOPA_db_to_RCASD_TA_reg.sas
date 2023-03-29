@@ -11,6 +11,11 @@
  Description:  Match TOPA_database with Urban-Greater DC RCASD data
  for filling in tenant association (TA) registration info.
  Use RCASD data for 2015-2020, TOPA_database entered data for 2006-2014.
+ 
+ This code was used to test the matching and produce the 
+ Match_TOPA_db_to_RCASD_TA_reg_not_found.xls workbook to share with 
+ CNHED. Final code adding u_date_dhcd_received_ta_reg to TOPA_database
+ is in Prog\TOPA\TOPA_data_to_DC_data.sas.
 
  Modifications:
 **************************************************************************/
