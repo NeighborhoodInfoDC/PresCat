@@ -125,30 +125,47 @@ data Topa_notice_flag;
   format u_notice_date MMDDYY10.;
   format u_sale_date MMDDYY10.;
   format u_proptype $UIPRTYP.;
+  
   if first.u_address_id_ref then prev_desc=""; 
   if first.u_address_id_ref then u_notice_date="";
+  
   if first.u_address_id_ref and desc="NOTICE OF SALE" then u_dedup_notice=1;
   else if desc="NOTICE OF SALE" and prev_desc="SALE" then u_dedup_notice=1;
   else u_dedup_notice=0; 
+  
   if desc="NOTICE OF SALE" and prev_desc="SALE" then u_notice_with_sale=1;
   else u_notice_with_sale=0; 
+  
   if u_dedup_notice=1 and u_notice_with_sale=1 then u_days_from_dedup_notice_to_sale=u_sale_date-u_ref_date;
+  
   if desc="NOTICE OF SALE" then u_days_between_notices=u_notice_date-u_ref_date;
+  
   retain prev_desc;
   prev_desc=desc; 
+  
   if desc="SALE" then u_sale_date=u_ref_date; 
   retain u_sale_date; 
+  
   if desc="NOTICE OF SALE" then u_notice_date=u_ref_date;
   retain u_notice_date;
+  
   if desc="SALE" then do; 
 	u_ownername=Ownername_full; u_saleprice=SALEPRICE; u_proptype=ui_proptype; u_address1=ADDRESS1;
 	u_address2=ADDRESS2; u_address3=address3; 
 	end; 
   retain u_ownername u_saleprice u_proptype u_address1 u_address2 u_address3; 
-  /** TEMPORARY COMMENT. REMOVE COMMENT MARKS AFTER TESTING
-  if desc="NOTICE OF SALE" then output;
-  drop desc;
-  **/
+
+  ** Write observation if a notice of sale and reset retained sales data for next observation **;
+  if desc="NOTICE OF SALE" then do;
+	output;
+	u_ownername=""; u_saleprice=.; u_proptype=.; u_address1="";
+	u_address2=""; u_address3=""; 
+	end;
+  
+  /** TEMPORARY CODE - REMOVE BEFORE FINALIZING PROGRAM **/
+  IF DESC="SALE" THEN OUTPUT;
+  
+  /**REMOVE COMMENT MARKS BEFORE FINALIZING** drop desc;**/
   drop Ownername_full SALEPRICE ui_proptype u_ref_date ADDRESS1 ADDRESS2 address3 prev_desc;
 run; 
 
