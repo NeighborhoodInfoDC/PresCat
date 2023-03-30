@@ -125,6 +125,8 @@ data Topa_notice_flag;
   format u_notice_date MMDDYY10.;
   format u_sale_date MMDDYY10.;
   format u_proptype $UIPRTYP.;
+  format u_dedup_notice DYESNO.;
+  format u_notice_with_sale DYESNO.;
   
   if first.u_address_id_ref then prev_desc=""; 
   if first.u_address_id_ref then u_notice_date="";
@@ -132,24 +134,24 @@ data Topa_notice_flag;
   if first.u_address_id_ref and desc="NOTICE OF SALE" then u_dedup_notice=1;
   else if desc="NOTICE OF SALE" and prev_desc="SALE" then u_dedup_notice=1;
   else u_dedup_notice=0; 
-  label u_dedup_notice='Latest notice issued on a property (before a sale or without a sale)';
+  label u_dedup_notice='Latest notice issued on a property (before a sale or without a sale) (Urban created var)';
   
   if desc="NOTICE OF SALE" and prev_desc="SALE" then u_notice_with_sale=1;
   else u_notice_with_sale=0; 
-  label u_notice_with_sale='Property sale occurred after the notice'; 
+  label u_notice_with_sale='Property sale occurred after the notice (Urban created var)'; 
   
   if u_dedup_notice=1 and u_notice_with_sale=1 then u_days_from_dedup_notice_to_sale=u_sale_date-u_ref_date;
-  label u_days_from_dedup_notice_to_sale='Number of days from the de-duplicated notice to the property sale';
+  label u_days_from_dedup_notice_to_sale='Number of days from the de-duplicated notice to the property sale (Urban created var)';
   
   if desc="NOTICE OF SALE" then u_days_between_notices=u_notice_date-u_ref_date;
-  label u_days_between_notices='Number of days between notices for the same property';
+  label u_days_between_notices='Number of days between notices for the same property (Urban created var)';
   
   retain prev_desc;
   prev_desc=desc; 
   
   if desc="SALE" then u_sale_date=u_ref_date; 
   retain u_sale_date; 
-  label u_sale_date='Property sale date';
+  label u_sale_date='Property sale date (Urban created var)';
   
   if desc="NOTICE OF SALE" then u_notice_date=u_ref_date;
   retain u_notice_date;
@@ -160,12 +162,12 @@ data Topa_notice_flag;
 	u_address2=ADDRESS2; u_address3=address3; 
 	end; 
   retain u_ownername u_saleprice u_proptype u_address1 u_address2 u_address3; 
-  label u_ownername ='Name(s) of property owners';
-  label u_saleprice='Property sale price($)';
-  label u_proptype='UI property type code';
-  label u_address1='Tax billing address part 1';
-  label u_address2='Tax billing address part 2';
-  label u_address3='Tax billing address part 3 (City, State, ZIP)';
+  label u_ownername ='Name(s) of property buyer(s) (Urban created var)';
+  label u_saleprice='Property sale price ($) (Urban created var)';
+  label u_proptype='Property type at sale (Urban created var)';
+  label u_address1='Buyer tax billing address part 1 (Urban created var)';
+  label u_address2='Buyer tax billing address part 2 (Urban created var)';
+  label u_address3='Buyer tax billing address part 3 (City, State, ZIP) (Urban created var)';
 
   /** Write observation if a notice of sale and reset retained sales data for next observation **/
   if desc="NOTICE OF SALE" then do;
@@ -174,33 +176,36 @@ data Topa_notice_flag;
 	u_address2=""; u_address3=""; u_sale_date=.; 
 	end;
   
-  /** TEMPORARY CODE - REMOVE BEFORE FINALIZING PROGRAM **/
-/*  IF DESC="SALE" THEN OUTPUT;*/
+  label
+    u_address_id_ref = "Unique property ID (DC MAR address ID) (Urban created var)"
+    FULLADDRESS = "Street address for unique property ID (Urban created var)";
   
-  /**REMOVE COMMENT MARKS BEFORE FINALIZING** drop desc;**/
+  drop desc;
   drop Ownername_full SALEPRICE ui_proptype u_ref_date ADDRESS1 ADDRESS2 address3 prev_desc;
 run; 
 
-%File_info( data=Topa_notice_flag, printobs=5 ) /** 4050 obs**/
 
-/** Temporary Proc Print for checking results **/
+/** Proc Print for checking results **/
 proc print data=Topa_notice_flag (firstobs=79 obs=94);
   /**where u_address_id_ref=5142;**/
   by u_address_id_ref;
+  var id u_notice_date u_sale_date u_dedup_notice u_notice_with_sale u_days_: u_saleprice u_ownername u_proptype;
 run;
 
+
+/** Finalize Topa_notices_sales (1498 obs) **/
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
     data=Topa_notice_flag,
-    out=Topa_notices_saledata,
+    out=Topa_notices_sales,
     outlib=PresCat,
-    label="TOPA notices from CNHED combined with real prop and address data to create new variables for TOPA eval",
-    sortby=u_address_id_ref,
+    label="TOPA notices from CNHED combined with real prop and address data to create new variables for TOPA eval, 2006-2020",
+    sortby=ID,
     /** Metadata parameters **/
     revisions=%str(New data set.),
     /** File info parameters **/
-    printobs=10 
+    printobs=10,
+    freqvars=u_dedup_notice u_notice_with_sale u_proptype ward2022 cluster2017
   )
-
 
