@@ -36,24 +36,59 @@ data Topa_CBO_sheet;
 run; 
 
 proc sort data=Topa_CBO_sheet out=Topa_CBO_sheet_sorted;
-  by u_address_id_ref descending u_notice_date;
+  by u_address_id_ref u_notice_date;
 run;
 
 %File_info( data=Topa_CBO_sheet_sorted, printobs=20 ) 
 
+data Topa_CBO_sheet_retain; 
+  set Topa_CBO_sheet_sorted;
+  by u_address_id_ref u_notice_date;
+  format r_notes $char500.;
+  format r_TA_provider $char.;
+  format r_TA_staff $char.;
+  format r_TA_lawyer $char.;
+  format r_TA_claim_rights $char.;
+  format r_TA_dev_partner $char.;
+  format r_date_TA_ass_rigts $char.;
+  format r_dev_ass_right $char.;
+  if u_dedup_notice=0 then do; 
+  r_notes=Notes; r_TA_provider=Technical_assistance_provider; r_TA_staff=Tech_Assist_Staff; r_TA_lawyer=Tenant_Assn_Lawyer; r_TA_claim_rights=Did_a_TA_claim_TOPA_rights; r_TA_dev_partner=TA_Development_Partner; r_date_TA_ass_rigts=Date_TA_assignment_of_rights; r_dev_ass_right=Developer_assignment_of_rights;
+    end; 
+  retain r_notes r_TA_provider r_TA_staff r_TA_lawyer r_TA_claim_rights r_TA_dev_partner r_date_TA_ass_rigts r_dev_ass_right; 
+  label r_notes ='Notes';
+  label r_TA_provider='CBO Technical assistance provider';
+  label r_TA_staff='Technical assistance staff';
+  label r_TA_lawyer='Technical assistance lawyer';
+  label r_TA_claim_rights='Did TA provider claim TOPA rights?';
+  label r_TA_dev_partner='TA Development Partner';
+  label r_date_TA_ass_rigts='Approx. Date of TA assignment of rights';
+  label r_dev_ass_right='Developer receiving assignment of rights';
+
+  if u_dedup_notice=1 then do;
+	output;
+	r_notes=""; r_TA_provider=.; r_TA_staff=""; r_TA_lawyer="";
+	r_TA_claim_rights=""; r_TA_dev_partner=""; r_date_TA_ass_rigts=""; r_dev_ass_right="";
+
+	end;
+  run; 
+%File_info( data=Topa_CBO_sheet_retain, printobs=20 ) 
+
+
 ** Export for CBO spreadsheet **;
 ods tagsets.excelxp   /** Open the excelxp destination **/
-  file="&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_CBO_TA_dedupnotice.xls"  /** This is where the output will go **/
+  file="&_dcdata_default_path\PresCat\Prog\TOPA\Topa_CBO_sheet_retain.xls"  /** This is where the output will go **/
   style=Normal    /** This is the ODS style that will be used in the workbook **/
 ;
 
 ods listing close;  /** Close the regular listing destination **/
-proc print label data=Topa_CBO_sheet_sorted;
+proc print label data=Topa_CBO_sheet_retain;
   where u_dedup_notice=1;
   id id; 
   var u_address_id_ref u_notice_date All_street_addresses Property_name u_date_dhcd_received_ta_reg u_sale_date u_ownername Notes 
 Technical_assistance_provider Tech_Assist_Staff Tenant_Assn_Lawyer Did_a_TA_claim_TOPA_rights TA_Development_Partner TA_negotiate 
-Date_TA_assignment_of_rights Developer_assignment_of_rights ass_aff_developer dev_agree buyouts assign_terms add_notes;
+Date_TA_assignment_of_rights Developer_assignment_of_rights ass_aff_developer dev_agree buyouts assign_terms add_notes r_notes r_TA_provider r_TA_staff r_TA_lawyer 
+r_TA_claim_rights r_TA_dev_partner r_date_TA_ass_rigts r_dev_ass_right;
 run;
 
 ods tagsets.excelxp close;  /** Close the excelxp destination **/
