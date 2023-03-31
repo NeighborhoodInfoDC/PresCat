@@ -52,9 +52,10 @@ data Topa_CBO_sheet_retain;
   format r_TA_dev_partner $char.;
   format r_date_TA_ass_rigts $char.;
   format r_dev_ass_right $char.;
-  if u_dedup_notice=0 then do; 
-  r_notes=Notes; r_TA_provider=Technical_assistance_provider; r_TA_staff=Tech_Assist_Staff; r_TA_lawyer=Tenant_Assn_Lawyer; r_TA_claim_rights=Did_a_TA_claim_TOPA_rights; r_TA_dev_partner=TA_Development_Partner; r_date_TA_ass_rigts=Date_TA_assignment_of_rights; r_dev_ass_right=Developer_assignment_of_rights;
-    end; 
+  if u_dedup_notice=0 then do;
+  r_notes=Notes; r_TA_provider=Technical_assistance_provider; r_TA_staff=Tech_Assist_Staff; r_TA_lawyer=Tenant_Assn_Lawyer; r_TA_claim_rights=Did_a_TA_claim_TOPA_rights;
+r_TA_dev_partner=TA_Development_Partner; r_date_TA_ass_rigts=Date_TA_assignment_of_rights; r_dev_ass_right=Developer_assignment_of_rights;
+end;
   retain r_notes r_TA_provider r_TA_staff r_TA_lawyer r_TA_claim_rights r_TA_dev_partner r_date_TA_ass_rigts r_dev_ass_right; 
   label r_notes ='Notes';
   label r_TA_provider='CBO Technical assistance provider';
@@ -65,11 +66,19 @@ data Topa_CBO_sheet_retain;
   label r_date_TA_ass_rigts='Approx. Date of TA assignment of rights';
   label r_dev_ass_right='Developer receiving assignment of rights';
 
-  if u_dedup_notice=1 then do;
+/*  if u_dedup_notice=1 then do;*/
+  if u_dedup_notice=1 and not( missing( Notes ) ) then r_notes=Notes;
+  else if u_dedup_notice=1 not( missing( Technical_assistance_provider ) ) then r_TA_provider=Technical_assistance_provider;
+  else if u_dedup_notice=1 not( missing( Tech_Assist_Staff ) ) then r_TA_staff=Tech_Assist_Staff;
+  else if u_dedup_notice=1 not( missing( Tenant_Assn_Lawyer ) ) then r_TA_lawyer=Tenant_Assn_Lawyer;
+  else if u_dedup_notice=1 not( missing( Did_a_TA_claim_TOPA_rights ) ) then r_TA_claim_rights=Did_a_TA_claim_TOPA_rights;
+  else if u_dedup_notice=1 not( missing( TA_Development_Partner ) ) then r_TA_dev_partner=TA_Development_Partner;
+  else if u_dedup_notice=1 not( missing( Date_TA_assignment_of_rights ) ) then r_date_TA_ass_rigts=Date_TA_assignment_of_rights;
+  else if u_dedup_notice=1 not( missing( Developer_assignment_of_rights ) ) then r_dev_ass_right=Developer_assignment_of_rights;
+
 	output;
 	r_notes=""; r_TA_provider=.; r_TA_staff=""; r_TA_lawyer="";
 	r_TA_claim_rights=""; r_TA_dev_partner=""; r_date_TA_ass_rigts=""; r_dev_ass_right="";
-
 	end;
   run; 
 %File_info( data=Topa_CBO_sheet_retain, printobs=20 ) 
@@ -85,10 +94,8 @@ ods listing close;  /** Close the regular listing destination **/
 proc print label data=Topa_CBO_sheet_retain;
   where u_dedup_notice=1;
   id id; 
-  var u_address_id_ref u_notice_date All_street_addresses Property_name u_date_dhcd_received_ta_reg u_sale_date u_ownername Notes 
-Technical_assistance_provider Tech_Assist_Staff Tenant_Assn_Lawyer Did_a_TA_claim_TOPA_rights TA_Development_Partner TA_negotiate 
-Date_TA_assignment_of_rights Developer_assignment_of_rights ass_aff_developer dev_agree buyouts assign_terms add_notes r_notes r_TA_provider r_TA_staff r_TA_lawyer 
-r_TA_claim_rights r_TA_dev_partner r_date_TA_ass_rigts r_dev_ass_right;
+  var u_address_id_ref u_notice_date All_street_addresses Property_name u_date_dhcd_received_ta_reg u_sale_date u_ownername r_notes r_TA_provider
+r_TA_staff r_TA_lawyer r_TA_claim_rights r_TA_dev_partner TA_negotiate r_date_TA_ass_rigts r_dev_ass_right ass_aff_developer dev_agree buyouts assign_terms add_notes;
 run;
 
 ods tagsets.excelxp close;  /** Close the excelxp destination **/
