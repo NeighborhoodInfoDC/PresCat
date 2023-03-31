@@ -67,15 +67,15 @@ end;
   label r_dev_ass_right='Developer receiving assignment of rights';
 
 /*  if u_dedup_notice=1 then do;*/
-  if u_dedup_notice=1 and not( missing( Notes ) ) then r_notes=Notes;
-  else if u_dedup_notice=1 not( missing( Technical_assistance_provider ) ) then r_TA_provider=Technical_assistance_provider;
-  else if u_dedup_notice=1 not( missing( Tech_Assist_Staff ) ) then r_TA_staff=Tech_Assist_Staff;
-  else if u_dedup_notice=1 not( missing( Tenant_Assn_Lawyer ) ) then r_TA_lawyer=Tenant_Assn_Lawyer;
-  else if u_dedup_notice=1 not( missing( Did_a_TA_claim_TOPA_rights ) ) then r_TA_claim_rights=Did_a_TA_claim_TOPA_rights;
-  else if u_dedup_notice=1 not( missing( TA_Development_Partner ) ) then r_TA_dev_partner=TA_Development_Partner;
-  else if u_dedup_notice=1 not( missing( Date_TA_assignment_of_rights ) ) then r_date_TA_ass_rigts=Date_TA_assignment_of_rights;
-  else if u_dedup_notice=1 not( missing( Developer_assignment_of_rights ) ) then r_dev_ass_right=Developer_assignment_of_rights;
-
+  if u_dedup_notice=1 then do; 
+	if not( missing( Notes ) ) then r_notes=Notes;
+	if not( missing( Technical_assistance_provider ) ) then r_TA_provider=Technical_assistance_provider;
+	if not( missing( Tech_Assist_Staff ) ) then r_TA_staff=Tech_Assist_Staff;
+	if not( missing( Tenant_Assn_Lawyer ) ) then r_TA_lawyer=Tenant_Assn_Lawyer;
+	if not( missing( Did_a_TA_claim_TOPA_rights ) ) then r_TA_claim_rights=Did_a_TA_claim_TOPA_rights;
+	if not( missing( TA_Development_Partner ) ) then r_TA_dev_partner=TA_Development_Partner;
+	if not( missing( Date_TA_assignment_of_rights ) ) then r_date_TA_ass_rigts=Date_TA_assignment_of_rights;
+	if not( missing( Developer_assignment_of_rights ) ) then r_dev_ass_right=Developer_assignment_of_rights;
 	output;
 	r_notes=""; r_TA_provider=.; r_TA_staff=""; r_TA_lawyer="";
 	r_TA_claim_rights=""; r_TA_dev_partner=""; r_date_TA_ass_rigts=""; r_dev_ass_right="";
