@@ -83,12 +83,15 @@ end;
   run; 
 %File_info( data=Topa_CBO_sheet_retain, printobs=20 ) 
 
+options missing=' ';
 
 ** Export for CBO spreadsheet **;
 ods tagsets.excelxp   /** Open the excelxp destination **/
   file="&_dcdata_default_path\PresCat\Prog\TOPA\Topa_CBO_sheet_retain.xls"  /** This is where the output will go **/
   style=Normal    /** This is the ODS style that will be used in the workbook **/
 ;
+
+ods tagsets.excelxp options( sheet_name="TOPA_CBO" );
 
 ods listing close;  /** Close the regular listing destination **/
 proc print label data=Topa_CBO_sheet_retain;
