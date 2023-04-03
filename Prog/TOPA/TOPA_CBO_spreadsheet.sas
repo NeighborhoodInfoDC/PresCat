@@ -23,7 +23,7 @@
 /** Fill in missing columns from original TOPA database to notices sale database created**/
 data Topa_CBO_sheet; 
   merge 
-    PresCat.TOPA_notices_sales (keep=id u_address_id_ref u_dedup_notice u_notice_date u_ownername u_sale_date  in=time_period)
+    PresCat.TOPA_notices_sales (keep=id u_address_id_ref u_dedup_notice u_notice_date u_ownername u_sale_date u_notice_with_sale in=time_period)
     Prescat.Topa_database (keep=id All_street_addresses Property_name Notes Technical_assistance_provider u_date_dhcd_received_ta_reg Tech_Assist_Staff Tenant_Assn_Lawyer Did_a_TA_claim_TOPA_rights TA_Development_Partner Date_TA_assignment_of_rights Developer_assignment_of_rights);
   by id;
   if time_period;
@@ -87,15 +87,25 @@ options missing=' ';
 
 ** Export for CBO spreadsheet **;
 ods tagsets.excelxp   /** Open the excelxp destination **/
-  file="&_dcdata_default_path\PresCat\Prog\TOPA\Topa_CBO_sheet_retain.xls"  /** This is where the output will go **/
+  file="&_dcdata_default_path\PresCat\Prog\TOPA\Topa_CBO_sheet.xls"  /** This is where the output will go **/
   style=Normal    /** This is the ODS style that will be used in the workbook **/
+  options(sheet_interval='Proc' )
 ;
-
-ods tagsets.excelxp options( sheet_name="TOPA_CBO" );
-
 ods listing close;  /** Close the regular listing destination **/
+
+ods tagsets.excelxp options( sheet_name="With Sales" );
+
 proc print label data=Topa_CBO_sheet_retain;
-  where u_dedup_notice=1;
+  where u_dedup_notice=1 and u_notice_with_sale=1;
+  id id; 
+  var u_address_id_ref u_notice_date All_street_addresses Property_name u_date_dhcd_received_ta_reg u_sale_date u_ownername r_notes r_TA_provider
+r_TA_staff r_TA_lawyer r_TA_claim_rights r_TA_dev_partner TA_negotiate r_date_TA_ass_rigts r_dev_ass_right ass_aff_developer dev_agree buyouts assign_terms add_notes;
+run;
+
+ods tagsets.excelxp options( sheet_name="Without Sales" );
+
+proc print label data=Topa_CBO_sheet_retain;
+  where u_dedup_notice=1 and u_notice_with_sale=0;
   id id; 
   var u_address_id_ref u_notice_date All_street_addresses Property_name u_date_dhcd_received_ta_reg u_sale_date u_ownername r_notes r_TA_provider
 r_TA_staff r_TA_lawyer r_TA_claim_rights r_TA_dev_partner TA_negotiate r_date_TA_ass_rigts r_dev_ass_right ass_aff_developer dev_agree buyouts assign_terms add_notes;
