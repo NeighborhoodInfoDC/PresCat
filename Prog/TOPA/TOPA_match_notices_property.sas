@@ -125,7 +125,7 @@ run;
 
 %File_info( data=Combo, printobs=5 ) /** 4050 obs**/
 
-/*Create flags (u_dedup_notice & u_notice_with_sale & u_sale_after_2020), u_days_between_notices & u_days_from_dedup_notice_to_sale*/
+/*Create flags (u_dedup_notice & u_notice_with_sale), u_days_between_notices & u_days_from_dedup_notice_to_sale*/
 data Topa_notice_flag; 
   set Combo;  
   by u_address_id_ref descending u_ref_date;
