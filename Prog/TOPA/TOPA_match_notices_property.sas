@@ -76,7 +76,12 @@ data Sales_by_property;
   if missing( ssl ) then delete;
 run;
 
-proc sort data=Sales_by_property out=Sales_by_property_nodup nodupkey;
+data Sales_by_property_dates;
+  set Sales_by_property; 
+  where saledate between '01Jan2006'd and '31may2022'd; /** Limit sale data to 2006-2020 **/
+run;
+
+proc sort data=Sales_by_property_dates out=Sales_by_property_nodup nodupkey;
   by u_address_id_ref descending saledate;
 run;
 
@@ -87,7 +92,12 @@ data TOPA_by_property;
   by id;
 run; 
 
-proc sort data=TOPA_by_property;
+data TOPA_by_property_dates; 
+  set TOPA_by_property; 
+  where u_offer_sale_date between '01Jan2006'd and '31dec2020'd;  /** Limit notice data to 2006-2020 **/
+run;
+
+proc sort data=TOPA_by_property_dates;
   by u_address_id_ref descending u_offer_sale_date id;
 run;
 
