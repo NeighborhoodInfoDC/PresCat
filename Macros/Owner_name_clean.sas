@@ -23,6 +23,7 @@
   &target = tranwrd( &target, 'Iii', 'III' );
   &target = tranwrd( &target, 'Ii', 'II' );
   &target = tranwrd( &target, 'Iv', 'IV' );
+  &target = tranwrd( &target, 'Mlk', 'MLK' );
   &target = tranwrd( &target, 'Ne', 'NE' );
   &target = tranwrd( &target, 'NEw', 'New' );
   &target = tranwrd( &target, 'NEighborhood', 'Neighborhood' );
