@@ -95,7 +95,7 @@ run;
 
 data Combo;
   set 
-    TOPA_by_property 
+    TOPA_by_property_dates 
     (keep=u_address_id_ref id u_offer_sale_date FULLADDRESS Anc2012 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2012 Ward2022 cluster2017
      rename=(u_offer_sale_date=u_ref_date)
      in=is_notice)
@@ -103,21 +103,19 @@ data Combo;
 	  (keep=u_address_id_ref saledate saleprice ownername_full ui_proptype ADDRESS1 ADDRESS2 address3
 	   rename=(saledate=u_ref_date));
 	by u_address_id_ref descending u_ref_date;
-
 	length desc $ 40;
 
 	if is_notice then desc = "NOTICE OF SALE";
 	else desc = "SALE";
 
-    /**Limit sale and notice data to 2006-2020 and do not use obs with missing address or date **/
-    where u_ref_date between '01Jan2006'd and '31dec2020'd 
-	  and not( missing( u_address_id_ref ) or missing( u_ref_date ) );
+    /**do not use obs with missing address or date **/
+    where not( missing( u_address_id_ref ) or missing( u_ref_date ) );
 
 run;
 
 %File_info( data=Combo, printobs=5 ) /** 4050 obs**/
 
-/*Create flags (u_dedup_notice & u_notice_with_sale), u_days_between_notices & u_days_from_dedup_notice_to_sale*/
+/*Create flags (u_dedup_notice & u_notice_with_sale & u_sale_after_2020), u_days_between_notices & u_days_from_dedup_notice_to_sale*/
 data Topa_notice_flag; 
   set Combo;  
   by u_address_id_ref descending u_ref_date;
@@ -183,7 +181,6 @@ data Topa_notice_flag;
   drop desc;
   drop Ownername_full SALEPRICE ui_proptype u_ref_date ADDRESS1 ADDRESS2 address3 prev_desc;
 run; 
-
 
 /** Proc Print for checking results **/
 proc print data=Topa_notice_flag (firstobs=79 obs=94);
