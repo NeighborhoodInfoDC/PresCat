@@ -138,7 +138,12 @@ data Topa_notice_flag;
   
   if first.u_address_id_ref then prev_desc=""; 
   if first.u_address_id_ref then u_notice_date="";
-  
+/*  if first.u_address_id_ref then do;*/
+/*    output; */
+/*  	u_ownername=""; u_saleprice=.; u_proptype=.; u_address1="";*/
+/*	u_address2=""; u_address3=""; u_sale_date=.; */
+/*	end;*/
+/*  */
   if first.u_address_id_ref and desc="NOTICE OF SALE" then u_dedup_notice=1;
   else if desc="NOTICE OF SALE" and prev_desc="SALE" then u_dedup_notice=1;
   else u_dedup_notice=0; 
