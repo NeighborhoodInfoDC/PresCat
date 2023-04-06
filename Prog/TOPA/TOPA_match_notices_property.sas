@@ -165,7 +165,7 @@ data Topa_notice_flag;
   retain u_notice_date;
   label u_notice_date='Notice offer of sale date (Urban created var)';
   
-  if desc="SALE" then do; 
+  if desc="SALE" and u_address_id_ref=u_address_id_ref /** and the u_address_id_ref for Sale and notice desc are the same?**/then do; 
 	u_ownername=Ownername_full; u_saleprice=SALEPRICE; u_proptype=ui_proptype; u_address1=ADDRESS1;
 	u_address2=ADDRESS2; u_address3=address3; 
 	end; 
@@ -178,7 +178,7 @@ data Topa_notice_flag;
   label u_address3='Buyer tax billing address part 3 (City, State, ZIP) (Urban created var)';
 
   /** Write observation if a notice of sale and reset retained sales data for next observation **/
-  if desc="NOTICE OF SALE" then do;
+  if desc="NOTICE OF SALE" /** and the u_address_id_ref for Sale and notice desc are the same?**/ then do;
 	output;
 	u_ownername=""; u_saleprice=.; u_proptype=.; u_address1="";
 	u_address2=""; u_address3=""; u_sale_date=.; 
@@ -191,6 +191,23 @@ data Topa_notice_flag;
   drop desc;
   drop Ownername_full SALEPRICE ui_proptype u_ref_date ADDRESS1 ADDRESS2 address3 prev_desc;
 run; 
+
+%File_info( data=Topa_notice_flag, printobs=100 ) /** 4050 obs**/
+
+proc print data=Topa_notice_flag;
+  where u_address_id_ref = 58024;
+run;
+
+proc print data=Combo;
+run;
+
+proc print data=Combo;
+  where u_address_id_ref = 58024;
+run;
+
+proc print data=Combo;
+  where u_address_id_ref = 30765;
+run;
 
 /** Proc Print for checking results **/
 proc print data=Topa_notice_flag (firstobs=79 obs=94);
@@ -210,7 +227,7 @@ run;
     label="TOPA notices from CNHED combined with real prop and address data to create new variables for TOPA eval, 2006-2020",
     sortby=ID,
     /** Metadata parameters **/
-    revisions=%str(New data set.),
+    revisions=%str(New data set. now includes 2021-2022 sales data),
     /** File info parameters **/
     printobs=10,
     freqvars=u_dedup_notice u_notice_with_sale u_proptype ward2022 cluster2017
