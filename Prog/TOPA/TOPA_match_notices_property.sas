@@ -136,14 +136,12 @@ data Topa_notice_flag;
   format u_dedup_notice DYESNO.;
   format u_notice_with_sale DYESNO.;
   
-  if first.u_address_id_ref then prev_desc=""; 
-  if first.u_address_id_ref then u_notice_date="";
-/*  if first.u_address_id_ref then do;*/
-/*    output; */
-/*  	u_ownername=""; u_saleprice=.; u_proptype=.; u_address1="";*/
-/*	u_address2=""; u_address3=""; u_sale_date=.; */
-/*	end;*/
-/*  */
+  if first.u_address_id_ref then do; 
+	output; 
+	  prev_desc=""; u_notice_date=""; u_ownername=""; u_saleprice=.; u_proptype=.; u_address1="";
+	  u_address2=""; u_address3=""; u_sale_date=.; 
+	end;
+  
   if first.u_address_id_ref and desc="NOTICE OF SALE" then u_dedup_notice=1;
   else if desc="NOTICE OF SALE" and prev_desc="SALE" then u_dedup_notice=1;
   else u_dedup_notice=0; 
@@ -170,7 +168,7 @@ data Topa_notice_flag;
   retain u_notice_date;
   label u_notice_date='Notice offer of sale date (Urban created var)';
   
-  if desc="SALE" and u_address_id_ref=u_address_id_ref /** and the u_address_id_ref for Sale and notice desc are the same?**/then do; 
+  if desc="SALE" and u_address_id_ref=u_address_id_ref then do; 
 	u_ownername=Ownername_full; u_saleprice=SALEPRICE; u_proptype=ui_proptype; u_address1=ADDRESS1;
 	u_address2=ADDRESS2; u_address3=address3; 
 	end; 
@@ -183,7 +181,7 @@ data Topa_notice_flag;
   label u_address3='Buyer tax billing address part 3 (City, State, ZIP) (Urban created var)';
 
   /** Write observation if a notice of sale and reset retained sales data for next observation **/
-  if desc="NOTICE OF SALE" /** and the u_address_id_ref for Sale and notice desc are the same?**/ then do;
+  if desc="NOTICE OF SALE" then do;
 	output;
 	u_ownername=""; u_saleprice=.; u_proptype=.; u_address1="";
 	u_address2=""; u_address3=""; u_sale_date=.; 
@@ -197,22 +195,17 @@ data Topa_notice_flag;
   drop Ownername_full SALEPRICE ui_proptype u_ref_date ADDRESS1 ADDRESS2 address3 prev_desc;
 run; 
 
-%File_info( data=Topa_notice_flag, printobs=100 ) /** 4050 obs**/
-
 proc print data=Topa_notice_flag;
   where u_address_id_ref = 58024;
 run;
 
 proc print data=Combo;
-run;
-
-proc print data=Combo;
   where u_address_id_ref = 58024;
 run;
 
 proc print data=Combo;
-  where u_address_id_ref = 30765;
 run;
+
 
 /** Proc Print for checking results **/
 proc print data=Topa_notice_flag (firstobs=79 obs=94);
