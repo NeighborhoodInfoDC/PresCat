@@ -137,7 +137,6 @@ data Topa_notice_flag;
   format u_notice_with_sale DYESNO.;
   
   if first.u_address_id_ref then do; 
-	output; 
 	  prev_desc=""; u_notice_date=""; u_ownername=""; u_saleprice=.; u_proptype=.; u_address1="";
 	  u_address2=""; u_address3=""; u_sale_date=.; 
 	end;
@@ -194,18 +193,6 @@ data Topa_notice_flag;
   drop desc;
   drop Ownername_full SALEPRICE ui_proptype u_ref_date ADDRESS1 ADDRESS2 address3 prev_desc;
 run; 
-
-proc print data=Topa_notice_flag;
-  where u_address_id_ref = 58024;
-run;
-
-proc print data=Combo;
-  where u_address_id_ref = 58024;
-run;
-
-proc print data=Combo;
-run;
-
 
 /** Proc Print for checking results **/
 proc print data=Topa_notice_flag (firstobs=79 obs=94);
