@@ -135,6 +135,7 @@ data Topa_notice_flag;
   format u_proptype $UIPRTYP.;
   format u_dedup_notice DYESNO.;
   format u_notice_with_sale DYESNO.;
+  format u_ownername $char100.;
   
   if first.u_address_id_ref then do; 
 	  prev_desc=""; u_notice_date=""; u_ownername=""; u_saleprice=.; u_proptype=.; u_address1="";
