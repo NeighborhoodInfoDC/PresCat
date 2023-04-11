@@ -76,7 +76,12 @@ data Sales_by_property;
   if missing( ssl ) then delete;
 run;
 
-proc sort data=Sales_by_property out=Sales_by_property_nodup nodupkey;
+data Sales_by_property_dates;
+  set Sales_by_property; 
+  where saledate between '01Jan2006'd and '31may2022'd; /** Limit sale data to 2006-2020 **/
+run;
+
+proc sort data=Sales_by_property_dates out=Sales_by_property_nodup nodupkey;
   by u_address_id_ref descending saledate;
 run;
 
@@ -87,7 +92,12 @@ data TOPA_by_property;
   by id;
 run; 
 
-proc sort data=TOPA_by_property;
+data TOPA_by_property_dates; 
+  set TOPA_by_property; 
+  where u_offer_sale_date between '01Jan2006'd and '31dec2020'd;  /** Limit notice data to 2006-2020 **/
+run;
+
+proc sort data=TOPA_by_property_dates;
   by u_address_id_ref descending u_offer_sale_date id;
 run;
 
@@ -95,7 +105,7 @@ run;
 
 data Combo;
   set 
-    TOPA_by_property 
+    TOPA_by_property_dates 
     (keep=u_address_id_ref id u_offer_sale_date FULLADDRESS Anc2012 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2012 Ward2022 cluster2017
      rename=(u_offer_sale_date=u_ref_date)
      in=is_notice)
@@ -103,15 +113,13 @@ data Combo;
 	  (keep=u_address_id_ref saledate saleprice ownername_full ui_proptype ADDRESS1 ADDRESS2 address3
 	   rename=(saledate=u_ref_date));
 	by u_address_id_ref descending u_ref_date;
-
 	length desc $ 40;
 
 	if is_notice then desc = "NOTICE OF SALE";
 	else desc = "SALE";
 
-    /**Limit sale and notice data to 2006-2020 and do not use obs with missing address or date **/
-    where u_ref_date between '01Jan2006'd and '31dec2020'd 
-	  and not( missing( u_address_id_ref ) or missing( u_ref_date ) );
+    /**do not use obs with missing address or date **/
+    where not( missing( u_address_id_ref ) or missing( u_ref_date ) );
 
 run;
 
@@ -127,9 +135,15 @@ data Topa_notice_flag;
   format u_proptype $UIPRTYP.;
   format u_dedup_notice DYESNO.;
   format u_notice_with_sale DYESNO.;
+  format u_ownername $char100.;
+  format u_address1 $char100.;
+  format u_address2 $char100.;
+  format u_address3 $char100.; 
   
-  if first.u_address_id_ref then prev_desc=""; 
-  if first.u_address_id_ref then u_notice_date="";
+  if first.u_address_id_ref then do; 
+	  prev_desc=""; u_notice_date=""; u_ownername=""; u_saleprice=.; u_proptype=.; u_address1="";
+	  u_address2=""; u_address3=""; u_sale_date=.; 
+	end;
   
   if first.u_address_id_ref and desc="NOTICE OF SALE" then u_dedup_notice=1;
   else if desc="NOTICE OF SALE" and prev_desc="SALE" then u_dedup_notice=1;
@@ -157,7 +171,7 @@ data Topa_notice_flag;
   retain u_notice_date;
   label u_notice_date='Notice offer of sale date (Urban created var)';
   
-  if desc="SALE" then do; 
+  if desc="SALE" and u_address_id_ref=u_address_id_ref then do; 
 	u_ownername=Ownername_full; u_saleprice=SALEPRICE; u_proptype=ui_proptype; u_address1=ADDRESS1;
 	u_address2=ADDRESS2; u_address3=address3; 
 	end; 
@@ -184,7 +198,6 @@ data Topa_notice_flag;
   drop Ownername_full SALEPRICE ui_proptype u_ref_date ADDRESS1 ADDRESS2 address3 prev_desc;
 run; 
 
-
 /** Proc Print for checking results **/
 proc print data=Topa_notice_flag (firstobs=79 obs=94);
   /**where u_address_id_ref=5142;**/
@@ -203,7 +216,7 @@ run;
     label="TOPA notices from CNHED combined with real prop and address data to create new variables for TOPA eval, 2006-2020",
     sortby=ID,
     /** Metadata parameters **/
-    revisions=%str(New data set.),
+    revisions=%str(New data set. now includes 2021-2022 sales data),
     /** File info parameters **/
     printobs=10,
     freqvars=u_dedup_notice u_notice_with_sale u_proptype ward2022 cluster2017
