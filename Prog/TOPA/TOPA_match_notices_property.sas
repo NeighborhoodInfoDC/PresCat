@@ -136,6 +136,9 @@ data Topa_notice_flag;
   format u_dedup_notice DYESNO.;
   format u_notice_with_sale DYESNO.;
   format u_ownername $char100.;
+  format u_address1 $char100.;
+  format u_address2 $char100.;
+  format u_address3 $char100.; 
   
   if first.u_address_id_ref then do; 
 	  prev_desc=""; u_notice_date=""; u_ownername=""; u_saleprice=.; u_proptype=.; u_address1="";
