@@ -40,6 +40,32 @@ data Subsidy_new_obs;
   Subsidy_source_info_date = 4/8/2022;
 
   Subsidy_source = "HUD/Low Income Housing Tax Credits";
+    /** New tax credit row for Portner Flats (NL000243) **/
+
+  nlihc_id = "NL000243";
+
+  subsidy_id = 3;  /** Fill in number for new subsidy row **/
+
+  units_tot = 96;
+
+  units_Assist = 96;
+
+  POA_start = 1/1/2018;
+
+  POA_end = 1/1/2048;
+
+  rent_to_fmr_description = "60% AMI";
+
+  subsidy_info_source_ID = "DCB20180002";
+
+  program = "LIHTC/4PCT";
+
+  compl_end = 1/1/2033;
+
+  output;  /** Saves the row to the output data set **/
+
+run;
+
 
   /** New tax credit row for Cedar Heights/Finsbury Square Apts (NL000106)
   Commenting out for Cedar Heights for now, it does not appear in the "new_projects_issue_300_rev.csv" file
@@ -67,28 +93,3 @@ data Subsidy_new_obs;
 
   output;  /** Saves the row to the output data set **/
 
-  /** New tax credit row for Portner Flats (NL000243) **/
-
-  nlihc_id = "NL000243";
-
-  subsidy_id = 3;  /** Fill in number for new subsidy row **/
-
-  units_tot = 96;
-
-  units_Assist = 96;
-
-  current_affordability_start = 1/1/2018;
-
-  affordability_end = 1/1/2048;
-
-  rent_to_fmr_description = "60% AMI";
-
-  subsidy_info_source_ID = "DCB20180002";
-
-  program = "LIHTC/4PCT";
-
-  compliance_end_date = 1/1/2033;
-
-  output;  /** Saves the row to the output data set **/
-
-run;
