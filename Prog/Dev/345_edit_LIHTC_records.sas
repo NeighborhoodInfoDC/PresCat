@@ -37,23 +37,33 @@ data Subsidy_new_obs;
 
   /** Data that is the same for both projects **/
 
-  Subsidy_source_info_date = ;
+  Subsidy_source_info_date = 4/8/2022;
 
-  Subsidy_source = "";
+  Subsidy_source = "HUD/Low Income Housing Tax Credits";
 
-  /** New tax credit row for Cedar Heights/Finsbury Square Apts (NL000106) **/
+  /** New tax credit row for Cedar Heights/Finsbury Square Apts (NL000106)
+  Commenting out for Cedar Heights for now, it does not appear in the "new_projects_issue_300_rev.csv" file
+  and the row with the corresponding MARID (286820) in the older "New_projects_issue_subsidy.csv" file is blank
 
   nlihc_id = "NL000106";
 
-  subsidy_id = 3;  /** Fill in number for new subsidy row **/
+  subsidy_id = 3;  /** Fill in number for new subsidy row 
 
-  program = 
+  units_tot = ;
 
-  subsidy_info_source = 
+  units_Assist = ;
 
-  subsidy_info_source_date = 
+  current_affordability_start = ;
 
-  >>  add other variables here
+  affordability_end = ;
+
+  rent_to_fmr_description = ;
+
+  subsidy_info_source_ID = ;
+
+  program = ;
+
+  compliance_end_date = ;
 
   output;  /** Saves the row to the output data set **/
 
@@ -63,7 +73,21 @@ data Subsidy_new_obs;
 
   subsidy_id = 3;  /** Fill in number for new subsidy row **/
 
-  >>  add other variables here
+  units_tot = 96;
+
+  units_Assist = 96;
+
+  current_affordability_start = 1/1/2018;
+
+  affordability_end = 1/1/2048;
+
+  rent_to_fmr_description = "60% AMI";
+
+  subsidy_info_source_ID = "DCB20180002";
+
+  program = "LIHTC/4PCT";
+
+  compliance_end_date = 1/1/2033;
 
   output;  /** Saves the row to the output data set **/
 
