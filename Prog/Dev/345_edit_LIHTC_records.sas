@@ -33,7 +33,9 @@ run;
 
 data Subsidy_new_obs;
 
-  set Prescat.Subsidy (obs=0);  /** Copy variables from Prescat.Subsidy, without any data **/
+  /** Set lengths of character variables **/
+
+  length Subsidy_source $ 40 nlihc_id $ 16 /*** FILL IN REST BASED ON VAR LENGTHS IN PRESCAT.SUBSIDY ****/;
 
   /** Data that is the same for both projects **/
 
