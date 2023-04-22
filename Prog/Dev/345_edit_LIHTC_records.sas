@@ -10,7 +10,7 @@
  
  Description:  
  Changes to Prescat.Subsidy
- - Add new tax credit record for Cedar Heights to Finsbury Square Apts (NL000106).
+ - Add new tax credit record for Cedar Heights to Finsbury Square Apts (NL000106). [This change was determined to be unneccesary]
  - Add new tax credit record to Portner Flats (NL000243).
  - Remove new tax credit record from Augusta Louisa (NL000337).
 
@@ -35,11 +35,12 @@ data Subsidy_new_obs;
 
   /** Set lengths of character variables **/
 
-  length Subsidy_source $ 40 nlihc_id $ 16 /*** FILL IN REST BASED ON VAR LENGTHS IN PRESCAT.SUBSIDY ****/;
+  length Subsidy_source $ 40 nlihc_id $ 16 rent_to_fmr_description $ 40 subsidy_info_source_ID $ 40 
+program $ 32 /*** FILL IN REST BASED ON VAR LENGTHS IN PRESCAT.SUBSIDY ****/;
 
   /** Data that is the same for both projects **/
 
-  Subsidy_source_info_date = 4/8/2022;
+  Subsidy_source_info_date = '8apr2022'd;
 
   Subsidy_source = "HUD/Low Income Housing Tax Credits";
     /** New tax credit row for Portner Flats (NL000243) **/
@@ -52,9 +53,9 @@ data Subsidy_new_obs;
 
   units_Assist = 96;
 
-  POA_start = 1/1/2018;
+  POA_start = '1jan2018'd;
 
-  POA_end = 1/1/2048;
+  POA_end = '1jan2048'd;
 
   rent_to_fmr_description = "60% AMI";
 
@@ -62,36 +63,61 @@ data Subsidy_new_obs;
 
   program = "LIHTC/4PCT";
 
-  compl_end = 1/1/2033;
+  compl_end = '1jan2033'd;
 
   output;  /** Saves the row to the output data set **/
 
 run;
 
+proc print data=Subsidy_new_obs;
+	format POA_start POA_end compl_end Subsidy_source_info_date MMDDYY8.;
+run;
 
-  /** New tax credit row for Cedar Heights/Finsbury Square Apts (NL000106)
-  Commenting out for Cedar Heights for now, it does not appear in the "new_projects_issue_300_rev.csv" file
-  and the row with the corresponding MARID (286820) in the older "New_projects_issue_subsidy.csv" file is blank
+data Subsidy;
 
-  nlihc_id = "NL000106";
+  set Prescat.Subsidy Subsidy_new_obs;  /** Listing two data sets here. Rows will be read from both into the new data set **/ 
+  by nlihc_id subsidy_id;  /** Keeps the order of the rows sorted by these two vars **/
 
-  subsidy_id = 3;  /** Fill in number for new subsidy row 
+  /** Remove tax credit row for Augusta Louisa, which was added from 2020 HUD update **/
+  if Nlihc_id = "NL000337" and Portfolio = "LIHTC" and year( Subsidy_source_info_date ) = 2020 then delete;
+  
+run;
 
-  units_tot = ;
+/** Replace Prescat.Subsidy with new version **/
 
-  units_Assist = ;
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Subsidy,
+  out=Subsidy,
+  outlib=Prescat,
+  label="Preservation Catalog, Project subsidies",
+  sortby=nlihc_id subsidy_id,
+  /** Metadata parameters **/
+  revisions=%str(Fix new LIHTC subsidies for NL000106, NL000243, and NL000337.),
+  /** File info parameters **/
+  printobs=0
+)
 
-  current_affordability_start = ;
+/** Update subsidy vars in Prescat.Project **/
 
-  affordability_end = ;
+%Create_project_subsidy_update( data=Subsidy ) 
 
-  rent_to_fmr_description = ;
+data Project;
+  	merge Prescat.project Project_Subsidy_update;
+	by nlihc_id;
+run;
 
-  subsidy_info_source_ID = ;
-
-  program = ;
-
-  compliance_end_date = ;
-
-  output;  /** Saves the row to the output data set **/
-
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Project,
+  out=Project,
+  outlib=PresCat,
+  label="Preservation Catalog, Projects",
+  sortby=Nlihc_id,
+  archive=N,
+  /** Metadata parameters **/
+  revisions=%str(Fix new LIHTC subsidies for NL000106, NL000243, and NL000337.),
+  /** File info parameters **/
+  printobs=0
+)
+  
