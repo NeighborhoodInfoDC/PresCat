@@ -101,8 +101,8 @@ proc print label data=Topa_CBO_sheet_retain;
   where u_dedup_notice=1 and u_notice_with_sale=1 and u_sale_date < '01jan2021'd;
   id id; 
   var u_address_id_ref u_notice_date All_street_addresses Property_name u_date_dhcd_received_ta_reg u_sale_date 
-u_ownername r_notes r_TA_provider r_TA_staff r_TA_lawyer r_TA_claim_rights r_TA_dev_partner outcome_homeowner 
-outcome_rentcontrol outcome_LIHTC outcome_section8 outcome_profit outcome_rehab outcome_no_afford outcome_buyouts dev_agree r_Existing_LIHTC r_New_LIHTC add_notes;
+u_ownername r_notes r_TA_provider r_TA_staff r_TA_lawyer r_Existing_LIHTC r_New_LIHTC r_TA_claim_rights r_TA_dev_partner outcome_homeowner 
+outcome_rentcontrol outcome_LIHTC outcome_section8 outcome_profit outcome_rehab outcome_no_afford outcome_buyouts dev_agree add_notes;
 run;
 
 ods tagsets.excelxp options( sheet_name="Without Sales" );
