@@ -35,21 +35,21 @@ data Subsidy_new_obs;
 
   /** Set lengths of character variables **/
 
-  length Subsidy_source $ 40 nlihc_id $ 16 rent_to_fmr_description $ 40 subsidy_info_source_ID $ 40 
+  length subsidy_info_source $ 40 nlihc_id $ 16 rent_to_fmr_description $ 40 subsidy_info_source_ID $ 40 
 program $ 32 /*** FILL IN REST BASED ON VAR LENGTHS IN PRESCAT.SUBSIDY ****/;
 
   /** Data that is the same for both projects **/
 
-  Subsidy_source_info_date = '8apr2022'd;
+  subsidy_info_source_date = '8apr2022'd;
 
-  Subsidy_source = "HUD/Low Income Housing Tax Credits";
+  subsidy_info_source = "HUD/Low Income Housing Tax Credits";
     /** New tax credit row for Portner Flats (NL000243) **/
 
   nlihc_id = "NL000243";
 
   subsidy_id = 3;  /** Fill in number for new subsidy row **/
 
-  units_tot = 96;
+  /*units_tot = 96;*/
 
   units_Assist = 96;
 
@@ -70,7 +70,7 @@ program $ 32 /*** FILL IN REST BASED ON VAR LENGTHS IN PRESCAT.SUBSIDY ****/;
 run;
 
 proc print data=Subsidy_new_obs;
-	format POA_start POA_end compl_end Subsidy_source_info_date MMDDYY8.;
+	format POA_start POA_end compl_end subsidy_info_source_date MMDDYY8.;
 run;
 
 data Subsidy;
@@ -79,7 +79,7 @@ data Subsidy;
   by nlihc_id subsidy_id;  /** Keeps the order of the rows sorted by these two vars **/
 
   /** Remove tax credit row for Augusta Louisa, which was added from 2020 HUD update **/
-  if Nlihc_id = "NL000337" and Portfolio = "LIHTC" and year( Subsidy_source_info_date ) = 2020 then delete;
+  if Nlihc_id = "NL000337" and Portfolio = "LIHTC" and year( subsidy_info_source_date ) = 2020 then delete;
   
 run;
 
@@ -121,3 +121,29 @@ run;
   printobs=0
 )
   
+title2 '***** CHECKS *****';
+
+proc compare base=PresCat.Subsidy compare=Subsidy listall maxprint=(40,32000);
+  id nlihc_id subsidy_id;
+run;
+
+
+%Dup_check(
+  data=Subsidy,
+  by=nlihc_id subsidy_id,
+  id=program,
+  out=_dup_check,
+  listdups=Y,
+  count=dup_check_count,
+  quiet=N,
+  debug=N
+)
+
+
+proc compare base=PresCat.Project compare=Project listall maxprint=(40,32000);
+  id nlihc_id;
+run;
+
+title2;
+
+
