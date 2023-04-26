@@ -24,7 +24,7 @@
 data Topa_CBO_sheet; 
   merge 
     PresCat.TOPA_notices_sales (keep=id u_address_id_ref u_dedup_notice u_notice_date u_ownername u_sale_date u_notice_with_sale in=time_period)
-    Prescat.Topa_database (keep=id All_street_addresses Property_name Notes Technical_assistance_provider u_date_dhcd_received_ta_reg Tech_Assist_Staff Tenant_Assn_Lawyer Did_a_TA_claim_TOPA_rights TA_Development_Partner Existing_LIHTC_Financing New_LIHTC_Financing);
+    Prescat.Topa_database (keep=id All_street_addresses Property_name Notes Technical_assistance_provider u_date_dhcd_received_ta_reg Tech_Assist_Staff Tenant_Assn_Lawyer TA_Development_Partner Existing_LIHTC_Financing New_LIHTC_Financing);
   by id;
   if time_period;
   outcome_homeowner=""; label outcome_homeowner = "Outcome: Homeownership";
@@ -37,6 +37,7 @@ data Topa_CBO_sheet;
   outcome_buyouts=""; label outcome_buyouts = "Outcome: Buyouts"; 
   dev_agree=""; label dev_agree = "Development agreement? (Y/N)";
   add_notes=""; label add_notes = "Additional notes"; 
+  TA_assign_rights=""; label TA_assign_rights = "Did the TA assign its rights?";
 run; 
 
 proc sort data=Topa_CBO_sheet out=Topa_CBO_sheet_sorted;
@@ -52,10 +53,9 @@ data Topa_CBO_sheet_retain;
   format r_TA_provider $char.;
   format r_TA_staff $char.;
   format r_TA_lawyer $char.;
-  format r_TA_claim_rights $char.;
   format r_TA_dev_partner $char.;
   if u_dedup_notice=0 then do;
-  r_notes=Notes; r_TA_provider=Technical_assistance_provider; r_TA_staff=Tech_Assist_Staff; r_TA_lawyer=Tenant_Assn_Lawyer; r_TA_claim_rights=Did_a_TA_claim_TOPA_rights;
+  r_notes=Notes; r_TA_provider=Technical_assistance_provider; r_TA_staff=Tech_Assist_Staff; r_TA_lawyer=Tenant_Assn_Lawyer;
 r_TA_dev_partner=TA_Development_Partner; r_Existing_LIHTC=Existing_LIHTC_Financing; r_New_LIHTC=New_LIHTC_Financing;
 end;
   retain r_notes r_TA_provider r_TA_staff r_TA_lawyer r_TA_claim_rights r_TA_dev_partner r_Existing_LIHTC r_New_LIHTC; 
@@ -63,7 +63,6 @@ end;
   label r_TA_provider='CBO Technical assistance provider';
   label r_TA_staff='Technical assistance staff';
   label r_TA_lawyer='Technical assistance lawyer';
-  label r_TA_claim_rights='Did the TA assign its rights?';
   label r_TA_dev_partner='TA Development Partner or consultant';
   label r_Existing_LIHTC='Existing LIHTC Financing? (Y/N)';
   label r_New_LIHTC='New LIHTC Financing? (Y/N)';
@@ -74,13 +73,12 @@ end;
 	if not( missing( Technical_assistance_provider ) ) then r_TA_provider=Technical_assistance_provider;
 	if not( missing( Tech_Assist_Staff ) ) then r_TA_staff=Tech_Assist_Staff;
 	if not( missing( Tenant_Assn_Lawyer ) ) then r_TA_lawyer=Tenant_Assn_Lawyer;
-	if not( missing( Did_a_TA_claim_TOPA_rights ) ) then r_TA_claim_rights=Did_a_TA_claim_TOPA_rights;
 	if not( missing( TA_Development_Partner ) ) then r_TA_dev_partner=TA_Development_Partner;
 	if not( missing( Existing_LIHTC_Financing ) ) then r_Existing_LIHTC=Existing_LIHTC_Financing;
 	if not( missing( New_LIHTC_Financing ) ) then r_New_LIHTC=New_LIHTC_Financing;
 	output;
 	r_notes=""; r_TA_provider=.; r_TA_staff=""; r_TA_lawyer="";
-	r_TA_claim_rights=""; r_TA_dev_partner=""; r_Existing_LIHTC=""; r_New_LIHTC="";
+	r_TA_dev_partner=""; r_Existing_LIHTC=""; r_New_LIHTC="";
 	end;
   run; 
 %File_info( data=Topa_CBO_sheet_retain, printobs=20 ) 
@@ -101,7 +99,7 @@ proc print label data=Topa_CBO_sheet_retain;
   where u_dedup_notice=1 and u_notice_with_sale=1 and u_sale_date < '01jan2021'd;
   id id; 
   var u_address_id_ref u_notice_date All_street_addresses Property_name u_date_dhcd_received_ta_reg u_sale_date 
-u_ownername r_notes r_TA_provider r_TA_staff r_TA_lawyer r_Existing_LIHTC r_New_LIHTC r_TA_claim_rights r_TA_dev_partner outcome_homeowner 
+u_ownername r_notes r_TA_provider r_TA_staff r_TA_lawyer r_Existing_LIHTC r_New_LIHTC TA_assign_rights r_TA_dev_partner outcome_homeowner 
 outcome_rentcontrol outcome_LIHTC outcome_section8 outcome_profit outcome_rehab outcome_no_afford outcome_buyouts dev_agree add_notes;
 run;
 
@@ -111,8 +109,8 @@ proc print label data=Topa_CBO_sheet_retain;
   where u_dedup_notice=1 and u_notice_with_sale=0;
   id id; 
   var u_address_id_ref u_notice_date All_street_addresses Property_name u_date_dhcd_received_ta_reg u_sale_date 
-u_ownername r_notes r_TA_provider r_TA_staff r_TA_lawyer r_TA_claim_rights r_TA_dev_partner outcome_homeowner 
-outcome_rentcontrol outcome_LIHTC outcome_section8 outcome_profit outcome_rehab outcome_no_afford outcome_buyouts dev_agree r_Existing_LIHTC r_New_LIHTC add_notes;
+u_ownername r_notes r_TA_provider r_TA_staff r_TA_lawyer r_Existing_LIHTC r_New_LIHTC TA_assign_rights r_TA_dev_partner outcome_homeowner 
+outcome_rentcontrol outcome_LIHTC outcome_section8 outcome_profit outcome_rehab outcome_no_afford outcome_buyouts dev_agree add_notes;
 run;
 
 ods tagsets.excelxp options( sheet_name="Sales in 2021 and 2022" );
@@ -121,8 +119,8 @@ proc print label data=Topa_CBO_sheet_retain;
   where u_dedup_notice=1 and u_notice_with_sale=1 and u_sale_date > '31dec2020'd;
   id id; 
   var u_address_id_ref u_notice_date All_street_addresses Property_name u_date_dhcd_received_ta_reg u_sale_date 
-u_ownername r_notes r_TA_provider r_TA_staff r_TA_lawyer r_TA_claim_rights r_TA_dev_partner outcome_homeowner 
-outcome_rentcontrol outcome_LIHTC outcome_section8 outcome_profit outcome_rehab outcome_no_afford outcome_buyouts dev_agree r_Existing_LIHTC r_New_LIHTC add_notes;
+u_ownername r_notes r_TA_provider r_TA_staff r_TA_lawyer r_Existing_LIHTC r_New_LIHTC TA_assign_rights r_TA_dev_partner outcome_homeowner 
+outcome_rentcontrol outcome_LIHTC outcome_section8 outcome_profit outcome_rehab outcome_no_afford outcome_buyouts dev_agree add_notes;
 run;
 
 ods tagsets.excelxp close;  /** Close the excelxp destination **/
