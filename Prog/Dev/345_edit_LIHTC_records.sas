@@ -13,6 +13,7 @@
  - Add new tax credit record for Cedar Heights to Finsbury Square Apts (NL000106). [This change was determined to be unneccesary]
  - Add new tax credit record to Portner Flats (NL000243).
  - Remove new tax credit record from Augusta Louisa (NL000337).
+ - Move new tax credit record from Augusta Louisa to Harry Janette Weinberg/Scattered Site II.
 
  Modifications:
 **************************************************************************/
@@ -25,10 +26,30 @@
 %DCData_lib( Realprop )
 %DCData_lib( Rod )
 %DCData_lib( DHCD )
+%DCData_lib( HUD )
 
 proc print data=Prescat.Subsidy;
   where nlihc_id in ( 'NL000106', 'NL000243' );  /** Limit output to rows with these project IDs **/
   var nlihc_id subsidy_id program Subsidy_info_source subsidy_info_source_date; /** Limit output to these variables **/
+run;
+
+proc print data=Prescat.Project_category_view;
+  where nlihc_id in ( 'NL000337', 'NL001151' );  /** Limit output to rows with these project IDs **/
+  id nlihc_id;
+  var proj_name proj_units_tot added_to_catalog proj_addre category_code;
+run;
+
+proc print data=Prescat.Subsidy;
+  where nlihc_id in ( 'NL000337', 'NL001151' );  /** Limit output to rows with these project IDs **/
+  id nlihc_id subsidy_id;
+  var subsidy_active program portfolio units: subsidy_info: update_dtm;
+  format program portfolio ;
+run;
+
+proc print data=Hud.Lihtc_2020_dc;
+  where hud_id in ( 'DCB00000008', 'DCB20142002' );
+  id hud_id;
+  var NONPROG LI_units project proj_add;
 run;
 
 data Subsidy_new_obs;
@@ -79,9 +100,45 @@ data Subsidy;
   by nlihc_id subsidy_id;  /** Keeps the order of the rows sorted by these two vars **/
 
   /** Remove tax credit row for Augusta Louisa, which was added from 2020 HUD update **/
-  if Nlihc_id = "NL000337" and Portfolio = "LIHTC" and year( subsidy_info_source_date ) = 2020 then delete;
+  if Nlihc_id = "NL000337" and Subsidy_id = 3 then delete;
+  
+  /** Move tax credit record from Augusta Louisa to new project (Harry Janette Weinberg/Scattered Site II) **/
+  if Nlihc_id = "NL000337" and Subsidy_id = 2 then Nlihc_id = 'NL001151';
+  
+  /** Set remaining Augusta Louisa subsidies to inactive **/
+  if Nlihc_id = "NL000337" then Subsidy_active = 0;
   
 run;
+
+proc sort data=Subsidy;
+  by nlihc_id subsidy_id;
+run;
+
+title2 '***** CHECKS: SUBSIDY *****';
+
+proc compare base=PresCat.Subsidy compare=Subsidy listall maxprint=(40,32000);
+  id nlihc_id subsidy_id;
+run;
+
+%Dup_check(
+  data=Subsidy,
+  by=nlihc_id subsidy_id,
+  id=program,
+  out=_dup_check,
+  listdups=Y,
+  count=dup_check_count,
+  quiet=N,
+  debug=N
+)
+
+proc print data=Subsidy;
+  where nlihc_id in ( 'NL000337', 'NL001151' );  /** Limit output to rows with these project IDs **/
+  id nlihc_id subsidy_id;
+  var subsidy_active program portfolio units: subsidy_info: update_dtm;
+  format program portfolio ;
+run;
+
+title2;
 
 /** Replace Prescat.Subsidy with new version **/
 
@@ -107,6 +164,14 @@ data Project;
 	by nlihc_id;
 run;
 
+title2 '***** CHECKS: PROJECT *****';
+
+proc compare base=PresCat.Project compare=Project listall maxprint=(40,32000);
+  id nlihc_id;
+run;
+
+title2;
+
 %Finalize_data_set( 
   /** Finalize data set parameters **/
   data=Project,
@@ -121,29 +186,5 @@ run;
   printobs=0
 )
   
-title2 '***** CHECKS *****';
-
-proc compare base=PresCat.Subsidy compare=Subsidy listall maxprint=(40,32000);
-  id nlihc_id subsidy_id;
-run;
-
-
-%Dup_check(
-  data=Subsidy,
-  by=nlihc_id subsidy_id,
-  id=program,
-  out=_dup_check,
-  listdups=Y,
-  count=dup_check_count,
-  quiet=N,
-  debug=N
-)
-
-
-proc compare base=PresCat.Project compare=Project listall maxprint=(40,32000);
-  id nlihc_id;
-run;
-
-title2;
 
 
