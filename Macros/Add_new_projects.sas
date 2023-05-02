@@ -48,7 +48,6 @@
     %goto exit_macro;
   %end;
   
-/****
   ** Update PresCat.Subsidy **;
   
   %Add_new_projects_subsidy( 
@@ -72,7 +71,6 @@
   run;
   
   title2;
-*****/
 
   %exit_macro: 
   
