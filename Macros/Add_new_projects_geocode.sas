@@ -24,7 +24,7 @@
   parcel_data_edits= /** Parcel data manual edits **/
   );
 
-  %local geo_vars;
+  %local geo_vars a_obs_count;
   
   ** Import geocoded project data **;
 
@@ -96,6 +96,7 @@
 	keep_geo=address_id anc2012 latitude longitude cluster2017 cluster_tr2000 
 	         geo2010 geo2020 geobg2020 geoblk2020 ward2012 ward2022,
     ds_label=,
+    match_score_min=71,            /** Minimum score for a match **/
     listunmatched=Y
   )
 
@@ -214,6 +215,16 @@
   	order by nlihc_id, address_id;
 
   quit;
+  
+  proc sql noprint;
+    select count( nlihc_id ) into :a_obs_count separated by ' ' from A;
+  quit;
+  
+  %if &a_obs_count = 0 %then %do;
+    %err_mput( macro=Add_new_project_geocode, msg=No valid street addresses in geocoded data. )
+    %let _macro_fatal_error = 1;
+    %goto exit_macro;
+  %end;
 
   ** Create project and building geocode data sets for new projects **;
 
@@ -573,6 +584,8 @@ run;
   run;
   
   title2;
+  
+  %exit_macro: 
 
 %mend Add_new_projects_geocode;
 
