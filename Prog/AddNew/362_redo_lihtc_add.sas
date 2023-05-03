@@ -12,7 +12,6 @@
  Catalog in issue #300. Will redo these and debug code.
 
    * North Capitol Commons
-   * Sheridan Station III
    * 770 C Street Apartments
 
  Modifications:
