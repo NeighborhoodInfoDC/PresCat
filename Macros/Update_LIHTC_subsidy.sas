@@ -366,7 +366,7 @@
   proc compare base=Subsidy_target compare=Subsidy_target_update_b 
       &Compare_opt outbase outcomp outdif maxprint=(40,32000)
       out=Update_subsidy_result (rename=(_type_=comp_type));
-    id nlihc_id Subsidy_ID Subsidy_Info_Source Subsidy_Info_Source_ID &Subsidy_compare_id_vars;
+    id nlihc_id Subsidy_ID /*Subsidy_Info_Source Subsidy_Info_Source_ID &Subsidy_compare_id_vars*/;
     var &Subsidy_update_vars;
   run;
   
