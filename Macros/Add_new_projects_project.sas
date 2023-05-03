@@ -139,11 +139,13 @@
 
     PBCA = 0;
     
+    Added_to_catalog = today();
+    
     Update_Dtm = datetime();
     
     format Status $Status. Category_code $Categry. 
       Subsidized Cat_At_Risk Cat_Expiring Cat_Failing_Insp Cat_More_Info Cat_Lost Cat_Replaced PBCA dyesno.
-      Update_Dtm datetime16.
+      added_to_catalog mmddyy10. Update_Dtm datetime16.
     ;
 
     format Proj_name ;
@@ -181,7 +183,7 @@
   proc print data=Project n;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
     id nlihc_id;
-    var Proj_name; 
+    var Proj_name added_to_catalog status subsidized; 
   run;
 
   title2 'File = PresCat.Project / DUPLICATE NLIHC_IDs';
