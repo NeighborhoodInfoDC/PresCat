@@ -47,18 +47,19 @@ run;
 
 %File_info( data=TOPA_table_data)
 
-** 1a. Table All Notices by Ward and Year **;
+** Printing Descriptive Tables **;
 options nodate nonumber;
 options orientation=portrait;
 
 %fdate()
 
 ods listing close;
-ods rtf file="&_dcdata_default_path\Prescat\Prog\Topa\TOPA_desc_tables.rtf" style=Styles.Rtf_lato_9pt startpage=proc;
+ods rtf file="&_dcdata_default_path\Prescat\Prog\Topa\TOPA_desc_tables.rtf" style=Styles.Rtf_lato_9pt;
 
 footnote1 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
 footnote2 height=9pt j=r '{Page}\~{\field{\*\fldinst{\pard\b\i0\chcbpat8\qc\f1\fs19\cf1{PAGE }\cf0\chcbpat0}}}';
 
+** 1a. Table All Notices by Ward and Year **;
 proc tabulate data=TOPA_table_data /** insert name of input data set here **/ format=comma12.0 noseps missing;
   class ward2022 u_notice_date;   /** These variables define the table rows and columns **/
   var all_notices;  /** This variable is used for the content of the table **/
@@ -80,11 +81,6 @@ proc tabulate data=TOPA_table_data /** insert name of input data set here **/ fo
   title3 "1a. TOPA Notices of Sale (With Duplicates) by Ward and Year, 2006-2020";
 run;
 
-title2;
-footnote1;
-
-ods rtf close;
-ods listing;
 
 ** 1b. Table All Notices by Neighborhood Cluster and Year **;
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
@@ -190,3 +186,9 @@ proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
   title2 " ";
   title3 "3b. Residential Units in Properties with TOPA Notices of Sale by Neighborhood Cluster and Year, 2006-2020";
 run;
+
+title2;
+footnote1;
+
+ods rtf close;
+ods listing;
