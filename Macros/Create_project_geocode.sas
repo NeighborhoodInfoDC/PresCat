@@ -24,7 +24,7 @@
   archive=N 
   );
 
-  %global PROJ_ADDRE_LENGTH;
+  %local PROJ_ADDRE_LENGTH;
 
   %let PROJ_ADDRE_LENGTH = 160;
 
