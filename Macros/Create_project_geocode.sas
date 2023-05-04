@@ -167,6 +167,12 @@
     
   %end;
   
+  ** Clean up temporary files **;
+  
+  proc datasets library=Work nolist;
+    delete _create_project_geocode /memtype=data;
+  quit;
+
 %mend Create_project_geocode;
 
 /** End Macro Definition **/
