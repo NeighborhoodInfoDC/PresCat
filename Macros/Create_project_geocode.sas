@@ -24,31 +24,41 @@
   archive=N 
   );
 
-  %local geo_vars MAX_PROJ_ADDRE;
+  %global PROJ_ADDRE_LENGTH;
+
+  %let PROJ_ADDRE_LENGTH = 400;
+
+  %local geo_vars PROJ_ADDRE_OVER_LBL;
 
   %let geo_vars = Ward2012 Anc2012 Psa2012 Geo2010 Cluster_tr2000 Cluster_tr2000_name Zip Geo2020 GeoBg2020 GeoBlk2020 Ward2022 cluster2017;
-  %let MAX_PROJ_ADDRE = 3;   /** Maximum number of addresses to include in Proj_addre field in PresCat.Project_geo **/
+  %let PROJ_ADDRE_OVER_LBL = "; others";
+
+  proc sort data=&data out=_create_project_geocode;
+    by nlihc_id descending bldg_units_mar bldg_addre;
+  run;
 
   data 
     &out 
       (keep=nlihc_id &geo_vars Proj_name Proj_address_id Proj_x Proj_y Proj_lat Proj_lon 
             Proj_addre Proj_zip Proj_image_url Proj_Streetview_url Bldg_count Proj_units_mar);
       
-    set &data;
+    set _create_project_geocode;
     by nlihc_id;
     
     length
-      Proj_addre $ 160
+      Proj_addre $ &PROJ_ADDRE_LENGTH
       Proj_zip Zip $ 5
       Proj_image_url Proj_streetview_url $ 255;
     
     retain 
       Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Proj_addre Proj_zip Proj_image_url 
-      Proj_streetview_url Bldg_count Proj_units_mar _Proj_addre_count;
+      Proj_streetview_url Bldg_count Proj_units_mar _Proj_addre_count
+      _Proj_addre_remaining;
     
     if first.nlihc_id then do;
       Bldg_count = 0;
       _Proj_addre_count = 0;
+      _Proj_addre_remaining = &PROJ_ADDRE_LENGTH;
       Proj_address_id = .;
       Proj_x = .;
       Proj_y = .;
@@ -78,15 +88,34 @@
 
     if Bldg_Streetview_url ~= "" and Proj_streetview_url = "" then Proj_streetview_url = Bldg_Streetview_url;
     
-    if not( missing( Bldg_addre ) ) then do;
+    put "START";
+    put _n_= bldg_addre= _proj_addre_remaining= proj_addre=;
     
-      _Proj_addre_count + 1;
+    if not( missing( Bldg_addre ) ) and _Proj_addre_remaining > 0 then do;
+    
+      if length( Bldg_addre ) < _Proj_addre_remaining - ( length( &PROJ_ADDRE_OVER_LBL ) + 2 ) then do;
+    
+        _Proj_addre_count + 1;
 
-      if _Proj_addre_count = 1 then Proj_addre = Bldg_addre;
-      else if _Proj_addre_count <= &MAX_PROJ_ADDRE then Proj_addre = trim( Proj_addre ) || "; " || Bldg_addre;
-      else if _Proj_addre_count = %eval( &MAX_PROJ_ADDRE + 1 ) then Proj_addre = trim( Proj_addre ) || "; others";
+        if _Proj_addre_count = 1 then Proj_addre = Bldg_addre;        
+        else Proj_addre = trim( Proj_addre ) || "; " || Bldg_addre;
+        
+        _Proj_addre_remaining = _Proj_addre_remaining - length( Bldg_addre );
+        
+      end; 
+      else do;
+      
+        Proj_addre = trim( Proj_addre ) || &PROJ_ADDRE_OVER_LBL;
+        
+        _Proj_addre_remaining = 0;
+        
+      end;
     
     end;
+    
+    put "END";
+    put _n_= bldg_addre= _proj_addre_remaining= proj_addre=;
+
       
     if last.nlihc_id then do;
     
@@ -116,7 +145,7 @@
     
     format Zip $zipa.;
     
-    drop _Proj_addre_count;
+    drop _Proj_addre_count _Proj_addre_remaining;
     
   run;
 
