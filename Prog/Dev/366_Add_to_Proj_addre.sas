@@ -21,26 +21,14 @@
 ** Define libraries **;
 %DCData_lib( Prescat )
 
-data Building_geocode_test (obs=20);
-  set Prescat.Building_geocode;
-  where nlihc_id in ( 'NL000043' );
-run;
-
-proc print data=Building_geocode_test n;
-  id nlihc_id;
-  var bldg_addre;
-run;
-
-%Create_project_geocode( data=Building_geocode_test, compare=N, finalize=N )
+%Create_project_geocode( data=Prescat.Building_geocode, compare=N, finalize=N )
 
 ods html body="&_dcdata_default_path\prescat\prog\dev\366_add_to_proj_addre.html" style=Minimal;
 ods listing close;
 
 proc print data=Project_geocode;
+  id nlihc_id;
   var proj_addre;
-  format proj_addre $400.;
-run;
-
 run;
 
 ods html close;

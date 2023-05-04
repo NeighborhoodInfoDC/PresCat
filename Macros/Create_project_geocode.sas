@@ -26,7 +26,7 @@
 
   %global PROJ_ADDRE_LENGTH;
 
-  %let PROJ_ADDRE_LENGTH = 400;
+  %let PROJ_ADDRE_LENGTH = 160;
 
   %local geo_vars PROJ_ADDRE_OVER_LBL;
 
@@ -88,9 +88,6 @@
 
     if Bldg_Streetview_url ~= "" and Proj_streetview_url = "" then Proj_streetview_url = Bldg_Streetview_url;
     
-    put "START";
-    put _n_= bldg_addre= _proj_addre_remaining= proj_addre=;
-    
     if not( missing( Bldg_addre ) ) and _Proj_addre_remaining > 0 then do;
     
       if length( Bldg_addre ) < _Proj_addre_remaining - ( length( &PROJ_ADDRE_OVER_LBL ) + 2 ) then do;
@@ -100,7 +97,7 @@
         if _Proj_addre_count = 1 then Proj_addre = Bldg_addre;        
         else Proj_addre = trim( Proj_addre ) || "; " || Bldg_addre;
         
-        _Proj_addre_remaining = _Proj_addre_remaining - length( Bldg_addre );
+        _Proj_addre_remaining = &PROJ_ADDRE_LENGTH - length( Proj_addre );
         
       end; 
       else do;
@@ -113,10 +110,6 @@
     
     end;
     
-    put "END";
-    put _n_= bldg_addre= _proj_addre_remaining= proj_addre=;
-
-      
     if last.nlihc_id then do;
     
       Proj_x = Proj_x / Bldg_count;
@@ -130,7 +123,7 @@
     
     label
       Bldg_count = "Number of buildings for project"
-      Proj_addre = "Project address"
+      Proj_addre = "Project addresses"
       Proj_address_id = "Project MAR address ID (first address in list)"
       Proj_image_url = "OCTO property image URL"
       Proj_lat = "Project latitude"
