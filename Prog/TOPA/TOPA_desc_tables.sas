@@ -49,7 +49,7 @@ run;
 
 ** Printing Descriptive Tables **;
 options nodate nonumber;
-options orientation=portrait;
+options orientation=landscape;
 
 %fdate()
 
