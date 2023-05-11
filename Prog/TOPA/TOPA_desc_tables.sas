@@ -169,7 +169,7 @@ run;
 ** 3b. Table Residential Units by Neighborhood Cluster and Year**;
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
   class cluster2017 u_notice_date;   
-  var sum_units;  
+  var sum_units ;  
   table 
     /** Rows **/
     all="DC"    
@@ -187,8 +187,101 @@ proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
   title3 "3b. Residential Units in Properties with TOPA Notices of Sale by Neighborhood Cluster and Year, 2006-2020";
 run;
 
+** 4a. Table Deduplicated notices resulting in a property sale (count) by Ward and Year**;
+proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
+  where u_dedup_notice=1;
+  class ward2022 u_notice_date;   
+  var u_notice_with_sale ;  
+  table 
+    /** Rows **/
+    all="DC"    
+    ward2022=" "  
+    ,
+    /** Columns **/
+    u_notice_with_sale=" " * sum=" " * 
+    (
+    all="Total"    
+    u_notice_date=" "  
+    ) 
+  ;
+  format u_notice_date year.;  
+  title2 " ";
+  title3 "4a. Properties with TOPA Notices that Sold by Ward and Year, 2006-2020";
+run;
+
+** 4b. Table Deduplicated notices resulting in a property sale (count) by Neighborhood Cluster and Year**;
+proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
+  where u_dedup_notice=1;
+  class cluster2017 u_notice_date;   
+  var u_notice_with_sale ;  
+  table 
+    /** Rows **/
+    all="DC"    
+    cluster2017=" "  
+    ,
+    /** Columns **/
+    u_notice_with_sale=" " * sum=" " * 
+    (
+    all="Total"    
+    u_notice_date=" "  
+    ) 
+  ;
+  format u_notice_date year.;  
+  title2 " ";
+  title3 "4b. Properties with TOPA Notices that Sold by Neighborhood Cluster and Year, 2006-2020";
+run;
+
+** 5a. Table Deduplicated notices resulting in a property sale (percentage) by Ward and Year**;
+
+proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
+  where u_dedup_notice=1;
+  class ward2022 u_notice_date;   
+  var u_notice_with_sale ;  
+  table 
+    /** Rows **/
+    all="DC"    
+    ward2022=" "  
+    ,
+    /** Columns **/
+    u_notice_with_sale=" " * mean=" " *
+    (
+    all="Total"    
+    u_notice_date=" "  
+    ) 
+  ;
+  format u_notice_date year. u_notice_with_sale percent10.;  
+  title2 " ";
+  title3 "5a. Percentage of Properties with TOPA Notices that Sold by Ward and Year, 2006-2020";
+run;
+
+** 5b. Table Deduplicated notices resulting in a property sale (percentage) by Neighborhood Cluster and Year**;
+
+
+proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
+  where u_dedup_notice=1;
+  class cluster2017 u_notice_date;   
+  var u_notice_with_sale ;  
+  table 
+    /** Rows **/
+    all="DC"    
+    cluster2017=" "  
+    ,
+    /** Columns **/
+    u_notice_with_sale=" " * mean=" " *
+    (
+    all="Total"    
+    u_notice_date=" "  
+    ) 
+  ;
+  format u_notice_date year. u_notice_with_sale percent10.;  
+  title2 " ";
+  title3 "5b. Percentage of Properties with TOPA Notices that Sold by Neighborhood Cluster and Year, 2006-2020";
+run;
+
 title2;
 footnote1;
 
 ods rtf close;
 ods listing;
+
+
