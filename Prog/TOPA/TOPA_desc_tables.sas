@@ -233,7 +233,7 @@ run;
 
 ** 5a. Table Deduplicated notices resulting in a property sale (percentage) by Ward and Year**;
 
-proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
+proc tabulate data=TOPA_table_data format=percent10.0 noseps missing;
   where u_dedup_notice=1;
   class ward2022 u_notice_date;   
   var u_notice_with_sale ;  
@@ -249,7 +249,7 @@ proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
     u_notice_date=" "  
     ) 
   ;
-  format u_notice_date year. u_notice_with_sale percent10.;  
+  format u_notice_date year.;  
   title2 " ";
   title3 "5a. Percentage of Properties with TOPA Notices that Sold by Ward and Year, 2006-2020";
 run;
@@ -257,7 +257,7 @@ run;
 ** 5b. Table Deduplicated notices resulting in a property sale (percentage) by Neighborhood Cluster and Year**;
 
 
-proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
+proc tabulate data=TOPA_table_data format=percent10.0 noseps missing;
   where u_dedup_notice=1;
   class cluster2017 u_notice_date;   
   var u_notice_with_sale ;  
@@ -273,7 +273,7 @@ proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
     u_notice_date=" "  
     ) 
   ;
-  format u_notice_date year. u_notice_with_sale percent10.;  
+  format u_notice_date year. ;  
   title2 " ";
   title3 "5b. Percentage of Properties with TOPA Notices that Sold by Neighborhood Cluster and Year, 2006-2020";
 run;
