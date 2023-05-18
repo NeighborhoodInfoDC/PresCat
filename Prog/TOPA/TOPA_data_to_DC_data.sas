@@ -350,6 +350,26 @@ data Topa_database;
   
 run;
 
+*************************************************************************
+** Adding year built (originally and after recent reno) to TOPA_SSL database **;
+
+proc sort data=TOPA_SSL out=ssl_sorted;
+  by ssl;
+run;
+
+proc sort data=Realprop.cama_parcel;
+  by ssl;
+run;
+
+data Topa_ssl_parcel; 
+  merge
+   Realprop.cama_parcel (keep=ssl AYB EYB)
+   ssl_sorted;
+  by ssl; 
+  if missing( id ) then delete;
+run; 
+
+%File_info( data=Topa_ssl_parcel, printobs=5 ) /** 4635 obs**/
 
 *************************************************************************
 ** Export 2007 TOPA/real property data **;
@@ -507,7 +527,7 @@ ods listing;   /** Reopen the listing destination **/
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
-    data=Topa_ssl,
+    data=Topa_ssl_parcel,
     out=Topa_ssl,
     outlib=PresCat,
     label="Preservation Catalog, real property parcels for TOPA database properties",
