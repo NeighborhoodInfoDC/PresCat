@@ -22,27 +22,44 @@
 %File_info( data=PresCat.TOPA_realprop, printobs=5 ) /** some IDs don't have real_prop info**/
 %File_info( data=PresCat.TOPA_addresses, printobs=5 )
 %File_info( data=PresCat.TOPA_database, printobs=5 ) 
-
-/*create flags (u_dedup_notice & u_notice_with_sale )*/
-/*create u_days_between_notices & u_days_from_dedup_notice_to_sale*/
-/*sales data listed in the data analysis plan 5.a*/
+/*SSL to match to cama_parcel*/
+%File_info( data=Realprop.cama_parcel, printobs=5 ) 
+/*AYB: Year property originally built */
+/*EYB: Year of most recent substantial property renovation*/
 
 /** Creating an ID for each property **/
 /** sorting by id then address id**/
 proc sort data=Prescat.Topa_addresses out=Topa_addresses_sort;
-  by id address_id;
+  by id;
 run;
+
+/**Sum residential units by address_id**/
+proc summary data=Topa_addresses_sort
+ noprint;
+ var ACTIVE_RES_OCCUPANCY_COUNT;
+ class id;
+ output out=TOPA_sum_units (drop=_:)
+	sum=sum_units;
+run;
+
+data Topa_addresses_num_units; 
+  merge 
+    Topa_addresses_sort
+    TOPA_sum_units;
+  by id;
+run; 
+
+%File_info( data=Topa_addresses_num_units, printobs=5 ) /** 4635 obs**/
 
 /** create ID (notice) x address_id crosswalk **/
 data Topa_id_x_address_1; 
-  set Topa_addresses_sort;
+  set Topa_addresses_num_units;
   by id; 
   if first.id then output; 
   rename address_id=u_address_id_ref;
 run; 
 
-%File_info( data=Topa_id_x_address_1, printobs=5 ) /** 1738 obs**/
-
+%File_info( data=Topa_id_x_address_1, printobs=5 ) /** 1749 obs**/
 
 /** Fill in missing ID numbers to match original TOPA database **/
 data Topa_id_x_address; 
@@ -52,7 +69,7 @@ data Topa_id_x_address;
   by id;
 run; 
  
-%File_info( data=Topa_id_x_address, printobs=5 ) /** 1740 obs**/
+%File_info( data=Topa_id_x_address, printobs=5 ) /** 1750 obs**/
 
 title2 '** Notices with missing u_address_id_ref **';
 proc print data=Topa_id_x_address;
@@ -101,12 +118,12 @@ proc sort data=TOPA_by_property_dates;
   by u_address_id_ref descending u_offer_sale_date id;
 run;
 
-%File_info( data=TOPA_by_property, printobs=5 ) /** 1740 obs**/
+%File_info( data=TOPA_by_property_dates, printobs=5 ) /** 1750 obs**/
 
 data Combo;
   set 
     TOPA_by_property_dates 
-    (keep=u_address_id_ref id u_offer_sale_date FULLADDRESS Anc2012 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2012 Ward2022 cluster2017
+    (keep=u_address_id_ref id u_offer_sale_date FULLADDRESS Anc2012 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2012 Ward2022 cluster2017 sum_units
      rename=(u_offer_sale_date=u_ref_date)
      in=is_notice)
     Sales_by_property_nodup
@@ -123,7 +140,7 @@ data Combo;
 
 run;
 
-%File_info( data=Combo, printobs=5 ) /** 4050 obs**/
+%File_info( data=Combo, printobs=5 ) /** 4593 obs**/
 
 /*Create flags (u_dedup_notice & u_notice_with_sale), u_days_between_notices & u_days_from_dedup_notice_to_sale*/
 data Topa_notice_flag; 
@@ -192,17 +209,21 @@ data Topa_notice_flag;
   
   label
     u_address_id_ref = "Unique property ID (DC MAR address ID) (Urban created var)"
-    FULLADDRESS = "Street address for unique property ID (Urban created var)";
+    FULLADDRESS = "Street address for unique property ID (Urban created var)"
+	sum_units = "Total number of housing units at the primary address (Urban created var)";
   
   drop desc;
   drop Ownername_full SALEPRICE ui_proptype u_ref_date ADDRESS1 ADDRESS2 address3 prev_desc;
 run; 
 
+%File_info( data=Topa_notice_flag, printobs=5 ) /** 4593 obs**/
+
+
 /** Proc Print for checking results **/
 proc print data=Topa_notice_flag (firstobs=79 obs=94);
   /**where u_address_id_ref=5142;**/
   by u_address_id_ref;
-  var id u_notice_date u_sale_date u_dedup_notice u_notice_with_sale u_days_: u_saleprice u_ownername u_proptype;
+  var id u_notice_date u_sale_date u_dedup_notice u_notice_with_sale u_saleprice u_ownername u_proptype;
 run;
 
 
