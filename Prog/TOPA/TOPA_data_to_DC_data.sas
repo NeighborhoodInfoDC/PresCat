@@ -161,6 +161,11 @@ proc sql noprint;
   order by TOPA_geocoded.ID, Xref.ssl;    /** Optional: sorts the output data set **/
 quit;
 
+** Remove duplicate SSLs **;
+proc sort data=TOPA_SSL nodupkey;
+  by id ssl;
+run;
+
 %File_info( data=TOPA_SSL, printobs=5 )
 
 %File_info( data=RealProp.Sales_master, printobs=5 )
