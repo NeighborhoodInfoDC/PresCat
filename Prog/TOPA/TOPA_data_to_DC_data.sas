@@ -362,10 +362,6 @@ proc sort data=TOPA_SSL out=ssl_sorted;
   by ssl;
 run;
 
-proc sort data=Realprop.cama_parcel;
-  by ssl;
-run;
-
 data Topa_ssl_parcel; 
   merge
    Realprop.cama_parcel (keep=ssl AYB EYB)
