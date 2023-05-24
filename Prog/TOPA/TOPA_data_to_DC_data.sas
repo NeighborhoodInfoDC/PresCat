@@ -20,7 +20,7 @@
 %DCData_lib( MAR )
 %DCData_lib( RealProp )
 
-%let revisions = Add u_date_dhcd_received_ta_reg.;
+%let revisions = Add u_date_dhcd_received_ta_reg. add AYB. and EYB. to Topa_ssl;
 
 ** Download and read TOPA dataset into SAS dataset**;
 %let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA-DOPA 5+_with_var_names_3_20_23_urban_update.csv";
