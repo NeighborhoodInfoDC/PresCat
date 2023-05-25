@@ -29,15 +29,30 @@ proc sort data=Prescat.Topa_addresses out=Topa_addresses_sort;
   by id address_id;
 run;
 
+** Adding # of res units by summing residential units by address_id **;
+proc summary data=Topa_addresses_sort
+ noprint;
+ var ACTIVE_RES_OCCUPANCY_COUNT;
+ class id;
+ output out=TOPA_sum_units (drop=_:)
+	sum=u_sum_units;
+run;
+
+** Merge summed dataset above with TOPA_notices_sales **;
+data TOPA_address_merge;
+  merge TOPA_sum_units Topa_addresses_sort;
+  by id;
+run;
+
 /** create ID (notice) x address_id crosswalk **/
 data Topa_id_x_address_1; 
-  set Topa_addresses_sort;
+  set TOPA_address_merge;
   by id; 
   if first.id then output; 
   rename address_id=u_address_id_ref;
 run; 
 
-%File_info( data=Topa_id_x_address_1, printobs=5 ) /** 1738 obs**/
+%File_info( data=Topa_id_x_address_1, printobs=5 ) /** 1749 obs**/
 
 /** Fill in missing ID numbers to match original TOPA database **/
 data Topa_id_x_address; 
@@ -47,7 +62,7 @@ data Topa_id_x_address;
   by id;
 run; 
  
-%File_info( data=Topa_id_x_address, printobs=5 ) /** 1740 obs**/
+%File_info( data=Topa_id_x_address, printobs=5 ) /** 1750 obs**/
 
 title2 '** Notices with missing u_address_id_ref **';
 proc print data=Topa_id_x_address;
@@ -93,11 +108,7 @@ data TOPA_by_property_dates;
   where u_offer_sale_date between '01Jan2006'd and '31dec2020'd;  /** Limit notice data to 2006-2020 **/
 run;
 
-proc sort data=TOPA_by_property_dates;
-  by u_address_id_ref descending u_offer_sale_date id;
-run;
-
-%File_info( data=TOPA_by_property, printobs=5 ) /** 1740 obs**/
+%File_info( data=TOPA_by_property, printobs=5 ) /** 1750 obs**/
 
 /*Adding years built variables to datasets below*/
 data TOPA_SSL_prop; 
@@ -111,26 +122,38 @@ data TOPA_years_clean;
   where AYB between 1 and 2023; 
 run; 
 
+%File_info( data=TOPA_years_clean, printobs=20 ) 
+
 proc sort data=TOPA_years_clean; 
-  by id EYB descending AYB; 
+  by id descending EYB AYB; 
 run; 
 
 data TOPA_years_built;  
   set TOPA_years_clean; 
-  	if first.id then do; 
+  by id descending EYB AYB; 
+  	if first.id then do;
 	  u_year_built_original=AYB; u_recent_reno=EYB;   
 	end; 
-  retain u_year_built_original; 
-  retain u_recent_reno; 
+  label u_year_built_original = 'Earliest year main portion originally built (Urban created var)';
+  label u_recent_reno = 'Caculated or apparent year an improvement was built (Urban created var)';
+  if missing( u_year_built_original ) or missing (u_recent_reno) then delete;
 run; 
 
-%File_info( data=TOPA_years_built, printobs=20 ) 
+data TOPA_years; 
+  merge TOPA_by_property TOPA_years_built (keep=id u_year_built_original u_recent_reno); 
+  by id; 
+run;  
 
+%File_info( data=TOPA_years, printobs=5 ) 
+
+proc sort data=TOPA_years out=TOPA_by_property_dates;
+  by u_address_id_ref descending u_offer_sale_date id;
+run;
 
 data Combo;
   set 
     TOPA_by_property_dates 
-    (keep=u_address_id_ref id u_offer_sale_date FULLADDRESS Anc2012 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2012 Ward2022 cluster2017
+    (keep=u_address_id_ref id u_offer_sale_date u_sum_units u_year_built_original u_recent_reno FULLADDRESS Anc2012 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2012 Ward2022 cluster2017
      rename=(u_offer_sale_date=u_ref_date)
      in=is_notice)
     Sales_by_property_nodup
@@ -226,11 +249,10 @@ run;
 proc print data=Topa_notice_flag (firstobs=79 obs=94);
   /**where u_address_id_ref=5142;**/
   by u_address_id_ref;
-  var id u_notice_date u_sale_date u_dedup_notice u_notice_with_sale u_days_: u_saleprice u_ownername u_proptype;
+  var id u_sum_units u_notice_date u_sale_date u_dedup_notice u_notice_with_sale u_days_: u_saleprice u_ownername u_proptype;
 run;
 
-%File_info( data=Topa_notice_flag, printobs=5 ) /** 4050 obs**/
-
+%File_info( data=Topa_notice_flag, printobs=5 ) 
 
 /** Finalize Topa_notices_sales (1498 obs) **/
 
