@@ -23,10 +23,6 @@
 %File_info( data=PresCat.TOPA_addresses, printobs=5 )
 %File_info( data=PresCat.TOPA_database, printobs=5 ) 
 
-/*create flags (u_dedup_notice & u_notice_with_sale )*/
-/*create u_days_between_notices & u_days_from_dedup_notice_to_sale*/
-/*sales data listed in the data analysis plan 5.a*/
-
 /** Creating an ID for each property **/
 /** sorting by id then address id**/
 proc sort data=Prescat.Topa_addresses out=Topa_addresses_sort;
@@ -42,7 +38,6 @@ data Topa_id_x_address_1;
 run; 
 
 %File_info( data=Topa_id_x_address_1, printobs=5 ) /** 1738 obs**/
-
 
 /** Fill in missing ID numbers to match original TOPA database **/
 data Topa_id_x_address; 
@@ -69,6 +64,7 @@ title2;
 /*run;*/
 
 /*Add vars from real_prop, combine with TOPA_id_x_address created above, clean up variables, and limit sale/notice data to 2006-2020*/
+
 data Sales_by_property;
   merge
     Prescat.Topa_realprop Topa_id_x_address;
@@ -102,6 +98,34 @@ proc sort data=TOPA_by_property_dates;
 run;
 
 %File_info( data=TOPA_by_property, printobs=5 ) /** 1740 obs**/
+
+/*Adding years built variables to datasets below*/
+data TOPA_SSL_prop; 
+  merge PresCat.TOPA_SSL Topa_id_x_address; 
+  by id; 
+run; 
+
+data TOPA_years_clean; 
+  set TOPA_SSL_prop; 
+  where EYB between 1 and 2023; /*removing zeros and future years*/
+  where AYB between 1 and 2023; 
+run; 
+
+proc sort data=TOPA_years_clean; 
+  by id EYB descending AYB; 
+run; 
+
+data TOPA_years_built;  
+  set TOPA_years_clean; 
+  	if first.id then do; 
+	  u_year_built_original=AYB; u_recent_reno=EYB;   
+	end; 
+  retain u_year_built_original; 
+  retain u_recent_reno; 
+run; 
+
+%File_info( data=TOPA_years_built, printobs=20 ) 
+
 
 data Combo;
   set 
@@ -204,6 +228,8 @@ proc print data=Topa_notice_flag (firstobs=79 obs=94);
   by u_address_id_ref;
   var id u_notice_date u_sale_date u_dedup_notice u_notice_with_sale u_days_: u_saleprice u_ownername u_proptype;
 run;
+
+%File_info( data=Topa_notice_flag, printobs=5 ) /** 4050 obs**/
 
 
 /** Finalize Topa_notices_sales (1498 obs) **/
