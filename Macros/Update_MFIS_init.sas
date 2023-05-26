@@ -75,7 +75,7 @@
   %let Subsidy_tech_vars = Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date subsidy_info_source_property Update_Dtm;
   
   %let Subsidy_missing_info_vars = 
-      Premise_id Property_name Property_street SOA_cat_sub_cat
+      &Subsidy_Info_Source_ID_src Premise_id Property_name Property_street SOA_cat_sub_cat
       ;
       
   %let Subsidy_dupcheck_id_vars = Premise_id Property_name;

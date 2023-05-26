@@ -19,18 +19,20 @@
 
 %macro Add_new_projects_geocode( 
   input_file_pre=, /** First part of input file names **/ 
-  input_path=  /** Location of input files **/
+  input_path=,  /** Location of input files **/
+  address_data_edits=, /** Address data manual edits **/
+  parcel_data_edits= /** Parcel data manual edits **/
   );
 
-  %local geo_vars;
+  %local geo_vars a_obs_count;
   
   ** Import geocoded project data **;
 
   ** Main sheet info **;
 
-  filename fimport "&input_path\&input_file_pre._main.csv" lrecl=2000;
+  filename fimport "&input_path\&input_file_pre..csv" lrecl=2000;
 
-  proc import out=New_Proj_Geocode_main
+  proc import out=New_Proj_projects
       datafile=fimport
       dbms=csv replace;
     datarow=2;
@@ -40,192 +42,63 @@
   run;
 
   filename fimport clear;
-
-  ** MAR Address sheet info **;
-
-  filename fimport "&input_path\&input_file_pre._mar_address.csv" lrecl=2000;
-
-  data WORK.NEW_PROJ_GEOCODE_MAR_ADDRESS    ;
-    %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
-    infile FIMPORT delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
-       informat ADDRESS_ID best32. ;
-       informat MARID best32. ;
-       informat STATUS $6. ;
-       informat FULLADDRESS $36. ;
-       informat ADDRNUM best32. ;
-       informat ADDRNUMSUFFIX $1. ;
-       informat STNAME $21. ;
-       informat STREET_TYPE $6. ;
-       informat QUADRANT $2. ;
-       informat CITY $10. ;
-       informat STATE $2. ;
-       informat XCOORD best32. ;
-       informat YCOORD best32. ;
-       informat SSL $17. ;
-       informat ANC $6. ;
-       informat PSA $23. ;
-       informat WARD $6. ;
-       informat NBHD_ACTION $1. ;
-       informat CLUSTER_ $10. ;
-       informat POLDIST $34. ;
-       informat ROC $17. ;
-       informat CENSUS_TRACT best32. ;
-       informat VOTE_PRCNCT $12. ;
-       informat SMD $8. ;
-       informat ZIPCODE best32. ;
-       informat NATIONALGRID $18. ;
-       informat ROADWAYSEGID best32. ;
-       informat FOCUS_IMPROVEMENT_AREA $2. ;
-       informat HAS_ALIAS $1. ;
-       informat HAS_CONDO_UNIT $1. ;
-       informat HAS_RES_UNIT $1. ;
-       informat HAS_SSL $1. ;
-       informat LATITUDE best32. ;
-       informat LONGITUDE best32. ;
-       informat STREETVIEWURL $104. ;
-       informat RES_TYPE $11. ;
-       informat WARD_2002 $6. ;
-       informat WARD_2012 $6. ;
-       informat ANC_2002 $6. ;
-       informat ANC_2012 $6. ;
-       informat SMD_2002 $8. ;
-       informat SMD_2012 $8. ;
-       informat IMAGEURL $38. ;
-       informat IMAGEDIR $8. ;
-       informat IMAGENAME $22. ;
-       informat CONFIDENCELEVEL $1. ;
-       format ADDRESS_ID best12. ;
-       format MARID best12. ;
-       format STATUS $6. ;
-       format FULLADDRESS $36. ;
-       format ADDRNUM best12. ;
-       format ADDRNUMSUFFIX $1. ;
-       format STNAME $21. ;
-       format STREET_TYPE $6. ;
-       format QUADRANT $2. ;
-       format CITY $10. ;
-       format STATE $2. ;
-       format XCOORD best12. ;
-       format YCOORD best12. ;
-       format SSL $17. ;
-       format ANC $6. ;
-       format PSA $23. ;
-       format WARD $6. ;
-       format NBHD_ACTION $1. ;
-       format CLUSTER_ $10. ;
-       format POLDIST $34. ;
-       format ROC $17. ;
-       format CENSUS_TRACT best12. ;
-       format VOTE_PRCNCT $12. ;
-       format SMD $8. ;
-       format ZIPCODE best12. ;
-       format NATIONALGRID $18. ;
-       format ROADWAYSEGID best12. ;
-       format FOCUS_IMPROVEMENT_AREA $2. ;
-       format HAS_ALIAS $1. ;
-       format HAS_CONDO_UNIT $1. ;
-       format HAS_RES_UNIT $1. ;
-       format HAS_SSL $1. ;
-       format LATITUDE best12. ;
-       format LONGITUDE best12. ;
-       format STREETVIEWURL $104. ;
-       format RES_TYPE $11. ;
-       format WARD_2002 $6. ;
-       format WARD_2012 $6. ;
-       format ANC_2002 $6. ;
-       format ANC_2012 $6. ;
-       format SMD_2002 $8. ;
-       format SMD_2012 $8. ;
-       format IMAGEURL $38. ;
-       format IMAGEDIR $8. ;
-       format IMAGENAME $22. ;
-       format CONFIDENCELEVEL $1. ;
-    input
-                ADDRESS_ID
-                MARID
-                STATUS $
-                FULLADDRESS $
-                ADDRNUM
-                ADDRNUMSUFFIX $
-                STNAME $
-                STREET_TYPE $
-                QUADRANT $
-                CITY $
-                STATE $
-                XCOORD
-                YCOORD
-                SSL $
-                ANC $
-                PSA $
-                WARD $
-                NBHD_ACTION $
-                CLUSTER_ $
-                POLDIST $
-                ROC $
-                CENSUS_TRACT
-                VOTE_PRCNCT $
-                SMD $
-                ZIPCODE
-                NATIONALGRID $
-                ROADWAYSEGID
-                FOCUS_IMPROVEMENT_AREA $
-                HAS_ALIAS $
-                HAS_CONDO_UNIT $
-                HAS_RES_UNIT $
-                HAS_SSL $
-                LATITUDE
-                LONGITUDE
-                STREETVIEWURL $
-                RES_TYPE $
-                WARD_2002 $
-                WARD_2012 $
-                ANC_2002 $
-                ANC_2012 $
-                SMD_2002 $
-                SMD_2012 $
-                IMAGEURL $
-                IMAGEDIR $
-                IMAGENAME $
-                CONFIDENCELEVEL $
-    ;
-    if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
-  run;
-
-  filename fimport clear;
-
-  ** Combine geocoding information **;
-
-  proc sort data=New_Proj_Geocode_main;
-    by marid;
-  run;
-
-  proc sort data=New_Proj_Geocode_mar_address;
-    by marid;
-  run;
-
-  data New_Proj_Geocode;
-
-    merge 
-      New_Proj_Geocode_main
-      New_Proj_Geocode_mar_address;
-    by marid;
-
-    length Streetview_url Image_url $ 255;
-
-    Streetview_url = left( STREETVIEWURL );
-
-    if imagename ~= "" and upcase( imagename ) ~=: "NO_IMAGE_AVAILABLE" then 
-      Image_url = trim( imageurl ) || "/" || trim( left( imagedir ) ) || "/" || imagename;
-
-    keep 
-      Proj_Name Bldg_City Bldg_ST Bldg_Zip Bldg_Addre
-      MAR_MATCHADDRESS MAR_XCOORD MAR_YCOORD MAR_LATITUDE
-      MAR_LONGITUDE MAR_WARD MAR_CENSUS_TRACT MAR_ZIPCODE MARID
-      MAR_ERROR MAR_SCORE MAR_SOURCEOPERATION MAR_IGNORE
-      SSL Ward_2012 ANC_2012 PSA Census_tract Cluster_
-      Streetview_url Image_url;
+  
+  ** Convert ZIP code to char var for geocoding **;
+  
+  data New_Proj_projects;
+  
+    set New_Proj_projects;
+    where id > 0;
+    
+    length Bldg_zip_char $ 5;
+    
+    Bldg_zip_char = left( put( Bldg_zip, z5.0 ) );
+    
+    rename Bldg_zip_char=Bldg_zip;
+    drop Bldg_zip;
+    
+    ** Remove unnecessary formats and informats **;
+    format _all_ ;
+    informat _all_ ;
 
   run;
+
+  title2 '********************************************************************************************';
+  title3 "** Rows in &input_path\&input_file_pre..csv with duplicate values of ID.";
+  title4 '** Each project should have a unique value of ID. Fix in input data.';
+
+  %Dup_check(
+    data=New_Proj_projects,
+    by=id,
+    id=proj_name Bldg_addre
+  )
+
+  title2;
+
+  title2 '********************************************************************************************';
+  title3 "** New project data read from &input_path\&input_file_pre..csv";
+
+  proc print data=New_Proj_projects noobs n;
+    id id;
+  run;
+  
+  title2;
+
+  ** Geocode new project addresses **;
+
+  %DC_mar_geocode(
+    geo_match=Y,
+    data=New_Proj_projects,
+    out=New_Proj_projects_geocode,
+    staddr=Bldg_addre,
+    zip=Bldg_zip,
+    id=ID,
+	keep_geo=address_id anc2012 latitude longitude cluster2017 cluster_tr2000 
+	         geo2010 geo2020 geobg2020 geoblk2020 ward2012 ward2022,
+    ds_label=,
+    match_score_min=71,            /** Minimum score for a match **/
+    listunmatched=Y
+  )
 
   ** Create Unique NLIHC IDs for New Projects **;
 
@@ -246,23 +119,20 @@
     if lastid = 0 then delete;
     run;
 
-  proc sort data = New_Proj_Geocode;
-    by proj_name;
+  proc sort data = New_Proj_projects_geocode;
+    by id;
     run;
 
-  data New_Proj_Geocode;
-    set New_Proj_Geocode;
-    by proj_name;
-    firstproj = first.proj_name;
-    format _all_ ;
-    informat _all_ ;
+  data New_Proj_projects_geocode;
+    set New_Proj_projects_geocode;
+    by id;
+    firstproj = first.id;
     run;
 
   *** Current format of nlihc_id is $16. Test with the new format***;
-  data New_Proj_Geocode;
+  data New_Proj_projects_geoc_nlihc_id;
     retain proj_name nlihc_id;
-    format nlihc_id $16.;
-    set Nlihc_id New_Proj_Geocode;
+    set Nlihc_id New_Proj_projects_geocode;
       retain nlihc_hold;
       if nlihc_num > nlihc_hold then nlihc_hold = nlihc_num;
       select (firstproj);
@@ -282,7 +152,7 @@
   %Data_to_format(
   FmtLib=work,
   FmtName=$nlihc_id_to_proj_name,
-  Data=New_Proj_Geocode,
+  Data=New_Proj_projects_geoc_nlihc_id,
   Value=nlihc_id,
   Label=proj_name,
   OtherLabel="",
@@ -296,11 +166,11 @@
 
     /** Match geocoded address IDs with MAR address-parcel crosswalk **/
     create table A as 
-      select distinct New.nlihc_id, New.Proj_name, New.Bldg_addre, coalesce( New.Marid, xref.address_id ) as address_id, xref.lot_type, xref.ssl as xref_ssl from 
-  	  New_proj_geocode as New left join
+      select distinct New.nlihc_id, New.Proj_name, New.Bldg_addre, coalesce( New.address_id, xref.address_id ) as address_id, xref.lot_type, xref.ssl as xref_ssl from 
+  	  New_Proj_projects_geoc_nlihc_id as New left join
   	  Mar.Address_ssl_xref as xref
-  	  on New.Marid = xref.address_id
-  	  where New.Mar_score > 90
+  	  on New.address_id = xref.address_id
+  	  where New.M_exactmatch
   	  order by nlihc_id, address_id, xref_ssl;
 
     /** Add property owner name and category **/ 
@@ -345,6 +215,16 @@
   	order by nlihc_id, address_id;
 
   quit;
+  
+  proc sql noprint;
+    select count( nlihc_id ) into :a_obs_count separated by ' ' from A;
+  quit;
+  
+  %if &a_obs_count = 0 %then %do;
+    %err_mput( macro=Add_new_project_geocode, msg=No valid street addresses in geocoded data. )
+    %let _macro_fatal_error = 1;
+    %goto exit_macro;
+  %end;
 
   ** Create project and building geocode data sets for new projects **;
 
@@ -355,14 +235,14 @@
     by address_id nlihc_id;
   run;
 
-  proc sort data=New_proj_geocode out=New_proj_geocode_addr_srt;
-    by marid;
+  proc sort data=New_Proj_projects_geoc_nlihc_id out=New_proj_geocode_addr_srt;
+    by address_id;
   run;
 
   data 
     work.Building_geocode_a
       (keep=nlihc_id address_id Proj_Name &geo_vars Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre bldg_zip
-            bldg_units_mar bldg_image_url bldg_Streetview_url ssl
+            bldg_units_mar ssl
        rename=(address_id=Bldg_address_id));
       
     merge 
@@ -372,21 +252,22 @@
           fulladdress=bldg_addre latitude=bldg_lat longitude=bldg_lon active_res_occupancy_count=bldg_units_mar
 		  x=bldg_x y=bldg_y zip=bldg_zip 
           ))
-      New_proj_geocode_addr_srt 
-        (keep=marid image_url streetview_url 
-         rename=(marid=address_id image_url=bldg_image_url streetview_url=bldg_streetview_url))
     ;
     by address_id;
 
-	if in1;
+    if in1;
+    
+    ** Address manual edits **;
+    
+    &Address_data_edits;
 
-	length Proj_name $ 80;
+    length Proj_name $ 80;
 
-	Proj_name = left( put( nlihc_id, $nlihc_id_to_proj_name. ) );
+    Proj_name = left( put( nlihc_id, $nlihc_id_to_proj_name. ) );
 
     ** Cluster names **;
     
-    length Cluster_tr2000_name $ 80;
+    length Cluster_tr2000_name $ 120;
 	    
     Cluster_tr2000_name = left( put( Cluster_tr2000, $clus00b. ) );
 
@@ -423,38 +304,47 @@
 
     if _type_ = 'BASE' then do;
       _hold_bldg_address_id = bldg_address_id;
+      in_catalog = 0;
+      output;
     end;
     else if _hold_bldg_address_id = bldg_address_id then do;
       %warn_put( macro=Add_new_projects_geocode, 
                  msg="Possible existing Catalog project. " bldg_address_id= 
                      " See output for details." )
+      in_catalog = 1;
       output;
     end;
     else do;
       _hold_bldg_address_id = .a;
     end;
+    
+    format in_catalog dyesno.;
 
     drop _hold_bldg_address_id;
 
   run;
 
   title2 '********************************************************************************************';
-  title3 '** Addresses in new projects that match those in existing Catalog projects';
-  title4 '** Check to make sure these projects are not already in Catalog';
+  title3 '** Addresses in new projects that match existing Catalog projects OR';
+  title4 '** New projects with common addresses';
+  title4 '** Check to make sure these projects are not already in Catalog or dedulicate in input data';
 
-  proc print data=Building_geocode_comp_rpt noobs label;
-    by bldg_address_id;
-    id nlihc_id;
-    var proj_name bldg_addre;
-  run;
-  
+  %Dup_check(
+    data=Building_geocode_comp_rpt,
+    by=bldg_address_id,
+    id=nlihc_id in_catalog proj_name bldg_addre,
+    out=_dup_check,
+    listdups=Y,
+    quiet=Y
+  )
+
   title2; 
 
   **remove projects from geocode datasets that are no longer in project dataset**;
 
   proc sql;
 
-     create table project as
+     create table project_geocode_b as
      select *
      from prescat.project_geocode
      where nlihc_id in (select distinct nlihc_id from prescat.project)
@@ -464,7 +354,7 @@
 
   proc sql;
 
-     create table building as
+     create table building_geocode_b as
      select *
      from prescat.building_geocode
      where nlihc_id in (select distinct nlihc_id from prescat.project)
@@ -475,14 +365,14 @@
   title2 '********************************************************************************************';
   title3 '** 1/ Check to see if any projects were removed in previous step';
 
-  proc compare base=prescat.project_geocode compare=work.project maxprint=(40,32000);
+  proc compare base=prescat.project_geocode compare=work.project_geocode_b listbaseobs nosummary;
     id nlihc_id;
   run;
 
   title2 '********************************************************************************************';
   title3 '** 2/ Check to see if any buildings were removed in previous step';
 
-  proc compare base=prescat.building_geocode compare=work.building maxprint=(40,32000);
+  proc compare base=prescat.building_geocode compare=work.building_geocode_b listbaseobs nosummary;
     id nlihc_id Bldg_addre;
   run;
 
@@ -495,14 +385,16 @@
   run;
 
   data Building_geocode;
-    set Building Building_geocode_a;
+    length Cluster_tr2000_name $ 120;
+    set Building_geocode_b Building_geocode_a;
     by nlihc_id Bldg_addre;
+    
   run;
 
   title2 '********************************************************************************************';
-  title3 '** 3/ Check for changes in the new Building geocode file that is not related to the new projects';
+  title3 '** 3/ Check for changes in the new Building geocode file that are not related to the new projects';
 
-  proc compare base=prescat.building_geocode compare=work.building_geocode listbasevar listcompvar maxprint=(40,32000);
+  proc compare base=prescat.building_geocode compare=work.building_geocode nosummary listbasevar listcompvar maxprint=(40,32000);
    id nlihc_id proj_name Bldg_addre;
    run;
    
@@ -558,7 +450,7 @@
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
     by nlihc_id;
     id nlihc_id;
-    var bldg_addre;
+    var bldg_units_mar bldg_addre;
   run;
   
   title2 'Project_geocode: New records';
@@ -566,7 +458,7 @@
   proc print data=Project_geocode n;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
     id nlihc_id;
-    var bldg_count proj_addre;
+    var bldg_count proj_units_mar proj_addre;
   run;
 
   title2;
@@ -627,6 +519,8 @@ data Parcel_a;
   
   if in1;
   
+  %Owner_name_clean( Parcel_owner_name, Parcel_owner_name )
+
   if Parcel_x = 0 then Parcel_x = .u;
   if Parcel_y = 0 then Parcel_y = .u;
   
@@ -653,6 +547,10 @@ run;
     
     informat _all_ ;
     
+    ** Parcel data manual edits **;
+    
+    &Parcel_data_edits;
+    
   run;
   
   %Finalize_data_set( 
@@ -669,7 +567,10 @@ run;
     printobs=0
   )
 
-  proc compare base=prescat.Parcel compare=Parcel listbasevar listcompvar maxprint=(40,32000);
+  title2 '********************************************************************************************';
+  title3 '** 4/ Check for changes in the new Parcel file that are not related to the new projects';
+
+  proc compare base=prescat.Parcel compare=Parcel nosummary listbasevar listcompvar maxprint=(40,32000);
    id nlihc_id ssl;
   run;
   
@@ -683,6 +584,8 @@ run;
   run;
   
   title2;
+  
+  %exit_macro: 
 
 %mend Add_new_projects_geocode;
 

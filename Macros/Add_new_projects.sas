@@ -26,16 +26,28 @@
 
 %macro Add_new_projects( 
   input_file_pre=, /** First part of input file names **/
-  input_path=&_dcdata_r_path\PresCat\Raw\AddNew  /** Location of input files **/
+  input_path=&_dcdata_r_path\PresCat\Raw\AddNew,  /** Location of input files **/
+  address_data_edits=, /** Address data manual edits **/
+  parcel_data_edits= /** Parcel data manual edits **/
   );
+  
+  %global _macro_fatal_error;
+  %let _macro_fatal_error = 0;
   
   ** Update PresCat.Building_geocode, PresCat.Project_geocode, PresCat.Parcel **;
   
   %Add_new_projects_geocode( 
     input_file_pre=&input_file_pre,
-    input_path=&input_path
+    input_path=&input_path,
+    address_data_edits=&address_data_edits,
+    parcel_data_edits=&parcel_data_edits
   )
-
+  
+  %if &_macro_fatal_error %then %do;
+    %err_mput( macro=Add_new_projects, msg=Macro exiting with error. )
+    %goto exit_macro;
+  %end;
+  
   ** Update PresCat.Subsidy **;
   
   %Add_new_projects_subsidy( 
@@ -60,6 +72,8 @@
   
   title2;
 
+  %exit_macro: 
+  
 %mend Add_new_projects;
 
 /** End Macro Definition **/
