@@ -135,7 +135,7 @@ data TOPA_years_built;
 	  u_year_built_original=AYB; u_recent_reno=EYB;   
 	end; 
   label u_year_built_original = 'Earliest year main portion originally built (Urban created var)';
-  label u_recent_reno = 'Caculated or apparent year an improvement was built (Urban created var)';
+  label u_recent_reno = 'Calculated or apparent year an improvement was built (Urban created var)';
   if missing( u_year_built_original ) or missing (u_recent_reno) then delete;
 run; 
 
