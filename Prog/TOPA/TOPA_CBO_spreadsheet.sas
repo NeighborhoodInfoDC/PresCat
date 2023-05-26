@@ -23,7 +23,7 @@
 /** Fill in missing columns from original TOPA database to notices sale database created**/
 data Topa_CBO_sheet; 
   merge 
-    PresCat.TOPA_notices_sales (keep=id u_address_id_ref u_dedup_notice u_notice_date u_ownername u_sale_date u_notice_with_sale in=time_period)
+    PresCat.TOPA_notices_sales (keep=id u_address_id_ref u_dedup_notice u_notice_date u_ownername u_sale_date u_notice_with_sale u_sum_units u_year_built_original u_recent_reno Ward2022 in=time_period)
     Prescat.Topa_database (keep=id All_street_addresses Property_name Notes Technical_assistance_provider u_date_dhcd_received_ta_reg Tech_Assist_Staff Tenant_Assn_Lawyer TA_Development_Partner Existing_LIHTC_Financing New_LIHTC_Financing);
   by id;
   if time_period;
@@ -100,7 +100,7 @@ proc print label data=Topa_CBO_sheet_retain;
   id id; 
   var u_address_id_ref u_notice_date All_street_addresses Property_name u_date_dhcd_received_ta_reg u_sale_date 
 u_ownername r_notes r_TA_provider r_TA_staff r_TA_lawyer r_Existing_LIHTC r_New_LIHTC TA_assign_rights r_TA_dev_partner outcome_homeowner 
-outcome_rentcontrol outcome_LIHTC outcome_section8 outcome_profit outcome_rehab outcome_no_afford outcome_buyouts dev_agree add_notes;
+outcome_rentcontrol outcome_LIHTC outcome_section8 outcome_profit outcome_rehab outcome_no_afford outcome_buyouts dev_agree add_notes u_sum_units u_year_built_original u_recent_reno Ward2022;
 run;
 
 ods tagsets.excelxp options( sheet_name="Without Sales" );
@@ -110,7 +110,7 @@ proc print label data=Topa_CBO_sheet_retain;
   id id; 
   var u_address_id_ref u_notice_date All_street_addresses Property_name u_date_dhcd_received_ta_reg u_sale_date 
 u_ownername r_notes r_TA_provider r_TA_staff r_TA_lawyer r_Existing_LIHTC r_New_LIHTC TA_assign_rights r_TA_dev_partner outcome_homeowner 
-outcome_rentcontrol outcome_LIHTC outcome_section8 outcome_profit outcome_rehab outcome_no_afford outcome_buyouts dev_agree add_notes;
+outcome_rentcontrol outcome_LIHTC outcome_section8 outcome_profit outcome_rehab outcome_no_afford outcome_buyouts dev_agree add_notes u_sum_units u_year_built_original u_recent_reno Ward2022;
 run;
 
 ods tagsets.excelxp options( sheet_name="Sales in 2021 and 2022" );
@@ -120,7 +120,7 @@ proc print label data=Topa_CBO_sheet_retain;
   id id; 
   var u_address_id_ref u_notice_date All_street_addresses Property_name u_date_dhcd_received_ta_reg u_sale_date 
 u_ownername r_notes r_TA_provider r_TA_staff r_TA_lawyer r_Existing_LIHTC r_New_LIHTC TA_assign_rights r_TA_dev_partner outcome_homeowner 
-outcome_rentcontrol outcome_LIHTC outcome_section8 outcome_profit outcome_rehab outcome_no_afford outcome_buyouts dev_agree add_notes;
+outcome_rentcontrol outcome_LIHTC outcome_section8 outcome_profit outcome_rehab outcome_no_afford outcome_buyouts dev_agree add_notes u_sum_units u_year_built_original u_recent_reno Ward2022;
 run;
 
 ods tagsets.excelxp close;  /** Close the excelxp destination **/
