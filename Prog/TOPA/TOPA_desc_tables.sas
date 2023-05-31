@@ -17,6 +17,7 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 
+%File_info( data=PresCat.TOPA_addresses, printobs=5 ) 
 %File_info( data=PresCat.TOPA_notices_sales, printobs=5 ) 
 %File_info( data=PresCat.TOPA_database, printobs=5 ) 
 
@@ -44,6 +45,21 @@ run;
 proc print data=TOPA_unit_check;
   var id Units u_sum_units Ward2022; 
   by Ward2022;
+run;
+
+proc print data=PresCat.TOPA_addresses;
+  var id FULLADDRESS ACTIVE_RES_OCCUPANCY_COUNT address_id; 
+  where id in ( 316 336 753 754 862 1260 );
+run;
+
+proc print data=TOPA_unit_check;
+  var id Units u_sum_units Ward2022; 
+  where id in ( 316 336 753 754 862 1260 );
+run;
+
+proc print data=PresCat.TOPA_database;
+  var id Units All_street_addresses Notes; 
+  where id in ( 316 336 753 754 862 1260 );
 run;
 
 ** Printing Descriptive Tables **;
