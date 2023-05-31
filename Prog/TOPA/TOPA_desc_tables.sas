@@ -29,16 +29,22 @@ run;
 
 %File_info( data=TOPA_table_data)
 
-** Comparing # of units from MAR to CNHED TOPA database **;
+** Comparing # of units from MAR addresses to CNHED TOPA database **;
 data TOPA_unit_check; 
   merge 
-	PresCat.TOPA_database (keep=id Units)
-	TOPA_table_data (keep=id u_sum_units); 
+	PresCat.TOPA_database
+	TOPA_table_data; 
   by id; 
 run;
 
-/*proc print data=TOPA_unit_check;*/
-/*run;*/
+proc sort data=TOPA_unit_check;
+  by Ward2022 id;
+run;
+
+proc print data=TOPA_unit_check;
+  var id Units u_sum_units Ward2022; 
+  by Ward2022;
+run;
 
 ** Printing Descriptive Tables **;
 options nodate nonumber;
