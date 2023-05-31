@@ -17,35 +17,28 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 
-%File_info( data=PresCat.TOPA_addresses, printobs=5 )
 %File_info( data=PresCat.TOPA_notices_sales, printobs=5 ) 
+%File_info( data=PresCat.TOPA_database, printobs=5 ) 
 
-** Sum residential units by address_id **;
-proc sort data=PresCat.TOPA_addresses; 
-  by id; 
-run; 
-
-proc summary data=PresCat.TOPA_addresses
- noprint;
- var ACTIVE_RES_OCCUPANCY_COUNT;
- class id;
- output out=TOPA_sum_units (drop=_:)
-	sum=sum_units;
-run;
-
-** Merge summed dataset above with TOPA_notices_sales **;
-data TOPA_data_merge;
-  merge TOPA_sum_units PresCat.TOPA_notices_sales;
-  by id;
-run;
-
+** Final edits before creating tables **;
 data TOPA_table_data; 
-  set TOPA_data_merge; 
+  set PresCat.TOPA_notices_sales; 
   where u_notice_date between '01Jan2006'd and '31dec2020'd;  /** Limit notice data to 2006-2020 **/
-  all_notices=1; label all_notices = "Every notice (including duplicates)";
+  all_notices=1; label all_notices = "Every notice (including duplicates)"; 
 run;
 
 %File_info( data=TOPA_table_data)
+
+** Comparing # of units from MAR to CNHED TOPA database **;
+data TOPA_unit_check; 
+  merge 
+	PresCat.TOPA_database (keep=id Units)
+	TOPA_table_data (keep=id u_sum_units); 
+  by id; 
+run;
+
+/*proc print data=TOPA_unit_check;*/
+/*run;*/
 
 ** Printing Descriptive Tables **;
 options nodate nonumber;
@@ -148,14 +141,14 @@ run;
 ** 3a. Table Residential Units by Ward and Year**;
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
   class ward2022 u_notice_date;   
-  var sum_units;  
+  var u_sum_units;  
   table 
     /** Rows **/
     all="DC"    
     ward2022=" "  
     ,
     /** Columns **/
-    sum_units=" " * sum=" " * 
+    u_sum_units=" " * sum=" " * 
     (
     all="Total"    
     u_notice_date=" "  
@@ -169,14 +162,14 @@ run;
 ** 3b. Table Residential Units by Neighborhood Cluster and Year**;
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
   class cluster2017 u_notice_date;   
-  var sum_units ;  
+  var u_sum_units ;  
   table 
     /** Rows **/
     all="DC"    
     cluster2017=" "  
     ,
     /** Columns **/
-    sum_units=" " * sum=" " * 
+    u_sum_units=" " * sum=" " * 
     (
     all="Total"    
     u_notice_date=" "  
@@ -278,10 +271,55 @@ proc tabulate data=TOPA_table_data format=percent10.0 noseps missing;
   title3 "5b. Percentage of Properties with TOPA Notices that Sold by Neighborhood Cluster and Year, 2006-2020";
 run;
 
+** 6a. Table Residential Units that sold by Ward and Year**;
+proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
+  where u_dedup_notice=1;
+  class ward2022 u_notice_date;   
+  var u_sum_units;  
+  table 
+    /** Rows **/
+    all="DC"    
+    ward2022=" "  
+    ,
+    /** Columns **/
+    u_sum_units=" " * sum=" " * 
+    (
+    all="Total"    
+    u_notice_date=" "  
+    ) 
+  ;
+  format u_notice_date year.;  
+  title2 " ";
+  title3 "6a. Residential Units in Properties with TOPA Notices that Sold by Ward and Year, 2006-2020";
+run;
+
+** 6b. Table Residential Units that sold by Ward and Year by Neighborhood Cluster and Year**;
+proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
+  where u_dedup_notice=1;
+  class cluster2017 u_notice_date;   
+  var u_sum_units ;  
+  table 
+    /** Rows **/
+    all="DC"    
+    cluster2017=" "  
+    ,
+    /** Columns **/
+    u_sum_units=" " * sum=" " * 
+    (
+    all="Total"    
+    u_notice_date=" "  
+    ) 
+  ;
+  format u_notice_date year.;  
+  title2 " ";
+  title3 "6b. Residential Units in Properties with TOPA Notices that Sold by Neighborhood Cluster and Year, 2006-2020";
+run;
+
 title2;
 footnote1;
 
 ods rtf close;
 ods listing;
+
 
 
