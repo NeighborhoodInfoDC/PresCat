@@ -42,25 +42,46 @@ proc sort data=TOPA_unit_check;
   by Ward2022 id;
 run;
 
+title2 'TOPA_unit_check';
 proc print data=TOPA_unit_check;
   var id Units u_sum_units Ward2022; 
   by Ward2022;
 run;
 
+title2 'PresCat.TOPA_addresses';
 proc print data=PresCat.TOPA_addresses;
   var id FULLADDRESS ACTIVE_RES_OCCUPANCY_COUNT address_id; 
   where id in ( 316 336 753 754 862 1260 );
 run;
 
+title2 'TOPA_unit_check';
 proc print data=TOPA_unit_check;
   var id Units u_sum_units Ward2022; 
   where id in ( 316 336 753 754 862 1260 );
 run;
 
+title2 'PresCat.TOPA_database';
 proc print data=PresCat.TOPA_database;
   var id Units All_street_addresses Notes; 
   where id in ( 316 336 753 754 862 1260 );
 run;
+
+title2 'Prescat.Topa_notices_sales';
+proc print data=Prescat.Topa_notices_sales;
+  id id;
+  var u_address_id_ref u_dedup_notice fulladdress; 
+  where id in ( 316 336 753 754 862 1260 );
+run;
+
+title2 'PresCat.Topa_realprop';
+proc print data=PresCat.Topa_realprop;
+  by id;
+  id id;
+  var ssl saledate saleprice ownername_full;
+  where id in ( 316 336 753 754 862 1260 );
+run;
+
+title2;
 
 ** Printing Descriptive Tables **;
 options nodate nonumber;
