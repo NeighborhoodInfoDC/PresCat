@@ -183,6 +183,7 @@ run;
 
 ** 3a. Table Residential Units by Ward and Year**;
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
+  where u_dedup_notice=1; 
   class ward2022 u_notice_date;   
   var u_sum_units;  
   table 
@@ -199,11 +200,12 @@ proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
   ;
   format u_notice_date year.;  
   title2 " ";
-  title3 "3a. Residential Units in Properties with TOPA Notices of Sale by Ward and Year, 2006-2020";
+  title3 "3a. Residential Units in Properties with TOPA Notices of Sale (Deduplicated) by Ward and Year, 2006-2020";
 run;
 
 ** 3b. Table Residential Units by Neighborhood Cluster and Year**;
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
+  where u_dedup_notice=1; 
   class cluster2017 u_notice_date;   
   var u_sum_units ;  
   table 
@@ -220,7 +222,7 @@ proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
   ;
   format u_notice_date year.;  
   title2 " ";
-  title3 "3b. Residential Units in Properties with TOPA Notices of Sale by Neighborhood Cluster and Year, 2006-2020";
+  title3 "3b. Residential Units in Properties with TOPA Notices of Sale (Deduplicated) by Neighborhood Cluster and Year, 2006-2020";
 run;
 
 ** 4a. Table Deduplicated notices resulting in a property sale (count) by Ward and Year**;
@@ -292,7 +294,6 @@ run;
 
 ** 5b. Table Deduplicated notices resulting in a property sale (percentage) by Neighborhood Cluster and Year**;
 
-
 proc tabulate data=TOPA_table_data format=percent10.0 noseps missing;
   where u_dedup_notice=1;
   class cluster2017 u_notice_date;   
@@ -316,7 +317,7 @@ run;
 
 ** 6a. Table Residential Units that sold by Ward and Year**;
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
-  where u_dedup_notice=1;
+  where u_dedup_notice=1 and u_notice_with_sale=1;
   class ward2022 u_notice_date;   
   var u_sum_units;  
   table 
@@ -338,7 +339,7 @@ run;
 
 ** 6b. Table Residential Units that sold by Ward and Year by Neighborhood Cluster and Year**;
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
-  where u_dedup_notice=1;
+  where u_dedup_notice=1 and u_notice_with_sale=1;
   class cluster2017 u_notice_date;   
   var u_sum_units ;  
   table 
