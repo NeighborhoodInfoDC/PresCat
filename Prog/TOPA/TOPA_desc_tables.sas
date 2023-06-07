@@ -42,6 +42,46 @@ proc sort data=TOPA_unit_check;
   by Ward2022 id;
 run;
 
+** Comparing SSLs from realprop dataset unit counts in addresses dataset by notice IDs **;
+data TOPA_entire_prop; 
+  merge 
+	PresCat.Topa_realprop
+	PresCat.TOPA_addresses; 
+  by id; 
+run;
+
+%File_info( data=TOPA_entire_prop)
+
+*************************************************************************
+** Export SSL/address data for IDs **;
+ods tagsets.excelxp   /** Open the excelxp destination **/
+  file="&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_IDs_316_753_754.xls"  /** This is where the output will go **/
+  style=Normal    /** This is the ODS style that will be used in the workbook **/
+  options( sheet_interval='bygroup' )   /** This creates a new worksheet for every BY group in the output **/
+;
+
+ods listing close;  /** Close the regular listing destination **/
+
+proc print label data=TOPA_entire_prop;
+  by id;
+  id id;
+  var ssl address_id saledate saleprice ownername_full ACTIVE_RES_OCCUPANCY_COUNT;
+  where id in ( 316 753 754 );
+run;
+
+ods tagsets.excelxp close;  /** Close the excelxp destination **/
+ods listing;   /** Reopen the listing destination **/
+*************************************************************************
+
+title2 'TOPA_entire_prop';
+proc print data=TOPA_entire_prop;
+  by id;
+  id id;
+  var ssl address_id saledate saleprice ownername_full ACTIVE_RES_OCCUPANCY_COUNT;
+  where id in ( 316 753 754 );
+run;
+title2
+
 title2 'TOPA_unit_check';
 proc print data=TOPA_unit_check;
   var id Units u_sum_units Ward2022; 
