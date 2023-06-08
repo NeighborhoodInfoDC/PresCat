@@ -17,7 +17,7 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 
-%let dsname="\\sas1\dcdata\Libraries\PresCat\Raw\TOPA\draft-combined pipeline 5+ - Combined.csv";
+%let dsname="\\sas1\dcdata\Libraries\PresCat\Raw\TOPA\draft-combined pipeline 5+ - Combined_edited.csv";
 
 filename fixed temp;
 /** Remove carriage return and line feed characters within quoted strings **/
@@ -64,33 +64,6 @@ run;
 
 data DC_Pipeline_2022_07; 
 	set DC_Pipeline;
-	_30__Unit_Sizes_Complete = input(_30__Unit_Sizes_Complete_, 8.);
-	_30_AMI_LRSP = input(_30__AMI___LRSP, 8.);
-/*	drop _30__Unit_Sizes_Complete_ _30__AMI___LRSP; putting variables together to drop*/ 
-	TDC_ = input(TDC, comma10.);
-/*	drop TDC;*/
-	TDCUnit = input(TDC_Unit, comma10.);
-/*	drop TDC_Unit;*/
-	TCE_ = input(TCE, comma10.);
-/*	drop TCE;*/
-/*	SumofUnit_Detail = input(Sum_of_Unit_Detail, 8.);*/
-/*	drop Sum_of_Unit_Detail;*/
-/*	Proportional_HPTF_30_AMI = input(Proportional_HPTF_30__AMI, comma10.);*/
-/*	drop Proportional_HPTF_30__AMI;*/
-/*	Previous_FundingAmount = input(Previous_Funding_Amount, comma10.);*/
-/*	drop Previous_Funding_Amount;*/
-/*	PADD_ = input(PADD, 8.);*/
-/*	drop PADD;*/
-/*	NSP_ = input(NSP, 8.);*/
-/*	drop NSP;*/
-/*	MARTRACT = input(MAR_TRACT, 8.);*/
-/*	drop MAR_TRACT;*/
-/*	Loan_GrantAmount = input(Loan_Grant_Amount, 8.);*/
-/*	drop Loan_Grant_Amount;*/
-/*	Loan_Amount_Per_AffordableUnit = input(Loan_Amount_Per_Affordable_Unit, comma10.);*/
-/*	drop Loan_Amount_Per_Affordable_Unit;*/
-/*	LRSP_ContractAmount = input(LRSP_Contract_Amount, comma10.);*/
-/*	drop LRSP_Contract_Amount;*/
 	label Project_name = 'Project Name'
 		Address = 'Address'
 		SSL = 'SSL'
@@ -183,9 +156,10 @@ data DC_Pipeline_2022_07;
 		MAR_LONGITUDE = 'MAR_LONGITUDE'
 		MAR_TRACT = 'MAR_TRACT'
 		MAR_ID = 'MAR_ID'
-		Notes = 'Notes'
+		Notes = 'Notes';
 
-	format TOPA_Notice_Date_s_ TA_Registration_Date Selection_Date Projected_or_Actual_Loan_Closing Previous_Funding_Date LRSP_Contract_Council_Submit_Dat mmddyy10.;
+		drop VAR94;
+
 run; 
 
 
@@ -197,13 +171,13 @@ run;
     data=DC_Pipeline_2022_07,
     out=DC_Pipeline_2022_07,
     outlib=PresCat,
-    label="Preservation Catalog, new DC pipeline dataset (TOPA)",
+    label="Preservation Catalog, new DC pipeline dataset, July 2022",
     sortby=Project_Name,
     /** Metadata parameters **/
     revisions=%str(New data set.),
     /** File info parameters **/
-    printobs=10,
-	freqvars=
+    printobs=5,
+	freqvars=application_type tenure Project_type_or_scope New_construction_or_preservation Construction_Status Loan_Status
   )
 
   ***convert to numeric:
