@@ -17,7 +17,7 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 
-%let dsname="\\sas1\dcdata\Libraries\PresCat\Raw\TOPA\combined_pipeline_5.csv";
+%let dsname="\\sas1\dcdata\Libraries\PresCat\Raw\TOPA\draft-combined pipeline 5+ - Combined.csv";
 
 filename fixed temp;
 /** Remove carriage return and line feed characters within quoted strings **/
@@ -57,7 +57,8 @@ proc import datafile=fixed
             replace;
 		
      getnames=yes;
-	 guessingrows=max;
+	 datarow=3;  /** Skip first 2 rows which have variable names and labels **/
+	guessingrows=max;
 
 run;
 
@@ -90,6 +91,100 @@ data DC_Pipeline_2022_07;
 /*	drop Loan_Amount_Per_Affordable_Unit;*/
 /*	LRSP_ContractAmount = input(LRSP_Contract_Amount, comma10.);*/
 /*	drop LRSP_Contract_Amount;*/
+	label Project_name = 'Project Name'
+		Address = 'Address'
+		SSL = 'SSL'
+		Developer = 'Developer'
+		FRPP_loan_amount = 'First Right Purchase Program (FRPP) Loan Amount'
+		FRPP_loan_covenant_terms = 'First Right Purchase Program (FRPP) Loan Covenant Terms'
+		SAFI_loan_amount = 'SIte Acquisition Funding Initiative (SAFI) Loan Amount'
+		SAFI_loan_covenant_terms = 'Site Acquisition Funding Initiative (SAFI) Loan Covenant Terms'
+		HPF_loan_amount = 'Housing Preservation Fund (HPF) Loan Amount'
+		HPF_loan_covenant_terms = 'Housing Preservation Fund (HPF) Loan Covenant Terms'
+		application_fiscal_year = 'Consolidated RFP/NOFA App Fiscal Year'
+		selection_fiscal_year = 'Selection Fiscal Year'
+		selection_date = 'Selection Date'
+		application_type = 'Application Type'
+		In_TOPA_spreadsheet = 'In TOPA spreadsheet?'
+		TOPA_notice_date = 'TOPA Notice Date(s)'
+		TA_registration_date = 'TA Registration Date'
+		Limited_equity_coop = 'Limited Equity Coop?'
+		LEC_year_formed = 'If LEC, Year Formed'
+		LEC_dev_consultant = 'If LEC, Dev. Consultant'
+		PADD_project = 'PADD project'
+		DMPED_project = 'DMPED Project'
+		Tenure = 'Tenure'
+		Project_type_or_scope = 'Project Type/Scope'
+		New_construction_or_preservation = 'New Construction or Preservation'
+		deed_verified = 'Deed Verified'
+		complete_unit_count = 'Complete Unit Count'
+		repl_30_AMI_units = 'Replacement 30% AMI Units'
+		units_0_to_30 = '0-30% AMI Units'
+		units_31_to_50 = '31-50% AMI Units'
+		units_51_to_60 = '51-60% AMI Units'
+		units_61_to_80 = '61-80% AMI Units'
+		units_81_to_market_rate = '81%+ AMI / Market Rate'
+		psh_units = 'PSH Units'
+		affordable_units = 'Affordable Units'
+		total_units = 'Total Units'
+		LRSP_units_new = 'LRSP Units (New)'
+		existing_rental_assistance = 'Existing Rental Assistance In Project'
+		Existing_RA_Type = 'Type of Existing Rental Assistance'
+		LRSP_Contract_Status = 'LRSP Contract Status'
+		LRSP_Contr_Council_Sub_Date = 'LRSP Contract Council Submit Date'
+		LRSP_Contract_LIMS_Link = 'LRSP Contract LIMS Link'
+		LRSP_Contract_Amount = 'LRSP Contract Amount'
+		LRSP_per_unit = 'LRSP/Unit'
+		Source_for_LRSP_Information = 'Source for LRSP Information'
+		LRSP_30_percent_units = '30% AMI - LRSP'
+		Average_AMI = 'Average AMI'
+		Total_Development_Costs_(TDC) = 'Total Development Costs (TDC)'
+		TDC_per_unit = 'TDC/Unit'
+		loan_amount_to_TDC_ratio = 'Loan Amount / TDC'
+		HPTF_amount = 'HPTF'
+		TCE_Amount = 'TCE'
+		HOPWA_Amount = 'Housing Opportunities for Persons With AIDS (HOPWA)'
+		CIP_Amount = 'Community Investment Program'
+		NSP_Amount = 'Neighborhood Stabilization Program'
+		CDBG_Amount = 'Community Development Block Grant (CDBG)'
+		HUD_HOME_Amount = 'HOME funds from HUD'
+		Dept_of_Behavioral_Health_Amount = 'Department of Behavorial Health (DBH)'
+		National_HTF_Amount = 'National Housing Trust Fund (HTF)'
+		Loan_or_Grant_Amount = 'Loan/Grant Amount'
+		Loan_Amount_Per_Affordable_Unit = 'Loan Amount Per Affordable Unit'
+		Council_Submission = 'Council Submission'
+		LIHTC_Annual_Allocation = 'LIHTC Annual Allocation'
+		LIHTC_Type = 'LIHTC Type'
+		Construction_Status = 'Construction Status'
+		Loan_Status = 'Loan Status'
+		Proj_or_Act_Loan_Closing_Date = 'Projected or Actual Loan Closing Date'
+		Proj_or_Act_Closing_FY = 'Projected or Actual Closing Fiscal Year'
+		App_to_Closing = 'App to Closing'
+		HPTF_30_AMI_Unit_Cost = 'HPTF 30% AMI Unit Cost'
+		Proportional_HPTF_30_AMI = 'Proportional HPTF 30% AMI'
+		DHCD_HPTF_30_AMI = 'DHCD HPTF 30% AMI'
+		DHCD_HPTF_30_AMI_Illustrative = 'DHCD HPTF 30% AMI Illustrative'
+		DHCD_HPTF_30_AMI_Method2 = 'DHCD HPTF 30% AMI Method2'
+		Previously_Funded = 'Prevously Funded?'
+		Previous_Funding_Date = 'Previous Funding Date'
+		Previous_Funding_Amount = 'Previous Funding Amount'
+		Previous_Funding_Type = 'Previous Funding Type'
+		Previous_Funding_Source = 'Previous Funding Source'
+		Thirty_perc_unit_sizes_compl = '30% Unit Sizes Complete?'
+		Singles_Units = 'Singles Units'
+		Family_Units = 'Family Units'
+		Share_Family_Units = 'Share Family Units'
+		Sum_of_Unit_Detail = 'Sum of Unit Detail'
+		Complete_Unit_Detail = 'Complete Unit Detail?'
+		Address_for_MAR = 'Address for MAR'
+		MAR_MATCHADDRESS = 'MAR_MATCHADDRESS'
+		MAR_WARD = 'MAR_WARD'
+		MAR_LATITUDE = 'MAR_LATITUDE'
+		MAR_LONGITUDE = 'MAR_LONGITUDE'
+		MAR_TRACT = 'MAR_TRACT'
+		MAR_ID = 'MAR_ID'
+		Notes = 'Notes'
+
 	format TOPA_Notice_Date_s_ TA_Registration_Date Selection_Date Projected_or_Actual_Loan_Closing Previous_Funding_Date LRSP_Contract_Council_Submit_Dat mmddyy10.;
 run; 
 
