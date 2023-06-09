@@ -20,7 +20,7 @@
 %DCData_lib( MAR )
 %DCData_lib( RealProp )
 
-%let revisions = Add u_date_dhcd_received_ta_reg.;
+%let revisions = Add AYB. and EYB. to Topa_ssl;
 
 ** Download and read TOPA dataset into SAS dataset**;
 %let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA-DOPA 5+_with_var_names_3_20_23_urban_update.csv";
@@ -160,6 +160,11 @@ proc sql noprint;
   where not( missing( xref.ssl ) )
   order by TOPA_geocoded.ID, Xref.ssl;    /** Optional: sorts the output data set **/
 quit;
+
+** Remove duplicate SSLs **;
+proc sort data=TOPA_SSL nodupkey;
+  by id ssl;
+run;
 
 %File_info( data=TOPA_SSL, printobs=5 )
 
@@ -350,6 +355,22 @@ data Topa_database;
   
 run;
 
+*************************************************************************
+** Adding year built (originally and after recent reno) to TOPA_SSL database **;
+
+proc sort data=TOPA_SSL out=ssl_sorted;
+  by ssl;
+run;
+
+data Topa_ssl_parcel; 
+  merge
+   Realprop.cama_parcel (keep=ssl AYB EYB)
+   ssl_sorted;
+  by ssl; 
+  if missing( id ) then delete;
+run; 
+
+%File_info( data=Topa_ssl_parcel, printobs=5 ) /** 4635 obs**/
 
 *************************************************************************
 ** Export 2007 TOPA/real property data **;
@@ -507,7 +528,7 @@ ods listing;   /** Reopen the listing destination **/
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
-    data=Topa_ssl,
+    data=Topa_ssl_parcel,
     out=Topa_ssl,
     outlib=PresCat,
     label="Preservation Catalog, real property parcels for TOPA database properties",
