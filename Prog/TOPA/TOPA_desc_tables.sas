@@ -18,8 +18,39 @@
 %DCData_lib( PresCat )
 
 %File_info( data=PresCat.TOPA_addresses, printobs=5 ) 
+%File_info( data=PresCat.TOPA_realprop, printobs=5 ) 
 %File_info( data=PresCat.TOPA_notices_sales, printobs=5 ) 
 %File_info( data=PresCat.TOPA_database, printobs=5 ) 
+
+*************************************************************************
+** Export SSL/address data for IDs **;
+ods tagsets.excelxp   /** Open the excelxp destination **/
+  file="&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_IDs_316_753_754.xls"  /** This is where the output will go **/
+  style=Normal    /** This is the ODS style that will be used in the workbook **/
+  options( sheet_interval='proc' )   /** This creates a new worksheet for every proc print in the output **/
+;
+
+ods listing close;  /** Close the regular listing destination **/
+
+ods tagsets.excelxp options(sheet_name="By addresses");
+proc print label data=PresCat.Topa_addresses;
+  by id;
+  id id;
+  var address_id FULLADDRESS ACTIVE_RES_OCCUPANCY_COUNT;
+  where id in ( 316 753 754 );
+run;
+
+ods tagsets.excelxp options(sheet_name="By real property");
+proc print label data=PresCat.TOPA_realprop;
+  by id;
+  id id;
+  var ssl saledate saleprice ownername_full;
+  where id in ( 316 753 754 );
+run;
+
+ods tagsets.excelxp close;  /** Close the excelxp destination **/
+ods listing;   /** Reopen the listing destination **/
+*************************************************************************
 
 ** Final edits before creating tables **;
 data TOPA_table_data; 
@@ -41,37 +72,6 @@ run;
 proc sort data=TOPA_unit_check;
   by Ward2022 id;
 run;
-
-** Comparing SSLs from realprop dataset unit counts in addresses dataset by notice IDs **;
-data TOPA_entire_prop; 
-  merge 
-	PresCat.Topa_realprop
-	PresCat.TOPA_addresses; 
-  by id; 
-run;
-
-%File_info( data=TOPA_entire_prop)
-
-*************************************************************************
-** Export SSL/address data for IDs **;
-ods tagsets.excelxp   /** Open the excelxp destination **/
-  file="&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_IDs_316_753_754.xls"  /** This is where the output will go **/
-  style=Normal    /** This is the ODS style that will be used in the workbook **/
-  options( sheet_interval='bygroup' )   /** This creates a new worksheet for every BY group in the output **/
-;
-
-ods listing close;  /** Close the regular listing destination **/
-
-proc print label data=TOPA_entire_prop;
-  by id;
-  id id;
-  var ssl address_id saledate saleprice ownername_full ACTIVE_RES_OCCUPANCY_COUNT;
-  where id in ( 316 753 754 );
-run;
-
-ods tagsets.excelxp close;  /** Close the excelxp destination **/
-ods listing;   /** Reopen the listing destination **/
-*************************************************************************
 
 title2 'TOPA_entire_prop';
 proc print data=TOPA_entire_prop;
