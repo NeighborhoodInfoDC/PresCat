@@ -24,32 +24,32 @@
 
 *************************************************************************
 ** Export SSL/address data for IDs **;
-ods tagsets.excelxp   /** Open the excelxp destination **/
-  file="&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_IDs_316_753_754.xls"  /** This is where the output will go **/
-  style=Normal    /** This is the ODS style that will be used in the workbook **/
-  options( sheet_interval='proc' )   /** This creates a new worksheet for every proc print in the output **/
-;
-
-ods listing close;  /** Close the regular listing destination **/
-
-ods tagsets.excelxp options(sheet_name="By addresses");
-proc print label data=PresCat.Topa_addresses;
-  by id;
-  id id;
-  var address_id FULLADDRESS ACTIVE_RES_OCCUPANCY_COUNT;
-  where id in ( 316 753 754 );
-run;
-
-ods tagsets.excelxp options(sheet_name="By real property");
-proc print label data=PresCat.TOPA_realprop;
-  by id;
-  id id;
-  var ssl saledate saleprice ownername_full;
-  where id in ( 316 753 754 );
-run;
-
-ods tagsets.excelxp close;  /** Close the excelxp destination **/
-ods listing;   /** Reopen the listing destination **/
+/*ods tagsets.excelxp   /** Open the excelxp destination **/*/
+/*  file="&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_IDs_316_753_754.xls"  /** This is where the output will go **/*/
+/*  style=Normal    /** This is the ODS style that will be used in the workbook **/*/
+/*  options( sheet_interval='proc' )   /** This creates a new worksheet for every proc print in the output **/*/
+/*;*/
+/**/
+/*ods listing close;  /** Close the regular listing destination **/*/
+/**/
+/*ods tagsets.excelxp options(sheet_name="By addresses");*/
+/*proc print label data=PresCat.Topa_addresses;*/
+/*  by id;*/
+/*  id id;*/
+/*  var address_id FULLADDRESS ACTIVE_RES_OCCUPANCY_COUNT;*/
+/*  where id in ( 316 753 754 );*/
+/*run;*/
+/**/
+/*ods tagsets.excelxp options(sheet_name="By real property");*/
+/*proc print label data=PresCat.TOPA_realprop;*/
+/*  by id;*/
+/*  id id;*/
+/*  var ssl saledate saleprice ownername_full;*/
+/*  where id in ( 316 753 754 );*/
+/*run;*/
+/**/
+/*ods tagsets.excelxp close;  /** Close the excelxp destination **/*/
+/*ods listing;   /** Reopen the listing destination **/*/
 *************************************************************************
 
 ** Final edits before creating tables **;
@@ -73,55 +73,58 @@ proc sort data=TOPA_unit_check;
   by Ward2022 id;
 run;
 
-title2 'TOPA_entire_prop';
-proc print data=TOPA_entire_prop;
-  by id;
-  id id;
-  var ssl address_id saledate saleprice ownername_full ACTIVE_RES_OCCUPANCY_COUNT;
-  where id in ( 316 753 754 );
-run;
-title2
+/*title2 'PresCat.TOPA_addresses';*/
+/*proc print data=PresCat.TOPA_addresses;*/
+/*  var id FULLADDRESS ACTIVE_RES_OCCUPANCY_COUNT address_id; */
+/*  where id in ( 316 336 753 754 862 1260 );*/
+/*run;*/
+/**/
+/*title2 'TOPA_unit_check';*/
+/*proc print data=TOPA_unit_check;*/
+/*  var id Units u_sum_units Ward2022; */
+/*  where id in ( 316 336 753 754 862 1260 );*/
+/*run;*/
+/**/
+/*title2 'PresCat.Topa_realprop';*/
+/*proc print data=PresCat.Topa_realprop;*/
+/*  by id;*/
+/*  id id;*/
+/*  var ssl saledate saleprice ownername_full;*/
+/*  where id in ( 316 336 753 754 862 1260 );*/
+/*run;*/
+/*title2;*/
 
-title2 'TOPA_unit_check';
-proc print data=TOPA_unit_check;
-  var id Units u_sum_units Ward2022; 
-  by Ward2022;
-run;
+*************************************************************************
+** Export Ward 6 projects **;
+ods tagsets.excelxp   /** Open the excelxp destination **/
+  file="&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_Ward6_2012-14.xls"  /** This is where the output will go **/
+  style=Normal    /** This is the ODS style that will be used in the workbook **/
+  options( sheet_interval='proc' )   /** This creates a new worksheet for every proc print in the output **/
+;
 
-title2 'PresCat.TOPA_addresses';
-proc print data=PresCat.TOPA_addresses;
-  var id FULLADDRESS ACTIVE_RES_OCCUPANCY_COUNT address_id; 
-  where id in ( 316 336 753 754 862 1260 );
-run;
+ods listing close;  /** Close the regular listing destination **/
 
-title2 'TOPA_unit_check';
-proc print data=TOPA_unit_check;
-  var id Units u_sum_units Ward2022; 
-  where id in ( 316 336 753 754 862 1260 );
-run;
-
-title2 'PresCat.TOPA_database';
-proc print data=PresCat.TOPA_database;
-  var id Units All_street_addresses Notes; 
-  where id in ( 316 336 753 754 862 1260 );
-run;
-
-title2 'Prescat.Topa_notices_sales';
-proc print data=Prescat.Topa_notices_sales;
-  id id;
-  var u_address_id_ref u_dedup_notice fulladdress; 
-  where id in ( 316 336 753 754 862 1260 );
+ods tagsets.excelxp options(sheet_name="2012");
+proc print label data=TOPA_table_data;
+  var FULLADDRESS u_sum_units u_notice_date u_dedup_notice u_notice_with_sale ;
+  where (Ward2022="6") and (u_notice_date between '01Jan2012'd and '31dec2012'd);
 run;
 
-title2 'PresCat.Topa_realprop';
-proc print data=PresCat.Topa_realprop;
-  by id;
-  id id;
-  var ssl saledate saleprice ownername_full;
-  where id in ( 316 336 753 754 862 1260 );
+ods tagsets.excelxp options(sheet_name="2013");
+proc print label data=TOPA_table_data;
+  var FULLADDRESS u_sum_units u_notice_date u_dedup_notice u_notice_with_sale ;
+  where (Ward2022="6") and (u_notice_date between '01Jan2013'd and '31dec2013'd);
 run;
 
-title2;
+ods tagsets.excelxp options(sheet_name="2014");
+proc print label data=TOPA_table_data;
+  var FULLADDRESS u_sum_units u_notice_date u_dedup_notice u_notice_with_sale ;
+  where (Ward2022="6") and (u_notice_date between '01Jan2014'd and '31dec2014'd);
+run;
+
+ods tagsets.excelxp close;  /** Close the excelxp destination **/
+ods listing;   /** Reopen the listing destination **/
+*************************************************************************
 
 ** Printing Descriptive Tables **;
 options nodate nonumber;
