@@ -105,21 +105,27 @@ ods tagsets.excelxp   /** Open the excelxp destination **/
 ods listing close;  /** Close the regular listing destination **/
 
 ods tagsets.excelxp options(sheet_name="2012");
-proc print label data=TOPA_table_data;
+proc print label data=TOPA_table_data n;
+  id id;
   var FULLADDRESS u_sum_units u_notice_date u_dedup_notice u_notice_with_sale ;
-  where (Ward2022="6") and (u_notice_date between '01Jan2012'd and '31dec2012'd);
+  sum u_sum_units;
+  where u_dedup_notice=1 and (Ward2022="6") and (u_notice_date between '01Jan2012'd and '31dec2012'd);
 run;
 
 ods tagsets.excelxp options(sheet_name="2013");
-proc print label data=TOPA_table_data;
+proc print label data=TOPA_table_data n;
+  id id;
   var FULLADDRESS u_sum_units u_notice_date u_dedup_notice u_notice_with_sale ;
-  where (Ward2022="6") and (u_notice_date between '01Jan2013'd and '31dec2013'd);
+  sum u_sum_units;
+  where u_dedup_notice=1 and (Ward2022="6") and (u_notice_date between '01Jan2013'd and '31dec2013'd);
 run;
 
 ods tagsets.excelxp options(sheet_name="2014");
-proc print label data=TOPA_table_data;
+proc print label data=TOPA_table_data n;
+  id id;
   var FULLADDRESS u_sum_units u_notice_date u_dedup_notice u_notice_with_sale ;
-  where (Ward2022="6") and (u_notice_date between '01Jan2014'd and '31dec2014'd);
+  sum u_sum_units;
+  where u_dedup_notice=1 and (Ward2022="6") and (u_notice_date between '01Jan2014'd and '31dec2014'd);
 run;
 
 ods tagsets.excelxp close;  /** Close the excelxp destination **/
