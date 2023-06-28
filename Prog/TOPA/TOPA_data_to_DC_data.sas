@@ -20,7 +20,7 @@
 %DCData_lib( MAR )
 %DCData_lib( RealProp )
 
-%let revisions = Add AYB. and EYB. to Topa_ssl;
+%let revisions = Add Ownercat and related vars to Topa_realprop.;
 
 ** Download and read TOPA dataset into SAS dataset**;
 %let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA-DOPA 5+_with_var_names_3_20_23_urban_update.csv";
@@ -172,7 +172,7 @@ run;
 
 ** match property sales records in realprop.sales_master to TOPA addresses **;
 proc sql noprint;
-  create table TOPA_realprop as   /** Name of output data set to be created **/
+  create table TOPA_realprop_a as   /** Name of output data set to be created **/
   select unique 
     coalesce( TOPA_SSL.SSL, RealProp.SSL ) as SSL label="Property identification number (square/suffix/lot)", /** Matching variables **/
 	saledate - u_offer_sale_date as u_days_notice_to_sale label="Number of days from offer of sale to actual sale (Urban created var)",
@@ -182,26 +182,25 @@ proc sql noprint;
 	TOPA_SSL.GeoBg2020, TOPA_SSL.GeoBlk2020, TOPA_SSL.Psa2012,
 	TOPA_SSL.VoterPre2012, TOPA_SSL.Ward2022, TOPA_SSL.Ward2012,
     RealProp.SSL, RealProp.SALEPRICE, RealProp.saleprice_prev, RealProp.SALEDATE, RealProp.saledate_prev, RealProp.Ownername_full, RealProp.ownername_full_prev, RealProp.ui_proptype,
-	RealProp.address1, RealProp.address2, RealProp.address3, RealProp.address1_prev, RealProp.address2_prev, RealProp.address3_prev, RealProp.premiseadd, RealProp.hstd_code  
+	RealProp.address1, RealProp.address2, RealProp.address3, RealProp.address1_prev, RealProp.address2_prev, RealProp.address3_prev, RealProp.premiseadd, RealProp.hstd_code,
+    RealProp.mix1txtype, Realprop.mix2txtype 
     from TOPA_SSL (where=(not(missing(SSL)))) as TOPA_SSL
       left join RealProp.Sales_master as realprop    /** Left join = only keep obs that are in TOPA_geocoded **/
   on TOPA_SSL.SSL = realprop.SSL   /** This is the condition you are matching on **/
   order by TOPA_SSL.ID, realprop.SALEDATE;    /** Optional: sorts the output data set **/
 quit;
 
-/******** NEED TO DEBUG THIS ***********
+** Add information on owner type (buyer) **;
 %Parcel_base_who_owns(
-  RegExpFile=&_dcdata_r_path\RealProp\Prog\Updates\Owner type codes reg expr.txt,
+  RegExpFile=&_dcdata_l_path\RealProp\Prog\Updates\Owner type codes reg expr.txt,
   Diagnostic_file=&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_who_owns_diagnostic.xls,
   inlib=work,
   data=TOPA_realprop_a,
   outlib=work,
+  out=TOPA_realprop,
   finalize=N,
-  Revisions=NULL  
+  ownername_full_provided=Y 
   )
-********************************************/
-
-%File_info( data=TOPA_realprop, printobs=5 )
 
 ** Create full list of addresses by rematching SSL file to SSL-address crosswalk **;
 
@@ -509,7 +508,8 @@ ods listing;   /** Reopen the listing destination **/
     /** Metadata parameters **/
     revisions=%str(&revisions),
     /** File info parameters **/
-    printobs=10 
+    printobs=10,
+    freqvars=ownercat 
   )
 
   %Finalize_data_set( 
@@ -538,5 +538,4 @@ ods listing;   /** Reopen the listing destination **/
     /** File info parameters **/
     printobs=10 
   )
-
 
