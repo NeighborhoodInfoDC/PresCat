@@ -62,6 +62,52 @@
 
 /** End Macro Definition **/
 
+title2 '--Properties missing an earlier TOPA notice--';
+
+ods html body="&_dcdata_default_path\PresCat\Prog\TOPA\Topa_CBO_data_checks_986.html" style=Minimal;
+
+
+** 930, 940, 960 Randolph Street NW **;
+
+proc print data=Prescat.Topa_notices_sales;
+  where u_address_id_ref = 225073;
+  id id;
+  var u_address_id_ref u_notice_date u_dedup_notice u_notice_with_sale u_sale_date;
+run;
+
+%Print_id( id=986 )
+
+title4 'Realprop.Sales_master';
+proc print data=Realprop.Sales_master;
+  where ssl in ( '2905    0037', '2905    0038', '2905    0039', '2905    0812' );
+  by ssl;
+  var saledate saleprice ownername_full ui_proptype premiseadd ownerpt_extractdat_first ownerpt_extractdat_last;
+run;
+
+ods html close;
+
+
+
+ENDSAS;
+
+proc print data=Prescat.Topa_notices_sales;
+  where u_address_id_ref = 239117;
+  id id;
+  var u_address_id_ref u_notice_date u_dedup_notice u_notice_with_sale u_sale_date;
+run;
+
+%Print_id( id=416 )
+
+%Print_id( id=990 )
+
+title4 'Realprop.Sales_master';
+proc print data=Realprop.Sales_master;
+  where ssl in ( '0315    0026', '0315    0822' );
+  by ssl;
+  var saledate saleprice ownername_full ui_proptype premiseadd ownerpt_extractdat_first ownerpt_extractdat_last;
+run;
+
+
 
 title2 '--Properties without sales--';
 
@@ -75,8 +121,6 @@ proc print data=Realprop.Sales_master;
   var saleprice ownername_full ui_proptype premiseadd ownerpt_extractdat_first ownerpt_extractdat_last;
 run;
 
-
-ENDSAS;
 
 %Print_id( id=258 )
 
