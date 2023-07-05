@@ -183,7 +183,7 @@ proc sql noprint;
 	TOPA_SSL.VoterPre2012, TOPA_SSL.Ward2022, TOPA_SSL.Ward2012,
     RealProp.SSL, RealProp.SALEPRICE, RealProp.saleprice_prev, RealProp.SALEDATE, RealProp.saledate_prev, RealProp.Ownername_full, RealProp.ownername_full_prev, RealProp.ui_proptype,
 	RealProp.address1, RealProp.address2, RealProp.address3, RealProp.address1_prev, RealProp.address2_prev, RealProp.address3_prev, RealProp.premiseadd, RealProp.hstd_code,
-    RealProp.mix1txtype, Realprop.mix2txtype 
+    RealProp.mix1txtype, Realprop.mix2txtype ,RealProp.ownerpt_extractdat_first, RealProp.ownerpt_extractdat_last
     from TOPA_SSL (where=(not(missing(SSL)))) as TOPA_SSL
       left join RealProp.Sales_master as realprop    /** Left join = only keep obs that are in TOPA_geocoded **/
   on TOPA_SSL.SSL = realprop.SSL   /** This is the condition you are matching on **/
@@ -192,7 +192,7 @@ quit;
 
 ** Add information on owner type (buyer) **;
 %Parcel_base_who_owns(
-  RegExpFile=&_dcdata_l_path\RealProp\Prog\Updates\Owner type codes reg expr.txt,
+  RegExpFile=&_dcdata_r_path\RealProp\Prog\Updates\Owner type codes reg expr.txt,
   Diagnostic_file=&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_who_owns_diagnostic.xls,
   inlib=work,
   data=TOPA_realprop_a,
