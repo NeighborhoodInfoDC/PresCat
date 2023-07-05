@@ -192,7 +192,7 @@ quit;
 
 ** Add information on owner type (buyer) **;
 %Parcel_base_who_owns(
-  RegExpFile=&_dcdata_l_path\RealProp\Prog\Updates\Owner type codes reg expr.txt,
+  RegExpFile=&_dcdata_r_path\RealProp\Prog\Updates\Owner type codes reg expr.txt,
   Diagnostic_file=&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_who_owns_diagnostic.xls,
   inlib=work,
   data=TOPA_realprop_a,
