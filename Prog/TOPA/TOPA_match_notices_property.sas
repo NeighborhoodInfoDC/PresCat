@@ -89,8 +89,16 @@ run;
 
 data Sales_by_property_dates;
   set Sales_by_property; 
-  where saledate between '01Jan2006'd and '31may2022'd; /** Limit sale data to 2006-2020 **/
+  format all_saledate MMDDYY10.;
+  format actual_saledate DYESNO.;
+  if not(missing(SALEDATE)) then all_saledate=SALEDATE and actual_saledate=0;
+  else all_saledate=ownerpt_extractdat_first and actual_saledate=1;
+  label all_saledate='Property sale date or if sale date missing, extract date of Ownerpt update where sale first appeared';
+  label actual_saledate='Property sale date used';
+  if all_saledate < '01Jan2006'd or > '31mar2023'd then delete;
 run;
+
+%File_info( data=Sales_by_property_dates, printobs=5 ) /** 4958 obs**/
 
 proc sort data=Sales_by_property_dates out=Sales_by_property_nodup nodupkey;
   by u_address_id_ref descending saledate;
