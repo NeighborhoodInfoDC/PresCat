@@ -138,12 +138,33 @@ data TOPA_geocoded;
   set TOPA_geocoded;
   
   if Address_std = "5115 QUEEN'S STROLL PLACE SE" then Address_id = 155975;
+
+  if ID = 10004 or ID = 10005 then address_id = 305753;
   
 run;
 
 %File_info( data=TOPA_geocoded, printobs=5 )
 
-** MAR.address_ssl_xref to identify other parcels to match to address **;
+** checking if manual adding above worked **;
+proc print data=TOPA_geocoded;
+  where id in (10004, 10005);
+run;
+
+** Manually add SSL to ID 894 **;
+data Address_ssl_xref_new_obs;
+  length ssl $ 17;
+  infile datalines dlm=",";
+  input address_id ssl;
+datalines;
+237132, 0620    0893
+;
+run;
+
+data Address_ssl_xref;
+  set Mar.Address_ssl_xref Address_ssl_xref_new_obs;
+run;
+
+** Address_ssl_xref to identify other parcels to match to address **;
 proc sql noprint;
   create table TOPA_SSL as   /** Name of output data set to be created **/
   select
@@ -155,7 +176,7 @@ proc sql noprint;
 	TOPA_geocoded.VoterPre2012, TOPA_geocoded.Ward2022, TOPA_geocoded.Ward2012,
     Xref.ssl
     from TOPA_geocoded (where=(not(missing(ADDRESS_ID)))) as TOPA_geocoded
-      left join Mar.Address_ssl_xref as xref    /** Left join = only keep obs that are in TOPA_geocoded **/
+      left join Address_ssl_xref as xref    /** Left join = only keep obs that are in TOPA_geocoded **/
   on TOPA_geocoded.ADDRESS_ID = Xref.address_id   /** This is the condition you are matching on **/
   where not( missing( xref.ssl ) )
   order by TOPA_geocoded.ID, Xref.ssl;    /** Optional: sorts the output data set **/
@@ -167,6 +188,11 @@ proc sort data=TOPA_SSL nodupkey;
 run;
 
 %File_info( data=TOPA_SSL, printobs=5 )
+
+** checking if manual adding above worked **;
+proc print data=TOPA_SSL;
+  where id=894;
+run;
 
 %File_info( data=RealProp.Sales_master, printobs=5 )
 
