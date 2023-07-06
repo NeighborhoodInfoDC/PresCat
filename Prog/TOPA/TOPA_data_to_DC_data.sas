@@ -131,6 +131,7 @@ title2;
 	keep_geo= SSL Address_id Ward2012 Anc2012 cluster2017 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2022
 )
 
+** Filter out non-exact matches.
 ** Manually fix addresses that are not successfully geocoded (problem with geocoder) **;
 
 data TOPA_geocoded;
@@ -138,6 +139,7 @@ data TOPA_geocoded;
   set TOPA_geocoded;
   
   if Address_std = "5115 QUEEN'S STROLL PLACE SE" then Address_id = 155975;
+  else if not m_exactmatch then delete;
   
 run;
 
@@ -538,4 +540,38 @@ ods listing;   /** Reopen the listing destination **/
     /** File info parameters **/
     printobs=10 
   )
+
+
+**** Diagnostics ****;
+
+title2 '** Notices without any address in TOPA_addresses **';
+
+proc sql;
+
+  select 
+    coalesce( TOPA_database.ID, TOPA_addresses.ID ) as ID,
+    TOPA_database.all_street_addresses,
+    TOPA_addresses.address_id
+  from TOPA_database left join TOPA_addresses
+  on TOPA_database.ID = TOPA_addresses.ID
+  where missing( TOPA_addresses.address_id )
+  order by id;
+  
+quit;
+
+
+title2 '** Notices without any parcel in TOPA_ssl **';
+
+proc sql;
+
+  select 
+    coalesce( TOPA_database.ID, TOPA_ssl.ID ) as ID,
+    TOPA_database.all_street_addresses,
+    TOPA_ssl.ssl
+  from TOPA_database left join TOPA_ssl
+  on TOPA_database.ID = TOPA_ssl.ID
+  where missing( TOPA_ssl.ssl )
+  order by id;
+  
+quit;
 
