@@ -84,6 +84,41 @@
 
 /** End Macro Definition **/
 
+
+title2 '-- TOPA notices without an SSL --';
+
+data A;
+
+  merge 
+    Prescat.Topa_database (keep=id all_street_addresses u_casd_date u_offer_sale_date in=indb)
+    Prescat.Topa_ssl (keep=id in=inssl);
+  by id;
+  
+  if indb and not inssl;
+  
+run;
+
+proc print data=A;
+  id id;
+run;
+
+proc print data=Realprop.Parcel_base;
+  where lowcase( premiseadd ) contains "705 4th";
+  id ssl;
+  var premiseadd;
+run;
+
+proc print data=Prescat.Topa_notices_sales;
+  where id = 347;
+  id id;
+  var u_address_id_ref;
+run;
+
+
+ENDSAS;
+
+ods listing close;
+
 title2 '--Properties missing an earlier TOPA notice--';
 
 title3 '930, 940, 960 Randolph Street NW';
@@ -114,3 +149,21 @@ title3 '76 M Street NW';
 title3 '2333 Skyland Place SE';
 %Print_id( id=1380 )
 
+title3 '4212 East Capitol Street SE';
+%Print_id( id=10004 )
+%Print_id( id=10005 )
+
+title3 'Wingate';
+%Print_id( id=623 )
+
+title3 '86 Webster Street NW';
+%Print_id( id=10006 )
+
+title3 '6931 1/2 Georgia Avenue';
+%Print_id( id=480 )
+
+title3 '705 4th Street NW';
+%Print_id( id=347 )
+
+
+ods listing;
