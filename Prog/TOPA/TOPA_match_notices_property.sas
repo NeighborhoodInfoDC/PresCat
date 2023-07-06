@@ -87,6 +87,10 @@ data Sales_by_property;
   if missing( ssl ) then delete;
 run;
 
+proc print data=Sales_by_property; /* can't find 894 ID */ 
+  where id=894;
+run;
+
 data Sales_by_property_dates;
   set Sales_by_property; 
   format all_saledate MMDDYY10.;
@@ -103,8 +107,13 @@ data Sales_by_property_dates;
   label actual_saledate='Property sale date used';
   if '01Jan2006'd <= all_saledate <= '31mar2023'd;
 run;
+%File_info( data=Sales_by_property_dates, printobs=5 ) 
 
-%File_info( data=Sales_by_property_dates, printobs=5 ) /** 4958 obs**/
+proc print data=Sales_by_property_dates;
+  where id in ( 232, 316, 894, 986, 990, 10004, 10005 );
+  by id;
+  var id ownerpt_extractdat_first SALEDATE all_saledate actual_saledate All_street_addresses u_address_id_ref;
+run;
 
 proc sort data=Sales_by_property_dates out=Sales_by_property_nodup nodupkey;
   by u_address_id_ref descending saledate;
