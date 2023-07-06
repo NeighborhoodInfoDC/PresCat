@@ -115,7 +115,6 @@ proc print data=Prescat.Topa_notices_sales;
 run;
 
 
-ENDSAS;
 
 ods listing close;
 
@@ -165,5 +164,7 @@ title3 '6931 1/2 Georgia Avenue';
 title3 '705 4th Street NW';
 %Print_id( id=347 )
 
+title3 '1302 12th Street NW';
+%Print_id( id=41 )
 
 ods listing;
