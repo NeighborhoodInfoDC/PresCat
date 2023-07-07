@@ -20,7 +20,7 @@
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
 
-proc format library=PresCat;
+proc format /*library=PresCat*/;
   
   value $Status
     "A" = "Active"
@@ -121,6 +121,10 @@ proc format library=PresCat;
 	'S8-MR' = 'PB8'
 	'PBV' = 'PBV'
 	'HOPEVI' = 'HOPE VI'
+	'DC-FRPP' = 'DC-FRPP'
+	'DC-HPF' = 'DC-HPF'
+	'DC-LRSP' = 'DC-LRSP'
+	'DC-SAFI' = 'DC-SAFI'
 
     /***
     '207/223-PR' = 'OTHER'
@@ -298,6 +302,12 @@ proc format library=PresCat;
     '202-DL-E74' = 'Sec 202 direct loan/elderly/pre-1974'
     '202-DL-EH' = 'Sec 202/8 direct loan/elderly-handicapped'
     '202/811-CA' = 'Sec 202/811 capital advance'
+	'DC-FRPP' = 'DC First Right Purchase Program'
+	'DC-HPF' = 'DC Housing Preservation Fund'
+	'DC-LRSP' = 'DC Local Rent Supplement Program'
+	'DC-SAFI' = 'DC Site Acquisition Funding Initiative'
+
+
 
     /** MFIS mortgage programs (new codes) **/
     "207APTS" = "Sec 207 Apartments"
@@ -484,7 +494,12 @@ proc format library=PresCat;
     'TEBOND' = 'Tax exempt bond'
 	'HOPEVI' = 'HOPE VI'
 	'FHLB' = 'FHLB'
-    'LECOOP' = 'Limited equity coop';
+    'LECOOP' = 'Limited equity coop'
+	'DC-FRPP' = 'DC FRPP'
+	'DC-HPF' = 'DC HPF'
+	'DC-LRSP' = 'DC LRSP'
+	'DC-SAFI' = 'DC SAFI';
+
 
   value $portfolio
     '202/811' = 'Section 202/811'
@@ -508,7 +523,11 @@ proc format library=PresCat;
 	'PBV' = 'Project-based vouchers'
 	'HOPEVI' = 'HOPE VI'
 	'FHLB' = 'Federal Home Loan Bank'
-    'LECOOP' = 'Limited equity cooperative';
+    'LECOOP' = 'Limited equity cooperative'
+	'DC-FRPP' = 'DC First Right Purchase Program'
+	'DC-HPF' = 'DC Housing Preservation Fund'
+	'DC-LRSP' = 'DC Local Rent Supplement Program'
+	'DC-SAFI' = 'DC Site Acquisition Funding Initiative';
 
   value lihtc_credit2prog
     . = 'LIHTC/UNKWN'
