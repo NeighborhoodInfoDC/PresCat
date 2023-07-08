@@ -525,7 +525,7 @@ ods listing;   /** Reopen the listing destination **/
     revisions=%str(&revisions),
     /** File info parameters **/
     printobs=10,
-    freqvars=Notice_listed_address
+    freqvars=Notice_listed_address ward2022
   )
 
   %Finalize_data_set( 
