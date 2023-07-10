@@ -64,7 +64,7 @@
   proc print data=Prescat.Topa_realprop;
     where id in ( &id );
     id id;
-    var ssl saledate saleprice ownername_full ui_proptype;
+    var ssl saledate saleprice ownername_full ui_proptype premiseadd ownerpt_extractdat_first;
   run;
   
   %if %length( &ssl ) > 0 %then %do;
