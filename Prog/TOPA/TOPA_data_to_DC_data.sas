@@ -126,24 +126,39 @@ title2;
 %DC_mar_geocode(
 	data=TOPA_addresses_notices,
 	staddr=Address,
-	out=TOPA_geocoded, 
+	out=TOPA_geocoded_a, 
 	geo_match=yes, 
-	keep_geo= SSL Address_id Ward2012 Anc2012 cluster2017 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2022
+	keep_geo=Address_id /*SSL Address_id Ward2012 Anc2012 cluster2017 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2022*/
 )
 
 ** Filter out non-exact matches.
 ** Manually fix addresses that are not successfully geocoded (problem with geocoder) **;
 
-data TOPA_geocoded;
+data TOPA_geocoded_b;
 
-  set TOPA_geocoded;
+  set TOPA_geocoded_a;
   
   if Address_std = "5115 QUEEN'S STROLL PLACE SE" then Address_id = 155975;
   else if ID in ( 930, 931, 10004, 10005 ) then address_id = 305753; /** 4212 EAST CAPITOL STREET NE **/
   else if ID = 1700 then address_id = 219981; /** 2852 CONNECTICUT AVENUE NW **/
+  else if ID = 480 then /** DO NOTHING **/; /** 6931, 6933, 6935, 6937 1/2 Georgia Avenue **/
   else if not m_exactmatch then delete;
   
 run;
+
+** Add geography variables to final geocoded data **;
+
+proc sql noprint;
+  create table TOPA_geocoded as 
+  select
+    TOPA_geocoded_b.*, 
+	MAR.SSL, MAR.Address_id, MAR.Ward2012, MAR.Anc2012, MAR.cluster2017, MAR.Geo2020, MAR.GeoBg2020, 
+    MAR.GeoBlk2020, MAR.Psa2012, MAR.VoterPre2012, MAR.Ward2022
+	from
+	  TOPA_geocoded_b left join Mar.Address_points_view as MAR
+  on TOPA_geocoded_b.Address_id = MAR.Address_id
+  order by ID, Address_id;
+quit;
 
 %File_info( data=TOPA_geocoded, printobs=5 )
 
