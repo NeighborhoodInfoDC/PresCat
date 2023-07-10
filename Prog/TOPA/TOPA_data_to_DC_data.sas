@@ -20,7 +20,7 @@
 %DCData_lib( MAR )
 %DCData_lib( RealProp )
 
-%let revisions = Manually add SSLs and address_ids to notices;
+%let revisions = Remove nonexact address matches from data.;
 
 ** Download and read TOPA dataset into SAS dataset**;
 %let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA-DOPA 5+_with_var_names_3_20_23_urban_update.csv";
@@ -139,7 +139,8 @@ data TOPA_geocoded;
   set TOPA_geocoded;
   
   if Address_std = "5115 QUEEN'S STROLL PLACE SE" then Address_id = 155975;
-  else if ID = 10004 or ID = 10005 then address_id = 305753;
+  else if ID in ( 930, 931, 10004, 10005 ) then address_id = 305753; /** 4212 EAST CAPITOL STREET NE **/
+  else if ID = 1700 then address_id = 219981; /** 2852 CONNECTICUT AVENUE NW **/
   else if not m_exactmatch then delete;
   
 run;
