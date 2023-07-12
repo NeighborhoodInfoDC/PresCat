@@ -142,6 +142,10 @@ data TOPA_geocoded_b;
   else if ID in ( 930, 931, 10004, 10005 ) then address_id = 305753; /** 4212 EAST CAPITOL STREET NE **/
   else if ID = 1700 then address_id = 219981; /** 2852 CONNECTICUT AVENUE NW **/
   else if ID = 480 then /** DO NOTHING **/; /** 6931, 6933, 6935, 6937 1/2 Georgia Avenue **/
+  else if ID = 83 then address_id = 234680;  /** 3536 CENTER STREET NW **/
+  else if ID = 404 then address_id = 245619;  /** 5810 BLAIR ROAD NW **/
+  else if ID = 10001 then address_id = 255207;  /** 4526 13TH STREET NW **/
+  else if ID = 10002 then address_id = 289376; /** 4040 A 8TH STREET NW **/
   else if not m_exactmatch then delete;
   
 run;
