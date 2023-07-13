@@ -78,6 +78,9 @@ data Topa_database2;
         %include "&_dcdata_r_path\PresCat\Raw\TOPA\TOPA_DOPA_5+_variable_labels.txt";
       ;
       
+    ** Change temporary CR-LF replacement text in Address (improves address parsing) **;
+    All_street_addresses = left( compbl( tranwrd( All_street_addresses, '||', '; ' ) ) );
+    
     ** If addresses are missing, use Address_for_mapping entered in CNHED database **;
     if lowcase( All_street_addresses ) in ( "lo", "", "4a03" ) then All_street_addresses = Address_for_mapping;
     
