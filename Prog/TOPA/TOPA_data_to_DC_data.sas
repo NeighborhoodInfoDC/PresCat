@@ -20,7 +20,7 @@
 %DCData_lib( MAR )
 %DCData_lib( RealProp )
 
-%let revisions = Manually add SSLs and address_ids to notices;
+%let revisions = Remove nonexact address matches from data.;
 
 ** Download and read TOPA dataset into SAS dataset**;
 %let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA-DOPA 5+_with_var_names_3_20_23_urban_update.csv";
@@ -78,6 +78,9 @@ data Topa_database2;
         %include "&_dcdata_r_path\PresCat\Raw\TOPA\TOPA_DOPA_5+_variable_labels.txt";
       ;
       
+    ** Change temporary CR-LF replacement text in Address (improves address parsing) **;
+    All_street_addresses = left( compbl( tranwrd( All_street_addresses, '||', '; ' ) ) );
+    
     ** If addresses are missing, use Address_for_mapping entered in CNHED database **;
     if lowcase( All_street_addresses ) in ( "lo", "", "4a03" ) then All_street_addresses = Address_for_mapping;
     
@@ -125,23 +128,45 @@ title2;
 ** adding SSLs and GEO ids to the address list**;
 %DC_mar_geocode(
 	data=TOPA_addresses_notices,
+	id=id,
 	staddr=Address,
-	out=TOPA_geocoded, 
+	out=TOPA_geocoded_a, 
 	geo_match=yes, 
-	keep_geo= SSL Address_id Ward2012 Anc2012 cluster2017 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2022
+	keep_geo=Address_id /*SSL Address_id Ward2012 Anc2012 cluster2017 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2022*/
 )
 
+** Filter out non-exact matches.
 ** Manually fix addresses that are not successfully geocoded (problem with geocoder) **;
 
-data TOPA_geocoded;
+data TOPA_geocoded_b;
 
-  set TOPA_geocoded;
+  set TOPA_geocoded_a;
   
   if Address_std = "5115 QUEEN'S STROLL PLACE SE" then Address_id = 155975;
-
-  if ID = 10004 or ID = 10005 then address_id = 305753;
+  else if ID in ( 930, 931, 10004, 10005 ) then address_id = 305753; /** 4212 EAST CAPITOL STREET NE **/
+  else if ID = 1700 then address_id = 219981; /** 2852 CONNECTICUT AVENUE NW **/
+  else if ID = 480 then /** DO NOTHING **/; /** 6931, 6933, 6935, 6937 1/2 Georgia Avenue **/
+  else if ID = 83 then address_id = 234680;  /** 3536 CENTER STREET NW **/
+  else if ID = 404 then address_id = 245619;  /** 5810 BLAIR ROAD NW **/
+  else if ID = 10001 then address_id = 255207;  /** 4526 13TH STREET NW **/
+  else if ID = 10002 then address_id = 289376; /** 4040 A 8TH STREET NW **/
+  else if not m_exactmatch then delete;
   
 run;
+
+** Add geography variables to final geocoded data **;
+
+proc sql noprint;
+  create table TOPA_geocoded as 
+  select
+    TOPA_geocoded_b.*, 
+	MAR.SSL, MAR.Address_id, MAR.Ward2012, MAR.Anc2012, MAR.cluster2017, MAR.Geo2020, MAR.GeoBg2020, 
+    MAR.GeoBlk2020, MAR.Psa2012, MAR.VoterPre2012, MAR.Ward2022
+	from
+	  TOPA_geocoded_b left join Mar.Address_points_view as MAR
+  on TOPA_geocoded_b.Address_id = MAR.Address_id
+  order by ID, Address_id;
+quit;
 
 %File_info( data=TOPA_geocoded, printobs=5 )
 
@@ -570,7 +595,7 @@ ods listing;   /** Reopen the listing destination **/
     revisions=%str(&revisions),
     /** File info parameters **/
     printobs=10,
-    freqvars=Notice_listed_address
+    freqvars=Notice_listed_address ward2022
   )
 
   %Finalize_data_set( 
@@ -586,3 +611,40 @@ ods listing;   /** Reopen the listing destination **/
     printobs=10 
   )
 
+
+**** Diagnostics ****;
+
+title2 '** Notices without any address in TOPA_addresses **';
+
+proc sql;
+
+  select 
+    coalesce( TOPA_database.ID, TOPA_addresses.ID ) as ID,
+    TOPA_database.all_street_addresses,
+    TOPA_addresses.address_id
+  from TOPA_database left join TOPA_addresses
+  on TOPA_database.ID = TOPA_addresses.ID
+  where missing( TOPA_addresses.address_id )
+  order by id;
+  
+quit;
+
+
+title2 '** Notices without any parcel in TOPA_ssl **';
+
+proc sql;
+
+  select 
+    coalesce( TOPA_database.ID, TOPA_ssl.ID ) as ID,
+    TOPA_database.all_street_addresses,
+    TOPA_ssl.ssl
+  from TOPA_database left join TOPA_ssl
+  on TOPA_database.ID = TOPA_ssl.ID
+  where missing( TOPA_ssl.ssl )
+  order by id;
+  
+quit;
+
+title2;
+
+run;
