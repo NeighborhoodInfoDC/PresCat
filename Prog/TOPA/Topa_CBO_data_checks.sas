@@ -26,7 +26,7 @@
 
 %macro Print_id( id=, u_address_id_ref=, ssl=  );
 
-  ods html body="&_dcdata_default_path\PresCat\Prog\TOPA\Topa_CBO_data_checks_&id..html" style=Analysis;
+  ods html body="&_dcdata_default_path\PresCat\Prog\TOPA\Topa_CBO_data_checks_&id..html" (title="ID=&id") style=Analysis;
 
   title4 "TOPA ID = &ID";
 
@@ -43,14 +43,14 @@
   proc print data=Prescat.Topa_database;
     where id in ( &id );
     id id;
-    var u_casd_date u_offer_sale_date date_final_closing final_purchaser all_street_addresses;
+    var u_casd_date u_offer_sale_date date_final_closing final_purchaser units all_street_addresses;
   run;
 
   title6 'Topa_addresses';
   proc print data=Prescat.Topa_addresses;
     where id in ( &id );
     id id;
-    var address_id fulladdress notice_listed_address;
+    var address_id active_res_occupancy_count fulladdress notice_listed_address;
   run;
 
   title6 'Topa_ssl';
