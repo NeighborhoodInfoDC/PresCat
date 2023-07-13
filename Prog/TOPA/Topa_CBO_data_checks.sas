@@ -30,15 +30,6 @@
 
   title4 "TOPA ID = &ID";
 
-  %if %length( &u_address_id_ref ) > 0 %then %do;
-    title6 'Topa_notices_sales';
-    proc print data=Prescat.Topa_notices_sales;
-      where u_address_id_ref = &u_address_id_ref;
-      id id;
-      var u_address_id_ref u_notice_date u_dedup_notice u_notice_with_sale u_sale_date;
-    run;
-  %end;
-
   title6 'Topa_database';
   proc print data=Prescat.Topa_database;
     where id in ( &id );
@@ -51,6 +42,7 @@
     where id in ( &id );
     id id;
     var address_id active_res_occupancy_count fulladdress notice_listed_address;
+    sum active_res_occupancy_count;
   run;
 
   title6 'Topa_ssl';
@@ -67,6 +59,22 @@
     var ssl saledate saleprice ownername_full ui_proptype premiseadd ownerpt_extractdat_first;
   run;
   
+  title6 'Topa_notices_sales';
+  proc print data=Prescat.Topa_notices_sales;
+    where id in ( &id );
+    id id;
+    var u_address_id_ref u_notice_date u_dedup_notice u_notice_with_sale u_sale_date;
+  run;
+  
+  %if %length( &u_address_id_ref ) > 0 %then %do;
+    title6 "Topa_notices_sales (all for u_address_id_ref = &u_address_id_ref)";
+    proc print data=Prescat.Topa_notices_sales;
+      where u_address_id_ref = &u_address_id_ref;
+      id id;
+      var u_address_id_ref u_notice_date u_dedup_notice u_notice_with_sale u_sale_date;
+    run;
+  %end;
+
   %if %length( &ssl ) > 0 %then %do;
     title6 'Realprop.Sales_master';
     proc print data=Realprop.Sales_master;
@@ -148,10 +156,6 @@ title3 '76 M Street NW';
 title3 '2333 Skyland Place SE';
 %Print_id( id=1380 )
 
-title3 '4212 East Capitol Street SE';
-%Print_id( id=10004 )
-%Print_id( id=10005 )
-
 title3 'Wingate';
 %Print_id( id=623 )
 
@@ -166,5 +170,23 @@ title3 '705 4th Street NW';
 
 title3 '1302 12th Street NW';
 %Print_id( id=41 )
+
+
+title2 '--Geocoding issues--';
+
+title3 '1710 Alabama Avenue SE etc.';
+%Print_id( id=318 )
+
+title3 '4837 3rd Street NE (invalid address)';
+%Print_id( id=25 )
+
+title3 '4040 A 8TH STREET NW';
+%Print_id( id=10002 );
+
+title3 '4212 EAST CAPITOL STREET NE';
+%Print_id( id=930, u_address_id_ref=305753 );
+%Print_id( id=931, u_address_id_ref=305753 );
+%Print_id( id=10004, u_address_id_ref=305753 );
+%Print_id( id=10005, u_address_id_ref=305753 );
 
 ods listing;
