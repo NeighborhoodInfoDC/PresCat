@@ -125,6 +125,7 @@ title2;
 ** adding SSLs and GEO ids to the address list**;
 %DC_mar_geocode(
 	data=TOPA_addresses_notices,
+	id=id,
 	staddr=Address,
 	out=TOPA_geocoded_a, 
 	geo_match=yes, 
