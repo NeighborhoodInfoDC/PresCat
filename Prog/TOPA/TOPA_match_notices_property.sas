@@ -36,6 +36,7 @@ proc summary data=Topa_addresses_sort
  class id;
  output out=TOPA_sum_units (drop=_:)
 	sum=u_sum_units;
+ label u_sum_units='Sum of MAR units for all associated buildings (Urban created var)';
 run;
 
 ** Merge summed dataset above with TOPA_notices_sales **;
@@ -87,13 +88,36 @@ data Sales_by_property;
   if missing( ssl ) then delete;
 run;
 
+proc print data=Sales_by_property; /* can't find 894 ID */ 
+  where id=894;
+run;
+
 data Sales_by_property_dates;
   set Sales_by_property; 
-  where saledate between '01Jan2006'd and '31may2022'd; /** Limit sale data to 2006-2020 **/
+  format all_saledate MMDDYY10.;
+  format actual_saledate DYESNO.;
+  if not(missing(SALEDATE)) then do; 
+	all_saledate=SALEDATE;
+	actual_saledate=1;
+		end; 
+  else if (missing(SALEDATE)) then do; 
+	all_saledate=ownerpt_extractdat_first;
+	actual_saledate=0;
+		end;
+  label all_saledate='Property sale date or if sale date missing, extract date of Ownerpt update where sale first appeared';
+  label actual_saledate='Property sale date used';
+  if '01Jan2006'd <= all_saledate <= '31mar2023'd;
+run;
+%File_info( data=Sales_by_property_dates, printobs=5 ) 
+
+proc print data=Sales_by_property_dates;
+  where id in ( 232, 316, 894, 986, 990, 10004, 10005 );
+  by id;
+  var id ownerpt_extractdat_first SALEDATE all_saledate actual_saledate All_street_addresses u_address_id_ref;
 run;
 
 proc sort data=Sales_by_property_dates out=Sales_by_property_nodup nodupkey;
-  by u_address_id_ref descending saledate;
+  by u_address_id_ref descending all_saledate;
 run;
 
 %File_info( data=Sales_by_property_nodup, printobs=5 ) /** 4958 obs**/
@@ -157,8 +181,8 @@ data Combo;
      rename=(u_offer_sale_date=u_ref_date)
      in=is_notice)
     Sales_by_property_nodup
-	  (keep=u_address_id_ref saledate saleprice ownername_full ui_proptype ADDRESS1 ADDRESS2 address3
-	   rename=(saledate=u_ref_date));
+	  (keep=u_address_id_ref saledate ownerpt_extractdat_first all_saledate actual_saledate saleprice ownername_full Ownercat ui_proptype ADDRESS1 ADDRESS2 address3
+	   rename=(all_saledate=u_ref_date));
 	by u_address_id_ref descending u_ref_date;
 	length desc $ 40;
 
@@ -186,10 +210,15 @@ data Topa_notice_flag;
   format u_address1 $char100.;
   format u_address2 $char100.;
   format u_address3 $char100.; 
-  
+  format u_orig_saledate MMDDYY10.;
+  format u_ownerpt_extractdat_first MMDDYY10.;
+  format u_actual_saledate DYESNO.;
+  format u_ownercat $OWNCAT.;
+
   if first.u_address_id_ref then do; 
 	  prev_desc=""; u_notice_date=""; u_ownername=""; u_saleprice=.; u_proptype=.; u_address1="";
-	  u_address2=""; u_address3=""; u_sale_date=.; 
+	  u_address2=""; u_address3=""; u_sale_date=.; u_orig_saledate=.; u_ownerpt_extractdat_first=.; u_actual_saledate=""; u_ownercat="";
+
 	end;
   
   if first.u_address_id_ref and desc="NOTICE OF SALE" then u_dedup_notice=1;
@@ -212,7 +241,7 @@ data Topa_notice_flag;
   
   if desc="SALE" then u_sale_date=u_ref_date; 
   retain u_sale_date; 
-  label u_sale_date='Property sale date (Urban created var)';
+  label u_sale_date='Property sale date or if sale date missing, extract date of Ownerpt update where sale first appeared (Urban created var)';
   
   if desc="NOTICE OF SALE" then u_notice_date=u_ref_date;
   retain u_notice_date;
@@ -220,21 +249,27 @@ data Topa_notice_flag;
   
   if desc="SALE" and u_address_id_ref=u_address_id_ref then do; 
 	u_ownername=Ownername_full; u_saleprice=SALEPRICE; u_proptype=ui_proptype; u_address1=ADDRESS1;
-	u_address2=ADDRESS2; u_address3=address3; 
+	u_address2=ADDRESS2; u_address3=address3; u_orig_saledate=saledate; u_ownerpt_extractdat_first=ownerpt_extractdat_first; 
+	u_actual_saledate=actual_saledate; u_ownercat=Ownercat;
+
 	end; 
-  retain u_ownername u_saleprice u_proptype u_address1 u_address2 u_address3; 
+  retain u_ownername u_saleprice u_proptype u_address1 u_address2 u_address3 u_orig_saledate u_ownerpt_extractdat_first u_actual_saledate u_ownercat; 
   label u_ownername ='Name(s) of property buyer(s) (Urban created var)';
   label u_saleprice='Property sale price ($) (Urban created var)';
   label u_proptype='Property type at sale (Urban created var)';
   label u_address1='Buyer tax billing address part 1 (Urban created var)';
   label u_address2='Buyer tax billing address part 2 (Urban created var)';
   label u_address3='Buyer tax billing address part 3 (City, State, ZIP) (Urban created var)';
+  label u_orig_saledate='Property sale date from real_prop (Urban created var)'; 
+  label u_ownerpt_extractdat_first='Extract date of Ownerpt update where sale first appeared (Urban created var)'; 
+  label u_actual_saledate= 'ID used Property sale date from real_prop (Urban created var)';   
+  label u_ownercat='Property owner type (Urban created var';
 
   /** Write observation if a notice of sale and reset retained sales data for next observation **/
   if desc="NOTICE OF SALE" then do;
 	output;
 	u_ownername=""; u_saleprice=.; u_proptype=.; u_address1="";
-	u_address2=""; u_address3=""; u_sale_date=.; 
+	u_address2=""; u_address3=""; u_sale_date=.; u_orig_saledate=.; u_ownerpt_extractdat_first=.; u_actual_saledate=""; u_ownercat="";
 	end;
   
   label
@@ -242,7 +277,7 @@ data Topa_notice_flag;
     FULLADDRESS = "Street address for unique property ID (Urban created var)";
   
   drop desc;
-  drop Ownername_full SALEPRICE ui_proptype u_ref_date ADDRESS1 ADDRESS2 address3 prev_desc;
+  drop Ownername_full SALEPRICE ui_proptype u_ref_date ADDRESS1 ADDRESS2 address3 prev_desc saledate ownerpt_extractdat_first actual_saledate Ownercat;
 run; 
 
 /** Proc Print for checking results **/
