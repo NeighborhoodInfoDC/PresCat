@@ -36,6 +36,7 @@ proc summary data=Topa_addresses_sort
  class id;
  output out=TOPA_sum_units (drop=_:)
 	sum=u_sum_units;
+ label u_sum_units='Sum of MAR units for all associated buildings (Urban created var)';
 run;
 
 ** Merge summed dataset above with TOPA_notices_sales **;
