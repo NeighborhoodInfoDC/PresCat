@@ -126,6 +126,20 @@ run;
 
 ods listing close;
 
+title3 '7444 Georgia Avenue NW';
+%Print_id( id=62, u_address_id_ref=253505 );
+
+ods listing;
+  title6 'Topa_addresses';
+  proc print data=Prescat.Topa_addresses;
+    where address_id in ( 253505 );
+    id id;
+    var address_id active_res_occupancy_count fulladdress notice_listed_address;
+    sum active_res_occupancy_count;
+  run;
+
+ENDSAS;
+
 title2 '--Properties missing an earlier TOPA notice--';
 
 title3 '930, 940, 960 Randolph Street NW';
@@ -192,5 +206,8 @@ title3 '4212 EAST CAPITOL STREET NE';
 title3 '1215 49th Street NE';
 %Print_id( id=15 )
 %Print_id( id=857 )
+
+
+title2
 
 ods listing;
