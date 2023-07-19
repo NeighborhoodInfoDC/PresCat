@@ -18,6 +18,21 @@
 ** Define libraries **;
 %DCData_lib( Prescat )
 
+%let categorical_vars = 
+    cbo_lihtc_plus 
+    r_Existing_LIHTC r_New_LIHTC TA_assign_rights
+    outcome_homeowner outcome_nonprofit_owner
+    outcome_rent_assign_rc_cont outcome_assign_rc_nopet
+    outcome_assign_LIHTC outcome_assign_section8
+    outcome_assign_profit_share
+    outcome_assign_noafford outcome_rehab outcome_buyouts
+    outcome_100pct_afford outcome_affordability
+    outcome_pres_funding_fail outcome_dev_agree    
+;
+
+%let info_vars = cbo_dhcd_received_ta_reg cbo_complete r_TA_provider r_TA_staff r_TA_lawyer r_TA_dev_partner;
+
+
 /** Macro Read_data - Start Definition **/
 
 %macro Read_data( file_suffix= );
@@ -79,11 +94,6 @@
     drop id;
     rename id_num=id;
     
-    u_notice_date_num = input( u_notice_date, anydtdte20. );
-    
-    drop u_notice_date;
-    rename u_notice_date_num=u_notice_date;
-    
     %if %lowcase( &file_suffix ) = without_sales %then %do;
     
       length cbo_unit_count_char $ 7;
@@ -94,14 +104,21 @@
       rename cbo_unit_count_char=cbo_unit_count;
       
     %end;
+        
+    u_date_dhcd_received_ta_reg = left( compbl( compress( propcase( u_date_dhcd_received_ta_reg ), '.' ) ) );
+    
+    length cbo_dhcd_received_ta_reg $ 3;
+    
+    if missing( u_date_dhcd_received_ta_reg ) then cbo_dhcd_received_ta_reg = 'No';
+    else if lowcase( u_date_dhcd_received_ta_reg ) = 'no info' then cbo_dhcd_received_ta_reg = 'No';
+    else cbo_dhcd_received_ta_reg = 'Yes';
    
     format _all_ ;
     informat _all_ ;
     
-    format u_sale_date u_notice_date_num mmddyy10.;
-    
     drop VAR: drop: ;
-    /*rename id_num=id u_notice_date_num=u_notice_date;*/
+    
+    rename u_date_dhcd_received_ta_reg=cbo_date_dhcd_received_ta_reg;
 
   run;
   
@@ -140,13 +157,99 @@ data Topa_CBO_sheet;
   if in1 then Source_sheet = "WITH SALES";
   else if in2 then Source_sheet = "WITHOUT SALES";
   else Source_sheet = "SALES IN 2021 AND 2022";
+  
+  ** Reformat categorical responses & create outcome flag **;
+  
+  u_has_cbo_outcome = 0;
+  
+  array a{*} &categorical_vars;
+  
+  do i = 1 to dim(a);
+  
+    a{i} = left( trim( compbl( propcase( a{i} ) ) ) );
+
+    select ( a{i});
+      when ( 'Y', 'Yes' )
+        a{i} = 'Yes';
+      when ( 'N', 'No', 'N.' )
+        a{i} = 'No';
+      otherwise
+        /** Do nothing **/;
+    end;
+    
+    if not( missing( a{i} ) ) then u_has_cbo_outcome = 1;
+
+  end;
+
+  label
+    u_has_cbo_outcome = 'Has one or more CBO outcome coded'
+    id = "CNHED database unique notice ID"
+    u_address_id_ref = "Unique property ID (DC MAR address ID) (Urban created var)"
+    cbo_complete = "Complete"
+    u_notice_date = "Notice offer of sale date (Urban created var)"
+    All_street_addresses = "All street addresses"
+    Property_name = "Property name"
+    cbo_unit_count = "Unit count"
+    cbo_date_dhcd_received_ta_reg = "Date DHCD received LOI (Urban created var, modified by CBOs)"
+    cbo_dhcd_received_ta_reg = "DHCD received LOI"
+    u_sale_date = "Property sale date (Urban created var)"
+    u_ownername = "Name(s) of property buyer(s) (Urban created var)"
+    r_notes = "Notes from CNHED datababase"
+    r_TA_provider = "CBO Technical assistance provider"
+    r_TA_staff = "Who filled this in now? (Was - who has info)"
+    r_TA_lawyer = "Tenant association lawyer"
+    r_Existing_LIHTC = "Existing LIHTC Financing (before Offer)? (Y/N)"
+    r_New_LIHTC = "New LIHTC Financing (per development ag)? (Y/N)"
+    cbo_lihtc_plus = "LIHTC + (existing tenants at rent control levels or better)"
+    TA_assign_rights = "Did the TA assign its rights? (Y/N)"
+    r_TA_dev_partner = "TA Development partner/ consultant"
+    outcome_homeowner = "Outcome: Homeownership"
+    outcome_nonprofit_owner = "Non-profit owner/ affordable outcome (no assignment)"
+    outcome_rent_assign_rc_cont = "Outcome: Rental Assignment w/ Rent Control Continued (Y/N)"
+    outcome_assign_rc_nopet = "Assignment: Rent control - No petitions in DA"
+    outcome_assign_LIHTC = "Outcome: Rental Assignment w/ LIHTC (Y/N)"
+    outcome_assign_section8 = "Outcome: Rental Assignment w/ Project-Based Section 8 Continued (Y/N)"
+    outcome_assign_profit_share = "Outcome: Rental Assignment w/ Profit-Sharing (Y/N)"
+    outcome_assign_noafford = "Outcome: Rental Assignment w/ No Affordability Guarantee (Y/N)"
+    outcome_rehab = "Outcome: Renovations / Repairs for residents in development ag (ownership or rental) (Y/N)"
+    outcome_buyouts = "Outcome: Buyouts"
+    outcome_100pct_afford = "100% affordable (Y/N)"
+    outcome_affordability = "What happened to affordability"
+    outcome_pres_funding_fail = "Preservation Funding Fail? (Y/N)"
+    outcome_dev_agree = "Development agreement? (Y/N)"
+    add_notes = "Additional notes"
+    data_notes = "Data Notes";
+
+  format u_sale_date u_notice_date mmddyy10. u_has_cbo_outcome dyesno.;
+  
+  drop i;
    
 run;
 
 %File_info( data=Topa_CBO_sheet, printobs=0, freqvars=Source_sheet )
+
+%Dup_check(
+  data=Topa_CBO_sheet,
+  by=id,
+  id=u_notice_date source_sheet,
+  out=_dup_check,
+  listdups=Y,
+  count=dup_check_count,
+  quiet=N,
+  debug=N
+)
 
 proc print data=Topa_CBO_sheet;
   where missing( u_notice_date );
   id id;
   var source_sheet all_street_addresses property_name;
 run;
+
+ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\TOPA\Topa_CBO_frequencies.xls" style=Normal options(sheet_interval='Table' );
+
+proc freq data=Topa_CBO_sheet;
+  tables u_has_cbo_outcome &categorical_vars &info_vars;
+run;
+
+ods tagsets.excelxp close;
+
