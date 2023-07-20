@@ -80,6 +80,7 @@ data TOPA_subsidy;
   set TOPA_subsidy_match; 
   format all_POA_start MMDDYY10.;
   format actual_POA_start DYESNO.;
+  format date_LEC_form MMDDYY10.;
   if not(missing(POA_start_orig)) then do;
 	all_POA_start=POA_start_orig;
 	actual_POA_start=1;
@@ -93,11 +94,17 @@ data TOPA_subsidy;
   u_days_notice_to_subsidy = all_POA_start - u_notice_date;
   label u_days_notice_to_subsidy='Number of days from notice of sale to start of subsidy (Urban created var)';
   if not(missing(all_POA_start)); ** delete missing subsidy start dates **; 
-  if u_days_notice_to_subsidy < 365; ** subsidies less than a year after the notice date**;
   if portfolio in ("LIHTC", "202/811", "PB8", "PRAC", "DC HPTF", "LECOOP"); ** only include LIHTC, federal project-based subsidies, DC HPTF, and LEC **;
+  if portfolio = "LIHTC" and u_days_notice_to_subsidy < 0 then before_LITHC_aff_units=Units_Assist;
+  if portfolio = "LIHTC" and 0 <= u_days_notice_to_subsidy <= 365 then LITHC_aff_units=Units_Assist;
+  if portfolio in ( "202/811", "PB8", "PRAC" ) and u_days_notice_to_subsidy < 0 then before_fed_aff_units=Units_Assist;
+  if portfolio in ( "202/811", "PB8", "PRAC" ) and 0 <= u_days_notice_to_subsidy <= 365 then fed_aff_units=Units_Assist;
+  if portfolio = "DC HPTF" and 0 <= u_days_notice_to_subsidy <= 365 then DC_HPTF_aff_units=Units_Assist;
+  if portfolio = "LECOOP" then date_LEC_form=all_POA_start;
 run;
 
-%File_info( data=TOPA_subsidy, printobs=10 )
+%File_info( data=TOPA_subsidy, printobs=190 )
+
 
 %Finalize_data_set( 
 /** Finalize data set parameters **/
