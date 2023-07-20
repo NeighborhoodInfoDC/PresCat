@@ -123,22 +123,28 @@ proc print data=Prescat.Topa_notices_sales;
 run;
 
 
+title2 '7444 Georgia Avenue NW';
+%Print_id( id=62, u_address_id_ref=253505 );
+
+title6 'Topa_addresses';
+proc print data=Prescat.Topa_addresses;
+  where address_id in ( 253505 );
+  id id;
+  var address_id active_res_occupancy_count fulladdress notice_listed_address;
+  sum active_res_occupancy_count;
+run;
+
+title2;
+
 
 ods listing close;
 
-title3 '7444 Georgia Avenue NW';
-%Print_id( id=62, u_address_id_ref=253505 );
+title2 '--Properties with incorrect sale?--';
+%Print_id( id=750 )
 
-ods listing;
-  title6 'Topa_addresses';
-  proc print data=Prescat.Topa_addresses;
-    where address_id in ( 253505 );
-    id id;
-    var address_id active_res_occupancy_count fulladdress notice_listed_address;
-    sum active_res_occupancy_count;
-  run;
 
-ENDSAS;
+title2;
+
 
 title2 '--Properties missing an earlier TOPA notice--';
 
