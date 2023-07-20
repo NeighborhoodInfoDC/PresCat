@@ -36,6 +36,11 @@ proc sql noprint;
   order by TOPA_addresses.ID;    /** Sorting by notice ID **/
 quit; 
 
+** Remove redundant matches **;
+proc sort data=Topa_nlihc_id nodupkey;
+  by id nlihc_id;
+run;
+
 %File_info( data=TOPA_nlihc_id, printobs=10 )
 
 ** Add TOPA notice and sale dates to TOPA_nlihc_id **; 
