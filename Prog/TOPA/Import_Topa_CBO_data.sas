@@ -253,3 +253,36 @@ run;
 
 ods tagsets.excelxp close;
 
+
+** Examine notes for selected obs **;
+
+ods listing close;
+ods html body="&_dcdata_default_path\PresCat\Prog\TOPA\Topa_CBO_notes.html" (title="Topa_CBO_notes") style=BarrettsBlue;
+
+title2 '-- Notices to remove --';
+proc print data=Topa_CBO_sheet;
+  where lowcase( cbo_complete ) contains 'remove' or lowcase( cbo_complete ) contains 'delete' or lowcase( cbo_complete ) contains 'duplicate';
+  id id;
+  var source_sheet u_notice_date cbo_complete add_notes data_notes;
+run;
+
+title2 '-- outcome_rent_assign_rc_cont --';
+proc print data=Topa_CBO_sheet;
+  where lowcase( outcome_rent_assign_rc_cont ) contains 'of sorts';
+  id id;
+  var source_sheet u_notice_date outcome_rent_assign_rc_cont add_notes data_notes;
+run;
+
+title2 '-- LRSP in notes --';
+proc print data=Topa_CBO_sheet;
+  where lowcase( add_notes ) contains 'lrsp' or lowcase( data_notes) contains 'lrsp' or
+  lowcase( add_notes ) contains 'rent sup' or lowcase( data_notes) contains 'rent sup';
+  id id;
+  var source_sheet u_notice_date outcome_assign_section8 add_notes data_notes;
+run;
+
+title2;
+
+ods html close;
+ods listing;
+
