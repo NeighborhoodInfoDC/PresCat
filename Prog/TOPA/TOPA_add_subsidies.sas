@@ -103,7 +103,7 @@ data TOPA_subsidy;
   if portfolio = "LECOOP" then date_LEC_form=all_POA_start;
 run;
 
-%File_info( data=TOPA_subsidy, printobs=190 )
+%File_info( data=TOPA_subsidy, printobs=10 )
 
 
 %Finalize_data_set( 
