@@ -257,7 +257,10 @@ ods tagsets.excelxp close;
 ** Examine notes for selected obs **;
 
 ods listing close;
-ods html body="&_dcdata_default_path\PresCat\Prog\TOPA\Topa_CBO_notes.html" (title="Topa_CBO_notes") style=BarrettsBlue;
+**ods html body="&_dcdata_default_path\PresCat\Prog\TOPA\Topa_CBO_notes.html" (title="Topa_CBO_notes") style=BarrettsBlue;
+ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\TOPA\Topa_CBO_notes.xls" style=Normal options(sheet_interval='Proc' );
+
+ods tagsets.excelxp options( sheet_name="Remove" );
 
 title2 '-- Notices to remove --';
 proc print data=Topa_CBO_sheet;
@@ -266,12 +269,16 @@ proc print data=Topa_CBO_sheet;
   var source_sheet u_notice_date cbo_complete add_notes data_notes;
 run;
 
+ods tagsets.excelxp options( sheet_name="outcome_rent_assign_rc_cont" );
+
 title2 '-- outcome_rent_assign_rc_cont --';
 proc print data=Topa_CBO_sheet;
   where lowcase( outcome_rent_assign_rc_cont ) contains 'of sorts';
   id id;
   var source_sheet u_notice_date outcome_rent_assign_rc_cont add_notes data_notes;
 run;
+
+ods tagsets.excelxp options( sheet_name="LRSP in notes" );
 
 title2 '-- LRSP in notes --';
 proc print data=Topa_CBO_sheet;
@@ -283,6 +290,7 @@ run;
 
 title2;
 
-ods html close;
+**ods html close;
+ods tagsets.excelxp close;
 ods listing;
 

@@ -59,13 +59,19 @@
     var ssl saledate saleprice ownername_full ui_proptype premiseadd ownerpt_extractdat_first;
   run;
   
+  proc sql noprint;
+  select u_address_id_ref into :u_address_id_ref from Prescat.Topa_notices_sales
+  where id = &id;
+  quit;
+
+/*  
   title6 'Topa_notices_sales';
   proc print data=Prescat.Topa_notices_sales;
     where id in ( &id );
     id id;
     var u_address_id_ref u_notice_date u_dedup_notice u_notice_with_sale u_sale_date;
   run;
-  
+*/  
   %if %length( &u_address_id_ref ) > 0 %then %do;
     title6 "Topa_notices_sales (all for u_address_id_ref = &u_address_id_ref)";
     proc print data=Prescat.Topa_notices_sales;
@@ -92,7 +98,7 @@
 
 /** End Macro Definition **/
 
-
+/*
 title2 '-- TOPA notices without an SSL --';
 
 data A;
@@ -136,8 +142,67 @@ run;
 
 title2;
 
+title2 'Bass Circle Apts';
+title3 'Topa_addresses';
+proc print data=Prescat.Topa_addresses;
+  where address_id in ( 149678 );
+  id id;
+  var address_id active_res_occupancy_count fulladdress notice_listed_address;
+  sum active_res_occupancy_count;
+run;
+
+proc print data=Prescat.Topa_ssl;
+  where ssl =: '5345';
+    id id;
+    var ssl;
+  run;
+*/  
+
+
 
 ods listing close;
+
+title2 '--Notices to delete?--';
+%Print_id( id=15 )
+%Print_id( id=857 )
+
+%Print_id( id=68 )
+%Print_id( id=73 )
+%Print_id( id=605 )
+
+%Print_id( id=151 )
+
+%Print_id( id=184 )
+
+%Print_id( id=207 )
+%Print_id( id=270 )
+%Print_id( id=276 )
+%Print_id( id=284 )
+%Print_id( id=312 )
+%Print_id( id=339 )
+%Print_id( id=572 )
+%Print_id( id=605 )
+%Print_id( id=686 )
+%Print_id( id=750 )
+%Print_id( id=773 )
+%Print_id( id=882 )
+%Print_id( id=884 )
+%Print_id( id=901 )
+%Print_id( id=954 )
+%Print_id( id=1017 )
+%Print_id( id=1079 )
+%Print_id( id=1104 )
+%Print_id( id=1108 )
+%Print_id( id=1157 )
+%Print_id( id=1251 )
+%Print_id( id=1306 )
+%Print_id( id=1370 )
+%Print_id( id=1386 )
+%Print_id( id=1421 )
+%Print_id( id=10004 )
+
+
+ENDSAS;
 
 title2 '--Properties with incorrect sale?--';
 %Print_id( id=750 )
