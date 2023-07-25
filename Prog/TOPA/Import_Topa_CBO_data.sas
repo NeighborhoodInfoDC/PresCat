@@ -180,6 +180,9 @@ data Topa_CBO_sheet;
     if not( missing( a{i} ) ) then u_has_cbo_outcome = 1;
 
   end;
+  
+  if cbo_unit_count in ( '.', '#N/A' ) then cbo_unit_count = '';
+  else if substr( cbo_unit_count, 1, 1 ) = '$' then cbo_unit_count = left( put( input( substr( cbo_unit_count, 2 ), 8. ), 5.0 ) );
 
   label
     u_has_cbo_outcome = 'Has one or more CBO outcome coded'
@@ -189,7 +192,7 @@ data Topa_CBO_sheet;
     u_notice_date = "Notice offer of sale date (Urban created var)"
     All_street_addresses = "All street addresses"
     Property_name = "Property name"
-    cbo_unit_count = "Unit count"
+    cbo_unit_count = "Unit count, includes entries modified by CBOs"
     cbo_date_dhcd_received_ta_reg = "Date DHCD received LOI (Urban created var, modified by CBOs)"
     cbo_dhcd_received_ta_reg = "DHCD received LOI"
     u_sale_date = "Property sale date (Urban created var)"
@@ -293,4 +296,54 @@ title2;
 **ods html close;
 ods tagsets.excelxp close;
 ods listing;
+
+
+ods listing close;
+ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\TOPA\Topa_CBO_nondedup_outcomes.xls" style=Normal options(sheet_interval='Proc' );
+
+title2 '-- Non-dedup notices with CBO outcomes --';
+
+data outcome_nodedup;
+
+  merge
+    Topa_CBO_sheet (keep=id source_sheet u_notice_date u_has_cbo_outcome &categorical_vars)
+    Prescat.Topa_notices_sales (keep=id u_dedup_notice u_notice_with_sale);
+  by id;
+  
+  if u_has_cbo_outcome and not u_dedup_notice;
+    
+run;
+
+proc print data=outcome_nodedup;
+  id id;
+  var source_sheet u_notice_date u_notice_with_sale &categorical_vars;
+run;
+
+ods tagsets.excelxp close;
+ods listing;
+
+
+** Finalize data **;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Topa_CBO_sheet,
+  out=Topa_CBO_sheet,
+  outlib=Prescat,
+  label="TOPA CBO review workbook with outcomes, created 4/28/2023",
+  sortby=id,
+  /** Metadata parameters **/
+  revisions=%str(New file.),
+  /** File info parameters **/
+  printobs=5
+)
+
+
+** Compare unit counts from original CNHED data **;
+
+proc compare base=Prescat.Topa_database compare=Topa_CBO_sheet (where=(cbo_unit_count~='')) maxprint=(1000,32000);
+  id id;
+  var units;
+  with cbo_unit_count;
+run;
 
