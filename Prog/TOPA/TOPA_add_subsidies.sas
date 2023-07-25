@@ -72,7 +72,7 @@ proc sql noprint;
   order by TOPA_nlihc_dates.ID; 
 quit; 
 
-%File_info( data=TOPA_subsidy_match, printobs=100 )
+%File_info( data=TOPA_subsidy_match, printobs=10 )
 
 ** Creating all_POA_start, actual_POA_start, and u_days_notice_to_subsidy, filtering out unneeded obs**; 
 
@@ -103,73 +103,54 @@ data TOPA_subsidy;
   if portfolio = "DC HPTF" and 0 <= u_days_notice_to_subsidy <= 365 then after_DC_HPTF_aff_units=Units_Assist;
   if portfolio = "LECOOP" and u_days_notice_to_subsidy < 0 then before_LEC_aff_units=Units_Assist;
   if portfolio = "LECOOP" and 0 <= u_days_notice_to_subsidy <= 365 then after_LEC_aff_units=Units_Assist;
+  if missing(poa_end_actual) or u_sale_date-poa_end_actual > 365 or poa_end_actual > '01Jan2023'd; **not including units where subsidy's expired **;
 run;
 
 %File_info( data=TOPA_subsidy, printobs=10 )
 
-proc sort data=TOPA_subsidy;
-  by id POA_start_orig;
+**Aggregating the data across rows with the same ID **;
+
+proc summary data=TOPA_subsidy
+ noprint;
+ var before_LIHTC_aff_units after_LIHTC_aff_units before_fed_aff_units after_fed_aff_units before_DC_HPTF_aff_units 
+	after_DC_HPTF_aff_units before_LEC_aff_units after_LEC_aff_units;
+ class id;
+ output out=TOPA_sum_rows
+	sum=sum_before_LIHTC_aff_units sum_after_LIHTC_aff_units sum_before_fed_aff_units sum_after_fed_aff_units sum_before_DC_HPTF_aff_units
+	sum_after_DC_HPTF_aff_units sum_before_LEC_aff_units sum_after_LEC_aff_units;
 run;
 
-** To do on data step: 
-	1) Add if not(missing(poa_end_actual)) and u_sale_date-poa_end_actual < 365 then delete
-	2) Retain all prev ids across subsidies that aren't last.id and add them to total IDs, ex. ID 318 where fed subsidy before LIHTC subsidy
-	3) Join data by ID for one obs per ID **;
+%File_info( data=TOPA_sum_rows, printobs=10)
 
-data TOPA_test; 
-  set TOPA_subsidy; 
-  by id POA_start_orig;
-  if first.ID then do;
-	prev_LIHTC_units=.; prev_fed_units=.; prev_DC_HPTF_units=.; prev_LEC_units=.; 
-  end;
-  if first.ID and ID=ID then do;
-	prev_LIHTC_units=before_LIHTC_aff_units; prev_fed_units=before_fed_aff_units; prev_DC_HPTF_units=before_DC_HPTF_aff_units;
-	prev_LEC_units=before_LEC_aff_units; 
-  end; 
-  retain prev_LIHTC_units;
-  retain prev_fed_units;
-  retain prev_DC_HPTF_units;
-  retain prev_LEC_units;
+**Summing the data across columns by subsidy type**;
 
-  if last.id and portfolio="LIHTC" then
-	if not(missing(after_LIHTC_aff_units)) and not(missing(prev_LIHTC_units)) then total_LIHTC_aff_units=prev_LIHTC_units+after_LIHTC_aff_units;
-	else if missing(after_LIHTC_aff_units) then total_LIHTC_aff_units=prev_LIHTC_units;
-	else total_LIHTC_aff_units=after_LIHTC_aff_units;
-  
-  if last.id and portfolio in ( "202/811", "PB8", "PRAC" ) then
-    if not(missing(after_fed_aff_units)) and not(missing(prev_fed_units)) then total_fed_aff_units=prev_fed_units+after_fed_aff_units;
-	else if missing(after_fed_aff_units) then total_fed_aff_units=prev_fed_units;
-    else total_fed_aff_units=after_fed_aff_units;
+data TOPA_sum_total; 
+  set TOPA_sum_rows; 
+  if not(missing(sum_before_LIHTC_aff_units)) and not(missing(sum_after_LIHTC_aff_units)) then total_LIHTC_aff_units=sum_before_LIHTC_aff_units+sum_after_LIHTC_aff_units;
+    else if missing(sum_after_LIHTC_aff_units) then total_LIHTC_aff_units=sum_before_LIHTC_aff_units;
+	else total_LIHTC_aff_units=sum_after_LIHTC_aff_units;
+ label total_LIHTC_aff_units='Total subsidy assisted units from the Low Income Housing Tax Credit (Urban created var)';
 
-  if last.id and portfolio = "DC HPTF" then
-    if not(missing(after_DC_HPTF_aff_units)) and not(missing(prev_DC_HPTF_units)) then total_DC_HPTF_aff_units=prev_DC_HPTF_units+after_DC_HPTF_aff_units;
-	else if missing(after_DC_HPTF_aff_units) then total_DC_HPTF_aff_units=prev_DC_HPTF_units;
-    else total_DC_HPTF_aff_units=after_DC_HPTF_aff_units;
+  if not(missing(sum_before_fed_aff_units)) and not(missing(sum_after_fed_aff_units)) then total_fed_aff_units=sum_before_fed_aff_units+sum_after_fed_aff_units;
+    else if missing(sum_after_fed_aff_units) then total_fed_aff_units=sum_before_fed_aff_units;
+	else total_fed_aff_units=sum_after_fed_aff_units; 
+ label total_fed_aff_units='Total federal subsidy assisted units (Project based vouchers, Section 202/811, project rental assistance contract) (Urban created var)';
 
-  if last.id and portfolio = "LECOOP" then
-    if not(missing(after_LEC_aff_units)) and not(missing(prev_LEC_units)) then total_LEC_aff_units=prev_LEC_units+after_fed_aff_units;
-	else if missing(after_LEC_aff_units) then total_LEC_aff_units=prev_LEC_units;
-  	else total_LEC_aff_units=after_LEC_aff_units;
+  if not(missing(sum_before_DC_HPTF_aff_units)) and not(missing(sum_after_DC_HPTF_aff_units)) then total_DC_HPTF_aff_units=sum_before_DC_HPTF_aff_units+sum_after_DC_HPTF_aff_units;
+    else if missing(sum_after_DC_HPTF_aff_units) then total_DC_HPTF_aff_units=sum_before_DC_HPTF_aff_units;
+	else total_DC_HPTF_aff_units=sum_after_DC_HPTF_aff_units; 
+ label total_DC_HPTF_aff_units='Total subsidy assisted units from the DC Housing Production Trust Fund (Urban created var)';
+
+  if not(missing(sum_before_LEC_aff_units)) and not(missing(sum_after_LEC_aff_units)) then total_LEC_aff_units=sum_before_LEC_aff_units+sum_after_LEC_aff_units;
+    else if missing(sum_after_LEC_aff_units) then total_LEC_aff_units=sum_before_LEC_aff_units;
+	else total_LEC_aff_units=sum_after_LEC_aff_units;
+ label total_LEC_aff_units='Total affordable units formed from Limited-Equity Cooperatives (Urban created var)';
+
+  keep id total_LIHTC_aff_units total_fed_aff_units total_DC_HPTF_aff_units total_LEC_aff_units;
 run; 
 
-%File_info( data=TOPA_test, printobs=193 )
+%File_info( data=TOPA_sum_total, printobs=10)
 
-proc sql;
-  create table TOPA_test2 as
-  select ID, 
-            sum(before_LIHTC_aff_units) as before_LIHTC_aff_units,
-            sum(after_LIHTC_aff_units) as after_LIHTC_aff_units,
-            sum(before_fed_aff_units) as before_fed_aff_units,
-            sum(after_fed_aff_units) as after_fed_aff_units,
-            sum(before_DC_HPTF_aff_units) as before_DC_HPTF_aff_units,
-            sum(after_DC_HPTF_aff_units) as after_DC_HPTF_aff_units,
-            sum(before_LEC_aff_units) as before_LEC_aff_units,
-            sum(after_LEC_aff_units) as after_LEC_aff_units
-  from   TOPA_subsidy
-  group by ID;
-quit;
-
-%File_info( data=TOPA_test2, printobs=138 )
 
 
 %Finalize_data_set( 
