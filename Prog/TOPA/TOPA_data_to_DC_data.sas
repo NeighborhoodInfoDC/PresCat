@@ -87,6 +87,9 @@ data Topa_database2;
     ** Fill in address for Holmead Place Apartments (Holmstead Place is a typo) **;
     if lowcase( All_street_addresses ) in: ( "holmead place", "holmstead place" ) then
       All_street_addresses = "3435 Holmead Pl NW";
+      
+    ** Correct addresses for Bass Circle Apartments **;
+    if id in ( 68, 73, 605 ) then All_street_addresses = "4505-4511 B St SE; 4608-4614 Benning Rd SE; 4600-4606 Benning Rd SE; 4605-4611 Bass Pl SE";
     
     ** Create proper date variables from text input **;
     u_CASD_date = input(CASD_Report_week_ending_date, anydtdte12.);
