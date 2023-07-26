@@ -35,7 +35,8 @@ data Topa_timing_check;
 
   merge 
     Prescat.Topa_notices_sales 
-    Prescat.Topa_database (keep=id u_date_dhcd_received_ta_reg);
+    Prescat.Topa_database (keep=id u_date_dhcd_received_ta_reg)
+    Prescat.Topa_cbo_sheet (keep=id cbo_dhcd_received_ta_reg);
   by id;
   
   if u_dedup_notice and u_notice_with_sale;
@@ -45,6 +46,8 @@ data Topa_timing_check;
     1108, 1157, 1251, 1306, 1370, 1386, 1421, 10004 ) then delete;
     
   total = 1;
+  
+  if not( missing( u_date_dhcd_received_ta_reg ) ) then cbo_dhcd_received_ta_reg = 'Yes';
   
   u_days_from_TA_to_sale = u_sale_date - u_date_dhcd_received_ta_reg;
   u_days_from_notice_to_TA = u_date_dhcd_received_ta_reg - u_notice_date;
@@ -65,6 +68,9 @@ proc format;
     180 -< 360 = '180 to 359 days'
     360 -< 420 = '360 to 419 days'
     420 - high = '420 days or more';
+  value $received_reg (notsorted)
+    ' ', 'No' = 'No'
+    'Yes' = 'Yes';
   value received_reg
     . = 'No'
     0 - high = 'Yes';
@@ -81,28 +87,28 @@ ods tagsets.excelxp
   style=Normal 
   options(sheet_interval='Proc' embedded_titles='Yes' embedded_footnotes='Yes');
 
-ods tagsets.excelxp options( sheet_name="Table 1" absolute_column_width="30,1,16,16,16");
+ods tagsets.excelxp options( sheet_name="Table 1" absolute_column_width="30,16,16,16,16");
 
 footnote1 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
 
 title2 'Table 1. Number of days between notice and sale with and without a tenant association being formed';
 
 proc tabulate data=Topa_timing_check format=comma12.0 noseps missing;
-  class u_days_from_dedup_notice_to_sale u_date_dhcd_received_ta_reg;
+  class u_days_from_dedup_notice_to_sale cbo_dhcd_received_ta_reg;
   var total;
   table 
     /** Rows **/
-    ( all='Total' 
-      u_days_from_dedup_notice_to_sale='Days from notice to sale' ) * sum=' '
-    ,
+    all='Total'
+    u_days_from_dedup_notice_to_sale='Days from notice to sale',
     /** Columns **/
-    total='Notices' *
-    u_date_dhcd_received_ta_reg='Tenant association formed'
+    total=' ' * ( sum='Total notices'
+    cbo_dhcd_received_ta_reg='Tenant association formed' * ( sum='Notices' colpctsum='Percent' * f=comma12.1 ) )
     / condense rts=60;
-  format u_date_dhcd_received_ta_reg received_reg. u_days_from_dedup_notice_to_sale day_range.;
+  format cbo_dhcd_received_ta_reg $received_reg. u_days_from_dedup_notice_to_sale day_range.;
 run;
 
-ods tagsets.excelxp options( sheet_name="Table 2" );
+
+ods tagsets.excelxp options( sheet_name="Table 2"  /*absolute_column_width="30,1,16,16,16"*/);
 
 title2 'Table 2. Number of days between notice and tenant association registration';
 
@@ -112,32 +118,13 @@ proc tabulate data=Topa_timing_check format=comma12.0 noseps missing;
   var total;
   table 
     /** Rows **/
-    ( all='Total' 
-      u_days_from_notice_to_TA='Days from notice to TA registration' ) * sum=' '
+    all='Total' 
+    u_days_from_notice_to_TA='Days from notice to TA registration'
     ,
     /** Columns **/
-    total='Notices'
+    total=' ' * ( sum='Notices' colpctsum='Percent' * f=comma12.1 )
     / condense rts=60;
   format u_days_from_notice_to_TA day_range.;
-run;
-
-ods tagsets.excelxp options( sheet_name="Table 3" );
-
-title2 'Table 3. Number of days between tenant association registration and sale';
-
-proc tabulate data=Topa_timing_check format=comma12.0 noseps missing;
-  where not( missing( u_days_from_TA_to_sale ) );
-  class u_days_from_TA_to_sale;
-  var total;
-  table 
-    /** Rows **/
-    ( all='Total' 
-      u_days_from_TA_to_sale='Days from TA registration to sale' ) * sum=' '
-    ,
-    /** Columns **/
-    total='Notices'
-    / condense rts=60;
-  format u_days_from_TA_to_sale day_range.;
 run;
 
 
