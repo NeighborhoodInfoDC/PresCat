@@ -88,8 +88,17 @@ data Topa_database2;
     if lowcase( All_street_addresses ) in: ( "holmead place", "holmstead place" ) then
       All_street_addresses = "3435 Holmead Pl NW";
       
-    ** Correct addresses for Bass Circle Apartments **;
-    if id in ( 68, 73, 605 ) then All_street_addresses = "4505-4511 B St SE; 4608-4614 Benning Rd SE; 4600-4606 Benning Rd SE; 4605-4611 Bass Pl SE";
+    ** Address corrections **;
+    
+    select ( id );
+    
+      when ( 68, 73, 605 ) All_street_addresses = "4505-4511 B St SE; 4608-4614 Benning Rd SE; 4600-4606 Benning Rd SE; 4605-4611 Bass Pl SE";
+      
+      when ( 15 ) All_street_addresses = "1215 49th Street NE; 1225 49TH STREET NE";
+      
+      otherwise /** DO NOTHING **/
+    
+    end;
     
     ** Create proper date variables from text input **;
     u_CASD_date = input(CASD_Report_week_ending_date, anydtdte12.);
@@ -100,7 +109,7 @@ data Topa_database2;
       u_CASD_date = "CASD report week ending date (Urban created var)"
       u_offer_sale_date = "Notice offer of sale date (Urban created var)";
 run;
-
+ENDSAS;
 title2 '** Check for duplicate values of ID **';
 %Dup_check(
   data=Topa_database2,
