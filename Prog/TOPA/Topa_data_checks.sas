@@ -52,6 +52,7 @@
       outcome_rehab outcome_buyouts
       outcome_100pct_afford outcome_affordability
       outcome_pres_funding_fail 
+      add_notes data_notes
     ;
   run;
   
@@ -69,7 +70,7 @@
   proc print data=Prescat.Topa_database;
     where id in ( &id );
     id id;
-    var u_casd_date u_offer_sale_date date_final_closing final_purchaser units all_street_addresses;
+    var u_casd_date u_offer_sale_date date_final_closing final_purchaser units all_street_addresses property_name;
   run;
 
   title4 'Topa_addresses';
@@ -79,7 +80,7 @@
     var address_id active_res_occupancy_count fulladdress notice_listed_address;
     sum active_res_occupancy_count;
   run;
-
+  
   title4 'Topa_ssl';
   proc print data=Prescat.Topa_ssl;
     where id in ( &id );
@@ -154,6 +155,14 @@ data Topa_sales_cbo;
   by id;
 
 run;
+
+** List of multiple notices per address **;
+
+%Dup_check(
+  data=Topa_sales_cbo,
+  by=u_address_id_ref,
+  id=id
+)
 
 
 ** Create all output **;
