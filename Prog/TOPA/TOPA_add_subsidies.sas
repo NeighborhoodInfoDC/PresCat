@@ -80,7 +80,6 @@ data TOPA_subsidy;
   set TOPA_subsidy_match; 
   format all_POA_start MMDDYY10.;
   format actual_POA_start DYESNO.;
-  format date_LEC_form MMDDYY10.;
   if not(missing(POA_start_orig)) then do;
 	all_POA_start=POA_start_orig;
 	actual_POA_start=1;
@@ -96,21 +95,46 @@ data TOPA_subsidy;
   if not(missing(all_POA_start)); ** delete missing subsidy start dates **; 
   if portfolio in ("LIHTC", "202/811", "PB8", "PRAC", "DC HPTF", "LECOOP"); ** only include LIHTC, federal project-based subsidies, DC HPTF, and LEC **;
   if portfolio = "LIHTC" and u_days_notice_to_subsidy < 0 then before_LIHTC_aff_units=Units_Assist;
-  if portfolio = "LIHTC" and 0 <= u_days_notice_to_subsidy <= 365 then after_LIHTC_aff_units=Units_Assist;
   if portfolio in ( "202/811", "PB8", "PRAC" ) and u_days_notice_to_subsidy < 0 then before_fed_aff_units=Units_Assist;
-  if portfolio in ( "202/811", "PB8", "PRAC" ) and 0 <= u_days_notice_to_subsidy <= 365 then after_fed_aff_units=Units_Assist;
   if portfolio = "DC HPTF" and u_days_notice_to_subsidy < 0 then before_DC_HPTF_aff_units=Units_Assist;
-  if portfolio = "DC HPTF" and 0 <= u_days_notice_to_subsidy <= 365 then after_DC_HPTF_aff_units=Units_Assist;
   if portfolio = "LECOOP" and u_days_notice_to_subsidy < 0 then before_LEC_aff_units=Units_Assist;
-  if portfolio = "LECOOP" and 0 <= u_days_notice_to_subsidy <= 365 then after_LEC_aff_units=Units_Assist;
-  if missing(poa_end_actual) or u_sale_date-poa_end_actual > 365 or poa_end_actual > '01Jan2023'd; **not including units where subsidy's expired **;
 run;
 
 %File_info( data=TOPA_subsidy, printobs=10 )
 
+data TOPA_subsidy_after; 
+  set TOPA_subsidy;
+  if portfolio = "LIHTC" then 
+	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and not(missing(before_LIHTC_aff_units)) then after_LIHTC_aff_units=Units_Assist+before_LIHTC_aff_units;
+	else if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and missing(before_LIHTC_aff_units) then after_LIHTC_aff_units=Units_Assist;
+	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 then after_LIHTC_aff_units=before_LIHTC_aff_units;
+	else if not(missing(poa_end_actual)) and poa_end_actual-u_sale_date <= 365 then after_LIHTC_aff_units=.;
+	else after_LIHTC_aff_units=Units_Assist;
+
+  if portfolio in ( "202/811", "PB8", "PRAC" ) then 
+	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and not(missing(before_fed_aff_units)) then after_fed_aff_units=Units_Assist+before_fed_aff_units;
+	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 and missing(before_fed_aff_units) then after_fed_aff_units=before_fed_aff_units;
+	else if not(missing(poa_end_actual)) and poa_end_actual-u_sale_date <= 365 then after_fed_aff_units=.;
+	else after_fed_aff_units=Units_Assist;
+
+  if portfolio = "DC HPTF" then 
+	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and not(missing(before_DC_HPTF_aff_units)) then after_DC_HPTF_aff_units=Units_Assist+before_DC_HPTF_aff_units;
+	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 and missing(before_DC_HPTF_aff_units) then after_DC_HPTF_aff_units=before_DC_HPTF_aff_units;
+	else if not(missing(poa_end_actual)) and poa_end_actual-u_sale_date <= 365 then after_DC_HPTF_aff_units=.;
+	else after_DC_HPTF_aff_units=Units_Assist;
+
+  if portfolio = "LECOOP" then 
+	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and not(missing(before_LEC_aff_units)) then after_LEC_aff_units=Units_Assist+before_LEC_aff_units;
+	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 and missing(before_LEC_aff_units) then after_LEC_aff_units=before_LEC_aff_units;
+	else if not(missing(poa_end_actual)) and poa_end_actual-u_sale_date <= 365 then after_LEC_aff_units=.;
+	else after_LEC_aff_units=Units_Assist;
+run; 
+
+%File_info( data=TOPA_subsidy_after, printobs=50 )
+
 **Aggregating the data across rows with the same ID **;
 
-proc summary data=TOPA_subsidy nway
+proc summary data=TOPA_subsidy_after nway
  noprint;
  var before_LIHTC_aff_units after_LIHTC_aff_units before_fed_aff_units after_fed_aff_units before_DC_HPTF_aff_units 
 	after_DC_HPTF_aff_units before_LEC_aff_units after_LEC_aff_units;
