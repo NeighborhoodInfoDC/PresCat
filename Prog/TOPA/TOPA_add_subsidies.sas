@@ -92,7 +92,7 @@ data TOPA_subsidy;
   label all_POA_start='Period of affordability, original start date or if original date missing, period of affordability, current start date';
   label actual_POA_start='Original start date used';
   u_days_notice_to_subsidy = all_POA_start - u_sale_date;
-  label u_days_notice_to_subsidy='Number of days from notice of sale to start of subsidy (Urban created var)';
+  label u_days_notice_to_subsidy='Number of days from property sale date to start of subsidy (Urban created var)';
   if not(missing(all_POA_start)); ** delete missing subsidy start dates **; 
   if portfolio in ("LIHTC", "202/811", "PB8", "PRAC", "DC HPTF", "LECOOP"); ** only include LIHTC, federal project-based subsidies, DC HPTF, and LEC **;
   if portfolio = "LIHTC" and u_days_notice_to_subsidy < 0 then before_LIHTC_aff_units=Units_Assist;
@@ -110,60 +110,37 @@ run;
 
 **Aggregating the data across rows with the same ID **;
 
-proc summary data=TOPA_subsidy
+proc summary data=TOPA_subsidy nway
  noprint;
  var before_LIHTC_aff_units after_LIHTC_aff_units before_fed_aff_units after_fed_aff_units before_DC_HPTF_aff_units 
 	after_DC_HPTF_aff_units before_LEC_aff_units after_LEC_aff_units;
  class id;
  output out=TOPA_sum_rows
-	sum=sum_before_LIHTC_aff_units sum_after_LIHTC_aff_units sum_before_fed_aff_units sum_after_fed_aff_units sum_before_DC_HPTF_aff_units
-	sum_after_DC_HPTF_aff_units sum_before_LEC_aff_units sum_after_LEC_aff_units;
+	sum=;
+ label before_LIHTC_aff_units='Subsidy assisted units from the Low Income Housing Tax Credit before property sale date (Urban created var)';
+ label after_LIHTC_aff_units='Subsidy assisted units from the Low Income Housing Tax Credit after property sale date (Urban created var)';
+ label before_fed_aff_units='Federal subsidy assisted units (Project based vouchers, Section 202/811, project rental assistance contract) before property sale date (Urban created var)';
+ label after_fed_aff_units='Federal subsidy assisted units (Project based vouchers, Section 202/811, project rental assistance contract) after property sale date (Urban created var)';
+ label before_DC_HPTF_aff_units='Subsidy assisted units from the DC Housing Production Trust Fund before property sale date (Urban created var)';
+ label after_DC_HPTF_aff_units='Subsidy assisted units from the DC Housing Production Trust Fund after property sale date (Urban created var)';
+ label before_LEC_aff_units='Affordable units formed from Limited-Equity Cooperatives before property sale date (Urban created var)';
+ label after_LEC_aff_units='Affordable units formed from Limited-Equity Cooperatives after property sale date (Urban created var)';
+ label ID='CNHED database unique notice ID';
 run;
 
 %File_info( data=TOPA_sum_rows, printobs=10)
 
-**Summing the data across columns by subsidy type**;
-
-data TOPA_sum_total; 
-  set TOPA_sum_rows; 
-  if not(missing(sum_before_LIHTC_aff_units)) and not(missing(sum_after_LIHTC_aff_units)) then total_LIHTC_aff_units=sum_before_LIHTC_aff_units+sum_after_LIHTC_aff_units;
-    else if missing(sum_after_LIHTC_aff_units) then total_LIHTC_aff_units=sum_before_LIHTC_aff_units;
-	else total_LIHTC_aff_units=sum_after_LIHTC_aff_units;
- label total_LIHTC_aff_units='Total subsidy assisted units from the Low Income Housing Tax Credit (Urban created var)';
-
-  if not(missing(sum_before_fed_aff_units)) and not(missing(sum_after_fed_aff_units)) then total_fed_aff_units=sum_before_fed_aff_units+sum_after_fed_aff_units;
-    else if missing(sum_after_fed_aff_units) then total_fed_aff_units=sum_before_fed_aff_units;
-	else total_fed_aff_units=sum_after_fed_aff_units; 
- label total_fed_aff_units='Total federal subsidy assisted units (Project based vouchers, Section 202/811, project rental assistance contract) (Urban created var)';
-
-  if not(missing(sum_before_DC_HPTF_aff_units)) and not(missing(sum_after_DC_HPTF_aff_units)) then total_DC_HPTF_aff_units=sum_before_DC_HPTF_aff_units+sum_after_DC_HPTF_aff_units;
-    else if missing(sum_after_DC_HPTF_aff_units) then total_DC_HPTF_aff_units=sum_before_DC_HPTF_aff_units;
-	else total_DC_HPTF_aff_units=sum_after_DC_HPTF_aff_units; 
- label total_DC_HPTF_aff_units='Total subsidy assisted units from the DC Housing Production Trust Fund (Urban created var)';
-
-  if not(missing(sum_before_LEC_aff_units)) and not(missing(sum_after_LEC_aff_units)) then total_LEC_aff_units=sum_before_LEC_aff_units+sum_after_LEC_aff_units;
-    else if missing(sum_after_LEC_aff_units) then total_LEC_aff_units=sum_before_LEC_aff_units;
-	else total_LEC_aff_units=sum_after_LEC_aff_units;
- label total_LEC_aff_units='Total affordable units formed from Limited-Equity Cooperatives (Urban created var)';
-
-  keep id total_LIHTC_aff_units total_fed_aff_units total_DC_HPTF_aff_units total_LEC_aff_units;
-run; 
-
-%File_info( data=TOPA_sum_total, printobs=10)
-
-
 
 %Finalize_data_set( 
 /** Finalize data set parameters **/
-  data=,
-  out=,
+  data=TOPA_sum_rows,
+  out=TOPA_subsidies,
   outlib=PresCat,
-  label="",
+  label="Preservation Catalog, Project Subsidies for TOPA notices",
   sortby=ID,
   /** Metadata parameters **/
-  revisions=%str,
+  revisions=%str(&revisions),
   /** File info parameters **/
-  printobs=10,
-  freqvars=
+  printobs=10
 )
 
