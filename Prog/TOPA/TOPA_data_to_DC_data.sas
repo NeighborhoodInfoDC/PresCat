@@ -78,6 +78,10 @@ data Topa_database2;
         %include "&_dcdata_r_path\PresCat\Raw\TOPA\TOPA_DOPA_5+_variable_labels.txt";
       ;
       
+    ** Delete invalid notices **;
+    if id in ( 95, 207, 270, 276, 312, 339, 572, 750, 773, 884, 901, 954, 1017 ) then u_delete_notice = 1;
+    else u_delete_notice = 0;
+    
     ** Change temporary CR-LF replacement text in Address (improves address parsing) **;
     All_street_addresses = left( compbl( tranwrd( All_street_addresses, '||', '; ' ) ) );
     
@@ -105,7 +109,9 @@ data Topa_database2;
     format u_CASD_date MMDDYY10.;
     u_offer_sale_date = input(Offer_of_Sale_date, anydtdte12.);
     format u_offer_sale_date MMDDYY10.;
+    format u_delete_notice dyesno.;
     label
+      u_delete_notice = "Notice flagged for deletion (Urban created var)"
       u_CASD_date = "CASD report week ending date (Urban created var)"
       u_offer_sale_date = "Notice offer of sale date (Urban created var)";
 run;
@@ -126,8 +132,13 @@ run;
 title2;
 
 **parse out individual addresses from TOPA dataset**;
+data Topa_database_w_del;
+  set Topa_database2;
+  where not( u_delete_notice );
+run;
+
 %Rcasd_address_parse(
-	data=Topa_database2,
+	data=Topa_database_w_del,
 	out=TOPA_addresses_notices,
 	id=ID,
 	addr=All_street_addresses,
@@ -271,8 +282,14 @@ proc sql noprint;
     from TOPA_SSL (where=(not(missing(SSL)))) as TOPA_SSL
       left join RealProp.Sales_master as realprop    /** Left join = only keep obs that are in TOPA_geocoded **/
   on TOPA_SSL.SSL = realprop.SSL   /** This is the condition you are matching on **/
+  /** CLEANING: Remove irrelevant sales **/
+  where not( 
+    ( realprop.id = 882 and realprop.saledate = '30mar2020'd ) or 
+    ( realprop.id = 184 and year( realprop.saledate ) = 2010 )
+  )
   order by TOPA_SSL.ID, realprop.SALEDATE;    /** Optional: sorts the output data set **/
 quit;
+
 
 ** Add information on owner type (buyer) **;
 %Parcel_base_who_owns(
@@ -327,10 +344,15 @@ proc sql noprint;
     from _full_address_list_grp left join 
     Mar.Address_points_view as mar
     on _full_address_list_grp.address_id = mar.address_id
+    /** CLEANING: Remove irrelevant/incorrect addresses **/
+    where not( 
+      _full_address_list_grp.id = 1079 and _full_address_list_grp.address_id = 316359
+    )
     order by id, address_id;
 
 quit;
 
+ 
 
 *************************************************************************
 ** Add revised TA registration date to Topa_database **;
@@ -372,7 +394,7 @@ proc sql noprint;
       topa.all_street_addresses, topa.u_casd_date,
       addr.address_id, addr.notice_listed_address
     from 
-      Topa_database2 as topa
+      Topa_database_w_del as topa
       left join
       Topa_addresses as addr
       on topa.id = addr.id
@@ -386,7 +408,7 @@ quit;
 data Match_TOPA_db_to_RCASD_TA_unq;
 
   merge 
-    Topa_database2 (keep=id u_offer_sale_date date_dhcd_received_ta_reg u_casd_date all_street_addresses)
+    Topa_database_w_del (keep=id u_offer_sale_date date_dhcd_received_ta_reg u_casd_date all_street_addresses)
     Match_TOPA_db_to_RCASD_TA (where=(not( missing( id ) or missing( nidc_rcasd_id ))));
   by id;
   

@@ -158,6 +158,10 @@ data Topa_CBO_sheet;
   else if in2 then Source_sheet = "WITHOUT SALES";
   else Source_sheet = "SALES IN 2021 AND 2022";
   
+  ** CLEANING: Switch outcomes to different notice **;
+  
+  if id = 1445 then id = 1555;
+  
   ** Reformat categorical responses & create outcome flag **;
   
   u_has_cbo_outcome = 0;
