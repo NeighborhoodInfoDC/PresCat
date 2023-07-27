@@ -160,7 +160,16 @@ data Topa_CBO_sheet;
   
   ** CLEANING: Switch outcomes to different notice **;
   
-  if id = 1445 then id = 1555;
+  select ( id );
+  
+    when ( 1445 ) id = 1555;
+  
+    when ( 931 ) delete;
+    when ( 10005 ) id = 931;
+    
+    otherwise /** DO NOTHING;
+    
+  end;
   
   ** Reformat categorical responses & create outcome flag **;
   

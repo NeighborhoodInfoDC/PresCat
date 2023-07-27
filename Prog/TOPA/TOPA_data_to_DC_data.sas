@@ -79,7 +79,10 @@ data Topa_database2;
       ;
       
     ** Delete invalid notices **;
-    if id in ( 95, 207, 270, 276, 312, 339, 572, 750, 773, 884, 901, 954, 1017 ) then u_delete_notice = 1;
+    if id in ( 
+      95, 137, 207, 270, 276, 312, 339, 572, 750, 773, 839, 884, 901, 954, 1017, 1104, 1108, 1157,
+      1113, 1121, 1251, 1298, 1306, 1370, 1385, 10004, 10005
+    ) then u_delete_notice = 1;
     else u_delete_notice = 0;
     
     ** Change temporary CR-LF replacement text in Address (improves address parsing) **;
@@ -99,6 +102,8 @@ data Topa_database2;
       when ( 68, 73, 605 ) All_street_addresses = "4505-4511 B St SE; 4608-4614 Benning Rd SE; 4600-4606 Benning Rd SE; 4605-4611 Bass Pl SE";
       
       when ( 15 ) All_street_addresses = "1215 49th Street NE; 1225 49TH STREET NE";
+      
+      when ( 1107 ) All_street_addresses = "2420 & 2426 15th Place SE"; /** Combined with 1108 **/
       
       otherwise /** DO NOTHING **/
     
