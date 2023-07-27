@@ -67,13 +67,23 @@ proc format;
     90 -< 180 = '90 to 179 days'
     180 -< 360 = '180 to 359 days'
     360 -< 420 = '360 to 419 days'
-    420 - high = '420 days or more';
+    420 -< 540 = '420 to 539 days'
+    540 - high = '540 days or more';
   value $received_reg (notsorted)
     ' ', 'No' = 'No'
     'Yes' = 'Yes';
   value received_reg
     . = 'No'
     0 - high = 'Yes';
+run;
+
+
+** Check on exclusions **;
+
+proc freq data=Topa_timing_check;
+  where '01mar2020'd <= u_sale_date < '01may2023'd;
+  tables u_actual_saledate u_sale_date / missing;
+  format u_sale_date yyq. ;
 run;
 
 options missing=' ';
@@ -89,11 +99,14 @@ ods tagsets.excelxp
 
 ods tagsets.excelxp options( sheet_name="Table 1" absolute_column_width="30,16,16,16,16");
 
-footnote1 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
+footnote1 "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
 
 title2 'Table 1. Number of days between notice and sale with and without a tenant association being formed';
 
+footnote3 'Notes: Includes only notices with an actual sale date reported. Exludes 220 notices with sales between March 2020 and April 2023 which were affected by TOPA tolling.';
+
 proc tabulate data=Topa_timing_check format=comma12.0 noseps missing;
+  where u_actual_saledate and '01mar2020'd <= u_sale_date < '01may2023'd;
   class u_days_from_dedup_notice_to_sale cbo_dhcd_received_ta_reg;
   var total;
   table 
@@ -111,6 +124,8 @@ run;
 ods tagsets.excelxp options( sheet_name="Table 2"  /*absolute_column_width="30,1,16,16,16"*/);
 
 title2 'Table 2. Number of days between notice and tenant association registration';
+
+footnote3 'Notes: Includes only notices where date of tenant association registration is known.';
 
 proc tabulate data=Topa_timing_check format=comma12.0 noseps missing;
   where not( missing( u_days_from_notice_to_TA ) );
@@ -132,6 +147,8 @@ ods tagsets.excelxp options( sheet_name="List 1" absolute_column_width="12,16,16
 
 title2 'List 1. Notices with TA registration before notice date';
 
+footnote3 'Notes: Includes only notices where date of tenant association registration is known.';
+
 proc print data=Topa_timing_check label n;
   where not( missing( u_days_from_notice_to_TA ) ) and u_days_from_notice_to_TA < 0;
   id id;
@@ -145,6 +162,8 @@ run;
 ods tagsets.excelxp options( sheet_name="List 2" );
 
 title2 'List 2. Notices with TA registration more than 45 days after notice date';
+
+footnote3 'Notes: Includes only notices where date of tenant association registration is known.';
 
 proc print data=Topa_timing_check label n;
   where u_days_from_notice_to_TA > 45;
@@ -160,8 +179,10 @@ ods tagsets.excelxp options( sheet_name="List 3" );
 
 title2 'List 3. Notices with notice and sale < 45 days apart';
 
+footnote3 'Notes: Includes only notices with an actual sale date reported. Exludes 220 notices with sales between March 2020 and April 2023 which were affected by TOPA tolling.';
+
 proc print data=Topa_timing_check label n;
-  where 0 <= u_days_from_dedup_notice_to_sale < 45;
+  where 0 <= u_days_from_dedup_notice_to_sale < 45 and ( u_actual_saledate and '01mar2020'd <= u_sale_date < '01may2023'd );
   id id;
   var u_days_from_dedup_notice_to_sale u_notice_date u_date_dhcd_received_ta_reg u_sale_date u_actual_saledate fulladdress u_ownername;
   label 
@@ -175,7 +196,7 @@ ods tagsets.excelxp options( sheet_name="List 4" );
 title2 'List 4. Notices with notice and sale >= 420 days (14 months) apart';
 
 proc print data=Topa_timing_check label n;
-  where u_days_from_dedup_notice_to_sale >= 420;
+  where u_days_from_dedup_notice_to_sale >= 420 and ( u_actual_saledate and '01mar2020'd <= u_sale_date < '01may2023'd );
   id id;
   var u_days_from_dedup_notice_to_sale u_notice_date u_date_dhcd_received_ta_reg u_sale_date u_actual_saledate fulladdress u_ownername;
   label 
