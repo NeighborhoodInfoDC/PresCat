@@ -75,15 +75,23 @@ proc format;
   value received_reg
     . = 'No'
     0 - high = 'Yes';
+  value bldg_size
+    0 - 15 = 'Smaller Buildings (15 units or fewer)'
+    16 - high = 'Larger Buildings (16 units or more)';
 run;
 
 
-** Check on exclusions **;
+** Check on exclusions, building sizes **;
 
 proc freq data=Topa_timing_check;
   where '01mar2020'd <= u_sale_date < '01may2023'd;
   tables u_actual_saledate u_sale_date / missing;
   format u_sale_date yyq. ;
+run;
+
+proc univariate data=Topa_timing_check plot;
+  where u_actual_saledate and '01mar2020'd <= u_sale_date < '01may2023'd;
+  var u_sum_units;
 run;
 
 options missing=' ';
@@ -107,17 +115,20 @@ footnote3 'Notes: Includes only notices with an actual sale date reported. Exlud
 
 proc tabulate data=Topa_timing_check format=comma12.0 noseps missing;
   where u_actual_saledate and '01mar2020'd <= u_sale_date < '01may2023'd;
-  class u_days_from_dedup_notice_to_sale cbo_dhcd_received_ta_reg;
+  class u_days_from_dedup_notice_to_sale cbo_dhcd_received_ta_reg u_sum_units;
   var total;
   table 
+    /** Page **/
+    all='All Buildings'
+    u_sum_units=' ',
     /** Rows **/
     all='Total'
     u_days_from_dedup_notice_to_sale='Days from notice to sale',
     /** Columns **/
-    total=' ' * ( sum='Total notices'
-    cbo_dhcd_received_ta_reg='Tenant association formed' * ( sum='Notices' colpctsum='Percent' * f=comma12.1 ) )
+    total=' ' * ( sum='Total notices' colpctsum='Percent' * f=comma12.1 ) 
+    total=' ' * cbo_dhcd_received_ta_reg='Tenant association formed' * ( sum='Notices' colpctsum='Percent' * f=comma12.1 )
     / condense rts=60;
-  format cbo_dhcd_received_ta_reg $received_reg. u_days_from_dedup_notice_to_sale day_range.;
+  format u_sum_units bldg_size. cbo_dhcd_received_ta_reg $received_reg. u_days_from_dedup_notice_to_sale day_range.;
 run;
 
 
