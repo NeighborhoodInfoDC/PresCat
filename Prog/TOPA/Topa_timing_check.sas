@@ -114,7 +114,7 @@ title2 'Table 1. Number of days between notice and sale with and without a tenan
 footnote3 'Notes: Includes only notices with an actual sale date reported. Exludes 220 notices with sales between March 2020 and April 2023 which were affected by TOPA tolling.';
 
 proc tabulate data=Topa_timing_check format=comma12.0 noseps missing;
-  where u_actual_saledate and '01mar2020'd <= u_sale_date < '01may2023'd;
+  where u_actual_saledate and not( '01mar2020'd <= u_sale_date < '01may2023'd );
   class u_days_from_dedup_notice_to_sale cbo_dhcd_received_ta_reg u_sum_units;
   var total;
   table 
@@ -207,7 +207,7 @@ ods tagsets.excelxp options( sheet_name="List 4" );
 title2 'List 4. Notices with notice and sale >= 420 days (14 months) apart';
 
 proc print data=Topa_timing_check label n;
-  where u_days_from_dedup_notice_to_sale >= 420 and ( u_actual_saledate and '01mar2020'd <= u_sale_date < '01may2023'd );
+  where u_days_from_dedup_notice_to_sale >= 420 and ( u_actual_saledate and not( '01mar2020'd <= u_sale_date < '01may2023'd ) );
   id id;
   var u_days_from_dedup_notice_to_sale u_notice_date u_date_dhcd_received_ta_reg u_sale_date u_actual_saledate fulladdress u_ownername;
   label 
