@@ -90,7 +90,7 @@ proc freq data=Topa_timing_check;
 run;
 
 proc univariate data=Topa_timing_check plot;
-  where u_actual_saledate and '01mar2020'd <= u_sale_date < '01may2023'd;
+  where u_actual_saledate and not( '01mar2020'd <= u_sale_date < '01may2023'd );
   var u_sum_units;
 run;
 
