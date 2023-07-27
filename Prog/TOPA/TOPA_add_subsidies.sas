@@ -102,33 +102,41 @@ run;
 
 %File_info( data=TOPA_subsidy, printobs=10 )
 
+/*the notices were in 2009 and 2017 and there is no sale date. So, if we are using the notice as 
+the reference then 2022 is several years later and I would say those subsidies were still in 
+effect after those dates.*/
+
 data TOPA_subsidy_after; 
   set TOPA_subsidy;
   if portfolio = "LIHTC" then 
-	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and not(missing(before_LIHTC_aff_units)) then after_LIHTC_aff_units=Units_Assist+before_LIHTC_aff_units;
-	else if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and missing(before_LIHTC_aff_units) then after_LIHTC_aff_units=Units_Assist;
+	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 1825 and not(missing(before_LIHTC_aff_units)) then after_LIHTC_aff_units=Units_Assist+before_LIHTC_aff_units;
+	else if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 1825 and missing(before_LIHTC_aff_units) then after_LIHTC_aff_units=Units_Assist;
 	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 then after_LIHTC_aff_units=before_LIHTC_aff_units;
 	else if not(missing(poa_end_actual)) and poa_end_actual-u_sale_date <= 365 then after_LIHTC_aff_units=.;
+	else if not(missing(poa_end_actual)) and missing(u_sale_date) then after_LIHTC_aff_units=before_LIHTC_aff_units;
 	else after_LIHTC_aff_units=Units_Assist;
 
   if portfolio in ( "202/811", "PB8", "PRAC" ) then 
-	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and not(missing(before_fed_aff_units)) then after_fed_aff_units=Units_Assist+before_fed_aff_units;
-	else if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and missing(before_fed_aff_units) then after_fed_aff_units=Units_Assist;
+	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 1825 and not(missing(before_fed_aff_units)) then after_fed_aff_units=Units_Assist+before_fed_aff_units;
+	else if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 1825 and missing(before_fed_aff_units) then after_fed_aff_units=Units_Assist;
 	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 then after_fed_aff_units=before_fed_aff_units;
 	else if not(missing(poa_end_actual)) and poa_end_actual-u_sale_date <= 365 then after_fed_aff_units=.;
+	else if not(missing(poa_end_actual)) and missing(u_sale_date) then before_fed_aff_units=after_fed_aff_units;
 	else after_fed_aff_units=Units_Assist;
 
   if portfolio = "DC HPTF" then 
-	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and not(missing(before_DC_HPTF_aff_units)) then after_DC_HPTF_aff_units=Units_Assist+before_DC_HPTF_aff_units;
-	else if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and missing(before_DC_HPTF_aff_units) then after_DC_HPTF_aff_units=Units_Assist;
+	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 1825 and not(missing(before_DC_HPTF_aff_units)) then after_DC_HPTF_aff_units=Units_Assist+before_DC_HPTF_aff_units;
+	else if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 1825 and missing(before_DC_HPTF_aff_units) then after_DC_HPTF_aff_units=Units_Assist;
 	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 then after_DC_HPTF_aff_units=before_DC_HPTF_aff_units;
 	else if not(missing(poa_end_actual)) and poa_end_actual-u_sale_date <= 365 then after_DC_HPTF_aff_units=.;
+	else if not(missing(poa_end_actual)) and missing(u_sale_date) then before_DC_HPTF_aff_units=after_DC_HPTF_aff_units;
 	else after_DC_HPTF_aff_units=Units_Assist;
 
   if portfolio = "LECOOP" then 
-	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and not(missing(before_LEC_aff_units)) then after_LEC_aff_units=Units_Assist+before_LEC_aff_units;
-	else if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and missing(before_LEC_aff_units) then after_LEC_aff_units=Units_Assist;
+	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 1825 and not(missing(before_LEC_aff_units)) then after_LEC_aff_units=Units_Assist+before_LEC_aff_units;
+	else if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 1825 and missing(before_LEC_aff_units) then after_LEC_aff_units=Units_Assist;
 	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 then after_LEC_aff_units=before_LEC_aff_units;
+	else if not(missing(poa_end_actual)) and missing(u_sale_date) then before_LEC_aff_units=after_LEC_aff_units;
 	else if not(missing(poa_end_actual)) and poa_end_actual-u_sale_date <= 365 then after_LEC_aff_units=.;
 	else after_LEC_aff_units=Units_Assist;
 run; 
