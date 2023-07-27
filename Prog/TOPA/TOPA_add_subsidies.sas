@@ -113,24 +113,65 @@ data TOPA_subsidy_after;
 
   if portfolio in ( "202/811", "PB8", "PRAC" ) then 
 	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and not(missing(before_fed_aff_units)) then after_fed_aff_units=Units_Assist+before_fed_aff_units;
-	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 and missing(before_fed_aff_units) then after_fed_aff_units=before_fed_aff_units;
+	else if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and missing(before_fed_aff_units) then after_fed_aff_units=Units_Assist;
+	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 then after_fed_aff_units=before_fed_aff_units;
 	else if not(missing(poa_end_actual)) and poa_end_actual-u_sale_date <= 365 then after_fed_aff_units=.;
 	else after_fed_aff_units=Units_Assist;
 
   if portfolio = "DC HPTF" then 
 	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and not(missing(before_DC_HPTF_aff_units)) then after_DC_HPTF_aff_units=Units_Assist+before_DC_HPTF_aff_units;
-	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 and missing(before_DC_HPTF_aff_units) then after_DC_HPTF_aff_units=before_DC_HPTF_aff_units;
+	else if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and missing(before_DC_HPTF_aff_units) then after_DC_HPTF_aff_units=Units_Assist;
+	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 then after_DC_HPTF_aff_units=before_DC_HPTF_aff_units;
 	else if not(missing(poa_end_actual)) and poa_end_actual-u_sale_date <= 365 then after_DC_HPTF_aff_units=.;
 	else after_DC_HPTF_aff_units=Units_Assist;
 
   if portfolio = "LECOOP" then 
 	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and not(missing(before_LEC_aff_units)) then after_LEC_aff_units=Units_Assist+before_LEC_aff_units;
-	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 and missing(before_LEC_aff_units) then after_LEC_aff_units=before_LEC_aff_units;
+	else if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 730 and missing(before_LEC_aff_units) then after_LEC_aff_units=Units_Assist;
+	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 then after_LEC_aff_units=before_LEC_aff_units;
 	else if not(missing(poa_end_actual)) and poa_end_actual-u_sale_date <= 365 then after_LEC_aff_units=.;
 	else after_LEC_aff_units=Units_Assist;
 run; 
 
-%File_info( data=TOPA_subsidy_after, printobs=50 )
+%File_info( data=TOPA_subsidy_after, printobs=10 )
+
+
+proc sort data=Topa_subsidy_after;
+  by u_address_id_ref u_notice_date;
+run;
+
+title2 '** Only units before **';
+proc print data=Topa_subsidy_after (obs=50);
+  where portfolio = 'LIHTC' and before_LIHTC_aff_units > 0 and after_LIHTC_aff_units in ( 0, . );
+  by u_address_id_ref;
+  id id;
+  var u_notice_date u_sale_date u_days_notice_to_subsidy portfolio poa_start_orig poa_start poa_end_actual units_assist before_LIHTC_aff_units after_LIHTC_aff_units;
+  format portfolio ;
+run;
+title2 '** Only units after **';
+proc print data=Topa_subsidy_after (obs=50);
+  where portfolio = 'LIHTC' and before_LIHTC_aff_units in ( 0, . ) and after_LIHTC_aff_units > 0;
+  by u_address_id_ref;
+  id id;
+  var u_notice_date u_sale_date u_days_notice_to_subsidy portfolio poa_start_orig poa_start poa_end_actual units_assist before_LIHTC_aff_units after_LIHTC_aff_units;
+  format portfolio ;
+run;
+title2 '** Units before & after **';
+proc print data=Topa_subsidy_after (obs=50);
+  where portfolio = 'LIHTC' and before_LIHTC_aff_units > 0 and after_LIHTC_aff_units > 0;
+  by u_address_id_ref;
+  id id;
+  var u_notice_date u_sale_date u_days_notice_to_subsidy portfolio poa_start_orig poa_start poa_end_actual units_assist before_LIHTC_aff_units after_LIHTC_aff_units;
+  format portfolio ;
+run;
+title2 '** LIHTC with missing u_days_notice_to_subsidy **';
+proc print data=Topa_subsidy_after (obs=50);
+  where portfolio = 'LIHTC' and missing( u_days_notice_to_subsidy );
+  by u_address_id_ref;
+  id id;
+  var u_notice_date u_sale_date u_days_notice_to_subsidy portfolio poa_start_orig poa_start poa_end_actual units_assist before_LIHTC_aff_units after_LIHTC_aff_units;
+  format portfolio ;
+run;
 
 **Aggregating the data across rows with the same ID **;
 
@@ -152,7 +193,7 @@ proc summary data=TOPA_subsidy_after nway
  label ID='CNHED database unique notice ID';
 run;
 
-%File_info( data=TOPA_sum_rows, printobs=10)
+%File_info( data=TOPA_sum_rows, printobs=50)
 
 
 %Finalize_data_set( 
