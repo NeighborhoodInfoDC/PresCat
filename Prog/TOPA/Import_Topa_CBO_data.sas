@@ -18,6 +18,8 @@
 ** Define libraries **;
 %DCData_lib( Prescat )
 
+%let revisions = Add data cleaning steps.;
+
 %let categorical_vars = 
     cbo_lihtc_plus 
     r_Existing_LIHTC r_New_LIHTC TA_assign_rights
@@ -167,7 +169,7 @@ data Topa_CBO_sheet;
     when ( 931 ) delete;
     when ( 10005 ) id = 931;
     
-    otherwise /** DO NOTHING;
+    otherwise /** DO NOTHING **/;
     
   end;
   
@@ -240,6 +242,10 @@ data Topa_CBO_sheet;
   
   drop i;
    
+run;
+
+proc sort data=Topa_CBO_sheet;
+  by id;
 run;
 
 %File_info( data=Topa_CBO_sheet, printobs=0, freqvars=Source_sheet )
@@ -346,7 +352,7 @@ ods listing;
   label="TOPA CBO review workbook with outcomes, created 4/28/2023",
   sortby=id,
   /** Metadata parameters **/
-  revisions=%str(New file.),
+  revisions=%str(&revisions),
   /** File info parameters **/
   printobs=5
 )

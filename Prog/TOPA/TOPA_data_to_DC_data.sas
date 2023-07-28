@@ -20,7 +20,7 @@
 %DCData_lib( MAR )
 %DCData_lib( RealProp )
 
-%let revisions = Remove nonexact address matches from data.;
+%let revisions = Add cleaning steps.;
 
 ** Download and read TOPA dataset into SAS dataset**;
 %let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA-DOPA 5+_with_var_names_3_20_23_urban_update.csv";
@@ -78,6 +78,8 @@ data Topa_database2;
         %include "&_dcdata_r_path\PresCat\Raw\TOPA\TOPA_DOPA_5+_variable_labels.txt";
       ;
       
+    **** CLEANING STEPS ****;
+    
     ** Delete invalid notices **;
     if id in ( 
       95, 137, 207, 270, 276, 312, 339, 572, 750, 773, 839, 884, 901, 954, 1017, 1104, 1108, 1157,
@@ -120,7 +122,7 @@ data Topa_database2;
       u_CASD_date = "CASD report week ending date (Urban created var)"
       u_offer_sale_date = "Notice offer of sale date (Urban created var)";
 run;
-ENDSAS;
+
 title2 '** Check for duplicate values of ID **';
 %Dup_check(
   data=Topa_database2,
@@ -289,8 +291,8 @@ proc sql noprint;
   on TOPA_SSL.SSL = realprop.SSL   /** This is the condition you are matching on **/
   /** CLEANING: Remove irrelevant sales **/
   where not( 
-    ( realprop.id = 882 and realprop.saledate = '30mar2020'd ) or 
-    ( realprop.id = 184 and year( realprop.saledate ) = 2010 )
+    ( TOPA_SSL.id = 882 and realprop.saledate = '30mar2020'd ) or 
+    ( TOPA_SSL.id = 184 and year( realprop.saledate ) = 2010 )
   )
   order by TOPA_SSL.ID, realprop.SALEDATE;    /** Optional: sorts the output data set **/
 quit;
@@ -606,7 +608,7 @@ ods listing;   /** Reopen the listing destination **/
     revisions=%str(&revisions),
     /** File info parameters **/
     printobs=10,
-    freqvars=technical_assistance_provider
+    freqvars=technical_assistance_provider u_delete_notice
   )
 
   %Finalize_data_set( 
@@ -663,7 +665,7 @@ proc sql;
     TOPA_addresses.address_id
   from TOPA_database left join TOPA_addresses
   on TOPA_database.ID = TOPA_addresses.ID
-  where missing( TOPA_addresses.address_id )
+  where missing( TOPA_addresses.address_id ) and not( TOPA_database.u_delete_notice )
   order by id;
   
 quit;
@@ -679,7 +681,7 @@ proc sql;
     TOPA_ssl.ssl
   from TOPA_database left join TOPA_ssl
   on TOPA_database.ID = TOPA_ssl.ID
-  where missing( TOPA_ssl.ssl )
+  where missing( TOPA_ssl.ssl ) and not( TOPA_database.u_delete_notice )
   order by id;
   
 quit;
