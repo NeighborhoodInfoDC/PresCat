@@ -70,7 +70,7 @@
   proc print data=Prescat.Topa_database;
     where id in ( &id );
     id id;
-    var u_casd_date u_offer_sale_date date_final_closing final_purchaser units all_street_addresses property_name;
+    var u_delete_notice u_casd_date u_offer_sale_date date_final_closing final_purchaser units u_final_units all_street_addresses property_name;
   run;
 
   title4 'Topa_addresses';

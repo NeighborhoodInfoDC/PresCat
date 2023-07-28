@@ -59,8 +59,9 @@ run;
 data Topa_id_x_address; 
   merge 
     Topa_id_x_address_1
-    Prescat.Topa_database (keep=id all_street_addresses address_for_mapping);
+    Prescat.Topa_database (keep=id all_street_addresses address_for_mapping units /*u_delete_notice*/);
   by id;
+  /*if u_delete_notice then delete;*/
 run; 
  
 %File_info( data=Topa_id_x_address, printobs=5 ) /** 1750 obs**/
@@ -177,7 +178,7 @@ run;
 data Combo;
   set 
     TOPA_by_property_dates 
-    (keep=u_address_id_ref id u_offer_sale_date u_sum_units u_year_built_original u_recent_reno FULLADDRESS Anc2012 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2012 Ward2022 cluster2017
+    (keep=u_address_id_ref id u_offer_sale_date u_final_units u_year_built_original u_recent_reno FULLADDRESS Anc2012 Geo2020 GeoBg2020 GeoBlk2020 Psa2012 VoterPre2012 Ward2012 Ward2022 cluster2017
      rename=(u_offer_sale_date=u_ref_date)
      in=is_notice)
     Sales_by_property_nodup

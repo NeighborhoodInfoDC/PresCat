@@ -82,7 +82,7 @@ data Topa_database2;
     
     ** Delete invalid notices **;
     if id in ( 
-      95, 137, 207, 270, 276, 312, 339, 572, 750, 773, 839, 884, 901, 954, 1017, 1104, 1108, 1157,
+      95, 137, 207, 270, 276, 312, 339, 572, 750, 754, 773, 839, 884, 901, 954, 1017, 1104, 1108, 1157,
       1113, 1121, 1251, 1298, 1306, 1370, 1385, 10004, 10005
     ) then u_delete_notice = 1;
     else u_delete_notice = 0;
@@ -216,7 +216,7 @@ proc print data=Prescat.Topa_notices_sales;
   where id in (1159, 1543);
 run; 
 
-** Manually add SSL to IDs (in order) 894, 347&376, 387, 403&1075, 824&1383&1387&1579, 894, 1159&1543, 1466**;
+** CLEANING: Manually add SSL to IDs (in order) 894, 347&376, 387, 403&1075, 824&1383&1387&1579, 894, 1159&1543, 1466**;
 data Address_ssl_xref_new_obs;
   length ssl $ 17;
   infile datalines dlm=",";
@@ -353,13 +353,24 @@ proc sql noprint;
     on _full_address_list_grp.address_id = mar.address_id
     /** CLEANING: Remove irrelevant/incorrect addresses **/
     where not( 
-      _full_address_list_grp.id = 1079 and _full_address_list_grp.address_id = 316359
+      ( _full_address_list_grp.id = 1079 and _full_address_list_grp.address_id = 316359 ) or
+      ( _full_address_list_grp.id = 862 and _full_address_list_grp.Notice_listed_address ) or
+      ( ( _full_address_list_grp.id = 523 or _full_address_list_grp.id = 1260 ) and _full_address_list_grp.Notice_listed_address )
     )
     order by id, address_id;
 
 quit;
 
- 
+
+** Adding # of res units by summing residential units by address_id **;
+proc summary data=Topa_addresses noprint;
+ var ACTIVE_RES_OCCUPANCY_COUNT;
+ by id;
+ output out=TOPA_sum_units (drop=_:)
+	sum=u_sum_units;
+ label ACTIVE_RES_OCCUPANCY_COUNT='Sum of MAR units for all associated buildings (Urban created var)';
+run;
+
 
 *************************************************************************
 ** Add revised TA registration date to Topa_database **;
@@ -459,12 +470,36 @@ run;
 title2;
 
 ** Add u_date_dhcd_received_ta_reg to main Topa_database **;
+** Add MAR unit counts and create final unit count var **;
 
 data Topa_database;
 
-  merge Topa_database2 Match_TOPA_db_to_RCASD_TA_unq (keep=id u_date_dhcd_received_ta_reg);
+  merge 
+    Topa_database2 
+    Match_TOPA_db_to_RCASD_TA_unq (keep=id u_date_dhcd_received_ta_reg)
+    TOPA_sum_units (keep=id u_sum_units);
   by id;
+
+  ** Use MAR unit count unless missing or 0, then use CNHED db unit count **;
+  if u_sum_units > 0 then u_final_units = u_sum_units;
+  else if indexc( units, '+' ) = 0 then u_final_units = input( units, 8.0 );
   
+  ** CLEANING: Manual unit corrections **;
+  select ( id );
+    when ( 258, 403, 1075 ) u_final_units = 61;  /** Terrace Manor **/
+    when ( 623 ) u_final_units = 714;  /** Wingate **/
+    when ( 753 ) u_final_units = 643;  /** THE FLATS **/
+    otherwise /** DO NOTHING **/;
+  end;
+  
+  label u_final_units = "Final housing unit count (Urban created var)";
+  
+  if u_final_units < 1 and not( u_delete_notice ) then do;
+    %warn_put( msg="Project with missing unit count: " id= u_final_units= u_sum_units= units= )
+  end;
+  
+  if u_final_units < 5 then u_delete_notice = 1;
+
 run;
 
 *************************************************************************
@@ -480,6 +515,10 @@ data Topa_ssl_parcel;
    ssl_sorted;
   by ssl; 
   if missing( id ) then delete;
+  
+  ** CLEANING: Remove irrelevant parcels **;
+  if id = 523 and compbl( ssl ) = '0540 0847' then delete;
+  
 run; 
 
 %File_info( data=Topa_ssl_parcel, printobs=5 ) /** 4635 obs**/
@@ -689,3 +728,18 @@ quit;
 title2;
 
 run;
+
+
+title2 '** Notices for properties with fewer than 5 housing units **';
+
+ods tagsets.excelxp file="&_dcdata_default_path\Prescat\Prog\Topa\Properties_under_5_units.xls" style=Normal options(sheet_interval='None' );
+
+proc print data=Topa_database label;
+  where 1 <= u_final_units < 5;
+  id id;
+  var u_CASD_date	u_offer_sale_date property_name all_street_addresses u_final_units u_sum_units units;
+  label units = "Units from notice (CNHED db)";
+run;
+
+ods tagsets.excelxp close;
+
