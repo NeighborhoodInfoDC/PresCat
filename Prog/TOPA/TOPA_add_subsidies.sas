@@ -212,7 +212,7 @@ run;
   label="Preservation Catalog, Project Subsidies for TOPA notices",
   sortby=ID,
   /** Metadata parameters **/
-  revisions=%str(&revisions),
+  revision=%str(New file.),
   /** File info parameters **/
   printobs=10
 )
