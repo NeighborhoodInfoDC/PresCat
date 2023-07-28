@@ -90,7 +90,7 @@ data TOPA_subsidy;
 		end;
   label all_POA_start='Period of affordability, original start date or if original date missing, period of affordability, current start date';
   label actual_POA_start='Original start date used';
-  u_days_notice_to_subsidy = all_POA_start - u_sale_date;
+  u_days_notice_to_subsidy = all_POA_start - max( u_sale_date, u_notice_date );
   label u_days_notice_to_subsidy='Number of days from property sale date to start of subsidy (Urban created var)';
   if not(missing(all_POA_start)); ** delete missing subsidy start dates **; 
   if portfolio in ("LIHTC", "202/811", "PB8", "PRAC", "DC HPTF", "LECOOP"); ** only include LIHTC, federal project-based subsidies, DC HPTF, and LEC **;
@@ -112,8 +112,7 @@ data TOPA_subsidy_after;
 	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 1825 and not(missing(before_LIHTC_aff_units)) then after_LIHTC_aff_units=Units_Assist+before_LIHTC_aff_units;
 	else if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 1825 and missing(before_LIHTC_aff_units) then after_LIHTC_aff_units=Units_Assist;
 	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 then after_LIHTC_aff_units=before_LIHTC_aff_units;
-	else if not(missing(poa_end_actual)) and poa_end_actual-u_sale_date <= 365 then after_LIHTC_aff_units=.;
-	else if not(missing(poa_end_actual)) and missing(u_sale_date) then after_LIHTC_aff_units=before_LIHTC_aff_units;
+	else if not(missing(poa_end_actual)) and poa_end_actual-max(u_sale_date,u_notice_date) <= 1825 then after_LIHTC_aff_units=.;
 	else after_LIHTC_aff_units=Units_Assist;
 
   if portfolio in ( "202/811", "PB8", "PRAC" ) then 
