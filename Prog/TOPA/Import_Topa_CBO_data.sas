@@ -164,10 +164,14 @@ data Topa_CBO_sheet;
   
   select ( id );
   
+    when ( 1555 ) delete;
     when ( 1445 ) id = 1555;
   
     when ( 931 ) delete;
     when ( 10005 ) id = 931;
+    
+    when ( 733 ) delete;
+    when ( 1137 ) id = 733;
     
     otherwise /** DO NOTHING **/;
     

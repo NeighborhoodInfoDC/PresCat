@@ -78,11 +78,19 @@ data Topa_database2;
         %include "&_dcdata_r_path\PresCat\Raw\TOPA\TOPA_DOPA_5+_variable_labels.txt";
       ;
       
+    ** Create proper date variables from text input **;
+    u_CASD_date = input(CASD_Report_week_ending_date, anydtdte12.);
+    u_offer_sale_date = input(Offer_of_Sale_date, anydtdte12.);
+    label
+      u_delete_notice = "Notice flagged for deletion (Urban created var)"
+      u_CASD_date = "CASD report week ending date (Urban created var)"
+      u_offer_sale_date = "Notice offer of sale date (Urban created var)";
+
     **** CLEANING STEPS ****;
     
     ** Delete invalid notices **;
     if id in ( 
-      95, 137, 207, 270, 276, 312, 339, 572, 750, 754, 773, 839, 884, 901, 954, 1017, 1104, 1108, 1157,
+      95, 128, 137, 207, 270, 276, 312, 339, 572, 750, 754, 773, 839, 884, 901, 954, 1017, 1104, 1108, 1157,
       1113, 1121, 1251, 1298, 1306, 1370, 1385, 10004, 10005
     ) then u_delete_notice = 1;
     else u_delete_notice = 0;
@@ -97,7 +105,7 @@ data Topa_database2;
     if lowcase( All_street_addresses ) in: ( "holmead place", "holmstead place" ) then
       All_street_addresses = "3435 Holmead Pl NW";
       
-    ** Address corrections **;
+    ** Data corrections **;
     
     select ( id );
     
@@ -107,20 +115,16 @@ data Topa_database2;
       
       when ( 1107 ) All_street_addresses = "2420 & 2426 15th Place SE"; /** Combined with 1108 **/
       
+      when ( 733 ) u_offer_sale_date = '13dec2014'd;
+      
       otherwise /** DO NOTHING **/
     
     end;
     
-    ** Create proper date variables from text input **;
-    u_CASD_date = input(CASD_Report_week_ending_date, anydtdte12.);
     format u_CASD_date MMDDYY10.;
-    u_offer_sale_date = input(Offer_of_Sale_date, anydtdte12.);
     format u_offer_sale_date MMDDYY10.;
     format u_delete_notice dyesno.;
-    label
-      u_delete_notice = "Notice flagged for deletion (Urban created var)"
-      u_CASD_date = "CASD report week ending date (Urban created var)"
-      u_offer_sale_date = "Notice offer of sale date (Urban created var)";
+
 run;
 
 title2 '** Check for duplicate values of ID **';
@@ -292,7 +296,9 @@ proc sql noprint;
   /** CLEANING: Remove irrelevant sales **/
   where not( 
     ( TOPA_SSL.id = 882 and realprop.saledate = '30mar2020'd ) or 
-    ( TOPA_SSL.id = 184 and year( realprop.saledate ) = 2010 )
+    ( TOPA_SSL.id = 184 and year( realprop.saledate ) = 2010 ) or
+    ( TOPA_SSL.id = 883 and realprop.saledate = '26mar2016'd ) or
+    ( TOPA_SSL.id = 1137 and realprop.saledate = '13apr2018'd )
   )
   order by TOPA_SSL.ID, realprop.SALEDATE;    /** Optional: sorts the output data set **/
 quit;
@@ -353,9 +359,9 @@ proc sql noprint;
     on _full_address_list_grp.address_id = mar.address_id
     /** CLEANING: Remove irrelevant/incorrect addresses **/
     where not( 
+      ( _full_address_list_grp.id in ( 339, 507, 508, 523, 862, 1260, 1545 ) and not( _full_address_list_grp.Notice_listed_address ) ) or
       ( _full_address_list_grp.id = 1079 and _full_address_list_grp.address_id = 316359 ) or
-      ( _full_address_list_grp.id = 862 and _full_address_list_grp.Notice_listed_address ) or
-      ( ( _full_address_list_grp.id = 523 or _full_address_list_grp.id = 1260 ) and _full_address_list_grp.Notice_listed_address )
+      ( _full_address_list_grp.id in ( 733, 1134, 1137 ) and _full_address_list_grp.address_id = 278480 )
     )
     order by id, address_id;
 
@@ -488,7 +494,9 @@ data Topa_database;
   select ( id );
     when ( 258, 403, 1075 ) u_final_units = 61;  /** Terrace Manor **/
     when ( 623 ) u_final_units = 714;  /** Wingate **/
-    when ( 753 ) u_final_units = 643;  /** THE FLATS **/
+    when ( 753 ) u_final_units = 643;  /** The Flats **/
+    when ( 226, 555, 883 ) u_final_units = 48; /** Portner Place (original unit count) **/
+    when ( 1545 ) u_final_units = 432; /** The Batley (original unit count) **/
     otherwise /** DO NOTHING **/;
   end;
   

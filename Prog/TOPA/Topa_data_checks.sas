@@ -52,6 +52,14 @@
       outcome_rehab outcome_buyouts
       outcome_100pct_afford outcome_affordability
       outcome_pres_funding_fail 
+    ;
+  run;
+  
+  title4 "Topa_notices_sales + Topa_cbo_sheet (u_address_id_ref=&u_address_id_ref) - CBO NOTES";
+  proc print data=Topa_sales_cbo;
+    where u_address_id_ref = &u_address_id_ref;
+    id id;
+    var 
       add_notes data_notes
     ;
   run;
