@@ -90,8 +90,8 @@ data Topa_database2;
     
     ** Delete invalid notices **;
     if id in ( 
-      95, 128, 137, 207, 270, 276, 312, 339, 572, 750, 754, 773, 839, 884, 901, 954, 1017, 1104, 1108, 1157,
-      1113, 1121, 1251, 1298, 1306, 1370, 1385, 10004, 10005
+      95, 128, 137, 207, 270, 276, 312, 339, 557, 572, 750, 754, 773, 839, 884, 901, 954, 
+      1017, 1104, 1108, 1157, 1113, 1121, 1251, 1298, 1306, 1370, 1385, 10002, 10004, 10005
     ) then u_delete_notice = 1;
     else u_delete_notice = 0;
     
@@ -117,6 +117,23 @@ data Topa_database2;
       
       when ( 733 ) u_offer_sale_date = '13dec2014'd;
       
+      /** From TOPA notices - Possible address corrections.xlsx **/
+      when ( 25 ) All_street_addresses = "4837 3RD STREET NW";
+      when ( 41 ) All_street_addresses = "1307 12TH STREET NW";
+      when ( 83 ) All_street_addresses = "3536 CENTER STREET NW";
+      when ( 127 ) All_street_addresses = "4209 DIX STREET NE";
+      when ( 176 ) All_street_addresses = "4837 3RD STREET NW";
+      when ( 223 ) All_street_addresses = "4912 NASH STREET NE";
+      when ( 309 ) All_street_addresses = "1011 7TH STREET NE";
+      when ( 404 ) All_street_addresses = "5810 BLAIR ROAD NW";
+      when ( 471 ) All_street_addresses = "2020 19TH PLACE SE";
+      when ( 617 ) All_street_addresses = "1911 18TH STREET SE";
+      when ( 812 ) All_street_addresses = "501 12TH STREET NE";
+      when ( 1381 ) All_street_addresses = "4275 FOOTE STREET NE";
+      when ( 10001 ) All_street_addresses = "4526 13TH STREET NW";
+      when ( 10006 ) All_street_addresses = "86 WEBSTER STREET NE";
+      when ( 10009 ) All_street_addresses = "624 GIRARD STREET NE";
+
       otherwise /** DO NOTHING **/
     
     end;
@@ -359,7 +376,7 @@ proc sql noprint;
     on _full_address_list_grp.address_id = mar.address_id
     /** CLEANING: Remove irrelevant/incorrect addresses **/
     where not( 
-      ( _full_address_list_grp.id in ( 339, 507, 508, 523, 862, 1260, 1545 ) and not( _full_address_list_grp.Notice_listed_address ) ) or
+      ( _full_address_list_grp.id in ( 339, 507, 508, 523, 575, 862, 1260, 1545 ) and not( _full_address_list_grp.Notice_listed_address ) ) or
       ( _full_address_list_grp.id = 1079 and _full_address_list_grp.address_id = 316359 ) or
       ( _full_address_list_grp.id in ( 733, 1134, 1137 ) and _full_address_list_grp.address_id = 278480 )
     )
