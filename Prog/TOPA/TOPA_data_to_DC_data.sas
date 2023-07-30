@@ -23,7 +23,7 @@
 %let revisions = Add cleaning steps.;
 
 ** Download and read TOPA dataset into SAS dataset**;
-%let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA-DOPA 5+_with_var_names_3_20_23_urban_update.csv";
+%let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA-DOPA 5+_with_var_names_3_20_23_urban_update_7_30_23.csv";
 filename fixed temp;
 /** Remove carriage return and line feed characters within quoted strings **/
 /*'0D'x is the hexadecimal representation of CR and
@@ -82,7 +82,7 @@ data Topa_database2;
     u_CASD_date = input(CASD_Report_week_ending_date, anydtdte12.);
     u_offer_sale_date = input(Offer_of_Sale_date, anydtdte12.);
     label
-      u_delete_notice = "Notice flagged for deletion (Urban created var)"
+      u_delete_notice = "Notice flagged for deletion from analysis (Urban created var)"
       u_CASD_date = "CASD report week ending date (Urban created var)"
       u_offer_sale_date = "Notice offer of sale date (Urban created var)";
 
@@ -90,7 +90,7 @@ data Topa_database2;
     
     ** Delete invalid notices **;
     if id in ( 
-      95, 128, 137, 165, 207, 270, 276, 312, 339, 557, 572, 750, 754, 773, 839, 884, 901, 954, 
+      95, 128, 137, 165, 207, 270, 276, 312, 339, 557, 572, 750, 754, 773, 839, 884, 901, 948, 954, 
       1017, 1104, 1108, 1157, 1113, 1121, 1251, 1298, 1306, 1370, 1385, 10002, 10004, 10005
     ) then u_delete_notice = 1;
     else u_delete_notice = 0;
@@ -300,17 +300,17 @@ run;
 
 data Missing_sales;
 
-  length ssl $ 17 saledate 8 ownername_full $ XXX ui_proptype $ 3 mix1txtype $ XXX premiseadd $ XXX;
+  length ssl $ 17 saledate 8 ownername_full $ 150 ui_proptype $ 2 mix1txtype $ 2 premiseadd $ 50;
   informat saledate mmddyy12.;
   infile datalines dlm=",";
   input ssl saledate ownername_full ui_proptype mix1txtype premiseadd;
 
 datalines;
-0315    0026, 11/15/2011, Jair Lynch (Regenesis Porfolio sale), XXX, XX, 1111 MASSACHUSETTS AVENUE NW
-2790    0812, 11/15/2011, Jair Lynch (Regenesis Porfolio sale), XXX, XX, 1339 FORT STEVENS DRIVE NW
-3642    0046, 11/15/2011, Jair Lynch (Regenesis Porfolio sale), XXX, XX, 617 HAMLIN STREET NE
-2905    0037, 11/15/2011, Jair Lynch (Regenesis Porfolio sale), XXX, XX, 930 RANDOLPH STREET NW
-2947    0080, 11/15/2011, Jair Lynch (Regenesis Porfolio sale), XXX, XX, 6676 GEORGIA AVENUE NW
+0315    0026, 11/15/2011, Jair Lynch Real Estate Partners (Regenesis Porfolio sale), 13, TX, 1111 MASSACHUSETTS AVENUE NW
+2790    0812, 11/15/2011, Jair Lynch Real Estate Partners (Regenesis Porfolio sale), 13, TX, 1339 FORT STEVENS DRIVE NW
+3642    0046, 11/15/2011, Jair Lynch Real Estate Partners (Regenesis Porfolio sale), 13, TX, 617 HAMLIN STREET NE
+2905    0037, 11/15/2011, Jair Lynch Real Estate Partners (Regenesis Porfolio sale), 13, TX, 930 RANDOLPH STREET NW
+2947    0080, 11/15/2011, Jair Lynch Real Estate Partners (Regenesis Porfolio sale), 13, TX, 6676 GEORGIA AVENUE NW
 run;
 
 data Sales_master;
@@ -476,6 +476,10 @@ proc sql noprint;
   order by id, notice_date;
 quit;
 
+proc sort data=Topa_database_w_del;
+  by id;
+run;
+
 data Match_TOPA_db_to_RCASD_TA_unq;
 
   merge 
@@ -525,6 +529,10 @@ title2;
 ** Add u_date_dhcd_received_ta_reg to main Topa_database **;
 ** Add MAR unit counts and create final unit count var **;
 
+proc sort data=Topa_database2;
+  by id;
+run;
+
 data Topa_database;
 
   merge 
@@ -533,9 +541,12 @@ data Topa_database;
     TOPA_sum_units (keep=id u_sum_units);
   by id;
 
-  ** Use MAR unit count unless missing or 0, then use CNHED db unit count **;
-  if u_sum_units > 0 then u_final_units = u_sum_units;
+  ** Default to MAR unit count unless missing or < 5
+  ** Otherwise, use CNHED db unit count unless it is "5+" **;
+  if u_sum_units >= 5 then u_final_units = u_sum_units;
   else if indexc( units, '+' ) = 0 then u_final_units = input( units, 8.0 );
+
+  if missing( u_final_units ) then u_final_units = u_sum_units;
   
   ** CLEANING: Manual unit corrections **;
   select ( id );
@@ -553,8 +564,6 @@ data Topa_database;
     %warn_put( msg="Project with missing unit count: " id= u_final_units= u_sum_units= units= )
   end;
   
-  if u_final_units < 5 then u_delete_notice = 1;
-
 run;
 
 *************************************************************************
@@ -787,14 +796,17 @@ run;
 
 title2 '** Notices for properties with fewer than 5 housing units **';
 
-ods tagsets.excelxp file="&_dcdata_default_path\Prescat\Prog\Topa\Properties_under_5_units.xls" style=Normal options(sheet_interval='None' );
+ods tagsets.excelxp 
+  file="&_dcdata_default_path\Prescat\Prog\Topa\Properties_under_5_units.xls" 
+  style=Normal options(sheet_interval='None' absolute_column_width="16");
 
 proc print data=Topa_database label;
   where 1 <= u_final_units < 5;
   id id;
-  var u_CASD_date	u_offer_sale_date property_name all_street_addresses u_final_units u_sum_units units;
+  var u_CASD_date u_offer_sale_date property_name all_street_addresses u_final_units u_sum_units units;
   label units = "Units from notice (CNHED db)";
 run;
 
 ods tagsets.excelxp close;
 
+title2;
