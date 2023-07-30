@@ -96,7 +96,7 @@
     drop id;
     rename id_num=id;
     
-    %if %lowcase( &file_suffix ) = without_sales %then %do;
+    %if %lowcase( &file_suffix ) = without_sales or %lowcase( &file_suffix ) = add_these_topas %then %do;
     
       length cbo_unit_count_char $ 7;
     
@@ -104,6 +104,12 @@
       
       drop cbo_unit_count;
       rename cbo_unit_count_char=cbo_unit_count;
+      
+    %end;
+        
+    %if %lowcase( &file_suffix ) = add_these_topas %then %do;
+    
+      drop u_sale_date u_notice_date u_address_id_ref;
       
     %end;
         
@@ -141,24 +147,32 @@
 
 %Read_data( file_suffix=sales_2021_2022 )
 
+%Read_data( file_suffix=add_these_topas )
+
 
 ** Combine data sets **;
 
 data Topa_CBO_sheet;
 
-  length cbo_complete $ 40 r_ta_provider r_ta_lawyer $ 80 add_notes data_notes $ 600;
+  length 
+    cbo_complete $ 40 
+    r_ta_provider r_ta_lawyer outcome_100pct_afford $ 80 
+    outcome_nonprofit_owner $ 200
+    add_notes data_notes $ 600;
 
   set 
     Topa_CBO_sheet_with_sales (in=in1)
     Topa_CBO_sheet_without_sales (in=in2)
-    Topa_CBO_sheet_sales_2021_2022;
+    Topa_CBO_sheet_sales_2021_2022 (in=in3)
+    Topa_CBO_sheet_add_these_topas;
   by id;
   
   length Source_sheet $ 24;
   
   if in1 then Source_sheet = "WITH SALES";
   else if in2 then Source_sheet = "WITHOUT SALES";
-  else Source_sheet = "SALES IN 2021 AND 2022";
+  else if in3 then Source_sheet = "SALES IN 2021 AND 2022";
+  else Source_sheet = "ADD THESE TOPAS";
   
   ** CLEANING: Switch outcomes to different notice **;
   
@@ -358,7 +372,8 @@ ods listing;
   /** Metadata parameters **/
   revisions=%str(&revisions),
   /** File info parameters **/
-  printobs=5
+  printobs=5,
+  freqvars=source_sheet
 )
 
 
