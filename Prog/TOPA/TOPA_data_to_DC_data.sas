@@ -90,7 +90,7 @@ data Topa_database2;
     
     ** Delete invalid notices **;
     if id in ( 
-      95, 128, 137, 207, 270, 276, 312, 339, 557, 572, 750, 754, 773, 839, 884, 901, 954, 
+      95, 128, 137, 165, 207, 270, 276, 312, 339, 557, 572, 750, 754, 773, 839, 884, 901, 954, 
       1017, 1104, 1108, 1157, 1113, 1121, 1251, 1298, 1306, 1370, 1385, 10002, 10004, 10005
     ) then u_delete_notice = 1;
     else u_delete_notice = 0;
@@ -133,6 +133,11 @@ data Topa_database2;
       when ( 10001 ) All_street_addresses = "4526 13TH STREET NW";
       when ( 10006 ) All_street_addresses = "86 WEBSTER STREET NE";
       when ( 10009 ) All_street_addresses = "624 GIRARD STREET NE";
+      
+      /** Regenesis Portfolio **/
+      when ( 419 ) All_street_addresses = "930, 940, 960 Randolph Street NW"; /** Petworth Place **/
+      when ( 418, 963 ) 
+        All_street_addresses = "617,621,625,629,633,637,641 & 643 Hamlin Street NE and 2908, 2912, 2916 & 2920 7th Street NE"; /** Brookland Place **/
 
       otherwise /** DO NOTHING **/
     
@@ -291,7 +296,32 @@ proc print data=TOPA_SSL;
   where id in (347,376,387,403,824,894,1075,1159,1382,1387,1466,1543,1579);
 run;
 
-%File_info( data=RealProp.Sales_master, printobs=5 )
+** CLEANING: Add missing sales records to Sales_master **;
+
+data Missing_sales;
+
+  length ssl $ 17 saledate 8 ownername_full $ XXX ui_proptype $ 3 mix1txtype $ XXX premiseadd $ XXX;
+  informat saledate mmddyy12.;
+  infile datalines dlm=",";
+  input ssl saledate ownername_full ui_proptype mix1txtype premiseadd;
+
+datalines;
+0315    0026, 11/15/2011, Jair Lynch (Regenesis Porfolio sale), XXX, XX, 1111 MASSACHUSETTS AVENUE NW
+2790    0812, 11/15/2011, Jair Lynch (Regenesis Porfolio sale), XXX, XX, 1339 FORT STEVENS DRIVE NW
+3642    0046, 11/15/2011, Jair Lynch (Regenesis Porfolio sale), XXX, XX, 617 HAMLIN STREET NE
+2905    0037, 11/15/2011, Jair Lynch (Regenesis Porfolio sale), XXX, XX, 930 RANDOLPH STREET NW
+2947    0080, 11/15/2011, Jair Lynch (Regenesis Porfolio sale), XXX, XX, 6676 GEORGIA AVENUE NW
+run;
+
+data Sales_master;
+
+  set Missing_sales RealProp.Sales_master;
+  
+  informat _all_ ;
+  
+run;
+
+%File_info( data=Sales_master, printobs=5 )
 
 ** match property sales records in realprop.sales_master to TOPA addresses **;
 proc sql noprint;
@@ -308,7 +338,7 @@ proc sql noprint;
 	RealProp.address1, RealProp.address2, RealProp.address3, RealProp.address1_prev, RealProp.address2_prev, RealProp.address3_prev, RealProp.premiseadd, RealProp.hstd_code,
     RealProp.mix1txtype, Realprop.mix2txtype ,RealProp.ownerpt_extractdat_first, RealProp.ownerpt_extractdat_last
     from TOPA_SSL (where=(not(missing(SSL)))) as TOPA_SSL
-      left join RealProp.Sales_master as realprop    /** Left join = only keep obs that are in TOPA_geocoded **/
+      left join Sales_master as realprop    /** Left join = only keep obs that are in TOPA_geocoded **/
   on TOPA_SSL.SSL = realprop.SSL   /** This is the condition you are matching on **/
   /** CLEANING: Remove irrelevant sales **/
   where not( 
@@ -376,7 +406,7 @@ proc sql noprint;
     on _full_address_list_grp.address_id = mar.address_id
     /** CLEANING: Remove irrelevant/incorrect addresses **/
     where not( 
-      ( _full_address_list_grp.id in ( 339, 507, 508, 523, 575, 862, 1260, 1545 ) and not( _full_address_list_grp.Notice_listed_address ) ) or
+      ( _full_address_list_grp.id in ( 339, 507, 508, 523, 575, 862, 1260, 1545, 58, 404, 999, 1560, 568, 1506, 595, 1505 ) and not( _full_address_list_grp.Notice_listed_address ) ) or
       ( _full_address_list_grp.id = 1079 and _full_address_list_grp.address_id = 316359 ) or
       ( _full_address_list_grp.id in ( 733, 1134, 1137 ) and _full_address_list_grp.address_id = 278480 )
     )
