@@ -68,7 +68,7 @@
   proc print data=Topa_sales_cbo label;
     where u_address_id_ref = &u_address_id_ref;
     id id;
-    var units cbo_unit_count u_sum_units;
+    var units cbo_unit_count u_sum_units u_final_units;
     label 
       units = 'Units from notice (CNHED db)'
     ;
