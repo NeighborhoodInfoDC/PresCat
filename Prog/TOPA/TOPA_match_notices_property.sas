@@ -29,25 +29,9 @@ proc sort data=Prescat.Topa_addresses out=Topa_addresses_sort;
   by id address_id;
 run;
 
-** Adding # of res units by summing residential units by address_id **;
-proc summary data=Topa_addresses_sort
- noprint;
- var ACTIVE_RES_OCCUPANCY_COUNT;
- class id;
- output out=TOPA_sum_units (drop=_:)
-	sum=u_sum_units;
- label u_sum_units='Sum of MAR units for all associated buildings (Urban created var)';
-run;
-
-** Merge summed dataset above with TOPA_notices_sales **;
-data TOPA_address_merge;
-  merge TOPA_sum_units Topa_addresses_sort;
-  by id;
-run;
-
 /** create ID (notice) x address_id crosswalk **/
 data Topa_id_x_address_1; 
-  set TOPA_address_merge;
+  set Topa_addresses_sort;
   by id; 
   if first.id then output; 
   rename address_id=u_address_id_ref;
@@ -59,9 +43,9 @@ run;
 data Topa_id_x_address; 
   merge 
     Topa_id_x_address_1
-    Prescat.Topa_database (keep=id all_street_addresses address_for_mapping units /*u_delete_notice*/);
+    Prescat.Topa_database (keep=id all_street_addresses address_for_mapping units u_delete_notice);
   by id;
-  /*if u_delete_notice then delete;*/
+  if u_delete_notice then delete;
 run; 
  
 %File_info( data=Topa_id_x_address, printobs=5 ) /** 1750 obs**/
@@ -285,7 +269,7 @@ run;
 proc print data=Topa_notice_flag (firstobs=79 obs=94);
   /**where u_address_id_ref=5142;**/
   by u_address_id_ref;
-  var id u_sum_units u_notice_date u_sale_date u_dedup_notice u_notice_with_sale u_days_: u_saleprice u_ownername u_proptype;
+  var id u_final_units u_notice_date u_sale_date u_dedup_notice u_notice_with_sale u_days_: u_saleprice u_ownername u_proptype;
 run;
 
 %File_info( data=Topa_notice_flag, printobs=5 ) 
