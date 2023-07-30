@@ -20,10 +20,10 @@
 %DCData_lib( MAR )
 %DCData_lib( RealProp )
 
-%let revisions = Remove nonexact address matches from data.;
+%let revisions = Add cleaning steps.;
 
 ** Download and read TOPA dataset into SAS dataset**;
-%let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA-DOPA 5+_with_var_names_3_20_23_urban_update.csv";
+%let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA-DOPA 5+_with_var_names_3_20_23_urban_update_7_30_23.csv";
 filename fixed temp;
 /** Remove carriage return and line feed characters within quoted strings **/
 /*'0D'x is the hexadecimal representation of CR and
@@ -78,6 +78,23 @@ data Topa_database2;
         %include "&_dcdata_r_path\PresCat\Raw\TOPA\TOPA_DOPA_5+_variable_labels.txt";
       ;
       
+    ** Create proper date variables from text input **;
+    u_CASD_date = input(CASD_Report_week_ending_date, anydtdte12.);
+    u_offer_sale_date = input(Offer_of_Sale_date, anydtdte12.);
+    label
+      u_delete_notice = "Notice flagged for deletion from analysis (Urban created var)"
+      u_CASD_date = "CASD report week ending date (Urban created var)"
+      u_offer_sale_date = "Notice offer of sale date (Urban created var)";
+
+    **** CLEANING STEPS ****;
+    
+    ** Delete invalid notices **;
+    if id in ( 
+      95, 128, 137, 165, 207, 270, 276, 312, 339, 557, 572, 750, 754, 773, 839, 884, 901, 948, 954, 
+      1017, 1104, 1108, 1157, 1113, 1121, 1251, 1298, 1306, 1370, 1385, 10002, 10004, 10005
+    ) then u_delete_notice = 1;
+    else u_delete_notice = 0;
+    
     ** Change temporary CR-LF replacement text in Address (improves address parsing) **;
     All_street_addresses = left( compbl( tranwrd( All_street_addresses, '||', '; ' ) ) );
     
@@ -87,15 +104,49 @@ data Topa_database2;
     ** Fill in address for Holmead Place Apartments (Holmstead Place is a typo) **;
     if lowcase( All_street_addresses ) in: ( "holmead place", "holmstead place" ) then
       All_street_addresses = "3435 Holmead Pl NW";
+      
+    ** Data corrections **;
     
-    ** Create proper date variables from text input **;
-    u_CASD_date = input(CASD_Report_week_ending_date, anydtdte12.);
+    select ( id );
+    
+      when ( 68, 73, 605 ) All_street_addresses = "4505-4511 B St SE; 4608-4614 Benning Rd SE; 4600-4606 Benning Rd SE; 4605-4611 Bass Pl SE";
+      
+      when ( 15 ) All_street_addresses = "1215 49th Street NE; 1225 49TH STREET NE";
+      
+      when ( 1107 ) All_street_addresses = "2420 & 2426 15th Place SE"; /** Combined with 1108 **/
+      
+      when ( 733 ) u_offer_sale_date = '13dec2014'd;
+      
+      /** From TOPA notices - Possible address corrections.xlsx **/
+      when ( 25 ) All_street_addresses = "4837 3RD STREET NW";
+      when ( 41 ) All_street_addresses = "1307 12TH STREET NW";
+      when ( 83 ) All_street_addresses = "3536 CENTER STREET NW";
+      when ( 127 ) All_street_addresses = "4209 DIX STREET NE";
+      when ( 176 ) All_street_addresses = "4837 3RD STREET NW";
+      when ( 223 ) All_street_addresses = "4912 NASH STREET NE";
+      when ( 309 ) All_street_addresses = "1011 7TH STREET NE";
+      when ( 404 ) All_street_addresses = "5810 BLAIR ROAD NW";
+      when ( 471 ) All_street_addresses = "2020 19TH PLACE SE";
+      when ( 617 ) All_street_addresses = "1911 18TH STREET SE";
+      when ( 812 ) All_street_addresses = "501 12TH STREET NE";
+      when ( 1381 ) All_street_addresses = "4275 FOOTE STREET NE";
+      when ( 10001 ) All_street_addresses = "4526 13TH STREET NW";
+      when ( 10006 ) All_street_addresses = "86 WEBSTER STREET NE";
+      when ( 10009 ) All_street_addresses = "624 GIRARD STREET NE";
+      
+      /** Regenesis Portfolio **/
+      when ( 419 ) All_street_addresses = "930, 940, 960 Randolph Street NW"; /** Petworth Place **/
+      when ( 418, 963 ) 
+        All_street_addresses = "617,621,625,629,633,637,641 & 643 Hamlin Street NE and 2908, 2912, 2916 & 2920 7th Street NE"; /** Brookland Place **/
+
+      otherwise /** DO NOTHING **/
+    
+    end;
+    
     format u_CASD_date MMDDYY10.;
-    u_offer_sale_date = input(Offer_of_Sale_date, anydtdte12.);
     format u_offer_sale_date MMDDYY10.;
-    label
-      u_CASD_date = "CASD report week ending date (Urban created var)"
-      u_offer_sale_date = "Notice offer of sale date (Urban created var)";
+    format u_delete_notice dyesno.;
+
 run;
 
 title2 '** Check for duplicate values of ID **';
@@ -114,8 +165,13 @@ run;
 title2;
 
 **parse out individual addresses from TOPA dataset**;
+data Topa_database_w_del;
+  set Topa_database2;
+  where not( u_delete_notice );
+run;
+
 %Rcasd_address_parse(
-	data=Topa_database2,
+	data=Topa_database_w_del,
 	out=TOPA_addresses_notices,
 	id=ID,
 	addr=All_street_addresses,
@@ -186,7 +242,7 @@ proc print data=Prescat.Topa_notices_sales;
   where id in (1159, 1543);
 run; 
 
-** Manually add SSL to IDs (in order) 894, 347&376, 387, 403&1075, 824&1383&1387&1579, 894, 1159&1543, 1466**;
+** CLEANING: Manually add SSL to IDs (in order) 894, 347&376, 387, 403&1075, 824&1383&1387&1579, 894, 1159&1543, 1466**;
 data Address_ssl_xref_new_obs;
   length ssl $ 17;
   infile datalines dlm=",";
@@ -240,7 +296,32 @@ proc print data=TOPA_SSL;
   where id in (347,376,387,403,824,894,1075,1159,1382,1387,1466,1543,1579);
 run;
 
-%File_info( data=RealProp.Sales_master, printobs=5 )
+** CLEANING: Add missing sales records to Sales_master **;
+
+data Missing_sales;
+
+  length ssl $ 17 saledate 8 ownername_full $ 150 ui_proptype $ 2 mix1txtype $ 2 premiseadd $ 50;
+  informat saledate mmddyy12.;
+  infile datalines dlm=",";
+  input ssl saledate ownername_full ui_proptype mix1txtype premiseadd;
+
+datalines;
+0315    0026, 11/15/2011, Jair Lynch Real Estate Partners (Regenesis Porfolio sale), 13, TX, 1111 MASSACHUSETTS AVENUE NW
+2790    0812, 11/15/2011, Jair Lynch Real Estate Partners (Regenesis Porfolio sale), 13, TX, 1339 FORT STEVENS DRIVE NW
+3642    0046, 11/15/2011, Jair Lynch Real Estate Partners (Regenesis Porfolio sale), 13, TX, 617 HAMLIN STREET NE
+2905    0037, 11/15/2011, Jair Lynch Real Estate Partners (Regenesis Porfolio sale), 13, TX, 930 RANDOLPH STREET NW
+2947    0080, 11/15/2011, Jair Lynch Real Estate Partners (Regenesis Porfolio sale), 13, TX, 6676 GEORGIA AVENUE NW
+run;
+
+data Sales_master;
+
+  set Missing_sales RealProp.Sales_master;
+  
+  informat _all_ ;
+  
+run;
+
+%File_info( data=Sales_master, printobs=5 )
 
 ** match property sales records in realprop.sales_master to TOPA addresses **;
 proc sql noprint;
@@ -257,10 +338,18 @@ proc sql noprint;
 	RealProp.address1, RealProp.address2, RealProp.address3, RealProp.address1_prev, RealProp.address2_prev, RealProp.address3_prev, RealProp.premiseadd, RealProp.hstd_code,
     RealProp.mix1txtype, Realprop.mix2txtype ,RealProp.ownerpt_extractdat_first, RealProp.ownerpt_extractdat_last
     from TOPA_SSL (where=(not(missing(SSL)))) as TOPA_SSL
-      left join RealProp.Sales_master as realprop    /** Left join = only keep obs that are in TOPA_geocoded **/
+      left join Sales_master as realprop    /** Left join = only keep obs that are in TOPA_geocoded **/
   on TOPA_SSL.SSL = realprop.SSL   /** This is the condition you are matching on **/
+  /** CLEANING: Remove irrelevant sales **/
+  where not( 
+    ( TOPA_SSL.id = 882 and realprop.saledate = '30mar2020'd ) or 
+    ( TOPA_SSL.id = 184 and year( realprop.saledate ) = 2010 ) or
+    ( TOPA_SSL.id = 883 and realprop.saledate = '26mar2016'd ) or
+    ( TOPA_SSL.id = 1137 and realprop.saledate = '13apr2018'd )
+  )
   order by TOPA_SSL.ID, realprop.SALEDATE;    /** Optional: sorts the output data set **/
 quit;
+
 
 ** Add information on owner type (buyer) **;
 %Parcel_base_who_owns(
@@ -315,9 +404,25 @@ proc sql noprint;
     from _full_address_list_grp left join 
     Mar.Address_points_view as mar
     on _full_address_list_grp.address_id = mar.address_id
+    /** CLEANING: Remove irrelevant/incorrect addresses **/
+    where not( 
+      ( _full_address_list_grp.id in ( 339, 507, 508, 523, 575, 862, 1260, 1545, 58, 404, 999, 1560, 568, 1506, 595, 1505 ) and not( _full_address_list_grp.Notice_listed_address ) ) or
+      ( _full_address_list_grp.id = 1079 and _full_address_list_grp.address_id = 316359 ) or
+      ( _full_address_list_grp.id in ( 733, 1134, 1137 ) and _full_address_list_grp.address_id = 278480 )
+    )
     order by id, address_id;
 
 quit;
+
+
+** Adding # of res units by summing residential units by address_id **;
+proc summary data=Topa_addresses noprint;
+ var ACTIVE_RES_OCCUPANCY_COUNT;
+ by id;
+ output out=TOPA_sum_units (drop=_:)
+	sum=u_sum_units;
+ label ACTIVE_RES_OCCUPANCY_COUNT='Sum of MAR units for all associated buildings (Urban created var)';
+run;
 
 
 *************************************************************************
@@ -360,7 +465,7 @@ proc sql noprint;
       topa.all_street_addresses, topa.u_casd_date,
       addr.address_id, addr.notice_listed_address
     from 
-      Topa_database2 as topa
+      Topa_database_w_del as topa
       left join
       Topa_addresses as addr
       on topa.id = addr.id
@@ -371,10 +476,14 @@ proc sql noprint;
   order by id, notice_date;
 quit;
 
+proc sort data=Topa_database_w_del;
+  by id;
+run;
+
 data Match_TOPA_db_to_RCASD_TA_unq;
 
   merge 
-    Topa_database2 (keep=id u_offer_sale_date date_dhcd_received_ta_reg u_casd_date all_street_addresses)
+    Topa_database_w_del (keep=id u_offer_sale_date date_dhcd_received_ta_reg u_casd_date all_street_addresses)
     Match_TOPA_db_to_RCASD_TA (where=(not( missing( id ) or missing( nidc_rcasd_id ))));
   by id;
   
@@ -418,11 +527,42 @@ run;
 title2;
 
 ** Add u_date_dhcd_received_ta_reg to main Topa_database **;
+** Add MAR unit counts and create final unit count var **;
+
+proc sort data=Topa_database2;
+  by id;
+run;
 
 data Topa_database;
 
-  merge Topa_database2 Match_TOPA_db_to_RCASD_TA_unq (keep=id u_date_dhcd_received_ta_reg);
+  merge 
+    Topa_database2 
+    Match_TOPA_db_to_RCASD_TA_unq (keep=id u_date_dhcd_received_ta_reg)
+    TOPA_sum_units (keep=id u_sum_units);
   by id;
+
+  ** Default to MAR unit count unless missing or < 5
+  ** Otherwise, use CNHED db unit count unless it is "5+" **;
+  if u_sum_units >= 5 then u_final_units = u_sum_units;
+  else if indexc( units, '+' ) = 0 then u_final_units = input( units, 8.0 );
+
+  if missing( u_final_units ) then u_final_units = u_sum_units;
+  
+  ** CLEANING: Manual unit corrections **;
+  select ( id );
+    when ( 258, 403, 1075 ) u_final_units = 61;  /** Terrace Manor **/
+    when ( 623 ) u_final_units = 714;  /** Wingate **/
+    when ( 753 ) u_final_units = 643;  /** The Flats **/
+    when ( 226, 555, 883 ) u_final_units = 48; /** Portner Place (original unit count) **/
+    when ( 1545 ) u_final_units = 432; /** The Batley (original unit count) **/
+    otherwise /** DO NOTHING **/;
+  end;
+  
+  label u_final_units = "Final housing unit count (Urban created var)";
+  
+  if u_final_units < 1 and not( u_delete_notice ) then do;
+    %warn_put( msg="Project with missing unit count: " id= u_final_units= u_sum_units= units= )
+  end;
   
 run;
 
@@ -439,6 +579,10 @@ data Topa_ssl_parcel;
    ssl_sorted;
   by ssl; 
   if missing( id ) then delete;
+  
+  ** CLEANING: Remove irrelevant parcels **;
+  if id = 523 and compbl( ssl ) = '0540 0847' then delete;
+  
 run; 
 
 %File_info( data=Topa_ssl_parcel, printobs=5 ) /** 4635 obs**/
@@ -567,7 +711,7 @@ ods listing;   /** Reopen the listing destination **/
     revisions=%str(&revisions),
     /** File info parameters **/
     printobs=10,
-    freqvars=technical_assistance_provider
+    freqvars=technical_assistance_provider u_delete_notice
   )
 
   %Finalize_data_set( 
@@ -624,7 +768,7 @@ proc sql;
     TOPA_addresses.address_id
   from TOPA_database left join TOPA_addresses
   on TOPA_database.ID = TOPA_addresses.ID
-  where missing( TOPA_addresses.address_id )
+  where missing( TOPA_addresses.address_id ) and not( TOPA_database.u_delete_notice )
   order by id;
   
 quit;
@@ -640,7 +784,7 @@ proc sql;
     TOPA_ssl.ssl
   from TOPA_database left join TOPA_ssl
   on TOPA_database.ID = TOPA_ssl.ID
-  where missing( TOPA_ssl.ssl )
+  where missing( TOPA_ssl.ssl ) and not( TOPA_database.u_delete_notice )
   order by id;
   
 quit;
@@ -648,3 +792,21 @@ quit;
 title2;
 
 run;
+
+
+title2 '** Notices for properties with fewer than 5 housing units **';
+
+ods tagsets.excelxp 
+  file="&_dcdata_default_path\Prescat\Prog\Topa\Properties_under_5_units.xls" 
+  style=Normal options(sheet_interval='None' absolute_column_width="16");
+
+proc print data=Topa_database label;
+  where 1 <= u_final_units < 5;
+  id id;
+  var u_CASD_date u_offer_sale_date property_name all_street_addresses u_final_units u_sum_units units;
+  label units = "Units from notice (CNHED db)";
+run;
+
+ods tagsets.excelxp close;
+
+title2;
