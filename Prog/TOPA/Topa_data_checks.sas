@@ -36,43 +36,47 @@
   select u_address_id_ref into :u_address_id_ref from Prescat.Topa_notices_sales
   where id = &id;
   quit;
+  
+  %if %length( &u_address_id_ref ) > 0 %then %do;
 
-  title4 "Topa_notices_sales + Topa_cbo_sheet (u_address_id_ref=&u_address_id_ref)";
-  proc print data=Topa_sales_cbo;
-    where u_address_id_ref = &u_address_id_ref;
-    id id;
-    var 
-      u_notice_date u_dedup_notice u_notice_with_sale u_sale_date
-      cbo_dhcd_received_ta_reg
-      r_Existing_LIHTC r_New_LIHTC TA_assign_rights
-      outcome_homeowner outcome_nonprofit_owner
-      outcome_rent_assign_rc_cont 
-      outcome_assign_section8
-      outcome_assign_profit_share
-      outcome_rehab outcome_buyouts
-      outcome_100pct_afford outcome_affordability
-      outcome_pres_funding_fail 
-    ;
-  run;
-  
-  title4 "Topa_notices_sales + Topa_cbo_sheet (u_address_id_ref=&u_address_id_ref) - CBO NOTES";
-  proc print data=Topa_sales_cbo;
-    where u_address_id_ref = &u_address_id_ref;
-    id id;
-    var 
-      add_notes data_notes
-    ;
-  run;
-  
-  title4 "Unit count comparisons";
-  proc print data=Topa_sales_cbo label;
-    where u_address_id_ref = &u_address_id_ref;
-    id id;
-    var units cbo_unit_count u_sum_units u_final_units;
-    label 
-      units = 'Units from notice (CNHED db)'
-    ;
-  run;
+    title4 "Topa_notices_sales + Topa_cbo_sheet (u_address_id_ref=&u_address_id_ref)";
+    proc print data=Topa_sales_cbo;
+      where u_address_id_ref = &u_address_id_ref;
+      id id;
+      var 
+        u_notice_date u_dedup_notice u_notice_with_sale u_sale_date
+        cbo_dhcd_received_ta_reg
+        r_Existing_LIHTC r_New_LIHTC TA_assign_rights
+        outcome_homeowner outcome_nonprofit_owner
+        outcome_rent_assign_rc_cont 
+        outcome_assign_section8
+        outcome_assign_profit_share
+        outcome_rehab outcome_buyouts
+        outcome_100pct_afford outcome_affordability
+        outcome_pres_funding_fail 
+      ;
+    run;
+    
+    title4 "Topa_notices_sales + Topa_cbo_sheet (u_address_id_ref=&u_address_id_ref) - CBO NOTES";
+    proc print data=Topa_sales_cbo;
+      where u_address_id_ref = &u_address_id_ref;
+      id id;
+      var 
+        add_notes data_notes
+      ;
+    run;
+    
+    title4 "Unit count comparisons";
+    proc print data=Topa_sales_cbo label;
+      where u_address_id_ref = &u_address_id_ref;
+      id id;
+      var units cbo_unit_count u_sum_units u_final_units;
+      label 
+        units = 'Units from notice (CNHED db)'
+      ;
+    run;
+    
+  %end;
 
   title4 'Topa_database';
   proc print data=Prescat.Topa_database;
