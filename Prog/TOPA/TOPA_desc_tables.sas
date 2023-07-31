@@ -16,6 +16,7 @@
 
 ** Define libraries **;
 %DCData_lib( PresCat )
+%DCData_lib( Realprop )
 
 %File_info( data=PresCat.TOPA_addresses, printobs=5 ) 
 %File_info( data=PresCat.TOPA_realprop, printobs=5 ) 
@@ -81,7 +82,7 @@ run;
 /**/
 /*title2 'TOPA_unit_check';*/
 /*proc print data=TOPA_unit_check;*/
-/*  var id Units u_sum_units Ward2022; */
+/*  var id Units u_final_units Ward2022; */
 /*  where id in ( 316 336 753 754 862 1260 );*/
 /*run;*/
 /**/
@@ -107,24 +108,24 @@ ods listing close;  /** Close the regular listing destination **/
 ods tagsets.excelxp options(sheet_name="2012");
 proc print label data=TOPA_table_data n;
   id id;
-  var FULLADDRESS u_sum_units u_notice_date u_dedup_notice u_notice_with_sale ;
-  sum u_sum_units;
+  var FULLADDRESS u_final_units u_notice_date u_dedup_notice u_notice_with_sale ;
+  sum u_final_units;
   where u_dedup_notice=1 and (Ward2022="6") and (u_notice_date between '01Jan2012'd and '31dec2012'd);
 run;
 
 ods tagsets.excelxp options(sheet_name="2013");
 proc print label data=TOPA_table_data n;
   id id;
-  var FULLADDRESS u_sum_units u_notice_date u_dedup_notice u_notice_with_sale ;
-  sum u_sum_units;
+  var FULLADDRESS u_final_units u_notice_date u_dedup_notice u_notice_with_sale ;
+  sum u_final_units;
   where u_dedup_notice=1 and (Ward2022="6") and (u_notice_date between '01Jan2013'd and '31dec2013'd);
 run;
 
 ods tagsets.excelxp options(sheet_name="2014");
 proc print label data=TOPA_table_data n;
   id id;
-  var FULLADDRESS u_sum_units u_notice_date u_dedup_notice u_notice_with_sale ;
-  sum u_sum_units;
+  var FULLADDRESS u_final_units u_notice_date u_dedup_notice u_notice_with_sale ;
+  sum u_final_units;
   where u_dedup_notice=1 and (Ward2022="6") and (u_notice_date between '01Jan2014'd and '31dec2014'd);
 run;
 
@@ -135,6 +136,7 @@ ods listing;   /** Reopen the listing destination **/
 ** Printing Descriptive Tables **;
 options nodate nonumber;
 options orientation=landscape;
+options missing='-';
 
 %fdate()
 
@@ -234,14 +236,14 @@ run;
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
   where u_dedup_notice=1; 
   class ward2022 u_notice_date;   
-  var u_sum_units;  
+  var u_final_units;  
   table 
     /** Rows **/
     all="DC"    
     ward2022=" "  
     ,
     /** Columns **/
-    u_sum_units=" " * sum=" " * 
+    u_final_units=" " * sum=" " * 
     (
     all="Total"    
     u_notice_date=" "  
@@ -256,14 +258,14 @@ run;
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
   where u_dedup_notice=1; 
   class cluster2017 u_notice_date;   
-  var u_sum_units ;  
+  var u_final_units ;  
   table 
     /** Rows **/
     all="DC"    
     cluster2017=" "  
     ,
     /** Columns **/
-    u_sum_units=" " * sum=" " * 
+    u_final_units=" " * sum=" " * 
     (
     all="Total"    
     u_notice_date=" "  
@@ -368,14 +370,14 @@ run;
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
   where u_dedup_notice=1 and u_notice_with_sale=1;
   class ward2022 u_notice_date;   
-  var u_sum_units;  
+  var u_final_units;  
   table 
     /** Rows **/
     all="DC"    
     ward2022=" "  
     ,
     /** Columns **/
-    u_sum_units=" " * sum=" " * 
+    u_final_units=" " * sum=" " * 
     (
     all="Total"    
     u_notice_date=" "  
@@ -390,14 +392,14 @@ run;
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
   where u_dedup_notice=1 and u_notice_with_sale=1;
   class cluster2017 u_notice_date;   
-  var u_sum_units ;  
+  var u_final_units ;  
   table 
     /** Rows **/
     all="DC"    
     cluster2017=" "  
     ,
     /** Columns **/
-    u_sum_units=" " * sum=" " * 
+    u_final_units=" " * sum=" " * 
     (
     all="Total"    
     u_notice_date=" "  
