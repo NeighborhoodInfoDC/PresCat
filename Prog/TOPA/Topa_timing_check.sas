@@ -35,15 +35,13 @@ data Topa_timing_check;
 
   merge 
     Prescat.Topa_notices_sales 
-    Prescat.Topa_database (keep=id u_date_dhcd_received_ta_reg)
+    Prescat.Topa_database (keep=id u_date_dhcd_received_ta_reg u_delete_notice)
     Prescat.Topa_cbo_sheet (keep=id cbo_dhcd_received_ta_reg);
   by id;
   
   if u_dedup_notice and u_notice_with_sale;
   
-  if id in ( 15, 73, 95, 151, 184, 207, 270, 276, 284, 312, 339, 572,
-    605, 686, 750, 773, 882, 884, 901, 954, 1017, 1079, 1104,
-    1108, 1157, 1251, 1306, 1370, 1386, 1421, 10004 ) then delete;
+  if u_delete_notice then delete;
     
   total = 1;
   
@@ -91,7 +89,7 @@ run;
 
 proc univariate data=Topa_timing_check plot;
   where u_actual_saledate and not( '01mar2020'd <= u_sale_date < '01may2023'd );
-  var u_sum_units;
+  var u_final_units;
 run;
 
 options missing=' ';
@@ -115,12 +113,12 @@ footnote3 'Notes: Includes only notices with an actual sale date reported. Exlud
 
 proc tabulate data=Topa_timing_check format=comma12.0 noseps missing;
   where u_actual_saledate and not( '01mar2020'd <= u_sale_date < '01may2023'd );
-  class u_days_from_dedup_notice_to_sale cbo_dhcd_received_ta_reg u_sum_units;
+  class u_days_from_dedup_notice_to_sale cbo_dhcd_received_ta_reg u_final_units;
   var total;
   table 
     /** Page **/
     all='All Buildings'
-    u_sum_units=' ',
+    u_final_units=' ',
     /** Rows **/
     all='Total'
     u_days_from_dedup_notice_to_sale='Days from notice to sale',
@@ -128,7 +126,7 @@ proc tabulate data=Topa_timing_check format=comma12.0 noseps missing;
     total=' ' * ( sum='Total notices' colpctsum='Percent' * f=comma12.1 ) 
     total=' ' * cbo_dhcd_received_ta_reg='Tenant association formed' * ( sum='Notices' colpctsum='Percent' * f=comma12.1 )
     / condense rts=60;
-  format u_sum_units bldg_size. cbo_dhcd_received_ta_reg $received_reg. u_days_from_dedup_notice_to_sale day_range.;
+  format u_final_units bldg_size. cbo_dhcd_received_ta_reg $received_reg. u_days_from_dedup_notice_to_sale day_range.;
 run;
 
 
