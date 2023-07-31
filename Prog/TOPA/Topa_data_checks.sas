@@ -159,7 +159,7 @@ data Topa_sales_cbo;
   merge 
     Prescat.Topa_notices_sales
     Prescat.Topa_cbo_sheet (drop=u_address_id_ref u_notice_date u_sale_date u_ownername)
-    Prescat.Topa_database (keep=id units);
+    Prescat.Topa_database (keep=id units u_sum_units);
   by id;
 
 run;
