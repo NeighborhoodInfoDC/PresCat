@@ -23,36 +23,6 @@
 %File_info( data=PresCat.TOPA_notices_sales, printobs=5 ) 
 %File_info( data=PresCat.TOPA_database, printobs=5 ) 
 
-*************************************************************************
-** Export SSL/address data for IDs **;
-/*ods tagsets.excelxp   /** Open the excelxp destination **/*/
-/*  file="&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_IDs_316_753_754.xls"  /** This is where the output will go **/*/
-/*  style=Normal    /** This is the ODS style that will be used in the workbook **/*/
-/*  options( sheet_interval='proc' )   /** This creates a new worksheet for every proc print in the output **/*/
-/*;*/
-/**/
-/*ods listing close;  /** Close the regular listing destination **/*/
-/**/
-/*ods tagsets.excelxp options(sheet_name="By addresses");*/
-/*proc print label data=PresCat.Topa_addresses;*/
-/*  by id;*/
-/*  id id;*/
-/*  var address_id FULLADDRESS ACTIVE_RES_OCCUPANCY_COUNT;*/
-/*  where id in ( 316 753 754 );*/
-/*run;*/
-/**/
-/*ods tagsets.excelxp options(sheet_name="By real property");*/
-/*proc print label data=PresCat.TOPA_realprop;*/
-/*  by id;*/
-/*  id id;*/
-/*  var ssl saledate saleprice ownername_full;*/
-/*  where id in ( 316 753 754 );*/
-/*run;*/
-/**/
-/*ods tagsets.excelxp close;  /** Close the excelxp destination **/*/
-/*ods listing;   /** Reopen the listing destination **/*/
-*************************************************************************
-
 ** Final edits before creating tables **;
 data TOPA_table_data; 
   set PresCat.TOPA_notices_sales; 
@@ -61,39 +31,6 @@ data TOPA_table_data;
 run;
 
 %File_info( data=TOPA_table_data)
-
-** Comparing # of units from MAR addresses to CNHED TOPA database **;
-data TOPA_unit_check; 
-  merge 
-	PresCat.TOPA_database
-	TOPA_table_data; 
-  by id; 
-run;
-
-proc sort data=TOPA_unit_check;
-  by Ward2022 id;
-run;
-
-/*title2 'PresCat.TOPA_addresses';*/
-/*proc print data=PresCat.TOPA_addresses;*/
-/*  var id FULLADDRESS ACTIVE_RES_OCCUPANCY_COUNT address_id; */
-/*  where id in ( 316 336 753 754 862 1260 );*/
-/*run;*/
-/**/
-/*title2 'TOPA_unit_check';*/
-/*proc print data=TOPA_unit_check;*/
-/*  var id Units u_final_units Ward2022; */
-/*  where id in ( 316 336 753 754 862 1260 );*/
-/*run;*/
-/**/
-/*title2 'PresCat.Topa_realprop';*/
-/*proc print data=PresCat.Topa_realprop;*/
-/*  by id;*/
-/*  id id;*/
-/*  var ssl saledate saleprice ownername_full;*/
-/*  where id in ( 316 336 753 754 862 1260 );*/
-/*run;*/
-/*title2;*/
 
 *************************************************************************
 ** Export Ward 6 projects **;
@@ -137,6 +74,7 @@ ods listing;   /** Reopen the listing destination **/
 options nodate nonumber;
 options orientation=landscape;
 options missing='-';
+ods escapechar = '^';
 
 %fdate()
 
