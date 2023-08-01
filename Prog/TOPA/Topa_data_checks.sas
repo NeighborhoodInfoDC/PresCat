@@ -97,7 +97,7 @@
   proc print data=Prescat.Topa_ssl;
     where id in ( &id );
     id id;
-    var ssl;
+    var ssl ayb eyb premiseadd ui_proptype usecode ownerpt_extractdat_first ownerpt_extractdat_last;
   run;
 
   title4 'Topa_realprop';
