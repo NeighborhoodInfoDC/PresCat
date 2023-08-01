@@ -266,7 +266,7 @@ run;
     label="TOPA notices from CNHED combined with real prop and address data to create new variables for TOPA eval, 2006-2020",
     sortby=ID,
     /** Metadata parameters **/
-    revisions=%str(New data set. now includes 2021-2022 sales data),
+    revisions=%str(Data cleaning. ),
     /** File info parameters **/
     printobs=10,
     freqvars=u_dedup_notice u_notice_with_sale u_proptype ward2022 cluster2017
