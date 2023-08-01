@@ -28,7 +28,7 @@
 
   %local u_address_id_ref;
 
-  ods html body="&_dcdata_default_path\PresCat\Prog\TOPA\Data checks\Topa_data_checks_&id..html" (title="ID=&id") style=Analysis;
+  ods html path="&_dcdata_default_path\PresCat\Prog\TOPA\Data checks" file="Topa_data_checks_&id..html" (title="ID=&id") style=Analysis;
 
   title2 "TOPA ID = &ID";
 
