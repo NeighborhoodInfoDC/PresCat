@@ -120,37 +120,19 @@ run;
 %File_info( data=TOPA_by_property, printobs=5 ) /** 1750 obs**/
 
 /*Adding years built variables to datasets below*/
-data TOPA_SSL_prop; 
-  merge PresCat.TOPA_SSL Topa_id_x_address; 
-  by id; 
-run; 
+proc summary data=PresCat.TOPA_SSL;
+  by id;
+  var eyb ayb;
+  output out=TOPA_years_built (drop=_type_ _freq_) min=u_recent_reno u_year_built_original;
+run;
 
-data TOPA_years_clean; 
-  set TOPA_SSL_prop; 
-  where EYB between 1 and 2023; /*removing zeros and future years*/
-  where AYB between 1 and 2023; 
-run; 
-
-%File_info( data=TOPA_years_clean, printobs=20 ) 
-
-proc sort data=TOPA_years_clean; 
-  by id descending EYB AYB; 
-run; 
-
-data TOPA_years_built;  
-  set TOPA_years_clean; 
-  by id descending EYB AYB; 
-  	if first.id then do;
-	  u_year_built_original=AYB; u_recent_reno=EYB;   
-	end; 
-  label u_year_built_original = 'Earliest year main portion originally built (Urban created var)';
-  label u_recent_reno = 'Calculated or apparent year an improvement was built (Urban created var)';
-  if missing( u_year_built_original ) or missing (u_recent_reno) then delete;
-run; 
+%File_info( data=TOPA_years_built, printobs=20 ) 
 
 data TOPA_years; 
-  merge TOPA_by_property TOPA_years_built (keep=id u_year_built_original u_recent_reno); 
+  merge TOPA_by_property TOPA_years_built; 
   by id; 
+  label u_year_built_original = 'Earliest year main portion originally built (Urban created var)';
+  label u_recent_reno = 'Calculated or apparent year an improvement was built (Urban created var)'; 
 run;  
 
 %File_info( data=TOPA_years, printobs=5 ) 
@@ -284,7 +266,7 @@ run;
     label="TOPA notices from CNHED combined with real prop and address data to create new variables for TOPA eval, 2006-2020",
     sortby=ID,
     /** Metadata parameters **/
-    revisions=%str(New data set. now includes 2021-2022 sales data),
+    revisions=%str(Data cleaning. ),
     /** File info parameters **/
     printobs=10,
     freqvars=u_dedup_notice u_notice_with_sale u_proptype ward2022 cluster2017

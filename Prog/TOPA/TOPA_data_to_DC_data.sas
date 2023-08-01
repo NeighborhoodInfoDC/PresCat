@@ -20,7 +20,7 @@
 %DCData_lib( MAR )
 %DCData_lib( RealProp )
 
-%let revisions = Add cleaning steps.;
+%let revisions = Additional cleaning to remove irrelevant sales. Add vars to Topa_ssl. Delete notices with under 5 units.;
 
 ** Download and read TOPA dataset into SAS dataset**;
 %let dsname="&_dcdata_r_path\PresCat\Raw\TOPA\TOPA-DOPA 5+_with_var_names_3_20_23_urban_update_7_30_23.csv";
@@ -341,11 +341,11 @@ proc sql noprint;
       left join Sales_master as realprop    /** Left join = only keep obs that are in TOPA_geocoded **/
   on TOPA_SSL.SSL = realprop.SSL   /** This is the condition you are matching on **/
   /** CLEANING: Remove irrelevant sales **/
+  /** NOTE: Must remove sales records from ALL related notices **/
   where not( 
-    ( TOPA_SSL.id = 882 and realprop.saledate = '30mar2020'd ) or 
-    ( TOPA_SSL.id = 184 and year( realprop.saledate ) = 2010 ) or
-    ( TOPA_SSL.id = 883 and realprop.saledate = '26mar2016'd ) or
-    ( TOPA_SSL.id = 1137 and realprop.saledate = '13apr2018'd )
+    ( TOPA_SSL.id = 882 and realprop.saledate = '3mar2020'd ) or 
+    ( TOPA_SSL.id in ( 184, 373 ) and year( realprop.saledate ) = 2010 ) or
+    ( TOPA_SSL.id in ( 733, 1134, 1137 ) and realprop.saledate = '13apr2018'd )
   )
   order by TOPA_SSL.ID, realprop.SALEDATE;    /** Optional: sorts the output data set **/
 quit;
@@ -564,6 +564,9 @@ data Topa_database;
     %warn_put( msg="Project with missing unit count: " id= u_final_units= u_sum_units= units= )
   end;
   
+  ** Mark notice for exclusion from analysis if fewer than 5 units **;
+  if u_final_units < 5 then u_notice_delete = 1;
+  
 run;
 
 *************************************************************************
@@ -576,9 +579,13 @@ run;
 data Topa_ssl_parcel; 
   merge
    Realprop.cama_parcel (keep=ssl AYB EYB)
+   Realprop.Parcel_base (keep=ssl premiseadd ui_proptype usecode ownerpt_extractdat_first ownerpt_extractdat_last)
    ssl_sorted;
   by ssl; 
   if missing( id ) then delete;
+  
+  if ayb < 1800 then ayb = .;
+  if eyb < 1800 then eyb = .;
   
   ** CLEANING: Remove irrelevant parcels **;
   if id = 523 and compbl( ssl ) = '0540 0847' then delete;
