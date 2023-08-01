@@ -564,6 +564,9 @@ data Topa_database;
     %warn_put( msg="Project with missing unit count: " id= u_final_units= u_sum_units= units= )
   end;
   
+  ** Mark notice for exclusion from analysis if fewer than 5 units **;
+  if u_final_units < 5 then u_delete_notice = 1;
+  
 run;
 
 *************************************************************************
