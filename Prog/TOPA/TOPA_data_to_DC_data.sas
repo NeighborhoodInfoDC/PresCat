@@ -565,7 +565,8 @@ data Topa_database;
   end;
   
   ** Mark notice for exclusion from analysis if fewer than 5 units **;
-  if u_final_units < 5 then u_notice_delete = 1;
+
+  if u_final_units < 5 then u_delete_notice = 1;
   
 run;
 
