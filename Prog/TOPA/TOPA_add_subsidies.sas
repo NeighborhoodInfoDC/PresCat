@@ -49,7 +49,7 @@ proc sql noprint;
   select unique 
   	coalesce( TOPA_nlihc_id.ID, Topa_notices_sales.ID ) as ID, /** Matching variables **/
 	TOPA_nlihc_id.u_address_id_ref, TOPA_nlihc_id.FULLADDRESS, TOPA_nlihc_id.Nlihc_id, TOPA_nlihc_id.Bldg_addre, /** Other vars keeping **/
-	Topa_notices_sales.u_sale_date, Topa_notices_sales.u_notice_date, Topa_notices_sales.u_sum_units
+	Topa_notices_sales.u_sale_date, Topa_notices_sales.u_notice_date, Topa_notices_sales.u_final_units
 	from TOPA_nlihc_id left join PresCat.Topa_notices_sales as Topa_notices_sales   /** Left join = only keep obs that are in TOPA_addresses**/ 
   on TOPA_nlihc_id.ID = Topa_notices_sales.ID   /** Matching on address_ID **/
   order by TOPA_nlihc_id.ID;    /** Sorting by notice ID **/
@@ -63,7 +63,7 @@ proc sql noprint;
   select unique
     coalesce ( TOPA_nlihc_dates.Nlihc_id, Subsidy.Nlihc_id ) as Nlihc_id, /** Matching variables **/
 	TOPA_nlihc_dates.ID, TOPA_nlihc_dates.u_address_id_ref, TOPA_nlihc_dates.FULLADDRESS, /** Other vars keeping **/
-	TOPA_nlihc_dates.u_sale_date, TOPA_nlihc_dates.u_notice_date, TOPA_nlihc_dates.u_sum_units,
+	TOPA_nlihc_dates.u_sale_date, TOPA_nlihc_dates.u_notice_date, TOPA_nlihc_dates.u_final_units,
 	Subsidy.POA_end, Subsidy.POA_end_actual, Subsidy.POA_end_prev,
 	Subsidy.POA_start, Subsidy.POA_start_orig, Subsidy.Portfolio, 
 	Subsidy.Program, Subsidy.Units_Assist, Subsidy.rent_to_fmr_description, Subsidy.Subsidy_id
@@ -184,7 +184,7 @@ proc summary data=TOPA_subsidy_after nway
  var before_LIHTC_aff_units after_LIHTC_aff_units before_fed_aff_units after_fed_aff_units before_DC_HPTF_aff_units 
 	after_DC_HPTF_aff_units before_LEC_aff_units after_LEC_aff_units;
  class id;
- output out=TOPA_sum_rows
+ output out=TOPA_sum_rows (drop=_type_ _freq_)
 	sum=;
  label before_LIHTC_aff_units='Subsidy assisted units from the Low Income Housing Tax Credit before property sale date (Urban created var)';
  label after_LIHTC_aff_units='Subsidy assisted units from the Low Income Housing Tax Credit after property sale date (Urban created var)';
@@ -197,19 +197,17 @@ proc summary data=TOPA_subsidy_after nway
  label ID='CNHED database unique notice ID';
 run;
 
-%File_info( data=TOPA_sum_rows, printobs=50)
-
 
 %Finalize_data_set( 
 /** Finalize data set parameters **/
   data=TOPA_sum_rows,
   out=TOPA_subsidies,
   outlib=PresCat,
-  label="Preservation Catalog, Project Subsidies for TOPA notices",
+  label="Preservation Catalog, Project subsidies for TOPA notices",
   sortby=ID,
   /** Metadata parameters **/
-  revision=%str(New file.),
+  revisions=%str(New file.),
   /** File info parameters **/
-  printobs=10
+  printobs=50
 )
 
