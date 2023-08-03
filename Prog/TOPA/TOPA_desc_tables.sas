@@ -372,6 +372,8 @@ proc odstext;
 run;
 
 
+ods rtf startpage=now;
+
 title3 "Table 2d. Residential Units in Properties With TOPA Notices of Sale (Deduplicated) by Neighborhood Cluster and Year, 2006-2020";
 
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
@@ -443,6 +445,8 @@ run;
   )
 
 
+ods rtf startpage=now;
+
 title3 "Table 4a. Properties With Tenant Association Registered by Ward and Year, 2006-2020";
 
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
@@ -469,6 +473,8 @@ proc odstext;
 run;
 
 
+ods rtf startpage=now;
+
 title3 "Table 4b. Residential Units in Properties With Tenant Association Registered by Ward and Year, 2006-2020";
 
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
@@ -494,6 +500,8 @@ proc odstext;
   p "Notes: Deduplicated notices with sales and a tenant association registration.";
 run;
 
+
+ods rtf startpage=now;
 
 title3 "Table 4c. Properties With Tenant Association Registered by Year Built and Year, 2006-2020";
 
@@ -523,6 +531,8 @@ proc odstext;
 run;
 
 
+ods rtf startpage=now;
+
 title3 "Table 4d. Residential Units in Properties With Tenant Association Registered by Year Built and Year, 2006-2020";
 
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
@@ -550,6 +560,8 @@ proc odstext;
   p "Notes: Deduplicated notices with sales and a tenant association registration.";
 run;
 
+
+ods rtf startpage=now;
 
 title3 "Table 5a. Properties With TOPA Notices That Sold by Ward and Year, 2006-2020";
 
@@ -602,6 +614,8 @@ run;
 %MEND SKIP;
 
 
+ods rtf startpage=now;
+
 title3 "Table 6a. Percentage of Properties With TOPA Notices That Sold by Ward and Year, 2006-2020";
 
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
@@ -627,6 +641,8 @@ proc odstext;
   p "Notes: Deduplicated notices, with and without sales.";
 run;
 
+
+ods rtf startpage=now;
 
 title3 "Table 6b. Percentage of Properties With TOPA Notices That Sold by Neighborhood Cluster and Year, 2006-2020";
 
@@ -654,6 +670,8 @@ proc odstext;
 run;
 
 
+ods rtf startpage=now;
+
 title3 "Table 7a. Residential Units in Properties With TOPA Notices That Sold by Ward and Year, 2006-2020";
 
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
@@ -679,6 +697,8 @@ proc odstext;
   p "Notes: Deduplicated notices with sales.";
 run;
 
+
+ods rtf startpage=now;
 
 title3 "Table 7b. Residential Units in Properties With TOPA Notices That Sold by Neighborhood Cluster and Year, 2006-2020";
 
@@ -706,6 +726,8 @@ proc odstext;
 run;
 
 
+ods rtf startpage=now;
+
 title3 "Table 8a. Properties Where Tenants Assigned Rights by Ward and Year, 2006-2020";
 
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
@@ -731,6 +753,8 @@ proc odstext;
   p "Notes: Deduplicated notices with sales where tenants assigned rights.";
 run;
 
+
+ods rtf startpage=now;
 
 title3 "Table 8b. Residential Units in Properties Where Tenants Assigned Rights by Ward and Year, 2006-2020";
 
