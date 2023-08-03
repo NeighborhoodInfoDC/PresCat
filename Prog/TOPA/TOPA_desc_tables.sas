@@ -18,19 +18,22 @@
 %DCData_lib( PresCat )
 %DCData_lib( Realprop )
 
+/*
 %File_info( data=PresCat.TOPA_addresses, printobs=5 ) 
 %File_info( data=PresCat.TOPA_realprop, printobs=5 ) 
 %File_info( data=PresCat.TOPA_notices_sales, printobs=5 ) 
 %File_info( data=PresCat.TOPA_database, printobs=5 ) 
+*/
 
 ** Combine data and final edits before creating tables **;
 ** N = 1455 notices **;
-data TOPA_table_data; 
+data TOPA_table_data;
   
   merge 
     PresCat.TOPA_notices_sales (in=in1)
     PresCat.TOPA_CBO_sheet (keep=id cbo_dhcd_received_ta_reg ta_assign_rights u_has_cbo_outcome outcome_:)
-    PresCat.topa_subsidies (keep=id before_: after_:); 
+    PresCat.topa_subsidies (keep=id before_: after_:)
+    PresCat.topa_database (keep=id All_street_addresses Property_name); 
   by id;
 
   if in1 and '01Jan2006'd <= u_notice_date <= '31dec2020'd;  /** Limit notice data to 2006-2020 **/
@@ -45,19 +48,27 @@ data TOPA_table_data;
   if lowcase( ta_assign_rights ) = 'yes' then d_ta_assign_rights = 1;
   else if lowcase( ta_assign_rights ) = 'no' then d_ta_assign_rights = 0;
   
+  if lowcase( outcome_homeowner ) in ( 'le coop' ) then d_le_coop = 1;
+  else d_le_coop = 0;
+  
   if after_lec_aff_units > 0 or lowcase( outcome_homeowner ) in ( 'le coop', 'condo' ) then d_purch_condo_coop = 1;
   else d_purch_condo_coop = 0;
+  
+  if d_purch_condo_coop = 0 and u_proptype = '11' then d_other_condo = 1;
+  else d_other_condo = 0;
   
   label
     all_notices = "Every notice (including duplicates)"
     d_cbo_dhcd_received_ta_reg = "Tenant association registered"
     d_ta_assign_rights = "Tenants assigned rights"
+    d_le_coop = "Limited equity coop" 
     d_purch_condo_coop = "Tenant homeownership: LE Coop or Condo"
+    d_other_condo = "Other condos (not tenant homeownership)"
   ;
   
 run;
 
-%File_info( data=TOPA_table_data)
+%File_info( data=TOPA_table_data, printobs=0 )
 
 ** Create formats for tables **;
 
@@ -80,6 +91,90 @@ proc format;
     0 = 'No'
     . = 'Unknown';
 run;
+
+
+/** Macro Count_table - Start Definition **/
+
+%macro Count_table( 
+  table_num=, title=, where=, row_var=ward2022, col_var=u_notice_date, row_var_fmt=, col_var_fmt=year.,
+  row_var_label=' ', col_var_label=' ', notes=
+  );
+
+  ods rtf startpage=now;
+  
+  title3 "Table &table_num.a. %left(&title)";
+  
+  ods rtf text = "^S={outputwidth=100% just=l} {\tc\f3\fs0\cf8 Table &table_num.a. %left(&title)}"; 
+
+  proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
+    where &where;
+    class &row_var / preloadfmt order=data;   
+    class &col_var;   
+    var all_notices;
+    table 
+      /** Rows **/
+      all="Total"
+      &row_var=&row_var_label  
+      ,
+      /** Columns **/
+      all_notices=" " * sum=" " * 
+      (
+      all="Total"    
+      &col_var=&col_var_label
+      ) 
+    ;
+    %if %length( &col_var_fmt ) > 0 %then %do;
+      format &col_var &col_var_fmt;  
+    %end;
+    %if %length( &row_var_fmt ) > 0 %then %do;
+      format &row_var &row_var_fmt;  
+    %end;
+  run;
+
+  proc odstext;
+    p "Notes: &notes";
+  run;
+
+
+  ods rtf startpage=now;
+
+  title3 "Table &table_num.b. Residential Units in %left(&title)";
+
+  ods rtf text = "^S={outputwidth=100% just=l} {\tc\f3\fs0\cf8 Table &table_num.b. Residential Units in %left(&title)}"; 
+
+  proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
+    where &where;
+    class &row_var / preloadfmt order=data;   
+    class &col_var;   
+    var u_final_units;
+    table 
+      /** Rows **/
+      all="Total"
+      &row_var=&row_var_label  
+      ,
+      /** Columns **/
+      u_final_units=" " * sum=" " * 
+      (
+      all="Total"    
+      &col_var=&col_var_label
+      ) 
+    ;
+    %if %length( &col_var_fmt ) > 0 %then %do;
+      format &col_var &col_var_fmt;  
+    %end;
+    %if %length( &row_var_fmt ) > 0 %then %do;
+      format &row_var &row_var_fmt;  
+    %end;
+  run;
+
+  proc odstext;
+    p "Notes: &notes";
+  run;
+
+%mend Count_table;
+
+/** End Macro Definition **/
+
 
 
 *************************************************************************
@@ -129,10 +224,18 @@ ods escapechar = '^';
 %fdate()
 
 ods listing close;
-ods rtf file="&_dcdata_default_path\Prescat\Prog\Topa\TOPA_desc_tables.rtf" style=Styles.Rtf_lato_9pt nokeepn notrkeep;
+ods rtf file="&_dcdata_default_path\Prescat\Prog\Topa\TOPA_desc_tables.rtf" style=Styles.Rtf_lato_9pt nokeepn notrkeep notoc_data startpage=off;
 
 footnote1 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
 footnote2 height=9pt j=r '{Page}\~{\field{\*\fldinst{\pard\b\i0\chcbpat8\qc\f1\fs19\cf1{PAGE }\cf0\chcbpat0}}}';
+
+proc odstext;
+  p "Table of Contents";
+run;
+
+ods rtf text = "^S={outputwidth=100% just=l}{\field{\*\fldinst {\\TOC \\f \\h}}}"; 
+
+ods rtf startpage=now;
 
 title3 "Table 1a. TOPA Notices of Sale (With Duplicates) by Ward and Year, 2006-2020";
 
@@ -160,6 +263,8 @@ proc odstext;
 run;
 
 
+ods rtf startpage=now;
+
 title3 "Table 1b. TOPA Notices of Sale (With Duplicates) by Neighborhood Cluster and Year, 2006-2020";
 
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
@@ -184,6 +289,8 @@ proc odstext;
   p "Notes: All notices, with and without sales.";
 run;
 
+
+ods rtf startpage=now;
 
 title3 "2a. TOPA Notices of Sale (Deduplicated) by Ward and Year, 2006-2020";
 
@@ -210,6 +317,8 @@ proc odstext;
 run;
 
 
+ods rtf startpage=now;
+
 title3 "Table 2b. TOPA Notices of Sale (Deduplicated) by Neighborhood Cluster and Year, 2006-2020";
 
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
@@ -234,6 +343,8 @@ proc odstext;
   p "Notes: Deduplicated notices, with and without sales.";
 run;
 
+
+ods rtf startpage=now;
 
 title3 "Table 2c. Residential Units in Properties With TOPA Notices of Sale (Deduplicated) by Ward and Year, 2006-2020";
 
@@ -286,7 +397,7 @@ proc odstext;
   p "Notes: Deduplicated notices, with and without sales.";
 run;
 
-
+%MACRO SKIP;
 title3 "Table 3. Outcome summary";
 
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
@@ -311,6 +422,25 @@ run;
 proc odstext;
   p "Notes: Deduplicated notices with sales.";
 run;
+%MEND SKIP;
+
+
+%Count_table(
+  table_num=3,
+  title=%str( Properties With Tenant Association Registered by Ward and Year, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=1,
+  notes=Deduplicated notices with sales and a tenant association registration.
+  )
+
+%Count_table(
+  table_num=4,
+  title=%str( Properties With Tenant Association Registered by Year Built and Year, 2006-2020 ),
+  row_var=u_year_built_original,
+  row_var_label="\i By year built",
+  row_var_fmt=year_built.,
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=1,
+  notes=Deduplicated notices with sales and a tenant association registration.
+  )
 
 
 title3 "Table 4a. Properties With Tenant Association Registered by Ward and Year, 2006-2020";
