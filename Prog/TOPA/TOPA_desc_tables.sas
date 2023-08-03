@@ -45,15 +45,21 @@ data TOPA_table_data;
   if lowcase( ta_assign_rights ) = 'yes' then d_ta_assign_rights = 1;
   else if lowcase( ta_assign_rights ) = 'no' then d_ta_assign_rights = 0;
   
+  if after_lec_aff_units > 0 or lowcase( outcome_homeowner ) in ( 'le coop', 'condo' ) then d_purch_condo_coop = 1;
+  else d_purch_condo_coop = 0;
+  
   label
     all_notices = "Every notice (including duplicates)"
     d_cbo_dhcd_received_ta_reg = "Tenant association registered"
     d_ta_assign_rights = "Tenants assigned rights"
+    d_purch_condo_coop = "Tenant homeownership: LE Coop or Condo"
   ;
   
 run;
 
 %File_info( data=TOPA_table_data)
+
+** Create formats for tables **;
 
 proc format;
   value year_built (notsorted)
@@ -69,6 +75,12 @@ proc format;
     1990 -< 2000 = '1990 to 2000'
     2000 - high  = '2000 or later'
     . = 'Unknown';
+  value dyesnounk (notsorted)
+    1 = 'Yes'
+    0 = 'No'
+    . = 'Unknown';
+run;
+
 
 *************************************************************************
 ** Export Ward 6 projects **;
@@ -272,6 +284,32 @@ run;
 
 proc odstext;
   p "Notes: Deduplicated notices, with and without sales.";
+run;
+
+
+title3 "Table 3. Outcome summary";
+
+proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
+  where u_dedup_notice=1 and u_notice_with_sale=1;
+  class d_cbo_dhcd_received_ta_reg d_ta_assign_rights d_purch_condo_coop / preloadfmt order=data;
+  var all_notices;
+  table 
+    /** Rows **/
+    all="Total"    
+    d_ta_assign_rights * d_purch_condo_coop
+    ,
+    /** Columns **/
+    all_notices=" " * sum=" " * 
+    (
+      all="Total notices"    
+      d_cbo_dhcd_received_ta_reg
+    )
+  ;
+  format d_cbo_dhcd_received_ta_reg d_ta_assign_rights d_purch_condo_coop dyesnounk.;
+run;
+
+proc odstext;
+  p "Notes: Deduplicated notices with sales.";
 run;
 
 
