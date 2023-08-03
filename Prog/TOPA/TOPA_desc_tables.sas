@@ -176,45 +176,6 @@ run;
 /** End Macro Definition **/
 
 
-
-*************************************************************************
-** Export Ward 6 projects **;
-ods tagsets.excelxp   /** Open the excelxp destination **/
-  file="&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_Ward6_2012-14.xls"  /** This is where the output will go **/
-  style=Normal    /** This is the ODS style that will be used in the workbook **/
-  options( sheet_interval='proc' )   /** This creates a new worksheet for every proc print in the output **/
-;
-
-ods listing close;  /** Close the regular listing destination **/
-
-ods tagsets.excelxp options(sheet_name="2012");
-proc print label data=TOPA_table_data n;
-  id id;
-  var FULLADDRESS u_final_units u_notice_date u_dedup_notice u_notice_with_sale ;
-  sum u_final_units;
-  where u_dedup_notice=1 and (Ward2022="6") and (u_notice_date between '01Jan2012'd and '31dec2012'd);
-run;
-
-ods tagsets.excelxp options(sheet_name="2013");
-proc print label data=TOPA_table_data n;
-  id id;
-  var FULLADDRESS u_final_units u_notice_date u_dedup_notice u_notice_with_sale ;
-  sum u_final_units;
-  where u_dedup_notice=1 and (Ward2022="6") and (u_notice_date between '01Jan2013'd and '31dec2013'd);
-run;
-
-ods tagsets.excelxp options(sheet_name="2014");
-proc print label data=TOPA_table_data n;
-  id id;
-  var FULLADDRESS u_final_units u_notice_date u_dedup_notice u_notice_with_sale ;
-  sum u_final_units;
-  where u_dedup_notice=1 and (Ward2022="6") and (u_notice_date between '01Jan2014'd and '31dec2014'd);
-run;
-
-ods tagsets.excelxp close;  /** Close the excelxp destination **/
-ods listing;   /** Reopen the listing destination **/
-*************************************************************************
-
 ** Printing Descriptive Tables **;
 options nodate nonumber;
 options orientation=landscape;
