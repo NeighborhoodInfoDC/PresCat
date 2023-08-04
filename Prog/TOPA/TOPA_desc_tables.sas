@@ -70,7 +70,7 @@ data TOPA_table_data;
   
   merge 
     PresCat.TOPA_notices_sales (in=in1)
-    PresCat.TOPA_CBO_sheet (keep=id cbo_dhcd_received_ta_reg ta_assign_rights u_has_cbo_outcome outcome_:)
+    PresCat.TOPA_CBO_sheet (keep=id cbo_dhcd_received_ta_reg ta_assign_rights r_ta_provider u_has_cbo_outcome outcome_:)
     PresCat.topa_subsidies (keep=id before_: after_:)
     PresCat.topa_database (keep=id All_street_addresses Property_name); 
   by id;
@@ -102,7 +102,7 @@ data TOPA_table_data;
   if after_fed_aff_units > 0 or lowcase( outcome_assign_section8 ) in: ( 'yes', 'added', 'lrsp added' ) then d_fed_aff = 1;
   else d_fed_aff = 0;
   
-  if outcome_rent_assign_rc_cont =: 'y' or outcome_assign_rc_nopet in: ( 'y', 'added' ) then d_rent_control = 1;
+  if lowcase( outcome_rent_assign_rc_cont ) =: 'y' or lowcase( outcome_assign_rc_nopet ) in: ( 'y', 'added' ) then d_rent_control = 1;
   else d_rent_control = 0;
   
   if d_lihtc=1 or d_fed_aff=1 or d_rent_control=1 or d_le_coop=1 then d_affordable = 1;
@@ -121,6 +121,9 @@ data TOPA_table_data;
   
   if lowcase( outcome_rehab ) = 'yes' then d_rehab = 1;
   else d_rehab = 0;
+  
+  if not( lowcase( r_ta_provider ) in ( '', 'none' ) ) then d_cbo_involved = 1;
+  else d_cbo_involved = 0;
     
   label
     all_notices = "Every notice (including duplicates)"
@@ -135,6 +138,7 @@ data TOPA_table_data;
     d_affordable = "Affordability added or preserved"
     d_100pct_afford = "100% affordable"
     d_rehab = "Renovations or repairs for residents in development agreement"
+    d_cbo_involved = "Properties with CBO involvement"
   ;
   
 run;
@@ -490,6 +494,13 @@ run;
   notes=Deduplicated notices with sales and renovations or repairs for residents in development agreement indicated by CBOs. (Unmarked notices omitted.)
   )
 
+%Count_table(
+  table_num=20,
+  title=%str( Properties With CBO Involvement, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_involved=1,
+  notes=Deduplicated notices with sales and CBO involvement.
+  )
+
 ** Count notices excluded because of TOPA tolling **;
 proc sql noprint;
   select sum( all_notices ) into :topa_tolling_notices from TOPA_table_data
@@ -497,7 +508,7 @@ proc sql noprint;
 quit;
 
 %Count_table(
-  table_num=20,
+  table_num=21,
   row_var=u_days_from_dedup_notice_to_sale,
   row_var_label="\i Days from notice to sale",
   row_var_fmt=day_range.,
@@ -508,7 +519,7 @@ quit;
 )
 
 %Count_table(
-  table_num=21,
+  table_num=22,
   row_var=u_days_from_dedup_notice_to_sale,
   row_var_label="\i Days from notice to sale",
   row_var_fmt=day_range.,
@@ -526,7 +537,7 @@ proc sql noprint;
 quit;
 
 %Count_table(
-  table_num=22,
+  table_num=23,
   row_var=u_days_from_dedup_notice_to_sale,
   row_var_label="\i Days from notice to sale",
   row_var_fmt=day_range.,
@@ -537,7 +548,7 @@ quit;
 )
 
 %Count_table(
-  table_num=23,
+  table_num=24,
   row_var=u_days_from_dedup_notice_to_sale,
   row_var_label="\i Days from notice to sale",
   row_var_fmt=day_range.,
