@@ -25,6 +25,45 @@
 %File_info( data=PresCat.TOPA_database, printobs=5 ) 
 */
 
+** Create formats for tables **;
+
+proc format;
+  value year_built (notsorted)
+    1 -< 1910 = 'Before 1910'
+    1910 -< 1920 = '1910 to 1919'
+    1920 -< 1930 = '1920 to 1929'
+    1930 -< 1940 = '1930 to 1939'
+    1940 -< 1950 = '1940 to 1949'
+    1950 -< 1960 = '1950 to 1959'
+    1960 -< 1970 = '1960 to 1969'
+    1970 -< 1980 = '1970 to 1979'
+    1980 -< 1990 = '1980 to 1989'
+    1990 -< 2000 = '1990 to 2000'
+    2000 - high  = '2000 or later'
+    . = 'Unknown';
+  value dyesnounk (notsorted)
+    1 = 'Yes'
+    0 = 'No'
+    . = 'Unknown';
+  value dyesonly
+    1 = 'Yes'
+    other = ' ';
+  value $buyout (notsorted)
+    '100.00%' = '100%'
+    'Partial/Option' = 'Partial/Option'
+    'None' = 'None';
+  value day_range
+    low -< 0 = '(negative)'
+    0 -< 45 = 'Less than 45 days'
+    45 -< 90 = '45 to 89 days'
+    90 -< 180 = '90 to 179 days'
+    180 -< 360 = '180 to 359 days'
+    360 -< 420 = '360 to 419 days'
+    420 -< 540 = '420 to 539 days'
+    540 - high = '540 days or more';  
+run;
+
+
 ** Combine data and final edits before creating tables **;
 ** N = 1455 notices **;
 data TOPA_table_data;
@@ -57,11 +96,25 @@ data TOPA_table_data;
   if d_purch_condo_coop = 0 and u_proptype = '11' then d_other_condo = 1;
   else d_other_condo = 0;
   
+  if after_LIHTC_aff_units > 0 or lowcase( outcome_assign_LIHTC ) in ( 'yes' ) then d_lihtc = 1;
+  else d_lihtc = 0;
+  
+  if after_fed_aff_units > 0 or lowcase( outcome_assign_section8 ) in: ( 'yes', 'added', 'lrsp added' ) then d_fed_aff = 1;
+  else d_fed_aff = 0;
+  
+  if outcome_rent_assign_rc_cont =: 'y' or outcome_assign_rc_nopet in: ( 'y', 'added' ) then d_rent_control = 1;
+  else d_rent_control = 0;
+  
+  if d_lihtc=1 or d_fed_aff=1 or d_rent_control=1 or d_le_coop=1 then d_affordable = 1;
+  else d_affordable = 0;
+  
+  /*
   if after_LIHTC_aff_units > 0 or lowcase( outcome_assign_LIHTC ) in ( 'yes' ) or 
-     after_fed_aff_units > 0 or not( lowcase( outcome_assign_section8 ) in ( 'yes', '' ) ) or
+     after_fed_aff_units > 0 or not( lowcase( outcome_assign_section8 ) in: ( 'yes', 'added', 'lrsp added' ) ) or
      outcome_rent_assign_rc_cont =: 'y' or outcome_assign_rc_nopet =: 'y' or
      d_le_coop then d_affordable = 1;
   else d_affordable = 0;
+  */
   
   if lowcase( outcome_100pct_afford ) in: ( 'y', 'a' ) then d_100pct_afford = 1;
   else d_100pct_afford = 0;
@@ -76,6 +129,9 @@ data TOPA_table_data;
     d_le_coop = "Limited equity coop" 
     d_purch_condo_coop = "Tenant homeownership: LE Coop or Condo"
     d_other_condo = "Other condos (not tenant homeownership)"
+    d_lihtc = "LIHTC added or preserved"
+    d_fed_aff = "Section 8 or other federal project-based added or preserved"
+    d_rent_control = "Rent control preserved"
     d_affordable = "Affordability added or preserved"
     d_100pct_afford = "100% affordable"
     d_rehab = "Renovations or repairs for residents in development agreement"
@@ -86,40 +142,35 @@ run;
 %File_info( data=TOPA_table_data, printobs=0 )
 
 
-** Create formats for tables **;
+** Export list of projects/units affordability was added/preserved for appendix **;
 
-proc format;
-  value year_built (notsorted)
-    1 -< 1910 = 'Before 1910'
-    1910 -< 1920 = '1910 to 1919'
-    1920 -< 1930 = '1920 to 1929'
-    1930 -< 1940 = '1930 to 1939'
-    1940 -< 1950 = '1940 to 1949'
-    1950 -< 1960 = '1950 to 1959'
-    1960 -< 1970 = '1960 to 1969'
-    1970 -< 1980 = '1970 to 1979'
-    1980 -< 1990 = '1980 to 1989'
-    1990 -< 2000 = '1990 to 2000'
-    2000 - high  = '2000 or later'
-    . = 'Unknown';
-  value dyesnounk (notsorted)
-    1 = 'Yes'
-    0 = 'No'
-    . = 'Unknown';
-  value $buyout (notsorted)
-    '100.00%' = '100%'
-    'Partial/Option' = 'Partial/Option'
-    'None' = 'None';
-  value day_range
-    low -< 0 = '(negative)'
-    0 -< 45 = 'Less than 45 days'
-    45 -< 90 = '45 to 89 days'
-    90 -< 180 = '90 to 179 days'
-    180 -< 360 = '180 to 359 days'
-    360 -< 420 = '360 to 419 days'
-    420 -< 540 = '420 to 539 days'
-    540 - high = '540 days or more';  
+proc sort data=TOPA_table_data;
+  by ward2022 u_notice_date fulladdress;
 run;
+
+ods tagsets.excelxp file="&_dcdata_default_path\Prescat\Prog\Topa\TOPA_afford_list.xls" style=Normal options(sheet_interval='Bygroup' );
+ods listing close;
+
+options nobyline;
+
+ods tagsets.excelxp options( absolute_column_width="16,16,32,32,16,16,16,16,16");
+
+proc print data=TOPA_table_data label noobs;
+  where u_dedup_notice=1 and u_notice_with_sale=1 and d_affordable=1;
+  by ward2022;
+  var u_notice_date u_sale_date fulladdress property_name u_final_units d_lihtc d_fed_aff d_rent_control d_le_coop;
+  format d_lihtc d_fed_aff d_rent_control d_le_coop dyesonly.;
+  label
+    u_notice_date = "Notice date"
+    u_sale_date = "Sale date (may be approximate)"
+    fulladdress = "Reference address (property may include other addresses)"
+    u_final_units = "Total units";
+run;
+
+ods tagsets.excelxp close;
+ods listing;
+
+options byline;
 
 
 /** Macro Count_table - Start Definition **/
