@@ -57,6 +57,12 @@ data TOPA_table_data;
   if d_purch_condo_coop = 0 and u_proptype = '11' then d_other_condo = 1;
   else d_other_condo = 0;
   
+  if after_LIHTC_aff_units > 0 or lowcase( outcome_assign_LIHTC ) in ( 'yes' ) or 
+     after_fed_aff_units > 0 or not( lowcase( outcome_assign_section8 ) in ( 'yes', '' ) ) or
+     outcome_rent_assign_rc_cont =: 'y' or outcome_assign_rc_nopet =: 'y' or
+     d_le_coop then d_affordable = 1;
+  else d_affordable = 0;
+  
   label
     all_notices = "Every notice (including duplicates)"
     d_cbo_dhcd_received_ta_reg = "Tenant association registered"
@@ -64,6 +70,7 @@ data TOPA_table_data;
     d_le_coop = "Limited equity coop" 
     d_purch_condo_coop = "Tenant homeownership: LE Coop or Condo"
     d_other_condo = "Other condos (not tenant homeownership)"
+    d_affordable = "Affordability added or preserved"
   ;
   
 run;
@@ -96,28 +103,33 @@ run;
 /** Macro Count_table - Start Definition **/
 
 %macro Count_table( 
-  table_num=, title=, where=, row_var=ward2022, col_var=u_notice_date, row_var_fmt=, col_var_fmt=year.,
-  row_var_label=' ', col_var_label=' ', notes=
+  table_num=, title=, title_prefix=, where=, row_var=ward2022, col_var=u_notice_date, row_var_fmt=, col_var_fmt=year.,
+  row_var_label=' ', col_var_label=' ', notes=,
+  analysis_var=all_notices, table_fmt=comma12.0, analysis_stat=sum
   );
+  
+  %local full_table_title;
 
   ods rtf startpage=now;
   
-  title3 "Table &table_num.a. %left(&title)";
+  %let full_table_title = Table &table_num.a. %left(%trim(&title_prefix)) %left(&title);
   
-  ods rtf text = "^S={outputwidth=100% just=l} {\tc\f3\fs0\cf8 Table &table_num.a. %left(&title)}"; 
+  title3 "&full_table_title";
+  
+  ods rtf text = "^S={outputwidth=100% just=l} {\tc\f3\fs0\cf8 &full_table_title}"; 
 
-  proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
+  proc tabulate data=TOPA_table_data format=&table_fmt noseps missing;
     where &where;
     class &row_var / preloadfmt order=data;   
     class &col_var;   
-    var all_notices;
+    var &analysis_var;
     table 
       /** Rows **/
       all="Total"
       &row_var=&row_var_label  
       ,
       /** Columns **/
-      all_notices=" " * sum=" " * 
+      &analysis_var=" " * &analysis_stat=" " * 
       (
       all="Total"    
       &col_var=&col_var_label
@@ -137,23 +149,25 @@ run;
 
 
   ods rtf startpage=now;
+  
+  %let full_table_title = Table &table_num.b. %left(&title_prefix) Residential Units in %left(&title);
+  
+  title3 "&full_table_title";
+  
+  ods rtf text = "^S={outputwidth=100% just=l} {\tc\f3\fs0\cf8 &full_table_title}"; 
 
-  title3 "Table &table_num.b. Residential Units in %left(&title)";
-
-  ods rtf text = "^S={outputwidth=100% just=l} {\tc\f3\fs0\cf8 Table &table_num.b. Residential Units in %left(&title)}"; 
-
-  proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
+  proc tabulate data=TOPA_table_data format=&table_fmt noseps missing;
     where &where;
     class &row_var / preloadfmt order=data;   
     class &col_var;   
-    var u_final_units;
+    var &analysis_var / weight=u_final_units;
     table 
       /** Rows **/
       all="Total"
       &row_var=&row_var_label  
       ,
       /** Columns **/
-      u_final_units=" " * sum=" " * 
+      &analysis_var=" " * &analysis_stat=" " * 
       (
       all="Total"    
       &col_var=&col_var_label
@@ -335,14 +349,46 @@ run;
   table_num=11,
   title=%str( Properties Where Tenants Purchased Coop/Condo by Ward and Year, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_purch_condo_coop=1,
-  notes=Deduplicated notices where tenants purchased coop/condo.
+  notes=Deduplicated notices with sales where tenants purchased coop/condo.
   )
 
 %Count_table(
   table_num=12,
   title=%str( Condo Properties Without Tenant Purchase, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_other_condo=1,
-  notes=Deduplicated notices for condo properties without tenant purchase.
+  notes=Deduplicated notices with sales and condo properties without tenant purchase.
+  )
+
+%Count_table(
+  table_num=13,
+  title=%str( Properties With Affordability Added or Preserved, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_affordable=1,
+  notes=Deduplicated notices with sales and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop) added or preserved.
+  )
+
+%Count_table(
+  table_num=14,
+  title=%str( 15+ Unit Properties, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and u_final_units >= 15,
+  notes=Deduplicated notices for properties with 15+ units with sales.
+  )
+
+%Count_table(
+  table_num=15,
+  title=%str( 15+ Unit Properties With Affordability Added or Preserved, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_affordable=1 and u_final_units >= 15,
+  notes=%str( Deduplicated notices for properties with 15+ units with sales and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop) added or preserved. )
+  )
+
+%Count_table(
+  table_num=16,
+  analysis_var=d_affordable,
+  analysis_stat=mean,
+  table_fmt=percent12.1,
+  title=%str( 15+ Unit Properties With Affordability Added or Preserved, 2006-2020 ),
+  title_prefix=Percentage of,
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and u_final_units >= 15,
+  notes=Deduplicated notices for properties with 15+ units with sales.
   )
 
 
