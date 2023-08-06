@@ -100,10 +100,11 @@ data TOPA_table_data;
   if lowcase( ta_assign_rights ) = 'yes' then d_ta_assign_rights = 1;
   else if lowcase( ta_assign_rights ) = 'no' then d_ta_assign_rights = 0;
   
+  ** NOTE: Only use CBO designated LEC's **;
   if lowcase( outcome_homeowner ) in ( 'le coop' ) then d_le_coop = 1;
   else d_le_coop = 0;
   
-  if after_lec_aff_units > 0 or lowcase( outcome_homeowner ) in ( 'le coop', 'condo' ) then d_purch_condo_coop = 1;
+  if lowcase( outcome_homeowner ) in ( 'le coop', 'condo' ) then d_purch_condo_coop = 1;
   else d_purch_condo_coop = 0;
   
   if d_purch_condo_coop = 0 and u_proptype = '11' then d_other_condo = 1;
