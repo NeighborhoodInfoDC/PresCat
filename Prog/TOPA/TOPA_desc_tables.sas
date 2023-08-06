@@ -69,7 +69,11 @@ run;
 data TOPA_table_data;
   
   merge 
-    PresCat.TOPA_notices_sales (in=in1)
+    PresCat.TOPA_notices_sales 
+      (in=in1 
+       keep=id u_dedup_notice u_notice_with_sale fulladdress ward2022 cluster2017 u_actual_saledate u_address_id_ref
+            u_days_from_dedup_notice_to_sale u_final_units u_notice_date u_sale_date u_ownercat u_ownername u_proptype
+            u_year_built_original u_recent_reno)
     PresCat.TOPA_CBO_sheet (keep=id cbo_dhcd_received_ta_reg ta_assign_rights r_ta_provider u_has_cbo_outcome outcome_:)
     PresCat.topa_subsidies (keep=id before_: after_:)
     PresCat.topa_database (keep=id All_street_addresses Property_name); 
@@ -126,7 +130,7 @@ data TOPA_table_data;
   else d_cbo_involved = 0;
     
   label
-    all_notices = "Every notice (including duplicates)"
+    all_notices = "Notices"
     d_cbo_dhcd_received_ta_reg = "Tenant association registered"
     d_ta_assign_rights = "Tenants assigned rights"
     d_le_coop = "Limited equity coop" 
@@ -141,9 +145,39 @@ data TOPA_table_data;
     d_cbo_involved = "Properties with CBO involvement"
   ;
   
+  format
+    d_cbo_dhcd_received_ta_reg d_ta_assign_rights d_cbo_involved d_rehab
+    d_affordable d_100pct_afford d_purch_condo_coop d_le_coop d_lihtc d_fed_aff d_rent_control d_other_condo dyesno.;
+
 run;
 
 %File_info( data=TOPA_table_data, printobs=0 )
+
+
+** Outcome diagnostic summary **;
+
+proc summary data=TOPA_table_data nway;
+  where u_dedup_notice=1 and u_notice_with_sale=1;
+  class 
+    d_affordable d_100pct_afford d_purch_condo_coop d_le_coop d_lihtc d_fed_aff d_rent_control d_other_condo;
+  var all_notices;
+  output out=TOPA_outcome_summary sum=;
+run;
+
+ods tagsets.excelxp file="&_dcdata_default_path\Prescat\Prog\Topa\TOPA_outcome_summary.xls" style=Normal options(sheet_interval='Bygroup' );
+ods listing close;
+
+ods tagsets.excelxp options( absolute_column_width="16");
+ods tagsets.excelxp options( sheet_name="Outcome summary" );
+
+proc print data=TOPA_outcome_summary label noobs;
+  id d_affordable d_100pct_afford d_purch_condo_coop d_le_coop d_lihtc d_fed_aff d_rent_control d_other_condo;
+  var all_notices;
+  sum all_notices;
+run;
+
+ods tagsets.excelxp close;
+ods listing;
 
 
 ** Export list of projects/units affordability was added/preserved for appendix **;
@@ -565,5 +599,134 @@ footnote1;
 ods rtf close;
 ods listing;
 
+
+** Export all table data **;
+
+/** Macro Export - Start Definition **/
+
+%macro Export( data=, out=, desc= );
+
+  %local lib file;
+  
+  %if %scan( &data, 2, . ) = %then %do;
+    %let lib = work;
+    %let file = &data;
+  %end;
+  %else %do;
+    %let lib = %scan( &data, 1, . );
+    %let file = %scan( &data, 2, . );
+  %end;
+
+  %if &out = %then %let out = &file;
+  
+  %if %length( &desc ) = 0 %then %do;
+    proc sql noprint;
+      select memlabel into :desc from dictionary.tables
+        where upcase(libname)=upcase("&lib") and upcase(memname)=upcase("&file");
+      quit;
+    run;
+  %end;
+
+  filename fexport "&out_folder\&out..csv" lrecl=2000;
+
+  proc export data=&data
+      outfile=fexport
+      dbms=csv replace;
+
+  run;
+  
+  filename fexport clear;
+
+  proc contents data=&data out=_cnt_&out (keep=varnum name label label="&desc") noprint;
+
+  proc sort data=_cnt_&out;
+    by varnum;
+  run;      
+  
+  %let file_list = &file_list &out;
+
+%mend Export;
+
+/** End Macro Definition **/
+
+
+/** Macro Dictionary - Start Definition **/
+
+%macro Dictionary( name=Data dictionary );
+
+  %local desc;
+
+  ** Start writing to XML workbook **;
+    
+  ods listing close;
+
+  ods tagsets.excelxp file="&out_folder\&name..xls" style=Normal 
+      options( sheet_interval='Proc' orientation='landscape' );
+
+  ** Write data dictionaries for all files **;
+
+  %local i k;
+
+  %let i = 1;
+  %let k = %scan( &file_list, &i, %str( ) );
+
+  %do %until ( &k = );
+   
+    proc sql noprint;
+      select memlabel into :desc from dictionary.tables
+        where upcase(libname)="WORK" and upcase(memname)=upcase("_cnt_&k");
+      quit;
+    run;
+
+    ods tagsets.excelxp 
+        options( sheet_name="&k" 
+                 embedded_titles='yes' embedded_footnotes='yes' 
+                 embed_titles_once='yes' embed_footers_once='yes' );
+
+    proc print data=_cnt_&k label;
+      id varnum;
+      var name label;
+      label 
+        varnum = 'Col #'
+        name = 'Name'
+        label = 'Description';
+      title1 bold "Data dictionary for file: &k..csv";
+      title2 bold "&desc";
+      title3 height=10pt "Prepared by Urban-Greater DC on %left(%qsysfunc(date(),worddate.)).";
+      footnote1;
+    run;
+
+    %let i = %eval( &i + 1 );
+    %let k = %scan( &file_list, &i, %str( ) );
+
+  %end;
+
+  ** Close workbook **;
+
+  ods tagsets.excelxp close;
+  ods listing;
+
+  run;
+  
+%mend Dictionary;
+
+/** End Macro Definition **/
+
+
+%global file_list out_folder;
+
+options missing=' ';
+
+** DO NOT CHANGE - This initializes the file_list macro variable **;
+%let file_list = ;
+
+** Fill in the folder location where the export files should be saved **;
+%let out_folder = &_dcdata_default_path\PresCat\Raw\TOPA;
+
+** Export individual data sets **;
+%Export( data=TOPA_table_data, desc=%str(Data for final TOPA study tables) )
+
+** Create data dictionary **;
+%Dictionary( name=TOPA_table_data_dictionary )
 
 
