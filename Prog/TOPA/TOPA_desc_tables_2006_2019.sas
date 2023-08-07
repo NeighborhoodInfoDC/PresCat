@@ -1,5 +1,5 @@
 /**************************************************************************
- Program:  TOPA_match_notices_property.sas
+ Program:  TOPA_desc_tables_2006_2019.sas
  Library:  PresCat
  Project:  Urban-Greater DC
  Author:   Elizabeth Burton
@@ -8,6 +8,8 @@
  Environment:  Local Windows session (desktop)
  
  Description:  Create basic descriptive tables for TOPA evaluation
+
+ TEST VERSION WITH ONLY NOTICES FROM 2006 TO 2019 (DROP 2020)
  
  Saves these outputs in Prog\TOPA:
    TOPA_desc_tables.rtf - Summary tables in Word format (need to create TOC by opening doc and typing ctrl-A, F9)
@@ -88,7 +90,7 @@ data TOPA_table_data;
     PresCat.topa_database (keep=id All_street_addresses Property_name); 
   by id;
 
-  if in1 and '01Jan2006'd <= u_notice_date <= '31dec2020'd;  /** Limit notice data to 2006-2020 **/
+  if in1 and '01Jan2006'd <= u_notice_date <= '31dec2019'd;  /** Limit notice data to 2006-2019 **/
   
   ** Analysis variables **;
   
@@ -121,6 +123,14 @@ data TOPA_table_data;
   
   if d_lihtc=1 or d_fed_aff=1 or d_rent_control=1 or d_le_coop=1 then d_affordable = 1;
   else d_affordable = 0;
+  
+  /*
+  if after_LIHTC_aff_units > 0 or lowcase( outcome_assign_LIHTC ) in ( 'yes' ) or 
+     after_fed_aff_units > 0 or not( lowcase( outcome_assign_section8 ) in: ( 'yes', 'added', 'lrsp added' ) ) or
+     outcome_rent_assign_rc_cont =: 'y' or outcome_assign_rc_nopet =: 'y' or
+     d_le_coop then d_affordable = 1;
+  else d_affordable = 0;
+  */
   
   if lowcase( outcome_100pct_afford ) in: ( 'y', 'a' ) then d_100pct_afford = 1;
   else d_100pct_afford = 0;
@@ -155,13 +165,13 @@ run;
 
 %File_info( data=TOPA_table_data, printobs=0 )
 
-
+%MACRO SKIP;
 ** Outcome diagnostic summary **;
 
 proc summary data=TOPA_table_data nway;
   where u_dedup_notice=1 and u_notice_with_sale=1;
   class 
-    cbo_dhcd_received_ta_reg d_cbo_involved d_affordable d_100pct_afford d_purch_condo_coop d_le_coop d_lihtc d_fed_aff d_rent_control d_other_condo;
+    u_has_cbo_outcome d_affordable d_100pct_afford d_purch_condo_coop d_le_coop d_lihtc d_fed_aff d_rent_control d_other_condo;
   var all_notices u_final_units;
   output out=TOPA_outcome_summary (drop=_type_ _freq_) sum=;
 run;
@@ -210,7 +220,7 @@ ods tagsets.excelxp close;
 ods listing;
 
 options byline;
-
+%MEND SKIP;
 
 /** Macro Count_table - Start Definition **/
 
@@ -313,7 +323,7 @@ ods escapechar = '^';
 %fdate()
 
 ods listing close;
-ods rtf file="&_dcdata_default_path\Prescat\Prog\Topa\TOPA_desc_tables.rtf" style=Styles.Rtf_lato_9pt nokeepn notrkeep notoc_data startpage=off;
+ods rtf file="&_dcdata_default_path\Prescat\Prog\Topa\TOPA_desc_tables_2006_2019.rtf" style=Styles.Rtf_lato_9pt nokeepn notrkeep notoc_data startpage=off;
 
 footnote1 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
 footnote2 height=9pt j=r '{Page}\~{\field{\*\fldinst{\pard\b\i0\chcbpat8\qc\f1\fs19\cf1{PAGE }\cf0\chcbpat0}}}';
@@ -330,14 +340,14 @@ ods rtf text = "^S={outputwidth=100% just=l}{\field{\*\fldinst {\\TOC \\f \\h}}}
 
 %Count_table(
   table_num=1,
-  title=%str( TOPA Notices of Sale (With Duplicates) by Ward and Year, 2006-2020 ),
+  title=%str( TOPA Notices of Sale (With Duplicates) by Ward and Year, 2006-2019 ),
   where=1,
   notes=%str( All notices, with and without sales. )
   )
 
 %Count_table(
   table_num=2,
-  title=%str( TOPA Notices of Sale (With Duplicates) by Neighborhood Cluster and Year, 2006-2020 ),
+  title=%str( TOPA Notices of Sale (With Duplicates) by Neighborhood Cluster and Year, 2006-2019 ),
   row_var=cluster2017,
   where=1,
   notes=%str( All notices, with and without sales. )
@@ -345,7 +355,7 @@ ods rtf text = "^S={outputwidth=100% just=l}{\field{\*\fldinst {\\TOC \\f \\h}}}
 
 %Count_table(
   table_num=3,
-  title=%str( TOPA Notices of Sale (Deduplicated) by Ward and Year, 2006-2020 ),
+  title=%str( TOPA Notices of Sale (Deduplicated) by Ward and Year, 2006-2019 ),
   where=u_dedup_notice=1,
   notes=%str( Deduplicated notices, with and without sales. )
   )
@@ -353,14 +363,14 @@ ods rtf text = "^S={outputwidth=100% just=l}{\field{\*\fldinst {\\TOC \\f \\h}}}
 %Count_table(
   table_num=4,
   row_var=cluster2017,
-  title=%str( TOPA Notices of Sale (Deduplicated) by Neighborhood Cluster and Year, 2006-2020 ),
+  title=%str( TOPA Notices of Sale (Deduplicated) by Neighborhood Cluster and Year, 2006-2019 ),
   where=u_dedup_notice=1,
   notes=%str( Deduplicated notices, with and without sales. )
   )
 
 %Count_table(
   table_num=5,
-  title=%str( Properties With TOPA Notices That Sold by Ward and Year, 2006-2020 ),
+  title=%str( Properties With TOPA Notices That Sold by Ward and Year, 2006-2019 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1,
   notes=%str( Deduplicated notices with sales. )
   )
@@ -368,7 +378,7 @@ ods rtf text = "^S={outputwidth=100% just=l}{\field{\*\fldinst {\\TOC \\f \\h}}}
 %Count_table(
   table_num=6,
   row_var=cluster2017,
-  title=%str( Properties With TOPA Notices That Sold by Neighborhood Cluster and Year, 2006-2020 ),
+  title=%str( Properties With TOPA Notices That Sold by Neighborhood Cluster and Year, 2006-2019 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1,
   notes=%str( Deduplicated notices with sales. )
   )
@@ -376,9 +386,9 @@ ods rtf text = "^S={outputwidth=100% just=l}{\field{\*\fldinst {\\TOC \\f \\h}}}
 
 ods rtf startpage=now;
 
-title3 "Table 7a. Percentage of Properties With TOPA Notices That Sold by Ward and Year, 2006-2020";
+title3 "Table 7a. Percentage of Properties With TOPA Notices That Sold by Ward and Year, 2006-2019";
 
-ods rtf text = "^S={outputwidth=100% just=l} {\tc\f3\fs0\cf8 Table 7a. Percentage of Properties With TOPA Notices That Sold by Ward and Year, 2006-2020}"; 
+ods rtf text = "^S={outputwidth=100% just=l} {\tc\f3\fs0\cf8 Table 7a. Percentage of Properties With TOPA Notices That Sold by Ward and Year, 2006-2019}"; 
 
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
   where u_dedup_notice=1;
@@ -406,9 +416,9 @@ run;
 
 ods rtf startpage=now;
 
-title3 "Table 7b. Percentage of Properties With TOPA Notices That Sold by Neighborhood Cluster and Year, 2006-2020";
+title3 "Table 7b. Percentage of Properties With TOPA Notices That Sold by Neighborhood Cluster and Year, 2006-2019";
 
-ods rtf text = "^S={outputwidth=100% just=l} {\tc\f3\fs0\cf8 Table 7b. Percentage of Properties With TOPA Notices That Sold by Neighborhood Cluster and Year, 2006-2020}"; 
+ods rtf text = "^S={outputwidth=100% just=l} {\tc\f3\fs0\cf8 Table 7b. Percentage of Properties With TOPA Notices That Sold by Neighborhood Cluster and Year, 2006-2019}"; 
 
 proc tabulate data=TOPA_table_data format=comma12.0 noseps missing;
   where u_dedup_notice=1;
@@ -436,7 +446,7 @@ run;
 
 %Count_table(
   table_num=8,
-  title=%str( Properties With Tenant Association Registered by Ward and Year, 2006-2020 ),
+  title=%str( Properties With Tenant Association Registered by Ward and Year, 2006-2019 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=1,
   notes=Deduplicated notices with sales and a tenant association registration.
   )
@@ -446,14 +456,14 @@ run;
   row_var=u_year_built_original,
   row_var_label="\i By year built",
   row_var_fmt=year_built.,
-  title=%str( Properties With Tenant Association Registered by Year Built and Year, 2006-2020 ),
+  title=%str( Properties With Tenant Association Registered by Year Built and Year, 2006-2019 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=1,
   notes=Deduplicated notices with sales and a tenant association registration.
   )
 
 %Count_table(
   table_num=10,
-  title=%str( Properties Where Tenants Assigned Rights by Ward and Year, 2006-2020 ),
+  title=%str( Properties Where Tenants Assigned Rights by Ward and Year, 2006-2019 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_ta_assign_rights=1,
   notes=Deduplicated notices with sales where tenants assigned rights.
   )
@@ -461,35 +471,35 @@ run;
 
 %Count_table(
   table_num=11,
-  title=%str( Properties Where Tenants Purchased Coop/Condo by Ward and Year, 2006-2020 ),
+  title=%str( Properties Where Tenants Purchased Coop/Condo by Ward and Year, 2006-2019 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_purch_condo_coop=1,
   notes=Deduplicated notices with sales where tenants purchased coop/condo.
   )
 
 %Count_table(
   table_num=12,
-  title=%str( Condo Properties Without Tenant Purchase by Ward and Year, 2006-2020 ),
+  title=%str( Condo Properties Without Tenant Purchase by Ward and Year, 2006-2019 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_other_condo=1,
   notes=Deduplicated notices with sales and condo properties without tenant purchase.
   )
 
 %Count_table(
   table_num=13,
-  title=%str( Properties With Affordability Added or Preserved by Ward and Year, 2006-2020 ),
+  title=%str( Properties With Affordability Added or Preserved by Ward and Year, 2006-2019 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_affordable=1,
   notes=Deduplicated notices with sales and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop) added or preserved.
   )
 
 %Count_table(
   table_num=14,
-  title=%str( 15+ Unit Properties by Ward and Year, 2006-2020 ),
+  title=%str( 15+ Unit Properties by Ward and Year, 2006-2019 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and u_final_units >= 15,
   notes=Deduplicated notices for properties with 15+ units with sales.
   )
 
 %Count_table(
   table_num=15,
-  title=%str( 15+ Unit Properties With Affordability Added or Preserved by Ward and Year, 2006-2020 ),
+  title=%str( 15+ Unit Properties With Affordability Added or Preserved by Ward and Year, 2006-2019 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_affordable=1 and u_final_units >= 15,
   notes=%str( Deduplicated notices for properties with 15+ units with sales and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop) added or preserved. )
   )
@@ -499,7 +509,7 @@ run;
   analysis_var=d_affordable,
   analysis_stat=mean,
   table_fmt=percent12.1,
-  title=%str( 15+ Unit Properties With Affordability Added or Preserved by Ward and Year, 2006-2020 ),
+  title=%str( 15+ Unit Properties With Affordability Added or Preserved by Ward and Year, 2006-2019 ),
   title_prefix=Percentage of,
   where=u_dedup_notice=1 and u_notice_with_sale=1 and u_final_units >= 15,
   notes=Deduplicated notices for properties with 15+ units with sales.
@@ -507,14 +517,14 @@ run;
 
 %Count_table(
   table_num=17,
-  title=%str( Properties With 100% Affordability by Ward and Year, 2006-2020 ),
+  title=%str( Properties With 100% Affordability by Ward and Year, 2006-2019 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_100pct_afford=1,
   notes=Deduplicated notices with sales and 100% affordability (marked by CBOs).
   )
 
 %Count_table(
   table_num=18,
-  title=%str( Properties With Renovations or Repairs for Residents in Development Agreement by Ward and Year, 2006-2020 ),
+  title=%str( Properties With Renovations or Repairs for Residents in Development Agreement by Ward and Year, 2006-2019 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_rehab=1,
   notes=Deduplicated notices with sales and renovations or repairs for residents in development agreement.
   )
@@ -524,14 +534,14 @@ run;
   row_var=outcome_buyouts,
   row_var_label="\i With buyouts",
   row_var_fmt=$buyout.,
-  title=%str( Properties With Buyouts by Ward and Year, 2006-2020 ),
+  title=%str( Properties With Buyouts by Ward and Year, 2006-2019 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and not( missing( outcome_buyouts ) ),
   notes=Deduplicated notices with sales and renovations or repairs for residents in development agreement indicated by CBOs. (Unmarked notices omitted.)
   )
 
 %Count_table(
   table_num=20,
-  title=%str( Properties With CBO Involvement by Ward and Year, 2006-2020 ),
+  title=%str( Properties With CBO Involvement by Ward and Year, 2006-2019 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_involved=1,
   notes=Deduplicated notices with sales and CBO involvement.
   )
@@ -539,7 +549,7 @@ run;
 ** Count notices excluded because of TOPA tolling **;
 proc sql noprint;
   select sum( all_notices ) into :topa_tolling_notices from TOPA_table_data
-  where u_dedup_notice=1 and u_notice_with_sale=1 and u_actual_saledate=1 and ( '01mar2020'd <= u_sale_date < '01may2023'd ) and u_final_units >= 15;
+  where u_dedup_notice=1 and u_notice_with_sale=1 and u_actual_saledate=1 and ( '01mar2019'd <= u_sale_date < '01may2023'd ) and u_final_units >= 15;
 quit;
 
 %Count_table(
@@ -547,10 +557,10 @@ quit;
   row_var=u_days_from_dedup_notice_to_sale,
   row_var_label="\i Days from notice to sale",
   row_var_fmt=day_range.,
-  title=%str( Properties With 15+ Units With Tenant Association Registered by Days from Notice to Sale by Ward and Year, 2006-2020* ),
-  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=1 and u_actual_saledate=1 and not( '01mar2020'd <= u_sale_date < '01may2023'd ) and u_final_units >= 15,
+  title=%str( Properties With 15+ Units With Tenant Association Registered by Days from Notice to Sale by Ward and Year, 2006-2019* ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=1 and u_actual_saledate=1 and not( '01mar2019'd <= u_sale_date < '01may2023'd ) and u_final_units >= 15,
   notes=%str( Deduplicated notices for properties with 15+ units that sold, with tenant association registered. ),
-  notes2=%str( *Includes only notices with an actual sale date reported. Exludes %left(&topa_tolling_notices) notices with sales between March 2020 and April 2023 which were affected by TOPA tolling. )
+  notes2=%str( *Includes only notices with an actual sale date reported. Exludes %left(&topa_tolling_notices) notices with sales between March 2019 and April 2023 which were affected by TOPA tolling. )
 )
 
 %Count_table(
@@ -558,17 +568,17 @@ quit;
   row_var=u_days_from_dedup_notice_to_sale,
   row_var_label="\i Days from notice to sale",
   row_var_fmt=day_range.,
-  title=%str( Properties With 15+ Units Without Tenant Association Registered by Days from Notice to Sale by Ward and Year, 2006-2020* ),
-  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=0 and u_actual_saledate=1 and not( '01mar2020'd <= u_sale_date < '01may2023'd ) and u_final_units >= 15,
+  title=%str( Properties With 15+ Units Without Tenant Association Registered by Days from Notice to Sale by Ward and Year, 2006-2019* ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=0 and u_actual_saledate=1 and not( '01mar2019'd <= u_sale_date < '01may2023'd ) and u_final_units >= 15,
   notes=%str( Deduplicated notices for properties with 15+ units that sold, with tenant association registered. ),
-  notes2=%str( *Includes only notices with an actual sale date reported. Exludes %left(&topa_tolling_notices) notices with sales between March 2020 and April 2023 that were affected by TOPA tolling. )
+  notes2=%str( *Includes only notices with an actual sale date reported. Exludes %left(&topa_tolling_notices) notices with sales between March 2019 and April 2023 that were affected by TOPA tolling. )
 )
 
 
 ** Count notices excluded because of TOPA tolling **;
 proc sql noprint;
   select sum( all_notices ) into :topa_tolling_notices from TOPA_table_data
-  where u_dedup_notice=1 and u_notice_with_sale=1 and u_actual_saledate=1 and ( '01mar2020'd <= u_sale_date < '01may2023'd );
+  where u_dedup_notice=1 and u_notice_with_sale=1 and u_actual_saledate=1 and ( '01mar2019'd <= u_sale_date < '01may2023'd );
 quit;
 
 %Count_table(
@@ -576,10 +586,10 @@ quit;
   row_var=u_days_from_dedup_notice_to_sale,
   row_var_label="\i Days from notice to sale",
   row_var_fmt=day_range.,
-  title=%str( Properties With Tenant Association Registered by Days from Notice to Sale by Ward and Year, 2006-2020* ),
-  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=1 and u_actual_saledate=1 and not( '01mar2020'd <= u_sale_date < '01may2023'd ),
+  title=%str( Properties With Tenant Association Registered by Days from Notice to Sale by Ward and Year, 2006-2019* ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=1 and u_actual_saledate=1 and not( '01mar2019'd <= u_sale_date < '01may2023'd ),
   notes=%str( Deduplicated notices for all properties that sold, with tenant association registered. ),
-  notes2=%str( *Includes only notices with an actual sale date reported. Exludes %left(&topa_tolling_notices) notices with sales between March 2020 and April 2023 that were affected by TOPA tolling. )
+  notes2=%str( *Includes only notices with an actual sale date reported. Exludes %left(&topa_tolling_notices) notices with sales between March 2019 and April 2023 that were affected by TOPA tolling. )
 )
 
 %Count_table(
@@ -587,32 +597,25 @@ quit;
   row_var=u_days_from_dedup_notice_to_sale,
   row_var_label="\i Days from notice to sale",
   row_var_fmt=day_range.,
-  title=%str( Properties Without Tenant Association Registered by Days from Notice to Sale by Ward and Year, 2006-2020* ),
-  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=0 and u_actual_saledate=1 and not( '01mar2020'd <= u_sale_date < '01may2023'd ),
+  title=%str( Properties Without Tenant Association Registered by Days from Notice to Sale by Ward and Year, 2006-2019* ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=0 and u_actual_saledate=1 and not( '01mar2019'd <= u_sale_date < '01may2023'd ),
   notes=%str( Deduplicated notices for all properties that sold, with tenant association registered. ),
-  notes2=%str( *Includes only notices with an actual sale date reported. Exludes %left(&topa_tolling_notices) notices with sales between March 2020 and April 2023 which were affected by TOPA tolling. )
+  notes2=%str( *Includes only notices with an actual sale date reported. Exludes %left(&topa_tolling_notices) notices with sales between March 2019 and April 2023 which were affected by TOPA tolling. )
 )
 
 
 %Count_table(
   table_num=25,
-  title=%str( Properties With CBO Involvement and Affordability Added or Preserved by Ward and Year, 2006-2020 ),
+  title=%str( Properties With CBO Involvement and Affordability Added or Preserved by Ward and Year, 2006-2019 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_involved=1 and d_affordable=1,
   notes=%str( Deduplicated notices with sales, CBO involvement, and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop) added or preserved. )
   )
 
 %Count_table(
   table_num=26,
-  title=%str( Properties Where Tenants Assigned Rights and Affordability Added or Preserved by Ward and Year, 2006-2020 ),
+  title=%str( Properties Where Tenants Assigned Rights and Affordability Added or Preserved by Ward and Year, 2006-2019 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_ta_assign_rights=1 and d_affordable=1,
   notes=%str( Deduplicated notices with sales, tenants assigned rights, and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop) added or preserved. )
-  )
-
-%Count_table(
-  table_num=27,
-  title=%str( Properties Where DHCD Received TA Registration and Affordability Added or Preserved by Ward and Year, 2006-2020 ),
-  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=1 and d_affordable=1,
-  notes=%str( Deduplicated notices with sales, TA registration, and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop) added or preserved. )
   )
 
 
@@ -623,7 +626,7 @@ footnote1;
 ods rtf close;
 ods listing;
 
-
+%MACRO SKIP;
 ** Export all table data **;
 
 /** Macro Export - Start Definition **/
@@ -753,4 +756,4 @@ options missing=' ';
 ** Create data dictionary **;
 %Dictionary( name=TOPA_table_data_dictionary )
 
-
+%MEND SKIP;
