@@ -122,14 +122,6 @@ data TOPA_table_data;
   if d_lihtc=1 or d_fed_aff=1 or d_rent_control=1 or d_le_coop=1 then d_affordable = 1;
   else d_affordable = 0;
   
-  /*
-  if after_LIHTC_aff_units > 0 or lowcase( outcome_assign_LIHTC ) in ( 'yes' ) or 
-     after_fed_aff_units > 0 or not( lowcase( outcome_assign_section8 ) in: ( 'yes', 'added', 'lrsp added' ) ) or
-     outcome_rent_assign_rc_cont =: 'y' or outcome_assign_rc_nopet =: 'y' or
-     d_le_coop then d_affordable = 1;
-  else d_affordable = 0;
-  */
-  
   if lowcase( outcome_100pct_afford ) in: ( 'y', 'a' ) then d_100pct_afford = 1;
   else d_100pct_afford = 0;
   
@@ -169,7 +161,7 @@ run;
 proc summary data=TOPA_table_data nway;
   where u_dedup_notice=1 and u_notice_with_sale=1;
   class 
-    u_has_cbo_outcome d_affordable d_100pct_afford d_purch_condo_coop d_le_coop d_lihtc d_fed_aff d_rent_control d_other_condo;
+    cbo_dhcd_received_ta_reg d_cbo_involved d_affordable d_100pct_afford d_purch_condo_coop d_le_coop d_lihtc d_fed_aff d_rent_control d_other_condo;
   var all_notices u_final_units;
   output out=TOPA_outcome_summary (drop=_type_ _freq_) sum=;
 run;
@@ -614,6 +606,13 @@ quit;
   title=%str( Properties Where Tenants Assigned Rights and Affordability Added or Preserved by Ward and Year, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_ta_assign_rights=1 and d_affordable=1,
   notes=%str( Deduplicated notices with sales, tenants assigned rights, and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop) added or preserved. )
+  )
+
+%Count_table(
+  table_num=27,
+  title=%str( Properties Where DHCD Received TA Registration and Affordability Added or Preserved by Ward and Year, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=1 and d_affordable=1,
+  notes=%str( Deduplicated notices with sales, TA registration, and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop) added or preserved. )
   )
 
 
