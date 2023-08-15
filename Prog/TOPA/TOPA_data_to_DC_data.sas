@@ -350,11 +350,22 @@ proc sql noprint;
   where not( 
     ( TOPA_SSL.id = 882 and realprop.saledate = '3mar2020'd ) or 
     ( TOPA_SSL.id in ( 184, 373 ) and year( realprop.saledate ) = 2010 ) or
-    ( TOPA_SSL.id in ( 733, 1134, 1137 ) and realprop.saledate = '13apr2018'd )
+    ( TOPA_SSL.id in ( 733, 1134, 1137 ) and realprop.saledate = '13apr2018'd ) 
   )
+
   order by TOPA_SSL.ID, realprop.SALEDATE;    /** Optional: sorts the output data set **/
 quit;
 
+/** CLEANING: Remove and replace sale dates from Farah 8/15/23 **/
+data TOPA_realprop_b;
+set TOPA_realprop_a;
+  select ( id ); 
+ 	  when ( 766, 850 ) saledate =.;
+ 	  when ( 73 ) saledate = '13oct2009'd;
+	  when ( 964 ) saledate = '15jun2017'd;
+  otherwise /** DO NOTHING **/
+  end; 
+run;
 
 ** Add information on owner type (buyer) **;
 %Parcel_base_who_owns(
