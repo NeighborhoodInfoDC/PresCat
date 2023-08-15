@@ -190,6 +190,37 @@ data Topa_CBO_sheet;
     otherwise /** DO NOTHING **/;
     
   end;
+
+  ** CLEANING: Manually  add CBO outcomes from Farah 8/15/23**;
+
+  if id = 753 then do; 
+  outcome_affordability = 'Not Affordable Before Sale';
+  TA_assign_rights = 'Yes';
+  end; 
+
+  if id = 73 then do;
+  TA_assign_rights = 'Yes';
+  outcome_100pct_afford = 'Yes';
+  outcome_rehab = 'Yes'; 
+  end; 
+
+  if id = 62 then do;
+  cbo_dhcd_received_ta_reg = 'Yes';
+  TA_assign_rights = 'Yes';
+  outcome_rent_assign_rc_cont = 'Yes';
+  outcome_100pct_afford = 'Yes';
+  outcome_rehab = 'Yes'; 
+  end; 
+
+  select ( id );
+    when ( 862 ) outcome_affordability = 'Not Affordable Before Sale';
+	when ( 1320 ) outcome_assign_noafford = 'No';
+    when ( 348, 1137, 416, 417, 418, 419, 420, 2009) cbo_dhcd_received_ta_reg = 'Yes';
+	when ( 349 ) cbo_dhcd_received_ta_reg = 'No';
+	when ( 945, 761, 820, 1011, 1297, 700) TA_assign_rights = 'Yes';
+
+  otherwise /** DO NOTHING **/;
+  end; 
   
   ** Reformat categorical responses & create outcome flag **;
   
@@ -206,8 +237,7 @@ data Topa_CBO_sheet;
         a{i} = 'Yes';
       when ( 'N', 'No', 'N.' )
         a{i} = 'No';
-      otherwise
-        /** Do nothing **/;
+      otherwise /** Do nothing **/;
     end;
     
     if not( missing( a{i} ) ) then u_has_cbo_outcome = 1;
@@ -264,6 +294,11 @@ run;
 
 proc sort data=Topa_CBO_sheet;
   by id;
+run;
+
+proc print data=Topa_CBO_sheet;
+  where id =62;
+  id id;
 run;
 
 %File_info( data=Topa_CBO_sheet, printobs=0, freqvars=Source_sheet )
