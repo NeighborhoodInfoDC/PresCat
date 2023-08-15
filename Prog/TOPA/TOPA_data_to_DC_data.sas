@@ -91,7 +91,8 @@ data Topa_database2;
     ** Delete invalid notices **;
     if id in ( 
       95, 128, 137, 165, 207, 270, 276, 312, 339, 557, 572, 750, 754, 773, 839, 884, 901, 948, 954, 
-      1017, 1104, 1108, 1157, 1113, 1121, 1251, 1298, 1306, 1370, 1385, 10002, 10004, 10005
+      1017, 1104, 1108, 1157, 1113, 1121, 1251, 1298, 1306, 1370, 1385, 10002, 10004, 10005, 162, 167,
+	  178, 382, 605, 883, 905, 941, 1096, 191
     ) then u_delete_notice = 1;
     else u_delete_notice = 0;
     
@@ -138,6 +139,10 @@ data Topa_database2;
       when ( 419 ) All_street_addresses = "930, 940, 960 Randolph Street NW"; /** Petworth Place **/
       when ( 418, 963 ) 
         All_street_addresses = "617,621,625,629,633,637,641 & 643 Hamlin Street NE and 2908, 2912, 2916 & 2920 7th Street NE"; /** Brookland Place **/
+
+	 /** Remove or replace wrong notice dates **/
+	  when ( 106, 134, 224, 381, 410, 489, 349 ) u_offer_sale_date =.;
+	  when ( 406 ) u_offer_sale_date = '02mar2012'd;
 
       otherwise /** DO NOTHING **/
     
