@@ -212,12 +212,17 @@ data Topa_CBO_sheet;
   outcome_rehab = 'Yes'; 
   end; 
 
+  if id = 700 then do; 
+  TA_assign_rights = 'Yes';
+  outcome_assign_LIHTC='No';
+  end;
+
   select ( id );
     when ( 862 ) outcome_affordability = 'Not Affordable Before Sale';
 	when ( 1320 ) outcome_assign_noafford = 'No';
     when ( 348, 1137, 416, 417, 418, 419, 420, 2009) cbo_dhcd_received_ta_reg = 'Yes';
 	when ( 349 ) cbo_dhcd_received_ta_reg = 'No';
-	when ( 945, 761, 820, 1011, 1297, 700) TA_assign_rights = 'Yes';
+	when ( 945, 761, 820, 1011, 1297) TA_assign_rights = 'Yes';
 
   otherwise /** DO NOTHING **/;
   end; 
