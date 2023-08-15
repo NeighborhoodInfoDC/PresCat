@@ -135,10 +135,20 @@ data TOPA_subsidy_after;
 	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 then after_LEC_aff_units=before_LEC_aff_units;
 	else if not(missing(poa_end_actual)) and poa_end_actual-max(u_sale_date,u_notice_date) <= 1825 then after_LEC_aff_units=.;
 	else after_LEC_aff_units=Units_Assist;
+
+** Manual edit to take these units out from Farah 8/15/23 **; 
+  if id = 157 then do; 
+  	after_LIHTC_aff_units =.;
+  	after_LEC_aff_units=.;
+  end; 
+
 run; 
 
 %File_info( data=TOPA_subsidy_after, printobs=10 )
 
+proc print data=TOPA_subsidy_after; 
+where id=157; 
+run; 
 
 proc sort data=Topa_subsidy_after;
   by u_address_id_ref u_notice_date;
@@ -196,6 +206,7 @@ proc summary data=TOPA_subsidy_after nway
  label after_LEC_aff_units='Affordable units formed from Limited-Equity Cooperatives after property sale date (Urban created var)';
  label ID='CNHED database unique notice ID';
 run;
+
 
 
 %Finalize_data_set( 
