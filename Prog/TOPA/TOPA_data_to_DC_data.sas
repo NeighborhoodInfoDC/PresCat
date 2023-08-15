@@ -117,6 +117,8 @@ data Topa_database2;
       when ( 1107 ) All_street_addresses = "2420 & 2426 15th Place SE"; /** Combined with 1108 **/
       
       when ( 733 ) u_offer_sale_date = '13dec2014'd;
+
+	  when ( 242 ) All_street_addresses = "3511-3513 11th Street NW";
       
       /** From TOPA notices - Possible address corrections.xlsx **/
       when ( 25 ) All_street_addresses = "4837 3RD STREET NW";
