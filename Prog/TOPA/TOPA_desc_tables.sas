@@ -155,6 +155,9 @@ run;
 
 %File_info( data=TOPA_table_data, printobs=0 )
 
+proc print data=TOPA_table_data;
+  where id = 62;
+run;
 
 ** Outcome diagnostic summary **;
 
@@ -313,7 +316,8 @@ ods escapechar = '^';
 %fdate()
 
 ods listing close;
-ods rtf file="&_dcdata_default_path\Prescat\Prog\Topa\TOPA_desc_tables.rtf" style=Styles.Rtf_lato_9pt nokeepn notrkeep notoc_data startpage=off;
+ods rtf file="&_dcdata_default_path\Prescat\Prog\Topa\TOPA_desc_tables.rtf" style=Styles.Rtf_lato_9pt nokeepn /* notrkeep */ notoc_data startpage=off;
+** removing notrkeep for my sas version **;
 
 footnote1 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
 footnote2 height=9pt j=r '{Page}\~{\field{\*\fldinst{\pard\b\i0\chcbpat8\qc\f1\fs19\cf1{PAGE }\cf0\chcbpat0}}}';

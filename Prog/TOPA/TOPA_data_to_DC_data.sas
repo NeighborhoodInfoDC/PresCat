@@ -95,6 +95,13 @@ data Topa_database2;
 	  178, 382, 605, 883, 905, 941, 1096, 191
     ) then u_delete_notice = 1;
     else u_delete_notice = 0;
+
+	** Remove or replace wrong notice dates **;
+	if id in (
+	  106, 134, 224, 381, 410, 489, 349
+	) then u_offer_sale_date =.;
+	if id in ( 406, 62 )
+	  then u_offer_sale_date = '02mar2012'd;
     
     ** Change temporary CR-LF replacement text in Address (improves address parsing) **;
     All_street_addresses = left( compbl( tranwrd( All_street_addresses, '||', '; ' ) ) );
@@ -150,6 +157,10 @@ data Topa_database2;
     format u_offer_sale_date MMDDYY10.;
     format u_delete_notice dyesno.;
 
+run;
+
+proc print data=Topa_database2;
+  where id = 134;
 run;
 
 title2 '** Check for duplicate values of ID **';
@@ -356,20 +367,35 @@ quit;
 
 %File_info( data=TOPA_realprop_a, printobs=5 )
 
-/** CLEANING: Remove and replace sale dates and notice dates from Farah 8/15/23 **/
+/** CLEANING: Remove and replace sale dates from Farah 8/15/23 **/
 data TOPA_realprop_b;
 set TOPA_realprop_a;
+  if id=766 then do;
+    saledate =.;
+	ownerpt_extractdat_first=.;
+  end; 
+
+  if id=850 then do;
+    saledate =.;
+	ownerpt_extractdat_first=.;
+  end; 
+
   select ( id ); 
- 	  when ( 766, 850 ) saledate =.;
  	  when ( 73 ) saledate = '13oct2009'd;
 	  when ( 964 ) saledate = '15jun2017'd;
 
-	 /** Remove or replace wrong notice dates **/
+	  /** Remove or replace wrong notice dates **/
 	  when ( 106, 134, 224, 381, 410, 489, 349 ) u_offer_sale_date =.;
 	  when ( 406, 62 ) u_offer_sale_date = '02mar2012'd;
 
   otherwise /** DO NOTHING **/
+
+
   end; 
+run;
+
+proc print data=TOPA_realprop_b;
+  where id = 406;
 run;
 
 ** Add information on owner type (buyer) **;

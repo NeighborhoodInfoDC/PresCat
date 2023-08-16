@@ -50,6 +50,7 @@ run;
  
 %File_info( data=Topa_id_x_address, printobs=5 ) /** 1750 obs**/
 
+
 title2 '** Notices with missing u_address_id_ref **';
 proc print data=Topa_id_x_address;
   where missing( u_address_id_ref );
@@ -74,7 +75,7 @@ data Sales_by_property;
 run;
 
 proc print data=Sales_by_property; /* can't find 894 ID */ 
-  where id=894;
+  where id=62;
 run;
 
 data Sales_by_property_dates;
@@ -107,7 +108,7 @@ run;
 
 %File_info( data=Sales_by_property_nodup, printobs=5 ) /** 4958 obs**/
 
-data TOPA_by_property;
+data TOPA_by_property; ** SOMETHING HAPPENING HERE WITH NOTICE DATES **;
   merge Prescat.Topa_database Topa_id_x_address;
   by id;
 run; 
@@ -118,6 +119,10 @@ data TOPA_by_property_dates;
 run;
 
 %File_info( data=TOPA_by_property, printobs=5 ) /** 1750 obs**/
+
+proc print data=TOPA_by_property;
+  where id = 62;
+run;
 
 /*Adding years built variables to datasets below*/
 proc summary data=PresCat.TOPA_SSL;
@@ -140,6 +145,8 @@ run;
 proc sort data=TOPA_years out=TOPA_by_property_dates;
   by u_address_id_ref descending u_offer_sale_date id;
 run;
+
+
 
 data Combo;
   set 
