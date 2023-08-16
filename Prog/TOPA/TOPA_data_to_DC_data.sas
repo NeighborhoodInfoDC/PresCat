@@ -159,10 +159,6 @@ data Topa_database2;
 
 run;
 
-proc print data=Topa_database2;
-  where id = 134;
-run;
-
 title2 '** Check for duplicate values of ID **';
 %Dup_check(
   data=Topa_database2,
@@ -367,36 +363,22 @@ quit;
 
 %File_info( data=TOPA_realprop_a, printobs=5 )
 
-/** CLEANING: Remove and replace sale dates from Farah 8/15/23 **/
+/** CLEANING: Replace sale dates from Farah 8/15/23 **/
 data TOPA_realprop_b;
 set TOPA_realprop_a;
-  if id=766 then do;
-    saledate =.;
-	ownerpt_extractdat_first=.;
-  end; 
-
-  if id=850 then do;
-    saledate =.;
-	ownerpt_extractdat_first=.;
-  end; 
 
   select ( id ); 
  	  when ( 73 ) saledate = '13oct2009'd;
 	  when ( 964 ) saledate = '15jun2017'd;
 
-	  /** Remove or replace wrong notice dates **/
-	  when ( 106, 134, 224, 381, 410, 489, 349 ) u_offer_sale_date =.;
+	  /** Replace wrong notice dates **/
 	  when ( 406, 62 ) u_offer_sale_date = '02mar2012'd;
 
   otherwise /** DO NOTHING **/
 
-
   end; 
 run;
 
-proc print data=TOPA_realprop_b;
-  where id = 406;
-run;
 
 ** Add information on owner type (buyer) **;
 %Parcel_base_who_owns(

@@ -74,10 +74,6 @@ data Sales_by_property;
   if missing( ssl ) then delete;
 run;
 
-proc print data=Sales_by_property; /* can't find 894 ID */ 
-  where id=62;
-run;
-
 data Sales_by_property_dates;
   set Sales_by_property; 
   format all_saledate MMDDYY10.;
@@ -120,10 +116,6 @@ run;
 
 %File_info( data=TOPA_by_property, printobs=5 ) /** 1750 obs**/
 
-proc print data=TOPA_by_property;
-  where id = 62;
-run;
-
 /*Adding years built variables to datasets below*/
 proc summary data=PresCat.TOPA_SSL;
   by id;
@@ -145,8 +137,6 @@ run;
 proc sort data=TOPA_years out=TOPA_by_property_dates;
   by u_address_id_ref descending u_offer_sale_date id;
 run;
-
-
 
 data Combo;
   set 
@@ -253,6 +243,7 @@ data Topa_notice_flag;
   drop desc;
   drop Ownername_full SALEPRICE ui_proptype u_ref_date ADDRESS1 ADDRESS2 address3 prev_desc saledate ownerpt_extractdat_first actual_saledate Ownercat;
 run; 
+
 
 /** Proc Print for checking results **/
 proc print data=Topa_notice_flag (firstobs=79 obs=94);
