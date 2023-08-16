@@ -155,10 +155,6 @@ run;
 
 %File_info( data=TOPA_table_data, printobs=0 )
 
-proc print data=TOPA_table_data;
-  where id = 62;
-run;
-
 ** Outcome diagnostic summary **;
 
 proc summary data=TOPA_table_data nway;
