@@ -142,10 +142,6 @@ data Topa_database2;
       when ( 418, 963 ) 
         All_street_addresses = "617,621,625,629,633,637,641 & 643 Hamlin Street NE and 2908, 2912, 2916 & 2920 7th Street NE"; /** Brookland Place **/
 
-	 /** Remove or replace wrong notice dates **/
-	  when ( 106, 134, 224, 381, 410, 489, 349 ) u_offer_sale_date =.;
-	  when ( 406 ) u_offer_sale_date = '02mar2012'd;
-
       otherwise /** DO NOTHING **/
     
     end;
@@ -358,13 +354,20 @@ proc sql noprint;
   order by TOPA_SSL.ID, realprop.SALEDATE;    /** Optional: sorts the output data set **/
 quit;
 
-/** CLEANING: Remove and replace sale dates from Farah 8/15/23 **/
+%File_info( data=TOPA_realprop_a, printobs=5 )
+
+/** CLEANING: Remove and replace sale dates and notice dates from Farah 8/15/23 **/
 data TOPA_realprop_b;
 set TOPA_realprop_a;
   select ( id ); 
  	  when ( 766, 850 ) saledate =.;
  	  when ( 73 ) saledate = '13oct2009'd;
 	  when ( 964 ) saledate = '15jun2017'd;
+
+	 /** Remove or replace wrong notice dates **/
+	  when ( 106, 134, 224, 381, 410, 489, 349 ) u_offer_sale_date =.;
+	  when ( 406, 62 ) u_offer_sale_date = '02mar2012'd;
+
   otherwise /** DO NOTHING **/
   end; 
 run;
@@ -374,7 +377,7 @@ run;
   RegExpFile=&_dcdata_r_path\RealProp\Prog\Updates\Owner type codes reg expr.txt,
   Diagnostic_file=&_dcdata_default_path\PresCat\Prog\TOPA\TOPA_who_owns_diagnostic.xls,
   inlib=work,
-  data=TOPA_realprop_a,
+  data=TOPA_realprop_b,
   outlib=work,
   out=TOPA_realprop,
   finalize=N,
