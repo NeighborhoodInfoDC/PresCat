@@ -97,9 +97,6 @@ data Topa_database2;
     else u_delete_notice = 0;
 
 	** Remove or replace wrong notice dates **;
-	if id in (
-	  106, 134, 224, 381, 410, 489, 349
-	) then u_offer_sale_date =.;
 	if id in ( 406, 62 )
 	  then u_offer_sale_date = '02mar2012'd;
     
