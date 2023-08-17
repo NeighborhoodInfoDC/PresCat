@@ -151,6 +151,23 @@ data TOPA_table_data;
     d_cbo_dhcd_received_ta_reg d_ta_assign_rights d_cbo_involved d_rehab
     d_affordable d_100pct_afford d_purch_condo_coop d_le_coop d_lihtc d_fed_aff d_rent_control d_other_condo dyesno.;
 
+  ** CLEANING manual edits to take out notice dates or saledates (and relevant vars) from Farah **; 
+
+  if id in (
+	  106, 134, 224, 381, 410, 489, 349
+	) then do;
+  u_notice_date =.;
+  u_days_from_dedup_notice_to_sale=.;
+  end;
+
+  if id in (
+	  766, 850
+	) then do;
+  u_sale_date =.;
+  u_days_from_dedup_notice_to_sale=.;
+  u_actual_saledate=.;
+  end;
+
 run;
 
 %File_info( data=TOPA_table_data, printobs=0 )
