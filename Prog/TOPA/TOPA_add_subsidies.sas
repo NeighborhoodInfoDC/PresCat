@@ -139,7 +139,7 @@ data TOPA_subsidy_after;
 ** Manual edit to take these units out from Farah 8/15/23 **; 
   if id = 157 then do; 
   	after_LIHTC_aff_units =.;
-  	after_LEC_aff_units=.;
+  	after_LEC_aff_units=21;
   end; 
 
 run; 

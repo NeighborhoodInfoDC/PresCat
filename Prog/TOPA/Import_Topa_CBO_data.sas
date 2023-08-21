@@ -217,6 +217,11 @@ data Topa_CBO_sheet;
   outcome_assign_LIHTC='No';
   end;
 
+  if id = 157 then do; 
+  outcome_homeowner = 'Le Coop';
+  outcome_assign_LIHTC = 'No';
+  end;
+
   select ( id );
     when ( 862 ) outcome_affordability = 'Not Affordable Before Sale';
 	when ( 1320 ) outcome_assign_noafford = 'No';

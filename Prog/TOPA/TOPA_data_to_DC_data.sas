@@ -367,6 +367,7 @@ set TOPA_realprop_a;
   select ( id ); 
  	  when ( 73 ) saledate = '13oct2009'd;
 	  when ( 964 ) saledate = '15jun2017'd;
+	  when ( 1086 ) saledate= '22dec2017'd;
 
 	  /** Replace wrong notice dates **/
 	  when ( 406, 62 ) u_offer_sale_date = '02mar2012'd;
