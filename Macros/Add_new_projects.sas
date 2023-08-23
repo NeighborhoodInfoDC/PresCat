@@ -27,6 +27,7 @@
 %macro Add_new_projects( 
   input_file_pre=, /** First part of input file names **/
   input_path=&_dcdata_r_path\PresCat\Raw\AddNew,  /** Location of input files **/
+  use_zipcode=Y,  /** Use ZIP code when geocoding (set =N when invoking macro if input data does not have ZIP codes) **/
   address_data_edits=, /** Address data manual edits **/
   parcel_data_edits= /** Parcel data manual edits **/
   );
@@ -39,6 +40,7 @@
   %Add_new_projects_geocode( 
     input_file_pre=&input_file_pre,
     input_path=&input_path,
+    use_zipcode=&use_zipcode,
     address_data_edits=&address_data_edits,
     parcel_data_edits=&parcel_data_edits
   )

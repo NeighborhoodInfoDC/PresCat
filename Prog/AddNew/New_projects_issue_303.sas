@@ -24,7 +24,8 @@
 
 
 %Add_new_projects(
-  input_file_pre = New_projects_issue_303
+  input_file_pre = New_projects_issue_303,
+  use_zipcode = N
 )
 
 

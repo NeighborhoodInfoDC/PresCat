@@ -20,6 +20,7 @@
 %macro Add_new_projects_geocode( 
   input_file_pre=, /** First part of input file names **/ 
   input_path=,  /** Location of input files **/
+  use_zipcode=, /** Use ZIP code when geocoding (set =N when invoking macro if input data does not have ZIP codes) **/
   address_data_edits=, /** Address data manual edits **/
   parcel_data_edits= /** Parcel data manual edits **/
   );
@@ -91,7 +92,9 @@
     data=New_Proj_projects,
     out=New_Proj_projects_geocode,
     staddr=Bldg_addre,
-    zip=Bldg_zip,
+    %if %mparam_is_yes( &use_zipcode ) %then %do;
+      zip=Bldg_zip,
+    %end; 
     id=ID,
 	keep_geo=address_id anc2012 latitude longitude cluster2017 cluster_tr2000 
 	         geo2010 geo2020 geobg2020 geoblk2020 ward2012 ward2022,
