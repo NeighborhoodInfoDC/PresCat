@@ -21,6 +21,7 @@
   input_file_pre=, /** First part of input file names **/ 
   input_path=,  /** Location of input files **/
   use_zipcode=, /** Use ZIP code when geocoding (set =N when invoking macro if input data does not have ZIP codes) **/
+  matching_project_list=, /** Destination XLS file for list of projects matching existing Catalog or another new project **/
   address_data_edits=, /** Address data manual edits **/
   parcel_data_edits= /** Parcel data manual edits **/
   );
@@ -169,7 +170,7 @@
 
     /** Match geocoded address IDs with MAR address-parcel crosswalk **/
     create table A as 
-      select distinct New.nlihc_id, New.Proj_name, New.Bldg_addre, coalesce( New.address_id, xref.address_id ) as address_id, xref.lot_type, xref.ssl as xref_ssl from 
+      select distinct New.id, New.nlihc_id, New.Proj_name, New.Bldg_addre, coalesce( New.address_id, xref.address_id ) as address_id, xref.lot_type, xref.ssl as xref_ssl from 
   	  New_Proj_projects_geoc_nlihc_id as New left join
   	  Mar.Address_ssl_xref as xref
   	  on New.address_id = xref.address_id
@@ -195,14 +196,14 @@
 
     /** Compile full list of parcel **/
     create table all_parcels as
-      select C.nlihc_id, C.who_ssl2 as ssl from C
+      select C.id, C.nlihc_id, C.who_ssl2 as ssl from C
       union
-      select A.nlihc_id, A.xref_ssl as ssl from A
+      select A.id, A.nlihc_id, A.xref_ssl as ssl from A
   	order by nlihc_id, ssl;
 
     /** Match full parcel list with address-parcel crosswalk to get address IDs **/
     create table D as
-      select distinct all_parcels.nlihc_id, coalesce( all_parcels.ssl, xref.ssl ) as ssl, xref.address_id from
+      select distinct all_parcels.id, all_parcels.nlihc_id, coalesce( all_parcels.ssl, xref.ssl ) as ssl, xref.address_id from
   	all_parcels left join
   	Mar.Address_ssl_xref as xref
   	on all_parcels.ssl = xref.ssl
@@ -211,9 +212,9 @@
 
     /** Compile full list of address IDs **/
     create table all_addresses as
-      select D.nlihc_id, D.address_id from D
+      select D.id, D.nlihc_id, D.address_id from D
       union
-      select A.nlihc_id, A.address_id from A
+      select A.id, A.nlihc_id, A.address_id from A
   	where not( missing( address_id ) )
   	order by nlihc_id, address_id;
 
@@ -244,7 +245,7 @@
 
   data 
     work.Building_geocode_a
-      (keep=nlihc_id address_id Proj_Name &geo_vars Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre bldg_zip
+      (keep=id nlihc_id address_id Proj_Name &geo_vars Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre bldg_zip
             bldg_units_mar ssl
        rename=(address_id=Bldg_address_id));
       
@@ -281,68 +282,44 @@
   
   ** Check new projects for pre-existing addresses in Catalog **;
   
-  proc sort data=Building_geocode_a out=Building_geocode_c1;
-    by bldg_address_id nlihc_id;
-  run;
+  proc sql noprint;
+    create table catalog_match as
+    select 
+      coalesce( new.bldg_address_id, cat.bldg_address_id ) as bldg_address_id, 
+  	new.id,
+      new.nlihc_id as nlihc_id_new, cat.nlihc_id as nlihc_id_cat,
+  	new.proj_name as proj_name_new, cat.proj_name as proj_name_cat,
+  	new.bldg_addre as bldg_addre_new, cat.bldg_addre as bldg_addre_cat
+    from Building_geocode_a as new full join PresCat.Building_geocode as cat
+    on new.bldg_address_id = cat.bldg_address_id
+    where not( missing( new.nlihc_id ) or missing( cat.nlihc_id ) )
+    order by id, nlihc_id_new, nlihc_id_cat;
+  quit;
 
-  proc sort data=PresCat.Building_geocode out=Building_geocode_c2;
-    by bldg_address_id nlihc_id;
-  run;
-
-  proc compare base=Building_geocode_c1 compare=Building_geocode_c2 noprint outbase outcomp out=Building_geocode_comp;
-    id bldg_address_id;
-    var nlihc_id proj_name bldg_addre;
-  run;
-
-  proc sort data=Building_geocode_comp;
-    by bldg_address_id _type_ nlihc_id;
-  run;
-
-  data Building_geocode_comp_rpt;
-
-    retain _hold_bldg_address_id .a;
-
-    set Building_geocode_comp;
-    by bldg_address_id;
-
-    if _type_ = 'BASE' then do;
-      _hold_bldg_address_id = bldg_address_id;
-      in_catalog = 0;
-      output;
-    end;
-    else if _hold_bldg_address_id = bldg_address_id then do;
-      %warn_put( macro=Add_new_projects_geocode, 
-                 msg="Possible existing Catalog project. " bldg_address_id= 
-                     " See output for details." )
-      in_catalog = 1;
-      output;
-    end;
-    else do;
-      _hold_bldg_address_id = .a;
-    end;
-    
-    format in_catalog dyesno.;
-
-    drop _hold_bldg_address_id;
-
+  proc sort data=catalog_match out=catalog_match_nodup (drop=bldg_address_id bldg_addre_:) nodupkey;
+    by id nlihc_id_new nlihc_id_cat;
   run;
 
   title2 '********************************************************************************************';
   title3 '** Addresses in new projects that match existing Catalog projects OR';
   title4 '** New projects with common addresses';
-  title4 '** Check to make sure these projects are not already in Catalog or dedulicate in input data';
+  title4 '** Check to make sure these projects are not already in Catalog or deduplicate in input data';
+  
+  %if %length( &matching_project_list ) > 0 %then %do;
+    ods tagsets.excelxp file="&matching_project_list" style=Normal options(sheet_interval='None' );
+    ods tagsets.excelxp options( sheet_name="Catalog matches" );
+  %end;
 
-  %Dup_check(
-    data=Building_geocode_comp_rpt,
-    by=bldg_address_id,
-    id=nlihc_id in_catalog proj_name bldg_addre,
-    out=_dup_check,
-    listdups=Y,
-    quiet=Y
-  )
+  proc print data=catalog_match_nodup;
+    id id;
+  run;
+
+  %if %length( &matching_project_list ) > 0 %then %do;
+    ods tagsets.excelxp close;
+  %end;
 
   title2; 
-
+  
   **remove projects from geocode datasets that are no longer in project dataset**;
 
   proc sql;

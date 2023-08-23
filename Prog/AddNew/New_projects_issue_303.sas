@@ -25,7 +25,8 @@
 
 %Add_new_projects(
   input_file_pre = New_projects_issue_303,
-  use_zipcode = N
+  use_zipcode = N,
+  matching_project_list=C:\DCData\Libraries\PresCat\Prog\AddNew\New_projects_issue_303_matching_project_list.xls
 )
 
 
