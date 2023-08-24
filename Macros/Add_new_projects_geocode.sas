@@ -64,6 +64,9 @@
     ** Remove unnecessary formats and informats **;
     format _all_ ;
     informat _all_ ;
+    
+    Proj_Name = trim( left( Proj_Name ) );
+    Bldg_Addre = trim( left( Bldg_Addre ) );
 
   run;
 
