@@ -21,7 +21,9 @@
   input_file_pre=, /** First part of input file names **/ 
   input_path=,  /** Location of input files **/
   use_zipcode=, /** Use ZIP code when geocoding (set =N when invoking macro if input data does not have ZIP codes) **/
+  match_score_min=,  /** Minimum score for match **/
   matching_project_list=, /** Destination XLS file for list of projects matching existing Catalog or another new project **/
+  geocode_edits=,  /** Geocoding manual edits **/
   address_data_edits=, /** Address data manual edits **/
   parcel_data_edits= /** Parcel data manual edits **/
   );
@@ -100,7 +102,7 @@
 	keep_geo=address_id anc2012 latitude longitude cluster2017 cluster_tr2000 
 	         geo2010 geo2020 geobg2020 geoblk2020 ward2012 ward2022,
     ds_label=,
-    match_score_min=71,            /** Minimum score for a match **/
+    match_score_min=&match_score_min,            /** Minimum score for a match **/
     listunmatched=Y
   )
 
@@ -131,6 +133,8 @@
     set New_Proj_projects_geocode;
     by id;
     firstproj = first.id;
+    ** Geocoding manual edits **;
+    &Geocode_edits;
     run;
 
   *** Current format of nlihc_id is $16. Test with the new format***;

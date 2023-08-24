@@ -28,7 +28,9 @@
   input_file_pre=, /** First part of input file names **/
   input_path=&_dcdata_r_path\PresCat\Raw\AddNew,  /** Location of input files **/
   use_zipcode=Y,  /** Use ZIP code when geocoding (set =N when invoking macro if input data does not have ZIP codes) **/
+  match_score_min=71,  /** Minimum score for match **/
   matching_project_list=, /** Destination XLS file for list of projects matching existing Catalog or another new project **/
+  geocode_edits=,  /** Geocoding manual edits **/
   address_data_edits=, /** Address data manual edits **/
   parcel_data_edits= /** Parcel data manual edits **/
   );
@@ -42,7 +44,9 @@
     input_file_pre=&input_file_pre,
     input_path=&input_path,
     use_zipcode=&use_zipcode,
+    match_score_min=&match_score_min,
     matching_project_list=&matching_project_list, 
+    geocode_edits=&geocode_edits,
     address_data_edits=&address_data_edits,
     parcel_data_edits=&parcel_data_edits
   )

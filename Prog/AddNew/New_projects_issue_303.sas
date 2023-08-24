@@ -26,6 +26,10 @@
 %Add_new_projects(
   input_file_pre = New_projects_issue_303,
   use_zipcode = N,
+  match_score_min = 65,
+  geocode_edits =
+    if id = 151 then M_EXACTMATCH = 1;
+  ,
   matching_project_list=C:\DCData\Libraries\PresCat\Prog\AddNew\New_projects_issue_303_matching_project_list.xls
 )
 
