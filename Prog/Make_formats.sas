@@ -20,7 +20,7 @@
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
 
-proc format /*library=PresCat*/;
+proc format library=PresCat;
   
   value $Status
     "A" = "Active"
