@@ -87,6 +87,25 @@ filename fimport clear;
 %File_info( data=New_subsidy )
 
 
+filename fimport "\\sas1\DCData\Libraries\PresCat\Raw\AddNew\Pipeline_id_crosswalk.csv" lrecl=2000;
+
+proc import out=Pipeline_id_crosswalk
+    datafile=fimport
+    dbms=csv replace;
+  datarow=2;
+  getnames=yes;
+  guessingrows=max;
+run;
+
+filename fimport clear;
+
+%File_info( data=Pipeline_id_crosswalk, stats= )
+
+ENDSAS;
+
+///////////////////////////
+START HERE: NEED TO RECREATE SUBSIDY DATA EXPORT FROM ORIGINAL PIPELINE FILE.
+
 ** Get start dates for subsidy data. Match based on project names. **;
 
 %Data_to_format(
