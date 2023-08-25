@@ -475,7 +475,6 @@ run;
   notes=Deduplicated notices with sales where tenants assigned rights.
   )
 
-
 %Count_table(
   table_num=11,
   title=%str( Properties Where Tenants Purchased Coop/Condo by Ward and Year, 2006-2020 ),
@@ -632,7 +631,19 @@ quit;
   notes=%str( Deduplicated notices with sales, TA registration, and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop) added or preserved. )
   )
 
+%Count_table(
+  table_num=28,
+  title=%str( Properties Where Tenants Purchased Coops by Ward and Year, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_le_coop=1, 
+  notes=%str(Deduplicated notices with sales where tenants purchased coop.)
+  )
 
+%Count_table(
+  table_num=29,
+  title=%str( Properties Where Tenants Assigned their Rights or Purchased Coops by Ward and Year, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_le_coop=1 or d_ta_assign_rights=1,
+  notes=%str(Deduplicated notices with sales where tenants assigned their rights or purchased coop.)
+  )
 
 title2;
 footnote1;
