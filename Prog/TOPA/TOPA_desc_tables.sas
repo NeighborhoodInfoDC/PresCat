@@ -82,7 +82,7 @@ data TOPA_table_data;
       (in=in1 
        keep=id u_dedup_notice u_notice_with_sale fulladdress ward2022 cluster2017 u_actual_saledate u_address_id_ref
             u_days_from_dedup_notice_to_sale u_final_units u_notice_date u_sale_date u_ownercat u_ownername u_proptype
-            u_year_built_original u_recent_reno)
+            u_year_built_original u_recent_reno x y)
     PresCat.TOPA_CBO_sheet (keep=id cbo_dhcd_received_ta_reg ta_assign_rights r_ta_provider u_has_cbo_outcome outcome_:)
     PresCat.topa_subsidies (keep=id before_: after_:)
     PresCat.topa_database (keep=id All_street_addresses Property_name); 
