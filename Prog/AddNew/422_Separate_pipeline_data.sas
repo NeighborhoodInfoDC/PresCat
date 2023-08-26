@@ -99,9 +99,36 @@ run;
 
 filename fimport clear;
 
+** Make ID var numeric **;
+
+data Pipeline_id_crosswalk;
+
+  length id_num 8.;
+
+  set Pipeline_id_crosswalk;
+
+  id_num = input( id, 8. );
+
+  drop id;
+  rename id_num = id;
+
+run;
+
 %File_info( data=Pipeline_id_crosswalk, stats= )
 
-ENDSAS;
+proc sort data=Pipeline_id_crosswalk out=Pipeline_id_crosswalk_nodup nodupkey;
+  by id project_name;
+run;
+
+** Create subsidy export file **;
+
+proc sql noprint;
+  create table Pipeline_w_id as 
+  select distinct xwalk.project_name, xwalk.id, pipeline.*
+  from Pipeline_id_crosswalk_nodup as xwalk left join Prescat.Dc_pipeline_2022_07 as pipeline
+  on xwalk.project_name = pipeline.project_name
+  order by id;
+quit;
 
 ///////////////////////////
 START HERE: NEED TO RECREATE SUBSIDY DATA EXPORT FROM ORIGINAL PIPELINE FILE.
