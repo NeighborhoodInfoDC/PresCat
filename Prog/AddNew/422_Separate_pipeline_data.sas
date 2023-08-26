@@ -71,7 +71,7 @@ run;
 
 %File_info( data=New_projects, stats= )
 
-
+/*
 filename fimport "\\sas1\DCData\Libraries\PresCat\Raw\AddNew\New_projects_issue_303_subsidy.csv" lrecl=2000;
 
 proc import out=New_subsidy
@@ -85,7 +85,7 @@ run;
 filename fimport clear;
 
 %File_info( data=New_subsidy )
-
+*/
 
 filename fimport "\\sas1\DCData\Libraries\PresCat\Raw\AddNew\Pipeline_id_crosswalk.csv" lrecl=2000;
 
@@ -130,38 +130,110 @@ proc sql noprint;
   order by id;
 quit;
 
-///////////////////////////
-START HERE: NEED TO RECREATE SUBSIDY DATA EXPORT FROM ORIGINAL PIPELINE FILE.
+** Create subsidy export **;
 
-** Get start dates for subsidy data. Match based on project names. **;
+data Subsidy;
 
-%Data_to_format(
-  FmtLib=work,
-  FmtName=$proj_name_to_id,
-  Data=New_projects,
-  Value=Proj_name,
-  Label=id,
-  OtherLabel="",
-  Print=N,
-  Contents=N
-  )
+  length
+ID Units_tot Units_Assist Current_Affordability_Start Affordability_End 8
+application_fiscal_year selection_date Proj_or_Act_Loan_Closing_Date $ 80
+rent_to_fmr_description Subsidy_Info_Source_ID Subsidy_Info_Source $ 40 
+Subsidy_Info_Source_Date 8
+Program $ 32
+Compliance_End_Date Previous_Affordability_end 8
+Agency $ 80 Date_Affordability_Ended 8;
 
+  set Pipeline_w_id;
 
-data Subsidy_start_date;
+  retain
+Affordability_End . 
+rent_to_fmr_description ""
+Subsidy_Info_Source_ID "" 
+Subsidy_Info_Source "DC/AFFPIPELINE" 
+Subsidy_Info_Source_Date '01jul2022'd
+Compliance_End_Date .
+Previous_Affordability_end .
+Date_Affordability_Ended .;
 
-  set Prescat.Dc_pipeline_2022_07;
-  
-  if project_name = "Ivy City/ Trinidad" then project_name = trim( project_name ) || " - " || address;
-  
-  id = input( put( project_name, $proj_name_to_id. ), 12. );
-  
-  if missing( id ) then do;
-    %warn_put( msg="Project not found. " project_name= address_for_mar= address= )
+  Units_tot = total_units;
+ 
+  ** Use project or loan closing date as subsidy start date. 
+  ** If closing date missing, use one year after selection date.
+  ** If selection date missing, use two years after end of FY of application.
+  *****************************************************************************;
+
+  select ( upcase( Proj_or_Act_Loan_Closing_Date ) );
+    when ( "2022 4Q" ) Current_Affordability_Start = '31dec2022'd;
+	when ( "2023 1Q" ) Current_Affordability_Start = '31mar2023'd;
+	when ( "UNKNOWN", "" ) Current_Affordability_Start = intnx( 'year', input( selection_date, anydtdte21. ), 1, 'same' );
+	otherwise Current_Affordability_Start = input( Proj_or_Act_Loan_Closing_Date, anydtdte12. );
   end;
-  
-run;
 
-ENDSAS;
+  if missing( Current_Affordability_Start ) and not( missing( application_fiscal_year ) ) then
+    Current_Affordability_Start = mdy( 9, 30, application_fiscal_year + 1 + 2 );
+
+  ** Output subsidy records for these subsidies
+	DC-FRPP - DC First Right Purchase Program [NONE IN FILE]
+DC-HPF - DC Housing Preservation Fund
+DC-LRSP - DC Local Rent Supplement Program
+DC-SAFI - DC Site Acquisition Funding Initiative
+DC-HPTF - DC Housing Production Trust Fund
+	LIHTC subsidy start after 2020 ONLY.
+  **;
+
+  if hpf_loan_amount ~= "" then do;
+    Program = "DC-HPF";
+	Units_Assist = affordable_units;
+	Agency = "DC Dept of Housing and Community Development";
+    output;
+  end;
+
+  if LRSP_Contract_Amount ~= "" then do;
+    Program = "DC-LRSP";
+	if lrsp_30_percent_units > 0 then Units_Assist = lrsp_30_percent_units;
+	else Units_Assist = affordable_units;
+	Agency = "DC Housing Authority";
+    output;
+  end;
+	
+  if safi_loan_amount ~= "" then do;
+    Program = "DC-SAFI";
+	Units_Assist = affordable_units;
+	Agency = "DC Dept of Housing and Community Development";
+    output;
+  end;
+	
+  if hptf_amount not in ( "", "0" ) then do;
+    Program = "DC-HPTF";
+	Units_Assist = affordable_units;
+	Agency = "DC Dept of Housing and Community Development";
+    output;
+  end;
+
+  if lihtc_annual_allocation ~= "" and year( Current_Affordability_Start ) > 2020 then do;
+
+    if indexw( lihtc_type, '4%' ) and indexw( lihtc_type, '9%' ) then Program = "LIHTC/4+9PCT";
+	else if indexw( lihtc_type, '4%' ) then Program = "LIHTC/4PCT";
+	else if indexw( lihtc_type, '9%' ) then Program = "LIHTC/9PCT"; 
+	else Program = "LIHTC/UNKWN";
+
+    Units_Assist = affordable_units;
+	Agency = "DC Dept of Housing and Community Development; DC Housing Finance Agency";
+
+    output;
+
+  end;
+
+  format Subsidy_Info_Source_Date Current_Affordability_Start mmddyy10.;
+
+  keep 
+ID Units_tot Units_Assist Current_Affordability_Start
+Affordability_End rent_to_fmr_description
+Subsidy_Info_Source_ID Subsidy_Info_Source
+Subsidy_Info_Source_Date Program Compliance_End_Date
+Previous_Affordability_end Agency Date_Affordability_Ended;
+
+run;
 
 
 ** Need to create one unique NLIHC_ID per ID **;
@@ -226,7 +298,7 @@ data
   
   length nlihc_id $ 16;
 
-  set New_subsidy;
+  set Subsidy;
   
   nlihc_id = put( id, id_to_nlihc_id. );
   
@@ -235,8 +307,8 @@ data
   
 run;
 
-%File_info( data=New_subsidy_new, contents=N )
-%File_info( data=New_subsidy_exist, contents=N )
+%File_info( data=New_subsidy_new, contents=N, freqvars=program )
+%File_info( data=New_subsidy_exist, contents=N, freqvars=program )
 
 
 
