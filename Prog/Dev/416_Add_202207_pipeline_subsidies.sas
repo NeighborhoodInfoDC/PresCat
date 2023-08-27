@@ -18,6 +18,7 @@
 
 ** Define libraries **;
 %DCData_lib( Prescat )
+%DCData_lib( Realprop, local=n )
 
 %let revisions = Update subsidies with data from Prescat.Dc_pipeline_2022_07.;
 
