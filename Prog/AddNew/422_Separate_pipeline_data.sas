@@ -21,7 +21,7 @@
 
 ** Read in source data **;
 
-filename fimport "\\sas1\DCData\Libraries\PresCat\Raw\AddNew\New_projects_issue_303_matching_project_list.csv" lrecl=2000;
+filename fimport "&_dcdata_r_path\PresCat\Raw\AddNew\New_projects_issue_303_matching_project_list.csv" lrecl=2000;
 
 proc import out=Matching_project_list
     datafile=fimport
@@ -47,7 +47,7 @@ filename fimport clear;
 )
 
 
-filename fimport "\\sas1\DCData\Libraries\PresCat\Raw\AddNew\New_projects_issue_303.csv" lrecl=2000;
+filename fimport "&_dcdata_r_path\PresCat\Raw\AddNew\New_projects_issue_303.csv" lrecl=2000;
 
 proc import out=New_projects
     datafile=fimport
@@ -71,23 +71,8 @@ run;
 
 %File_info( data=New_projects, stats= )
 
-/*
-filename fimport "\\sas1\DCData\Libraries\PresCat\Raw\AddNew\New_projects_issue_303_subsidy.csv" lrecl=2000;
 
-proc import out=New_subsidy
-    datafile=fimport
-    dbms=csv replace;
-  datarow=2;
-  getnames=yes;
-  guessingrows=max;
-run;
-
-filename fimport clear;
-
-%File_info( data=New_subsidy )
-*/
-
-filename fimport "\\sas1\DCData\Libraries\PresCat\Raw\AddNew\Pipeline_id_crosswalk.csv" lrecl=2000;
+filename fimport "&_dcdata_r_path\PresCat\Raw\AddNew\Pipeline_id_crosswalk.csv" lrecl=2000;
 
 proc import out=Pipeline_id_crosswalk
     datafile=fimport
@@ -313,7 +298,7 @@ run;
 
 ** Create project & subsidy CSV files for issue 303 (new projects) **;
 
-filename fexport "\\sas1\DCData\Libraries\PresCat\Raw\AddNew\New_projects_issue_303_rev.csv" lrecl=2000;
+filename fexport "&_dcdata_r_path\PresCat\Raw\AddNew\New_projects_issue_303_rev.csv" lrecl=2000;
 
 proc export data=New_projects_new
     outfile=fexport
@@ -323,7 +308,7 @@ run;
 
 filename fexport clear;
 
-filename fexport "\\sas1\DCData\Libraries\PresCat\Raw\AddNew\New_projects_issue_303_rev_subsidy.csv" lrecl=2000;
+filename fexport "&_dcdata_r_path\PresCat\Raw\AddNew\New_projects_issue_303_rev_subsidy.csv" lrecl=2000;
 
 proc export data=New_subsidy_new
     outfile=fexport
@@ -336,7 +321,7 @@ filename fexport clear;
 
 ** Create subsidy CSV file for issue 416 (existing projects) **;
 
-filename fexport "\\sas1\DCData\Libraries\PresCat\Raw\416_pipeline_subsidies.csv" lrecl=2000;
+filename fexport "&_dcdata_r_path\PresCat\Raw\416_pipeline_subsidies.csv" lrecl=2000;
 
 proc export data=New_subsidy_exist
     outfile=fexport
@@ -345,9 +330,5 @@ proc export data=New_subsidy_exist
 run;
 
 filename fexport clear;
-
-
-** 
-
 
 run;
