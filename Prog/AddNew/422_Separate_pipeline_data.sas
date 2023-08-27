@@ -311,5 +311,43 @@ run;
 %File_info( data=New_subsidy_exist, contents=N, freqvars=program )
 
 
+** Create project & subsidy CSV files for issue 303 (new projects) **;
+
+filename fexport "\\sas1\DCData\Libraries\PresCat\Raw\AddNew\New_projects_issue_303_rev.csv" lrecl=2000;
+
+proc export data=New_projects_new
+    outfile=fexport
+    dbms=csv replace;
+
+run;
+
+filename fexport clear;
+
+filename fexport "\\sas1\DCData\Libraries\PresCat\Raw\AddNew\New_projects_issue_303_rev_subsidy.csv" lrecl=2000;
+
+proc export data=New_subsidy_new
+    outfile=fexport
+    dbms=csv replace;
+
+run;
+
+filename fexport clear;
+
+
+** Create subsidy CSV file for issue 416 (existing projects) **;
+
+filename fexport "\\sas1\DCData\Libraries\PresCat\Raw\416_pipeline_subsidies.csv" lrecl=2000;
+
+proc export data=New_subsidy_exist
+    outfile=fexport
+    dbms=csv replace;
+
+run;
+
+filename fexport clear;
+
+
+** 
+
 
 run;
