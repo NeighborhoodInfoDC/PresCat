@@ -93,10 +93,11 @@ data TOPA_subsidy;
   u_days_notice_to_subsidy = all_POA_start - max( u_sale_date, u_notice_date );
   label u_days_notice_to_subsidy='Number of days from property sale date to start of subsidy (Urban created var)';
   if not(missing(all_POA_start)); ** delete missing subsidy start dates **; 
-  if portfolio in ("LIHTC", "202/811", "PB8", "PRAC", "DC HPTF", "LECOOP"); ** only include LIHTC, federal project-based subsidies, DC HPTF, and LEC **;
+  if portfolio in ("LIHTC", "202/811", "PB8", "PRAC", "DC HPTF", "LECOOP", "DC-FRPP", "DC-HPF", "DC-LRSP", "DC-SAFI" ); ** only include LIHTC, federal project-based subsidies, DC HPTF, and LEC **;
   if portfolio = "LIHTC" and u_days_notice_to_subsidy < 0 then before_LIHTC_aff_units=Units_Assist;
   if portfolio in ( "202/811", "PB8", "PRAC" ) and u_days_notice_to_subsidy < 0 then before_fed_aff_units=Units_Assist;
   if portfolio = "DC HPTF" and u_days_notice_to_subsidy < 0 then before_DC_HPTF_aff_units=Units_Assist;
+  if portfolio in ( "DC-FRPP", "DC-HPF", "DC-LRSP", "DC-SAFI" ) and u_days_notice_to_subsidy < 0 then before_DC_other_aff_units=Units_Assist;
   if portfolio = "LECOOP" and u_days_notice_to_subsidy < 0 then before_LEC_aff_units=Units_Assist;
 run;
 
@@ -128,6 +129,13 @@ data TOPA_subsidy_after;
 	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 then after_DC_HPTF_aff_units=before_DC_HPTF_aff_units;
 	else if not(missing(poa_end_actual)) and poa_end_actual-max(u_sale_date,u_notice_date) <= 1825 then after_DC_HPTF_aff_units=.;
 	else after_DC_HPTF_aff_units=Units_Assist;
+
+  if portfolio in ( "DC-FRPP", "DC-HPF", "DC-LRSP", "DC-SAFI" ) then 
+	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 1825 and not(missing(before_DC_other_aff_units)) then after_DC_other_aff_units=Units_Assist+before_DC_other_aff_units;
+	else if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 1825 and missing(before_DC_other_aff_units) then after_DC_other_aff_units=Units_Assist;
+	else if missing(poa_end_actual) and u_days_notice_to_subsidy <0 or u_days_notice_to_subsidy > 0 then after_DC_other_aff_units=before_DC_other_aff_units;
+	else if not(missing(poa_end_actual)) and poa_end_actual-max(u_sale_date,u_notice_date) <= 1825 then after_DC_other_aff_units=.;
+	else after_DC_other_aff_units=Units_Assist;
 
   if portfolio = "LECOOP" then 
 	if missing(poa_end_actual) and 0 <= u_days_notice_to_subsidy <= 1825 and not(missing(before_LEC_aff_units)) then after_LEC_aff_units=Units_Assist+before_LEC_aff_units;
@@ -192,7 +200,7 @@ run;
 proc summary data=TOPA_subsidy_after nway
  noprint;
  var before_LIHTC_aff_units after_LIHTC_aff_units before_fed_aff_units after_fed_aff_units before_DC_HPTF_aff_units 
-	after_DC_HPTF_aff_units before_LEC_aff_units after_LEC_aff_units;
+	after_DC_HPTF_aff_units before_DC_other_aff_units after_DC_other_aff_units before_LEC_aff_units after_LEC_aff_units;
  class id;
  output out=TOPA_sum_rows (drop=_type_ _freq_)
 	sum=;
@@ -202,6 +210,8 @@ proc summary data=TOPA_subsidy_after nway
  label after_fed_aff_units='Federal subsidy assisted units (Project based vouchers, Section 202/811, project rental assistance contract) after property sale date (Urban created var)';
  label before_DC_HPTF_aff_units='Subsidy assisted units from the DC Housing Production Trust Fund before property sale date (Urban created var)';
  label after_DC_HPTF_aff_units='Subsidy assisted units from the DC Housing Production Trust Fund after property sale date (Urban created var)';
+ label before_DC_other_aff_units='Subsidy assisted units from other local DC subsidies (DC-FRPP, DC-HPF, DC-LRSP, DC-SAFI) before property sale date (Urban created var)';
+ label after_DC_other_aff_units='Subsidy assisted units from other local DC subsidies (DC-FRPP, DC-HPF, DC-LRSP, DC-SAFI) after property sale date (Urban created var)';
  label before_LEC_aff_units='Affordable units formed from Limited-Equity Cooperatives before property sale date (Urban created var)';
  label after_LEC_aff_units='Affordable units formed from Limited-Equity Cooperatives after property sale date (Urban created var)';
  label ID='CNHED database unique notice ID';
@@ -217,7 +227,7 @@ run;
   label="Preservation Catalog, Project subsidies for TOPA notices",
   sortby=ID,
   /** Metadata parameters **/
-  revisions=%str(New file.),
+  revisions=%str(Revise after Catalog update with July 2022 DC pipline data.),
   /** File info parameters **/
   printobs=50
 )
