@@ -113,13 +113,19 @@ data TOPA_table_data;
   if after_LIHTC_aff_units > 0 or lowcase( outcome_assign_LIHTC ) in ( 'yes' ) then d_lihtc = 1;
   else d_lihtc = 0;
   
+  if after_DC_HPTF_aff_units > 0  then d_dc_hptf = 1;
+  else d_dc_hptf = 0;
+  
+  if after_DC_other_aff_units > 0  then d_dc_other = 1;
+  else d_dc_other = 0;
+  
   if after_fed_aff_units > 0 or lowcase( outcome_assign_section8 ) in: ( 'yes', 'added', 'lrsp added' ) then d_fed_aff = 1;
   else d_fed_aff = 0;
   
   if lowcase( outcome_rent_assign_rc_cont ) =: 'y' or lowcase( outcome_assign_rc_nopet ) in: ( 'y', 'added' ) then d_rent_control = 1;
   else d_rent_control = 0;
   
-  if d_lihtc=1 or d_fed_aff=1 or d_rent_control=1 or d_le_coop=1 then d_affordable = 1;
+  if d_lihtc=1 or d_dc_hptf=1 or d_dc_other=1 or d_fed_aff=1 or d_rent_control=1 or d_le_coop=1 then d_affordable = 1;
   else d_affordable = 0;
   
   if lowcase( outcome_100pct_afford ) in: ( 'y', 'a' ) then d_100pct_afford = 1;
@@ -139,6 +145,8 @@ data TOPA_table_data;
     d_purch_condo_coop = "Tenant homeownership: LE Coop or Condo"
     d_other_condo = "Other condos (not tenant homeownership)"
     d_lihtc = "LIHTC added or preserved"
+    d_dc_hptf = "DC housing production trust fund added or preserved"
+    d_dc_other = "Other DC subsidy added or preserved"
     d_fed_aff = "Section 8 or other federal project-based added or preserved"
     d_rent_control = "Rent control preserved"
     d_affordable = "Affordability added or preserved"
@@ -149,7 +157,7 @@ data TOPA_table_data;
   
   format
     d_cbo_dhcd_received_ta_reg d_ta_assign_rights d_cbo_involved d_rehab
-    d_affordable d_100pct_afford d_purch_condo_coop d_le_coop d_lihtc d_fed_aff d_rent_control d_other_condo dyesno.;
+    d_affordable d_100pct_afford d_purch_condo_coop d_le_coop d_lihtc d_dc_hptf d_dc_other d_fed_aff d_rent_control d_other_condo dyesno.;
 
   ** CLEANING manual edits to take out notice dates or saledates (and relevant vars) from Farah **; 
 
@@ -497,6 +505,20 @@ run;
   )
 
 %Count_table(
+  table_num=13.1,
+  title=%str( Properties With LIHTC Added or Preserved by Ward and Year, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_lihtc=1,
+  notes=Deduplicated notices with sales and LIHTC added or preserved.
+  )
+
+%Count_table(
+  table_num=13.2,
+  title=%str( Properties With DC HPTF Added or Preserved by Ward and Year, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_dc_hptf=1,
+  notes=Deduplicated notices with sales and DC HPTF added or preserved.
+  )
+
+%Count_table(
   table_num=14,
   title=%str( 15+ Unit Properties by Ward and Year, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and u_final_units >= 15,
@@ -614,21 +636,21 @@ quit;
   table_num=25,
   title=%str( Properties With CBO Involvement and Affordability Added or Preserved by Ward and Year, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_involved=1 and d_affordable=1,
-  notes=%str( Deduplicated notices with sales, CBO involvement, and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop) added or preserved. )
+  notes=%str( Deduplicated notices with sales, CBO involvement, and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop, DC HPTF, DC FRPP, DC HPF, DC LRSP, DC SAFI) added or preserved. )
   )
 
 %Count_table(
   table_num=26,
   title=%str( Properties Where Tenants Assigned Rights and Affordability Added or Preserved by Ward and Year, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_ta_assign_rights=1 and d_affordable=1,
-  notes=%str( Deduplicated notices with sales, tenants assigned rights, and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop) added or preserved. )
+  notes=%str( Deduplicated notices with sales, tenants assigned rights, and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop, DC HPTF, DC FRPP, DC HPF, DC LRSP, DC SAFI) added or preserved. )
   )
 
 %Count_table(
   table_num=27,
   title=%str( Properties Where DHCD Received TA Registration and Affordability Added or Preserved by Ward and Year, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=1 and d_affordable=1,
-  notes=%str( Deduplicated notices with sales, TA registration, and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop) added or preserved. )
+  notes=%str( Deduplicated notices with sales, TA registration, and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop, DC HPTF, DC FRPP, DC HPF, DC LRSP, DC SAFI) added or preserved. )
   )
 
 %Count_table(
