@@ -107,6 +107,13 @@
     var ssl saledate saleprice ownername_full ui_proptype premiseadd ownerpt_extractdat_first;
   run;
   
+  title4 'Topa_subsidies';
+  proc print data=Prescat.Topa_subsidies;
+    where id in ( &id );
+    id id;
+    var before_: after_: ;
+  run;
+  
   %if %length( &ssl ) > 0 %then %do;
     title4 'Realprop.Sales_master';
     proc print data=Realprop.Sales_master;
