@@ -163,10 +163,7 @@ data TOPA_table_data;
 
   if id in (
 	  106, 134, 224, 381, 410, 489, 349
-	) then do;
-  u_notice_date =.;
-  u_days_from_dedup_notice_to_sale=.;
-  end;
+	) then u_days_from_dedup_notice_to_sale=.;
 
   if id in (
 	  766, 850
