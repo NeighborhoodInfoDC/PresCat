@@ -43,7 +43,7 @@ ggplot() +
   geom_sf(data = TOPA_coop, 
           mapping = aes(size=u_final_units), 
           color = palette_urbn_main["cyan"],
-          alpha = 0.6) +
+          alpha = 0.4) +
   geom_sf_text(data = geoward22, aes(label=WARD), color = alpha(palette_urbn_gray[7.5]), nudge_x = 2, size = 4) +
   scale_size_continuous(name="Number of units in project", breaks = c(20, 40, 60, 80)) +
   scale_alpha_continuous(name="Number of units in project", breaks = c(20, 40, 60, 80)) 
