@@ -35,26 +35,27 @@ geoward22 <- geoward22 %>% st_transform("EPSG:26985")
 
 # 1) Co-op Map
 TOPA_coop <- TOPA_data %>%
-  filter(d_le_coop=="Yes") %>%
-  rename("Total number of housing units"=u_final_units)
+  filter(d_le_coop=="Yes") 
 
-coop_map <- ggplot() +
+ggplot() +
   geom_sf(data = geoward22, 
           fill = palette_urbn_gray[5]) +
   geom_sf(data = TOPA_coop, 
-          mapping = aes(size=`Total number of housing units`), 
+          mapping = aes(size=u_final_units), 
           color = palette_urbn_main["cyan"],
           alpha = 0.6) +
   geom_sf_text(data = geoward22, aes(label=WARD), color = alpha(palette_urbn_gray[7.5]), nudge_x = 2, size = 4) +
-  scale_size_continuous(name="Total number of housing units", breaks = c(20, 40, 60, 80)) +
-  scale_alpha_continuous(name="Total number of housing units", breaks = c(20, 40, 60, 80)) 
-  
+  scale_size_continuous(name="Number of units in project", breaks = c(20, 40, 60, 80)) +
+  scale_alpha_continuous(name="Number of units in project", breaks = c(20, 40, 60, 80)) 
+
+ggsave("TOPA_coop_map.png", type = "cairo", dpi = 400)
+
 # 2) Affordable map
 TOPA_affordable <- TOPA_data %>%
   filter(d_affordable=="Yes") %>%
   arrange(u_final_units)
 
-affordable_map <- ggplot() +
+ggplot() +
   geom_sf(data = geoward22, 
           fill = palette_urbn_gray[5]) +
   geom_sf(data = TOPA_affordable, 
@@ -62,14 +63,16 @@ affordable_map <- ggplot() +
           color = palette_urbn_main["cyan"],
           alpha = 0.4) +
   geom_sf_text(data = geoward22, aes(label=WARD), color = alpha(palette_urbn_gray[7.5]), nudge_x = 2, size = 4) +
-  scale_size_continuous(name="Total number of housing units", breaks = c(25, 50, 100, 200, 500)) +
-  scale_alpha_continuous(name="Total number of housing units", breaks = c(25, 50, 100, 200, 500)) 
+  scale_size_continuous(name="Number of units in project", breaks = c(25, 50, 100, 200, 500)) +
+  scale_alpha_continuous(name="Number of units in project", breaks = c(25, 50, 100, 200, 500)) 
+
+ggsave("TOPA_affordable_map.png", type = "cairo", dpi = 400)
 
 # 3) Tenants assigned rights/co-op
 TOPA_exercise <- TOPA_data %>%
   filter(d_ta_assign_rights=="Yes" | d_le_coop=="Yes")
 
-exercise_map <- ggplot() +
+ggplot() +
   geom_sf(data = geoward22, 
           fill = palette_urbn_gray[5]) +
   geom_sf(data = TOPA_exercise, 
@@ -77,5 +80,8 @@ exercise_map <- ggplot() +
           color = palette_urbn_main["cyan"],
           alpha = 0.4)+
   geom_sf_text(data = geoward22, aes(label=WARD), color = alpha(palette_urbn_gray[7.5]), nudge_x = 2, size = 4) +
-  scale_size_continuous(name="Total number of housing units", breaks = c(25, 50, 100, 200, 500)) +
-  scale_alpha_continuous(name="Total number of housing units", breaks = c(25, 50, 100, 200, 500)) 
+  scale_size_continuous(name="Number of units in project", breaks = c(25, 50, 100, 200, 500)) +
+  scale_alpha_continuous(name="Number of units in project", breaks = c(25, 50, 100, 200, 500)) 
+
+ggsave("TOPA_exercise_map.png", type = "cairo", dpi = 400)
+
