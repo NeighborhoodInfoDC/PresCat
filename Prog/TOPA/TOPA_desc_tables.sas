@@ -92,6 +92,52 @@ data TOPA_table_data;
 
   if in1 and '01Jan2006'd <= u_notice_date <= '31dec2020'd;  /** Limit notice data to 2006-2020 **/
   
+  ** CLEANING manual edits to take out notice dates or saledates (and relevant vars) from Farah **; 
+
+  if id in (
+	  106, 134, 224, 381, 410, 489, 349
+	) then u_days_from_dedup_notice_to_sale=.;
+
+  if id in (
+	  766, 850
+	) then do;
+  u_sale_date =.;
+  u_days_from_dedup_notice_to_sale=.;
+  u_actual_saledate=.;
+  end;
+  
+  if id = 449 then u_final_units = 27;  /** Unity Coop Association (only 1 buildling became coop) **/
+  
+  ** CLEANING: LIHTC manual edits from Farah (TOPA Data Fixes/LIHTC) **;
+  
+  select ( id );
+    when ( 931 ) after_LIHTC_aff_units = 549;
+    when ( 946 ) after_LIHTC_aff_units = 334;
+    when ( 1117 ) after_LIHTC_aff_units = 272;
+    when ( 1075 ) after_LIHTC_aff_units = 130;
+    when ( 926 ) after_LIHTC_aff_units = 100;
+    when ( 1080 ) after_LIHTC_aff_units = 100;
+    when ( 555 ) after_LIHTC_aff_units = 96;
+    when ( 1001 ) after_LIHTC_aff_units = 96;
+    when ( 1013 ) after_LIHTC_aff_units = 90;
+    when ( 1105 ) after_LIHTC_aff_units = 70;
+    when ( 181 ) after_LIHTC_aff_units = 68;
+    when ( 549 ) after_LIHTC_aff_units = 64;
+    when ( 1219 ) after_LIHTC_aff_units = 56;
+    when ( 1342 ) after_LIHTC_aff_units = 46;
+    when ( 571 ) after_LIHTC_aff_units = 32;
+    when ( 1124 ) after_LIHTC_aff_units = 30;
+    otherwise /** DO NOTHING **/;
+  end;
+  
+  ** Make sure affordable unit counts do not exceed total unit count **;
+  
+  array a{*} before_: after_: ;
+  
+  do i = 1 to dim( a );
+    a{i} = min( max( 0, a{i} ), u_final_units );
+  end;
+  
   ** Analysis variables **;
   
   all_notices=1;  
@@ -127,8 +173,14 @@ data TOPA_table_data;
   if lowcase( outcome_rent_assign_rc_cont ) =: 'y' or lowcase( outcome_assign_rc_nopet ) in: ( 'y', 'added' ) then d_rent_control = 1;
   else d_rent_control = 0;
   
-  if d_lihtc=1 or d_dc_hptf=1 or d_dc_other=1 or d_fed_aff=1 or d_rent_control=1 or d_le_coop=1 then d_affordable = 1;
-  else d_affordable = 0;
+  if d_lihtc=1 or d_dc_hptf=1 or d_dc_other=1 or d_fed_aff=1 or d_rent_control=1 or d_le_coop=1 then do;
+    d_affordable = 1;
+    u_affordable_units = min( u_final_units, max( 0, after_lihtc_aff_units, after_dc_hptf_aff_units, after_dc_other_aff_units, after_fed_aff_units, d_rent_control * u_final_units, d_le_coop * u_final_units ) );
+  end;
+  else do;
+    d_affordable = 0;
+    u_affordable_units = 0;
+  end;
   
   if lowcase( outcome_100pct_afford ) in: ( 'y', 'a' ) then d_100pct_afford = 1;
   else d_100pct_afford = 0;
@@ -155,27 +207,14 @@ data TOPA_table_data;
     d_100pct_afford = "100% affordable"
     d_rehab = "Renovations or repairs for residents in development agreement"
     d_cbo_involved = "Properties with CBO involvement"
+    u_affordable_units = "Affordble units (Urban created var)"
   ;
   
   format
     d_cbo_dhcd_received_ta_reg d_ta_assign_rights d_cbo_involved d_rehab
     d_affordable d_100pct_afford d_purch_condo_coop d_le_coop d_lihtc d_dc_hptf d_dc_other d_fed_aff d_rent_control d_other_condo dyesno.;
-
-  ** CLEANING manual edits to take out notice dates or saledates (and relevant vars) from Farah **; 
-
-  if id in (
-	  106, 134, 224, 381, 410, 489, 349
-	) then u_days_from_dedup_notice_to_sale=.;
-
-  if id in (
-	  766, 850
-	) then do;
-  u_sale_date =.;
-  u_days_from_dedup_notice_to_sale=.;
-  u_actual_saledate=.;
-  end;
-  
-  if id = 449 then u_final_units = 27;  /** Unity Coop Association (only 1 buildling became coop) **/
+    
+  drop i;
 
 run;
 
@@ -232,18 +271,19 @@ ods listing close;
 
 options nobyline;
 
-ods tagsets.excelxp options( absolute_column_width="16,16,32,32,16,16,16,16,16");
+ods tagsets.excelxp options( absolute_column_width="16,16,32,32,14,14,14,14,14,14,14");
 
 proc print data=TOPA_table_data label noobs;
   where u_dedup_notice=1 and u_notice_with_sale=1 and d_affordable=1;
   by ward2022;
-  var u_notice_date u_sale_date fulladdress property_name u_final_units d_lihtc d_fed_aff d_rent_control d_le_coop;
-  format d_lihtc d_fed_aff d_rent_control d_le_coop dyesonly.;
+  var u_notice_date u_sale_date fulladdress property_name u_final_units u_affordable_units d_lihtc d_fed_aff d_dc_hptf d_dc_other d_rent_control d_le_coop;
+  format d_lihtc d_fed_aff d_dc_hptf d_dc_other d_rent_control d_le_coop dyesonly.;
   label
     u_notice_date = "Notice date"
     u_sale_date = "Sale date (may be approximate)"
     fulladdress = "Reference address (property may include other addresses)"
-    u_final_units = "Total units";
+    u_final_units = "Total units"
+    u_affordable_units = "Affordable units";
 run;
 
 ods tagsets.excelxp close;
@@ -257,7 +297,7 @@ options byline;
 %macro Count_table( 
   table_num=, title=, title_prefix=, where=, row_var=ward2022, col_var=u_notice_date, row_var_fmt=, col_var_fmt=year.,
   row_var_label=' ', col_var_label=' ', notes=, notes2=, notes3=,
-  analysis_var=all_notices, table_fmt=comma12.0, analysis_stat=sum
+  analysis_var=all_notices, unit_count=u_final_units, unit_desc=Residential, table_fmt=comma12.0, analysis_stat=sum
   );
   
   %local full_table_title;
@@ -304,7 +344,7 @@ options byline;
 
   ods rtf startpage=now;
   
-  %let full_table_title = Table &table_num.b. %left(&title_prefix) Residential Units in %left(&title);
+  %let full_table_title = Table &table_num.b. %left(&title_prefix) %left(&unit_desc) Units in %left(&title);
   
   title3 "&full_table_title";
   
@@ -314,7 +354,7 @@ options byline;
     where &where;
     class &row_var / preloadfmt order=data;   
     class &col_var;   
-    var &analysis_var / weight=u_final_units;
+    var &analysis_var / weight=&unit_count;
     table 
       /** Rows **/
       all="Total"
@@ -338,6 +378,7 @@ options byline;
   proc odstext;
     p "Notes: %left(&notes)";
     p "%left(&notes2)";
+    p "Unit count = &unit_count..";
   run;
 
 %mend Count_table;
@@ -518,6 +559,8 @@ run;
   table_num=13,
   title=%str( Properties With Affordability Added or Preserved by Ward and Year, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_affordable=1,
+  unit_count=u_affordable_units,
+  unit_desc=Affordable,
   notes=Deduplicated notices with sales and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop) added or preserved.
   )
 
@@ -525,6 +568,8 @@ run;
   table_num=13.1,
   title=%str( Properties With LIHTC Added or Preserved by Ward and Year, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_lihtc=1,
+  unit_count=after_lihtc_aff_units,
+  unit_desc=LIHTC Affordable,
   notes=Deduplicated notices with sales and LIHTC added or preserved.
   )
 
@@ -532,6 +577,8 @@ run;
   table_num=13.2,
   title=%str( Properties With DC HPTF Added or Preserved by Ward and Year, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_dc_hptf=1,
+  unit_count=after_dc_hptf_aff_units,
+  unit_desc=DC HPTF Affordable,
   notes=Deduplicated notices with sales and DC HPTF added or preserved.
   )
 
@@ -546,6 +593,8 @@ run;
   table_num=15,
   title=%str( 15+ Unit Properties With Affordability Added or Preserved by Ward and Year, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_affordable=1 and u_final_units >= 15,
+  unit_count=u_affordable_units,
+  unit_desc=Affordable,
   notes=%str( Deduplicated notices for properties with 15+ units with sales and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop) added or preserved. )
   )
 
@@ -564,6 +613,8 @@ run;
   table_num=17,
   title=%str( Properties With 100% Affordability by Ward and Year, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_100pct_afford=1,
+  unit_count=u_affordable_units,
+  unit_desc=Affordable,
   notes=Deduplicated notices with sales and 100% affordability (marked by CBOs).
   )
 
@@ -654,6 +705,8 @@ quit;
   table_num=25,
   title=%str( Properties With CBO Involvement and Affordability Added or Preserved by Ward and Year, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_involved=1 and d_affordable=1,
+  unit_count=u_affordable_units,
+  unit_desc=Affordable,
   notes=%str( Deduplicated notices with sales, CBO involvement, and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop, DC HPTF, DC FRPP, DC HPF, DC LRSP, DC SAFI) added or preserved. )
   )
 
@@ -661,6 +714,8 @@ quit;
   table_num=26,
   title=%str( Properties Where Tenants Assigned Rights and Affordability Added or Preserved by Ward and Year, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_ta_assign_rights=1 and d_affordable=1,
+  unit_count=u_affordable_units,
+  unit_desc=Affordable,
   notes=%str( Deduplicated notices with sales, tenants assigned rights, and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop, DC HPTF, DC FRPP, DC HPF, DC LRSP, DC SAFI) added or preserved. )
   )
 
@@ -668,6 +723,8 @@ quit;
   table_num=27,
   title=%str( Properties Where DHCD Received TA Registration and Affordability Added or Preserved by Ward and Year, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=1 and d_affordable=1,
+  unit_count=u_affordable_units,
+  unit_desc=Affordable,
   notes=%str( Deduplicated notices with sales, TA registration, and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop, DC HPTF, DC FRPP, DC HPF, DC LRSP, DC SAFI) added or preserved. )
   )
 
