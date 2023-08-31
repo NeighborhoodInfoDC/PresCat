@@ -33,9 +33,10 @@ geoward22 <- st_read(
 #Transform to Maryland plane
 geoward22 <- geoward22 %>% st_transform("EPSG:26985")
 
-# 1) Co-op Map
+# 1) Co-op Map - Table 28b
 TOPA_coop <- TOPA_data %>%
-  filter(d_le_coop=="Yes") 
+  filter(d_le_coop=="Yes") %>%
+  arrange(u_final_units) 
 
 ggplot() +
   geom_sf(data = geoward22, 
@@ -50,27 +51,28 @@ ggplot() +
 
 ggsave("TOPA_coop_map.png", type = "cairo", dpi = 400)
 
-# 2) Affordable map
+# 2) Affordable map - Table 13b
 TOPA_affordable <- TOPA_data %>%
   filter(d_affordable=="Yes") %>%
-  arrange(u_final_units)
+  arrange(u_affordable_units) 
 
 ggplot() +
   geom_sf(data = geoward22, 
           fill = palette_urbn_gray[5]) +
   geom_sf(data = TOPA_affordable, 
-          mapping = aes(size=u_final_units), 
+          mapping = aes(size=u_affordable_units), 
           color = palette_urbn_main["cyan"],
           alpha = 0.4) +
   geom_sf_text(data = geoward22, aes(label=WARD), color = alpha(palette_urbn_gray[7.5]), nudge_x = 2, size = 4) +
-  scale_size_continuous(name="Number of units in project", breaks = c(25, 50, 100, 200, 500)) +
-  scale_alpha_continuous(name="Number of units in project", breaks = c(25, 50, 100, 200, 500)) 
+  scale_size_continuous(name="Number of affordable units in project", breaks = c(25, 50, 100, 200, 500)) +
+  scale_alpha_continuous(name="Number of affordable units in project", breaks = c(25, 50, 100, 200, 500)) 
 
 ggsave("TOPA_affordable_map.png", type = "cairo", dpi = 400)
 
-# 3) Tenants assigned rights/co-op
+# 3) Tenants assigned rights/co-op - Table 29b
 TOPA_exercise <- TOPA_data %>%
-  filter(d_ta_assign_rights=="Yes" | d_le_coop=="Yes")
+  filter(d_ta_assign_rights=="Yes" | d_le_coop=="Yes") %>%
+  arrange(u_final_units)
 
 ggplot() +
   geom_sf(data = geoward22, 
@@ -84,4 +86,23 @@ ggplot() +
   scale_alpha_continuous(name="Number of units in project", breaks = c(25, 50, 100, 200, 500)) 
 
 ggsave("TOPA_exercise_map.png", type = "cairo", dpi = 400)
+
+# 4) Tenants Assigned Rights and Affordability - Table 26b 
+TOPA_exercise_affordable <- TOPA_data %>%
+  filter(d_ta_assign_rights=="Yes" & d_affordable=="Yes") %>%
+  arrange(u_affordable_units)
+
+ggplot() +
+  geom_sf(data = geoward22, 
+          fill = palette_urbn_gray[5]) +
+  geom_sf(data = TOPA_exercise_affordable, 
+          mapping = aes(size=u_affordable_units), 
+          color = palette_urbn_main["cyan"],
+          alpha = 0.4)+
+  geom_sf_text(data = geoward22, aes(label=WARD), color = alpha(palette_urbn_gray[7.5]), nudge_x = 2, size = 4) +
+  scale_size_continuous(name="Number of affordable units in project", breaks = c(25, 50, 100, 200, 500)) +
+  scale_alpha_continuous(name="Number of affordable units in project", breaks = c(25, 50, 100, 200, 500)) 
+
+ggsave("TOPA_exercise_affordable.png", type = "cairo", dpi = 400)
+
 
