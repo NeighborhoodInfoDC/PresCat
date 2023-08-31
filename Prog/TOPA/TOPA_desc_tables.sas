@@ -85,7 +85,7 @@ data TOPA_table_data;
        keep=id u_dedup_notice u_notice_with_sale fulladdress ward2022 cluster2017 u_actual_saledate u_address_id_ref
             u_days_from_dedup_notice_to_sale u_final_units u_notice_date u_sale_date u_ownercat u_ownername u_proptype
             u_year_built_original u_recent_reno x y)
-    PresCat.TOPA_CBO_sheet (keep=id cbo_dhcd_received_ta_reg ta_assign_rights r_ta_provider u_has_cbo_outcome outcome_:)
+    PresCat.TOPA_CBO_sheet (keep=id cbo_dhcd_received_ta_reg ta_assign_rights r_ta_provider u_has_cbo_outcome outcome_: cbo_unit_count)
     PresCat.topa_subsidies (keep=id before_: after_:)
     PresCat.topa_database (keep=id All_street_addresses Property_name); 
   by id;
@@ -158,7 +158,10 @@ data TOPA_table_data;
   if d_purch_condo_coop = 0 and u_proptype = '11' then d_other_condo = 1;
   else d_other_condo = 0;
   
-  if after_LIHTC_aff_units > 0 or lowcase( outcome_assign_LIHTC ) in ( 'yes' ) then d_lihtc = 1;
+  if after_LIHTC_aff_units > 0 or lowcase( outcome_assign_LIHTC ) in ( 'yes' ) then do;
+    d_lihtc = 1;
+    if not( after_LIHTC_aff_units > 0 ) then after_LIHTC_aff_units = min( cbo_unit_count, u_final_units );
+  end;
   else d_lihtc = 0;
   
   if after_DC_HPTF_aff_units > 0  then d_dc_hptf = 1;
