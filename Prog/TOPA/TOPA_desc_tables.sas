@@ -12,7 +12,7 @@
  Saves these outputs in Prog\TOPA:
    TOPA_desc_tables.rtf - Summary tables in Word format (Need to create TOC by opening doc and typing ctrl-A, F9.
                           Then change TOC table properties to allow row to break across pages.)
-   TOPA_afford_list.xls - List of 15+ unit TOPA properties with affordability added or preserved
+   TOPA_afford_list.xls - List of 15+ unit TOPA properties with affordability added or preserved and TA assigned rights.
    TOPA_outcome_summary.xls - Summary crosstabulation of key outcome variables for diagnostics
    
  Saves these outputs in Raw\TOPA:
@@ -277,7 +277,7 @@ options nobyline;
 ods tagsets.excelxp options( absolute_column_width="16,16,32,32,14,14,14,14,14,14,14");
 
 proc print data=TOPA_table_data label noobs;
-  where u_dedup_notice=1 and u_notice_with_sale=1 and d_affordable=1;
+  where u_dedup_notice=1 and u_notice_with_sale=1 and d_ta_assign_rights=1 and d_affordable=1;
   by ward2022;
   var u_notice_date u_sale_date fulladdress property_name u_final_units u_affordable_units d_lihtc d_fed_aff d_dc_hptf d_dc_other d_rent_control d_le_coop;
   format d_lihtc d_fed_aff d_dc_hptf d_dc_other d_rent_control d_le_coop dyesonly.;
