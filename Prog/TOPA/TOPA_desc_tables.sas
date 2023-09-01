@@ -12,7 +12,7 @@
  Saves these outputs in Prog\TOPA:
    TOPA_desc_tables.rtf - Summary tables in Word format (Need to create TOC by opening doc and typing ctrl-A, F9.
                           Then change TOC table properties to allow row to break across pages.)
-   TOPA_afford_list.xls - List of 15+ unit TOPA properties with affordability added or preserved and TA assigned rights.
+   TOPA_afford_list.xls - List of TOPA properties with affordability added or preserved and TA assigned rights.
    TOPA_outcome_summary.xls - Summary crosstabulation of key outcome variables for diagnostics
    
  Saves these outputs in Raw\TOPA:
