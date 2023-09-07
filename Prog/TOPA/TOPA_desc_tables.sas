@@ -723,7 +723,7 @@ quit;
   where=u_dedup_notice=1 and u_notice_with_sale=1 and ( ( d_ta_assign_rights=1 and d_affordable=1 ) or d_le_coop=1 ),
   unit_count=u_affordable_units,
   unit_desc=Affordable,
-  notes=%str( Deduplicated notices with sales, tenants assigned rights; rental affordability (LIHTC, Section 8 or other project-based, rent control, DC HPTF, DC FRPP, DC HPF, DC LRSP, DC SAFI) added or preserved OR LE coop. )
+  notes=%str( Deduplicated notices with sales; rental affordability (LIHTC, Section 8 or other project-based, rent control, DC HPTF, DC FRPP, DC HPF, DC LRSP, DC SAFI) added or preserved where tenants assigned rights, OR LE coop (with or without tenants assigning rights). )
   )
 
 %Count_table(
