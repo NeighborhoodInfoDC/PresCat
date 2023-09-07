@@ -130,6 +130,10 @@ data TOPA_table_data;
     otherwise /** DO NOTHING **/;
   end;
   
+  ** CLEANING: Fix address **;
+  
+  if id in ( 567, 1057 ) then fulladdress = "710 JEFFERSON STREET NW";
+  
   ** Make sure affordable unit counts do not exceed total unit count **;
   
   array a{*} before_: after_: ;
