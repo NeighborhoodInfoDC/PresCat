@@ -719,11 +719,29 @@ quit;
 
 %Count_table(
   table_num=26,
-  title=%str( Properties Where Tenants Assigned Rights and Affordability Added or Preserved by Ward and Year, 2006-2020 ),
-  where=u_dedup_notice=1 and u_notice_with_sale=1 and ( ( d_ta_assign_rights=1 and d_affordable=1 ) or d_le_coop=1 ),
+  title=%str( Properties Where Tenants Assigned Rights or LE Coop and Affordability Added or Preserved by Ward and Year, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_affordable=1 and ( d_ta_assign_rights=1 or d_le_coop=1 ),
   unit_count=u_affordable_units,
   unit_desc=Affordable,
-  notes=%str( Deduplicated notices with sales; rental affordability (LIHTC, Section 8 or other project-based, rent control, DC HPTF, DC FRPP, DC HPF, DC LRSP, DC SAFI) added or preserved where tenants assigned rights, OR LE coop (with or without tenants assigning rights). )
+  notes=%str( Deduplicated notices with sales; rental affordability (LIHTC, Section 8 or other project-based, rent control, LE coop, DC HPTF, DC FRPP, DC HPF, DC LRSP, DC SAFI) added or preserved; tenants assigned rights or LE coop. )
+  )
+
+%Count_table(
+  table_num=26.1,
+  title=%str( Properties Where Tenants Assigned Rights or LE Coop and LIHTC Added or Preserved by Ward and Year, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_lihtc=1 and ( d_ta_assign_rights=1 or d_le_coop=1 ),
+  unit_count=after_lihtc_aff_units,
+  unit_desc=LIHTC Affordable,
+  notes=%str( Deduplicated notices with sales; LIHTC added or preserved; tenants assigned rights or LE coop. )
+  )
+
+%Count_table(
+  table_num=26.2,
+  title=%str( Properties Where Tenants Assigned Rights or LE Coop and DC HPTF Added or Preserved by Ward and Year, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_dc_hptf=1,
+  unit_count=after_dc_hptf_aff_units,
+  unit_desc=DC HPTF Affordable,
+  notes=%str( Deduplicated notices with sales; DC HPTF added or preserved; tenants assigned rights or LE coop. )
   )
 
 %Count_table(
@@ -748,6 +766,7 @@ quit;
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_le_coop=1 or d_ta_assign_rights=1,
   notes=%str(Deduplicated notices with sales where tenants assigned their rights or formed limited equity coop.)
   )
+
 
 
 ** Days to sale descriptive stats for Ryan **;
