@@ -738,7 +738,7 @@ quit;
 %Count_table(
   table_num=26.2,
   title=%str( Properties Where Tenants Assigned Rights or LE Coop and DC HPTF Added or Preserved by Ward and Year, 2006-2020 ),
-  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_dc_hptf=1,
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_dc_hptf=1 and ( d_ta_assign_rights=1 or d_le_coop=1 ),
   unit_count=after_dc_hptf_aff_units,
   unit_desc=DC HPTF Affordable,
   notes=%str( Deduplicated notices with sales; DC HPTF added or preserved; tenants assigned rights or LE coop. )
