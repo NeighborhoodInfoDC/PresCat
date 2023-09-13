@@ -89,7 +89,7 @@ ggsave("TOPA_exercise_map.png", type = "cairo", dpi = 400)
 
 # 4) Tenants Assigned Rights and Affordability - Table 26b 
 TOPA_exercise_affordable <- TOPA_data %>%
-  filter(d_ta_assign_rights=="Yes" & d_affordable=="Yes") %>%
+  filter((d_ta_assign_rights=="Yes" & d_affordable=="Yes") | d_le_coop=="Yes") %>%
   arrange(u_affordable_units)
 
 ggplot() +
@@ -104,5 +104,4 @@ ggplot() +
   scale_alpha_continuous(name="Number of affordable units in project", breaks = c(25, 50, 100, 200, 500)) 
 
 ggsave("TOPA_exercise_affordable.png", type = "cairo", dpi = 400)
-
 
