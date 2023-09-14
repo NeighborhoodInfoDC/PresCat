@@ -781,7 +781,7 @@ quit;
 
 %Count_table(
   table_num=27.1,
-  title=%str( Properties Where Tenants Assigned Rights or LE Coop and LIHTC Added or Preserved by Ward and Year, 2006-2020 ),
+  title=%str( Properties Where DHCD Received TA Registration and LIHTC Added or Preserved by Ward and Year, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=1 and d_lihtc=1,
   unit_count=after_lihtc_aff_units,
   unit_desc=LIHTC Affordable,
@@ -790,7 +790,7 @@ quit;
 
 %Count_table(
   table_num=27.2,
-  title=%str( Properties Where Tenants Assigned Rights or LE Coop and DC HPTF Added or Preserved by Ward and Year, 2006-2020 ),
+  title=%str( Properties Where DHCD Received TA Registration and DC HPTF Added or Preserved by Ward and Year, 2006-2020 ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=1 and d_dc_hptf=1,
   unit_count=after_dc_hptf_aff_units,
   unit_desc=DC HPTF Affordable,
