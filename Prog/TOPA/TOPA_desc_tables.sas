@@ -38,6 +38,22 @@
 ** Create formats for tables **;
 
 proc format;
+  value year_cols
+    '01jan2006'd - '31dec2006'd = '2006'
+    '01jan2007'd - '31dec2007'd = '2007'
+    '01jan2008'd - '31dec2008'd = '2008'
+    '01jan2009'd - '31dec2009'd = '2009'
+    '01jan2010'd - '31dec2010'd = '2010'
+    '01jan2011'd - '31dec2011'd = '2011'
+    '01jan2012'd - '31dec2012'd = '2012'
+    '01jan2013'd - '31dec2013'd = '2013'
+    '01jan2014'd - '31dec2014'd = '2014'
+    '01jan2015'd - '31dec2015'd = '2015'
+    '01jan2016'd - '31dec2016'd = '2016'
+    '01jan2017'd - '31dec2017'd = '2017'
+    '01jan2018'd - '31dec2018'd = '2018'
+    '01jan2019'd - '31dec2019'd = '2019'
+    '01jan2020'd - '31dec2020'd = '2020';
   value year_built (notsorted)
     1 -< 1910 = 'Before 1910'
     1910 -< 1920 = '1910 to 1919'
@@ -302,8 +318,8 @@ options byline;
 /** Macro Count_table - Start Definition **/
 
 %macro Count_table( 
-  table_num=, title=, title_prefix=, where=, row_var=ward2022, col_var=u_notice_date, row_var_fmt=, col_var_fmt=year.,
-  row_var_label=' ', col_var_label=' ', notes=, notes2=, notes3=,
+  table_num=, title=, title_prefix=, where=, row_var=ward2022, col_var=u_notice_date, row_var_fmt=, col_var_fmt=year_cols.,
+  row_var_label=' ', col_var_label=' ', notes=, notes2=, notes3=, table_options=printmiss,
   analysis_var=all_notices, unit_count=u_final_units, unit_desc=Residential, table_fmt=comma12.0, analysis_stat=sum
   );
   
@@ -320,7 +336,7 @@ options byline;
   proc tabulate data=TOPA_table_data format=&table_fmt noseps missing;
     where &where;
     class &row_var / preloadfmt order=data;   
-    class &col_var;   
+    class &col_var / preloadfmt;
     var &analysis_var;
     table 
       /** Rows **/
@@ -333,6 +349,9 @@ options byline;
       all="Total"    
       &col_var=&col_var_label
       ) 
+      %if %length( &table_options ) > 0 %then %do;
+      / &table_options
+      %end;
     ;
     %if %length( &col_var_fmt ) > 0 %then %do;
       format &col_var &col_var_fmt;  
@@ -360,7 +379,7 @@ options byline;
   proc tabulate data=TOPA_table_data format=&table_fmt noseps missing;
     where &where;
     class &row_var / preloadfmt order=data;   
-    class &col_var;   
+    class &col_var / preloadfmt;   
     var &analysis_var / weight=&unit_count;
     table 
       /** Rows **/
@@ -372,7 +391,10 @@ options byline;
       (
       all="Total"    
       &col_var=&col_var_label
-      ) 
+      )
+      %if %length( &table_options ) > 0 %then %do;
+      / &table_options
+      %end;
     ;
     %if %length( &col_var_fmt ) > 0 %then %do;
       format &col_var &col_var_fmt;  
@@ -664,6 +686,7 @@ quit;
   row_var=u_days_from_dedup_notice_to_sale,
   row_var_label="\i Days from notice to sale",
   row_var_fmt=day_range.,
+  table_options=,
   title=%str( Properties With 15+ Units With Tenant Association Registered by Days from Notice to Sale by Ward and Year, 2006-2020* ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and ( &u_days_p10 <= u_days_from_dedup_notice_to_sale <= &u_days_p90 ) and d_cbo_dhcd_received_ta_reg=1 and u_actual_saledate=1 and not( '01mar2020'd <= u_sale_date < '01may2023'd ) and u_final_units >= 15,
   notes=%str( Deduplicated notices for properties with 15+ units that sold, with tenant association registered. ),
@@ -676,6 +699,7 @@ quit;
   row_var=u_days_from_dedup_notice_to_sale,
   row_var_label="\i Days from notice to sale",
   row_var_fmt=day_range.,
+  table_options=,
   title=%str( Properties With 15+ Units Without Tenant Association Registered by Days from Notice to Sale by Ward and Year, 2006-2020* ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and ( &u_days_p10 <= u_days_from_dedup_notice_to_sale <= &u_days_p90 ) and d_cbo_dhcd_received_ta_reg=0 and u_actual_saledate=1 and not( '01mar2020'd <= u_sale_date < '01may2023'd ) and u_final_units >= 15,
   notes=%str( Deduplicated notices for properties with 15+ units that sold, with tenant association registered. ),
@@ -688,6 +712,7 @@ quit;
   row_var=u_days_from_dedup_notice_to_sale,
   row_var_label="\i Days from notice to sale",
   row_var_fmt=day_range.,
+  table_options=,
   title=%str( Properties With Tenant Association Registered by Days from Notice to Sale by Ward and Year, 2006-2020* ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and ( &u_days_p10 <= u_days_from_dedup_notice_to_sale <= &u_days_p90 ) and d_cbo_dhcd_received_ta_reg=1 and u_actual_saledate=1 and not( '01mar2020'd <= u_sale_date < '01may2023'd ),
   notes=%str( Deduplicated notices for all properties that sold, with tenant association registered. ),
@@ -700,6 +725,7 @@ quit;
   row_var=u_days_from_dedup_notice_to_sale,
   row_var_label="\i Days from notice to sale",
   row_var_fmt=day_range.,
+  table_options=,
   title=%str( Properties Without Tenant Association Registered by Days from Notice to Sale by Ward and Year, 2006-2020* ),
   where=u_dedup_notice=1 and u_notice_with_sale=1 and ( &u_days_p10 <= u_days_from_dedup_notice_to_sale <= &u_days_p90 ) and d_cbo_dhcd_received_ta_reg=0 and u_actual_saledate=1 and not( '01mar2020'd <= u_sale_date < '01may2023'd ),
   notes=%str( Deduplicated notices for all properties that sold, with tenant association registered. ),
@@ -719,11 +745,29 @@ quit;
 
 %Count_table(
   table_num=26,
-  title=%str( Properties Where Tenants Assigned Rights and Affordability Added or Preserved by Ward and Year, 2006-2020 ),
-  where=u_dedup_notice=1 and u_notice_with_sale=1 and ( ( d_ta_assign_rights=1 and d_affordable=1 ) or d_le_coop=1 ),
+  title=%str( Properties Where Tenants Assigned Rights or LE Coop and Affordability Added or Preserved by Ward and Year, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_affordable=1 and ( d_ta_assign_rights=1 or d_le_coop=1 ),
   unit_count=u_affordable_units,
   unit_desc=Affordable,
-  notes=%str( Deduplicated notices with sales; rental affordability (LIHTC, Section 8 or other project-based, rent control, DC HPTF, DC FRPP, DC HPF, DC LRSP, DC SAFI) added or preserved where tenants assigned rights, OR LE coop (with or without tenants assigning rights). )
+  notes=%str( Deduplicated notices with sales; rental affordability (LIHTC, Section 8 or other project-based, rent control, LE coop, DC HPTF, DC FRPP, DC HPF, DC LRSP, DC SAFI) added or preserved; tenants assigned rights or LE coop. )
+  )
+
+%Count_table(
+  table_num=26.1,
+  title=%str( Properties Where Tenants Assigned Rights or LE Coop and LIHTC Added or Preserved by Ward and Year, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_lihtc=1 and ( d_ta_assign_rights=1 or d_le_coop=1 ),
+  unit_count=after_lihtc_aff_units,
+  unit_desc=LIHTC Affordable,
+  notes=%str( Deduplicated notices with sales; LIHTC added or preserved; tenants assigned rights or LE coop. )
+  )
+
+%Count_table(
+  table_num=26.2,
+  title=%str( Properties Where Tenants Assigned Rights or LE Coop and DC HPTF Added or Preserved by Ward and Year, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_dc_hptf=1 and ( d_ta_assign_rights=1 or d_le_coop=1 ),
+  unit_count=after_dc_hptf_aff_units,
+  unit_desc=DC HPTF Affordable,
+  notes=%str( Deduplicated notices with sales; DC HPTF added or preserved; tenants assigned rights or LE coop. )
   )
 
 %Count_table(
@@ -733,6 +777,24 @@ quit;
   unit_count=u_affordable_units,
   unit_desc=Affordable,
   notes=%str( Deduplicated notices with sales, TA registration, and affordability (LIHTC, Section 8 or other project-based, rent control, LE coop, DC HPTF, DC FRPP, DC HPF, DC LRSP, DC SAFI) added or preserved. )
+  )
+
+%Count_table(
+  table_num=27.1,
+  title=%str( Properties Where DHCD Received TA Registration and LIHTC Added or Preserved by Ward and Year, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=1 and d_lihtc=1,
+  unit_count=after_lihtc_aff_units,
+  unit_desc=LIHTC Affordable,
+  notes=%str( Deduplicated notices with sales, TA registration, LIHTC added or preserved. )
+  )
+
+%Count_table(
+  table_num=27.2,
+  title=%str( Properties Where DHCD Received TA Registration and DC HPTF Added or Preserved by Ward and Year, 2006-2020 ),
+  where=u_dedup_notice=1 and u_notice_with_sale=1 and d_cbo_dhcd_received_ta_reg=1 and d_dc_hptf=1,
+  unit_count=after_dc_hptf_aff_units,
+  unit_desc=DC HPTF Affordable,
+  notes=%str( Deduplicated notices with sales, TA registration, DC HPTF added or preserved. )
   )
 
 %Count_table(
@@ -748,6 +810,7 @@ quit;
   where=u_dedup_notice=1 and u_notice_with_sale=1 and d_le_coop=1 or d_ta_assign_rights=1,
   notes=%str(Deduplicated notices with sales where tenants assigned their rights or formed limited equity coop.)
   )
+
 
 
 ** Days to sale descriptive stats for Ryan **;
