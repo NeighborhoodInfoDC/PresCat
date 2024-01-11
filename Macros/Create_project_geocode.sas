@@ -60,10 +60,10 @@
       _Proj_addre_count = 0;
       _Proj_addre_remaining = &PROJ_ADDRE_LENGTH;
       Proj_address_id = .;
-      Proj_x = .;
-      Proj_y = .;
-      Proj_lat = .;
-      Proj_lon = .;
+      Proj_x = Bldg_x;
+      Proj_y = Bldg_y;
+      Proj_lat = Bldg_lat;
+      Proj_lon = Bldg_lon;
       Proj_addre = "";
       Proj_zip = "";
       Proj_image_url = "";
@@ -78,10 +78,6 @@
     if Proj_zip = "" then Proj_zip = Bldg_Zip;
     Zip = Proj_zip;
     
-    Proj_x = sum( Proj_x, Bldg_x );
-    Proj_y = sum( Proj_y, Bldg_y );
-    Proj_lat = sum( Proj_lat, Bldg_lat );
-    Proj_lon = sum( Proj_lon, Bldg_lon );
     Proj_units_mar = sum( Proj_units_mar, Bldg_units_mar );
     
     if Bldg_image_url ~= "" and Proj_image_url = "" then Proj_image_url = Bldg_image_url;
@@ -112,11 +108,6 @@
     
     if last.nlihc_id then do;
     
-      Proj_x = Proj_x / Bldg_count;
-      Proj_y = Proj_y / Bldg_count;
-      Proj_lat = Proj_lat / Bldg_count;
-      Proj_lon = Proj_lon / Bldg_count;
-      
       output &out;
       
     end;
