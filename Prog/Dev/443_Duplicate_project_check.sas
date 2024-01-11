@@ -87,9 +87,10 @@ data Building_geocode_new Building_geocode_old;
 
 run;
 
+/*
 %File_info( data=Building_geocode_new, contents=n, stats=, printobs=50 )
 %File_info( data=Building_geocode_old, contents=n, stats=, printobs=50 )
-
+*/
 
 %Check_for_dups( data1=Building_geocode_new, data2=Building_geocode_old, matching_project_list=C:\DCData\Libraries\PresCat\Prog\Dev\443_Duplicate_project_check_new_old.xls )
 
