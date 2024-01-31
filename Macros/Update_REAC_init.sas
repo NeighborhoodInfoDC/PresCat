@@ -187,6 +187,17 @@
     "800234530" = "NL001023"  /** Van Metre Columbia Uptown Apartments **/
 	"800239073" = "NL000033"/**The Gregory**/
 	"800246084" = "NL000335"  /**Woodmont Crossing Apts.**/
+	"800227248" = "NL000382" /**Rhode Island (Metro) Station**/
+	"800233648" = "NL001218"  /** Progression Place (aka) Broadcast Center; 7th Flats  **/
+	"800238749" = "NL001250"  /** Metro Village Apartments  **/
+	"800240204" = "NL001284"  /** Conway Center  **/
+	"800240533" = "NL001168"  /** Channing Phillips Homes  **/
+	"800242032" = "NL000243"  /** Portner Flats  **/
+	"800245279" = "NL000128"  /** Maplewood Court Apartments  **/
+	"800246559" = "NL000255"  /** Ainger Place   **/
+	"800248661" = "NL001222"  /** Rockburne Estate  **/
+	"800251116" = "NL001148"  /** Pomeroy Gardens Apartments  **/
+
     
     other = " ";
 
