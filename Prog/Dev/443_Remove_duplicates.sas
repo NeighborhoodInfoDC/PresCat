@@ -175,20 +175,36 @@ proc compare base=PresCat.Project compare=Project listall maxprint=(40,32000);
   id nlihc_id;
 run;
 
-********** NEED TO FINISH THIS CODE >>>>>>>>
 ** Addresses to add **;
 
 data Building_geocode_to_add;
 
-  set Mar.Address_points_view (keep=address_id anc2012 fulladdress latitude longitude x y);
+  set Mar.Address_points_view 
+        (keep=address_id anc2012 cluster2017 cluster_tr2000 psa2012 
+              ward2012 ward2022 ssl geo2010 geo2020 geobg2020 geoblk2020 
+              fulladdress latitude longitude x y zip
+              active_res_occupancy_count
+        );
   
   where address_id in ( 277127 );
   
-  length nlihc_id $ 16;
+  length nlihc_id $ 16 proj_name $ 80 cluster_tr2000_name $ 120;
   
   if address_id = 277127 then nlihc_id = "NL001248";
   
-  rename address_id=bldg_address_id fulladdress=bldg_addre latitude=bldg_lat longitude=bldg_lon x=bldg_x y=bldg_y;
+  proj_name = left( put( nlihc_id, $nlihc_id_to_name. ) );
+  
+  cluster_tr2000_name = left( put( cluster_tr2000, $clus00b. ) );
+  
+  rename 
+    address_id=bldg_address_id 
+    active_res_occupancy_count=bldg_units_mar
+    fulladdress=bldg_addre 
+    latitude=bldg_lat 
+    longitude=bldg_lon 
+    x=bldg_x 
+    y=bldg_y
+    zip=bldg_zip;
   
 run;
 
@@ -285,7 +301,7 @@ data Building_geocode;
 run;
 
 proc print data=Building_geocode;
-  where nlihc_id = "NL001248";
+  where nlihc_id in ( "NL001248", "NL001268", "NL001204", "NL001205" );
   id nlihc_id;
   var bldg_addre;
 run;
