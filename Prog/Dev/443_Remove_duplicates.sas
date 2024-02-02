@@ -9,7 +9,7 @@
  GitHub issue:  443
  
  Description:  Remove duplicate/invalid address, SSLs, and projects
- from Catalog.
+ from Catalog. Add missing addresses and SSLs. Adjust project names. 
 
  Modifications:
 **************************************************************************/
@@ -20,11 +20,13 @@
 %DCData_lib( PresCat )
 %DCData_lib( MAR )
 %DCData_lib( RealProp )
+%DCData_lib( ROD )
+%DCData_lib( DHCD )
+
+%let revisions = %str( Correct addresses, SSLs, other info for recently added projects. );
 
 %let projects_to_delete = 
   'NL001189', 'NL001219', 'NL001240', 'NL001253', 'NL001256', 'NL001270', 'NL001302', 'NL001309', 'NL001328';
-
-%let revisions = %str( Correct addresses, SSLs, other info for recently added projects. );
 
 ** Adjusted project names **;
 
@@ -349,13 +351,26 @@ proc compare base=PresCat.Building_geocode compare=Building_geocode listall maxp
   id nlihc_id bldg_addre;
 run;
 
+%Finalize_data_set(
+  data=Building_geocode,
+  out=Building_geocode,
+  outlib=PresCat,
+  label="Preservation Catalog, Building-level geocoding info",
+  sortby=nlihc_id bldg_addre,
+  revisions=%str(&revisions),
+  printobs=0
+)
+
+** Project_geocode **;
+
 %Create_project_geocode( 
   data=Building_geocode, 
   out=Project_geocode, 
   revisions=&revisions, 
   compare=Y,
-  finalize=N
+  finalize=Y
   )
+
 
 ** Parcel to add **;
 
@@ -479,6 +494,24 @@ proc compare base=PresCat.Parcel compare=Parcel listall maxprint=(40,32000);
   id nlihc_id ssl;
 run;
 
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Parcel,
+  out=Parcel,
+  outlib=Prescat,
+  label="Preservation Catalog, Real property parcels",
+  sortby=nlihc_id ssl,
+  /** Metadata parameters **/
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0,
+  freqvars=
+)
+
+** Real property **;
+
+%Update_real_property( parcel=Parcel, revisions=%str(&revisions) )
+
 
 ** Update Project_category **;
 
@@ -498,4 +531,16 @@ proc compare base=PresCat.Project_category compare=Project_category listall maxp
   id nlihc_id;
 run;
 
-
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Project_category,
+  out=Project_category,
+  outlib=Prescat,
+  label="Preservation Catalog, Project category",
+  sortby=nlihc_id,
+  /** Metadata parameters **/
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0,
+  freqvars=
+)
