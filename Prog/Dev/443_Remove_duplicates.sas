@@ -24,6 +24,8 @@
 %let projects_to_delete = 
   'NL001189', 'NL001219', 'NL001240', 'NL001253', 'NL001256', 'NL001270', 'NL001302', 'NL001309', 'NL001328';
 
+%let revisions = %str( Correct addresses, SSLs, other info for recently added projects. );
+
 ** Adjusted project names **;
 
 proc format;
@@ -81,6 +83,11 @@ data Subsidy_to_add;
       nlihc_id = 'NL001201';
     end;
     
+    when ( 'NL001248' ) do;
+      subsidy_id = .;
+      nlihc_id = 'NL001268';
+    end;
+    
     when ( 'NL001253' ) do;
       subsidy_id = .;
       nlihc_id = 'NL001221';
@@ -131,10 +138,12 @@ data Subsidy;
   
   _subsidy_id_hold = subsidy_id + 1;
   
-  ** Adjust unit counts for scattered site project **;
+  ** Adjust unit counts for scattered site projects **;
   
   if nlihc_id = 'NL001286' then units_assist = 18;
   else if nlihc_id = 'NL001287' then units_assist = 12;
+  
+  if nlihc_id in ( 'NL001248', 'NL001268' ) and poa_start = '01aug2022'd then units_assist = 25;
   
   ** Fix subsidy date **;
   
@@ -148,21 +157,37 @@ data Subsidy;
 run;
 
 proc print data=Subsidy;
-  where nlihc_id in ( 'NL001201', 'NL001221', 'NL001286', 'NL001287', 'NL001301' );
+  where nlihc_id in ( 'NL001201', 'NL001221', 'NL001286', 'NL001287', 'NL001301', 'NL001248', 'NL001268' );
   by nlihc_id; 
   id nlihc_id subsidy_id;
-  var program poa_start units_assist;
+  var program poa_start units_assist subsidy_info_source_date;
 run;
 
 proc compare base=PresCat.Subsidy compare=Subsidy listall maxprint=(40,32000);
   id nlihc_id subsidy_id;
 run;
 
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Subsidy,
+  out=Subsidy,
+  outlib=Prescat,
+  label="Preservation Catalog, Project subsidies",
+  sortby=nlihc_id subsidy_id,
+  /** Metadata parameters **/
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0,
+  freqvars=
+)
+
+** Projects **;
+
 %Create_project_subsidy_update( data=Subsidy, out=Project_subsidy_update, project_file=Project_del )
 
 data Project;
 
-  merge Project_del Project_subsidy_update;
+  update Project_del Project_subsidy_update;
   by nlihc_id;
   
   ** Update project names **;
@@ -174,6 +199,20 @@ run;
 proc compare base=PresCat.Project compare=Project listall maxprint=(40,32000);
   id nlihc_id;
 run;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=Project,
+  out=Project,
+  outlib=Prescat,
+  label="Preservation Catalog, Projects",
+  sortby=nlihc_id,
+  /** Metadata parameters **/
+  revisions=%str(&revisions),
+  /** File info parameters **/
+  printobs=0,
+  freqvars=
+)
 
 ** Addresses to add **;
 
@@ -313,14 +352,150 @@ run;
 %Create_project_geocode( 
   data=Building_geocode, 
   out=Project_geocode, 
-  revisions=, 
+  revisions=&revisions, 
   compare=Y,
   finalize=N
   )
 
+** Parcel to add **;
+
+data Parcel_to_add;
+
+  merge 
+    Realprop.Parcel_base 
+      (keep=ssl in_last_ownerpt ownerpt_extractdat_last saledate ui_proptype x_coord y_coord)
+    Realprop.Parcel_base_who_owns 
+      (keep=ssl ownername_full ownercat);
+  by ssl;
+  
+  where ssl = '2567    0090';
+  
+  length nlihc_id $ 16;
+  
+  if ssl = '2567    0090' then nlihc_id = 'NL001248';
+  
+  rename 
+    ownerpt_extractdat_last=parcel_info_source_date 
+    saledate=parcel_owner_date 
+    ui_proptype=parcel_type 
+    x_coord=parcel_x
+    y_coord=parcel_y
+    ownername_full=parcel_owner_name
+    ownercat=parcel_owner_type
+  ;
+  
+run;
+
+proc sort data=Parcel_to_add;
+  by nlihc_id ssl;
+run;
+
 ** Correct parcels **;
 
+data Parcel;
+
+  set PresCat.Parcel Parcel_to_add;
+  by nlihc_id ssl;
+
+  if nlihc_id in ( &projects_to_delete ) then delete;
+
+  select;
+  
+    when ( nlihc_id = "NL001180" ) do;
+      if compbl( ssl ) in ( "3383 0002" );
+    end;
+
+    when ( nlihc_id = "NL001196" ) do;
+      if compbl( ssl ) in ( "5579 0066" );
+    end;
+
+    when ( nlihc_id = "NL001207" ) do;
+      if compbl( ssl ) in ( "3026 0052" );
+    end;
+
+    when ( nlihc_id = "NL001210" ) do;
+      if compbl( ssl ) in ( "3208 0849" );
+    end;
+
+    when ( nlihc_id = "NL001215" ) do;
+      if compbl( ssl ) in ( "0888 0810" );
+    end;
+
+    when ( nlihc_id = "NL001241" ) do;
+      if compbl( ssl ) in ( "2808 0068" );
+    end;
+
+    when ( nlihc_id = "NL001248" ) do;
+      if compbl( ssl ) in ( "2567 0090" );
+    end;
+
+    when ( nlihc_id = "NL001286" ) do;
+      if compbl( ssl ) in ( "5764 0053" );
+    end;
+
+    when ( nlihc_id = "NL001287" ) do;
+      if compbl( ssl ) in ( "3208 0849" );
+    end;
+
+    when ( nlihc_id = "NL001306" ) do;
+      if compbl( ssl ) in ( "3814 0061", "3814 0807" );
+    end;
+
+    when ( nlihc_id = "NL001313" ) do;
+      if compbl( ssl ) in ( "3026 0034" ) then delete;
+    end;
+
+    when ( nlihc_id = "NL001320" ) do;
+      if compbl( ssl ) in ( "6129 0076", "6129 0080" );
+    end;
+
+    when ( nlihc_id = "NL001341" ) do;
+      if compbl( ssl ) in ( "2208 0065", "2208 0808" );
+    end;
+
+    when ( nlihc_id = "NL001342" ) do;
+      if compbl( ssl ) in ( "2777 0029" );
+    end;
+
+    when ( nlihc_id = "NL001327" ) do;
+      if compbl( ssl ) in ( "0771 0014", "0771 0818" );
+    end;
+
+    otherwise
+      /** KEEP ALL PARCELS **/;
+      
+  end;
+
+run;
+
+proc print data=Parcel;
+  where nlihc_id in ( "NL001180", "NL001313", "NL001248", "NL001268", "NL001306");
+  by nlihc_id;
+  id nlihc_id;
+  var ssl;
+run;
+
+proc compare base=PresCat.Parcel compare=Parcel listall maxprint=(40,32000);
+  id nlihc_id ssl;
+run;
 
 
-** Update Project_category_view **;
+** Update Project_category **;
+
+data Project_category;
+
+  set PresCat.Project_category;
+  
+  if nlihc_id in ( &projects_to_delete ) then delete;
+
+  ** Update project names **;
+  
+  if put( nlihc_id, $nlihc_id_to_name. ) ~= "" then proj_name = left( put( nlihc_id, $nlihc_id_to_name. ) );
+  
+run;
+
+proc compare base=PresCat.Project_category compare=Project_category listall maxprint=(40,32000);
+  id nlihc_id;
+run;
+
 
