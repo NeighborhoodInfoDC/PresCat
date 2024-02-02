@@ -20,6 +20,8 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 
+%let revisions = %str( Correct addresses, SSLs, other info for recently added projects. );
+
 proc sql noprint;
   create view PresCat.Project_category_view (label="Preservation Catalog, Project + Project_Category") as
     select 
@@ -108,7 +110,7 @@ run;
   ds_name=Project_category_view,
   creator_process=Project_category_view.sas,
   restrictions=None,
-  revisions=%str(Add new Census geos, neighborhood clusters, and wards.)
+  revisions=%str(&revisions)
 )
 
 /*****************************************
