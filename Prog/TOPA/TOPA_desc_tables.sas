@@ -158,6 +158,10 @@ data TOPA_table_data;
     a{i} = min( max( 0, a{i} ), u_final_units );
   end;
   
+  ** Clean up u_proptype missing values **;
+  
+  if left( u_proptype ) = '.' then u_proptype = '';
+  
   ** Analysis variables **;
   
   all_notices=1;  
@@ -231,6 +235,7 @@ data TOPA_table_data;
     d_rehab = "Renovations or repairs for residents in development agreement"
     d_cbo_involved = "Properties with CBO involvement"
     u_affordable_units = "Affordble units (Urban created var)"
+    u_ownercat = "Property owner type (Urban created var)"
   ;
   
   format
@@ -241,7 +246,12 @@ data TOPA_table_data;
 
 run;
 
+proc sort data=TOPA_table_data;
+  by ID;
+run;
+
 %File_info( data=TOPA_table_data, printobs=0 )
+
 
 ** Trim u_days_from_dedup_notice_to_sale data for summary tables **;
 
@@ -285,7 +295,7 @@ ods listing;
 
 ** Export list of projects/units affordability was added/preserved for appendix **;
 
-proc sort data=TOPA_table_data;
+proc sort data=TOPA_table_data out=TOPA_table_data_by_ward;
   by ward2022 u_notice_date fulladdress;
 run;
 
@@ -296,7 +306,7 @@ options nobyline;
 
 ods tagsets.excelxp options( absolute_column_width="16,16,32,32,14,14,14,14,14,14,14");
 
-proc print data=TOPA_table_data label noobs;
+proc print data=TOPA_table_data_by_ward label noobs;
   where u_dedup_notice=1 and u_notice_with_sale=1 and ( ( d_ta_assign_rights=1 and d_affordable=1 ) or d_le_coop=1 ) and u_final_units >= 15;
   by ward2022;
   var u_notice_date u_sale_date fulladdress property_name u_final_units u_affordable_units d_lihtc d_fed_aff d_dc_hptf d_dc_other d_rent_control d_le_coop;
@@ -1065,4 +1075,106 @@ options missing=' ';
 ** Create data dictionary **;
 %Dictionary( name=TOPA_table_data_dictionary )
 
+
+*******************************************************************************;
+** Create public release version of TOPA data.
+**;
+
+%let public_var_list = 
+
+  ID
+  u_notice_date
+  u_dedup_notice
+
+  Property_name
+  All_street_addresses
+
+  u_address_id_ref
+  FULLADDRESS
+  cluster2017
+  Ward2022
+  x
+  y
+
+  u_final_units
+  u_affordable_units
+
+  u_recent_reno
+  u_year_built_original
+
+  u_notice_with_sale
+  u_sale_date
+  u_actual_saledate
+  u_proptype
+  u_ownername
+  u_ownercat
+  u_days_from_dedup_notice_to_sale
+
+  r_ta_provider
+  TA_assign_rights
+  cbo_dhcd_received_ta_reg
+
+  before_LIHTC_aff_units
+  after_LIHTC_aff_units
+  before_fed_aff_units
+  after_fed_aff_units
+  before_DC_HPTF_aff_units
+  after_DC_HPTF_aff_units
+  before_DC_other_aff_units
+  after_DC_other_aff_units
+  before_LEC_aff_units
+  after_LEC_aff_units
+
+  outcome_homeowner
+  outcome_assign_LIHTC
+  outcome_assign_section8
+  outcome_rent_assign_rc_cont
+  outcome_assign_rc_nopet
+  outcome_100pct_afford
+  outcome_rehab
+  outcome_buyouts
+
+  d_100pct_afford
+  d_affordable
+  d_cbo_dhcd_received_ta_reg
+  d_cbo_involved
+  d_dc_hptf
+  d_dc_other
+  d_fed_aff
+  d_le_coop
+  d_lihtc
+  d_other_condo
+  d_purch_condo_coop
+  d_rehab
+  d_rent_control
+  d_ta_assign_rights
+  ;
+
+
+data TOPA_study_public_data;
+
+  retain &public_var_list;
+
+  set TOPA_table_data;
+  
+  ** Suppress individual owner names for condos or SFHs **;
+  
+  if u_proptype in ( '10', '11' ) and u_ownercat in ( '010', '030' ) then u_ownername = 'XXXXXXXX';
+  
+  keep &public_var_list;
+
+run;
+
+proc compare base=TOPA_table_data compare=TOPA_study_public_data listall maxprint=(40,32000);
+  id ID;
+run;
+
+** DO NOT CHANGE - This initializes the file_list macro variable **;
+%let file_list = ;
+
+** Export individual data sets **;
+%Export( data=TOPA_study_public_data, desc=%str(Data for final TOPA study tables - PUBLIC VERSION) )
+
+** Create data dictionary **;
+%Dictionary( name=TOPA_study_public_data_dictionary )
 
