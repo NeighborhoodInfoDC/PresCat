@@ -55,6 +55,8 @@ vignettes/*.pdf
 *.mdbx
 *.pdf
 *.rtf
+*.accdb
+*.laccdb
 
 # Raw files
 *.csv
