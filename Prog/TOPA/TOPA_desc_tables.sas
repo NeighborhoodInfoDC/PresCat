@@ -250,7 +250,22 @@ proc sort data=TOPA_table_data;
   by ID;
 run;
 
-%File_info( data=TOPA_table_data, printobs=0 )
+
+** Create permanent data set **;
+
+%Finalize_data_set( 
+  /** Finalize data set parameters **/
+  data=TOPA_table_data,
+  out=TOPA_table_data,
+  outlib=PresCat,
+  label="TOPA study final outcome data for summary tables",
+  sortby=id,
+  /** Metadata parameters **/
+  restrictions=Confidential,
+  revisions=%str(New file.),
+  /** File info parameters **/
+  printobs=0
+)
 
 
 ** Trim u_days_from_dedup_notice_to_sale data for summary tables **;
