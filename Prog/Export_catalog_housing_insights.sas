@@ -136,6 +136,38 @@ options msglevel=n;
 /** End Macro Definition **/
 
 
+** Create TOPA outcome data set **;
+
+data Project_TOPA_outcomes (label="Preservation Catalog, TOPA outcomes for projects");
+
+  retain
+    nlihc_id d_cbo_dhcd_received_ta_reg TA_assign_rights d_le_coop d_purch_condo_coop d_other_condo 
+    d_lihtc d_dc_hptf d_dc_other d_fed_aff d_rent_control d_affordable d_100pct_afford 
+    d_rehab d_cbo_involved;
+
+  set PresCat.Project_TOPA_outcomes;
+  by nlihc_id;
+  
+  if last.nlihc_id;
+  
+  if outcome_buyouts = "100%" then d_buyout_100 = 1;
+  else d_buyout_100 = 0;
+  
+  if outcome_buyouts = "Partial/Option" then d_buyout_partial = 1;
+  else d_buyout_partial = 0;
+  
+  format d_buyout: dyesno.;
+  
+  keep 
+    nlihc_id d_cbo_dhcd_received_ta_reg TA_assign_rights d_le_coop d_purch_condo_coop d_other_condo 
+    d_lihtc d_dc_hptf d_dc_other d_fed_aff d_rent_control d_affordable d_100pct_afford 
+    d_rehab d_cbo_involved d_buyout_100 d_buyout_partial;
+    
+run;
+
+
+** Export data **;
+
 %global file_list out_folder;
 
 ** DO NOT CHANGE - This initializes the file_list macro variable **;
@@ -181,6 +213,7 @@ run;
 %Export( data=PresCat.Real_property )
 %Export( data=PresCat.Building_geocode )
 %Export( data=PresCat.Project_geocode )
+%Export( data=Project_TOPA_outcomes )
 
 ** Create data dictionary **;
 %Dictionary()
