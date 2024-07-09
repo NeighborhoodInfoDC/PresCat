@@ -136,6 +136,89 @@ options msglevel=n;
 /** End Macro Definition **/
 
 
+**** Create TOPA outcome data set ****;
+
+** Crosswalk to match TOPA notices addresses with Nlihc_id **;
+
+proc sql noprint;
+  create table TOPA_nlihc_id as
+  select unique 
+  	coalesce( TOPA_addresses.address_id, Building_geocode.Bldg_address_id ) as u_address_id_ref label="DC MAR address ID", /** Matching variables **/
+	TOPA_addresses.FULLADDRESS,TOPA_addresses.ID,  /** Other vars keeping **/
+	Building_geocode.Nlihc_id, Building_geocode.Bldg_addre
+	from PresCat.TOPA_addresses as TOPA_addresses
+      left join PresCat.Building_geocode as Building_geocode   /** Left join = only keep obs that are in TOPA_addresses**/ 
+  on TOPA_addresses.address_id = Building_geocode.Bldg_address_id   /** Matching on address_ID **/
+  where not( missing(Building_geocode.Nlihc_id))
+  order by TOPA_addresses.ID;    /** Sorting by notice ID **/
+quit; 
+
+** Remove redundant matches **;
+proc sort data=Topa_nlihc_id nodupkey;
+  by id nlihc_id;
+run;
+
+
+** Merge with TOPA outcome data **;
+
+proc sql noprint;
+  create table Project_TOPA_outcomes_full as
+  select unique
+    TOPA_nlihc_id.id, TOPA_nlihc_id.nlihc_id, Table_dat.*
+    from TOPA_nlihc_id 
+    left join PresCat.TOPA_table_data as Table_dat
+    on TOPA_nlihc_id.id = Table_dat.id
+    where Table_dat.u_dedup_notice
+    order by TOPA_nlihc_id.nlihc_id, u_notice_date;
+quit;
+
+** Create export data set **;
+
+data Project_TOPA_outcomes (label="Preservation Catalog, TOPA outcomes for projects");
+
+  retain
+    nlihc_id has_topa_outcome d_cbo_dhcd_received_ta_reg TA_assign_rights d_le_coop d_purch_condo_coop d_other_condo 
+    d_lihtc d_dc_hptf d_dc_other d_fed_aff d_rent_control d_affordable d_100pct_afford 
+    d_rehab d_cbo_involved;
+
+  set Project_TOPA_outcomes_full;
+  by nlihc_id;
+  
+  if last.nlihc_id;
+  
+  has_topa_outcome = 1;
+  
+  if outcome_buyouts = "100%" then d_buyout_100 = 1;
+  else d_buyout_100 = 0;
+  
+  if outcome_buyouts = "Partial/Option" then d_buyout_partial = 1;
+  else d_buyout_partial = 0;
+  
+  format has_topa_outcome d_buyout: dyesno.;
+  
+  ** Fix irregular value **;
+  if TA_assign_rights = "Purchase" then TA_assign_rights = " ";
+  
+  label
+    TA_assign_rights = "Tenant association assigned rights"
+    has_topa_outcome = "Has TOPA outcome reported"
+    d_buyout_100 = "100% buyout"
+    d_buyout_partial = "Partial buyout";
+  
+  keep 
+    nlihc_id has_topa_outcome d_cbo_dhcd_received_ta_reg TA_assign_rights d_le_coop d_purch_condo_coop d_other_condo 
+    d_lihtc d_dc_hptf d_dc_other d_fed_aff d_rent_control d_affordable d_100pct_afford 
+    d_rehab d_cbo_involved d_buyout_100 d_buyout_partial;
+    
+run;
+
+proc freq data=Project_TOPA_outcomes;
+  tables TA_assign_rights;
+  format TA_assign_rights ;
+run;
+
+** Export data **;
+
 %global file_list out_folder;
 
 ** DO NOT CHANGE - This initializes the file_list macro variable **;
@@ -181,6 +264,7 @@ run;
 %Export( data=PresCat.Real_property )
 %Export( data=PresCat.Building_geocode )
 %Export( data=PresCat.Project_geocode )
+%Export( data=Project_TOPA_outcomes )
 
 ** Create data dictionary **;
 %Dictionary()
