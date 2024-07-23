@@ -177,7 +177,7 @@ quit;
 data Project_TOPA_outcomes (label="Preservation Catalog, TOPA outcomes for projects");
 
   retain
-    nlihc_id has_topa_outcome d_cbo_dhcd_received_ta_reg TA_assign_rights d_le_coop d_purch_condo_coop d_other_condo 
+    nlihc_id u_notice_date u_sale_date has_topa_outcome d_cbo_dhcd_received_ta_reg TA_assign_rights d_le_coop d_purch_condo_coop d_other_condo 
     d_lihtc d_dc_hptf d_dc_other d_fed_aff d_rent_control d_affordable d_100pct_afford 
     d_rehab d_cbo_involved;
 
@@ -200,13 +200,15 @@ data Project_TOPA_outcomes (label="Preservation Catalog, TOPA outcomes for proje
   if TA_assign_rights = "Purchase" then TA_assign_rights = " ";
   
   label
+    u_notice_date = "Date of TOPA notice of sale"
+    u_sale_date = "Date of property sale (if sold)"
     TA_assign_rights = "Tenant association assigned rights"
     has_topa_outcome = "Has TOPA outcome reported"
     d_buyout_100 = "100% buyout"
     d_buyout_partial = "Partial buyout";
   
   keep 
-    nlihc_id has_topa_outcome d_cbo_dhcd_received_ta_reg TA_assign_rights d_le_coop d_purch_condo_coop d_other_condo 
+    nlihc_id u_notice_date u_sale_date has_topa_outcome d_cbo_dhcd_received_ta_reg TA_assign_rights d_le_coop d_purch_condo_coop d_other_condo 
     d_lihtc d_dc_hptf d_dc_other d_fed_aff d_rent_control d_affordable d_100pct_afford 
     d_rehab d_cbo_involved d_buyout_100 d_buyout_partial;
     
