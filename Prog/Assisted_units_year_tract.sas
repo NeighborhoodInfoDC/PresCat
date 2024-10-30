@@ -281,12 +281,12 @@ proc means data=Assisted_units_by_year n sum;
   var mid_asst_units_2000-mid_asst_units_2022;
 run;
 
-ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\Assisted_units_year_tract.xls" style=Normal options(sheet_interval='None' );
+ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\Assisted_units_project_year_tract.xls" style=Normal options(sheet_interval='None' );
 ods listing close;
 
 proc print data=Assisted_units_by_year;
   id nlihc_id;
-  var start_year poa_end_max mid_asst_units_2000-mid_asst_units_2022;
+  var proj_name geo2020 start_year poa_end_max mid_asst_units_2000-mid_asst_units_2022;
 run;
 
 ods tagsets.excelxp close;
