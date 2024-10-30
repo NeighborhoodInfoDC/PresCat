@@ -18,6 +18,7 @@
 
 ** Define libraries **;
 %DCData_lib( PresCat, local=n )
+%DCData_lib( RealProp )
 
 %let PUBHSNG  = 1;
 %let S8PROG   = 2;
@@ -68,7 +69,7 @@ proc format;
 
 ** Aggregate subsidies so one record per portfolio **;
 
-proc summary data=PresCat.Subsidy (where=(Subsidy_Active and Portfolio~='PRAC')) nway;
+proc summary data=PresCat.Subsidy (where=(Portfolio~='PRAC')) nway;
   class nlihc_id portfolio;
   var Units_assist Poa_start Poa_end Compl_end;
   output out=Subsidy_unique 
@@ -80,10 +81,8 @@ run;
 data Project_subsidy;
 
   merge
-    PresCat.Project
-      (drop=Cat_: Hud_Mgr_: Hud_Own_:
-       where=(put( nlihc_id, $nlihcid2cat. ) in ( '1', '2', '3', '4', '5' ))
-       in=inProject)
+    Prescat.Project_category_view
+      (in=inProject)
     Subsidy_unique
       (in=inSubsidy);
   by NLIHC_ID;
@@ -92,13 +91,13 @@ data Project_subsidy;
   
 run;
 
-data Assisted_units;
+data Project_assisted_units;
 
   set Project_subsidy;
   by NLIHC_ID;
   
   retain num_progs total_units min_asst_units max_asst_units asst_units1-asst_units&MAXPROGS
-         poa_start_min poa_end_min poa_end_max compl_end_min compl_end_max;
+         poa_start_min poa_end_min poa_end_max compl_end_min compl_end_max proj_ayb_min;
 
   array a_aunits{&MAXPROGS} asst_units1-asst_units&MAXPROGS;
   
@@ -117,6 +116,8 @@ data Assisted_units;
 
     compl_end_min = .;
     compl_end_max = .;
+    
+    proj_ayb_min = .;
 
     do i = 1 to &MAXPROGS;
       a_aunits{i} = 0;
@@ -152,6 +153,8 @@ data Assisted_units;
   
   compl_end_min = min( compl_end, compl_end_min );
   compl_end_max = max( compl_end, compl_end_max );
+  
+  if proj_ayb > 0 then proj_ayb_min = min( proj_ayb, proj_ayb_min );
   
   if last.NLIHC_ID then do;
   
@@ -195,25 +198,11 @@ data Assisted_units;
   
   format poa_start_min poa_end_min poa_end_max compl_end_min compl_end_max mmddyy10.;
   
-  drop i portfolio Units_Assist poa_start poa_end compl_end _freq_ _type_;
+  drop i portfolio Units_Assist poa_start poa_end compl_end proj_ayb _freq_ _type_;
 
 run;
-
-proc sort data=Assisted_units 
-    out=Project_assisted_units 
-          (label="Preservation Catalog, Assisted unit counts by project and subsidy portfolio");
-  by ProgCat NLIHC_ID;
 
 %File_info( data=Project_assisted_units, printobs=0, freqvars=ProgCat Ward2022 Geo2020 )
-
-proc print data=Project_assisted_units n='Projects = ';
-  by ProgCat;
-  id NLIHC_ID;
-  var total_units min_asst_units mid_asst_units max_asst_units asst_units: poa_start_min poa_end_min poa_end_max;
-  sum total_units min_asst_units mid_asst_units max_asst_units asst_units: ;
-  format ProgCat ProgCat. total_units min_asst_units mid_asst_units max_asst_units asst_units: comma6.0
-         poa_end_min poa_end_max mmddyy8.;
-run;
 
 ods rtf file="&_dcdata_default_path\PresCat\Prog\Assisted_units_year_tract.rtf" style=Styles.Rtf_arial_9pt;
 
@@ -275,26 +264,51 @@ data Assisted_units_by_year;
 
   set Project_assisted_units;
   
-  start_date = max( Proj_ayb, Poa_start_min );
+  start_year = max( Proj_ayb_min, year( Poa_start_min ) );
   
   array a{2000:2022} mid_asst_units_2000-mid_asst_units_2022;
   
   do y = 2000 to 2022;
   
-    if year( start_date ) <= y and ( year( poa_end_max ) >= y or missing( poa_end_max ) ) then a{y} = mid_asst_units;
-    else mid_asst_units = 0;
+    if start_year <= y and ( year( poa_end_max ) >= y or missing( poa_end_max ) ) then a{y} = mid_asst_units;
+    else a{y} = 0;
     
   end;  
   
-  format start_date mmddyy10.;
-
-run;
-
-proc print data=Assisted_units_by_year (obs=100);
-  id nlihc_id;
-  var start_date poa_end_max mid_asst_units_2000-mid_asst_units_2022;
 run;
 
 proc means data=Assisted_units_by_year n sum;
   var mid_asst_units_2000-mid_asst_units_2022;
 run;
+
+ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\Assisted_units_year_tract.xls" style=Normal options(sheet_interval='None' );
+ods listing close;
+
+proc print data=Assisted_units_by_year;
+  id nlihc_id;
+  var start_year poa_end_max mid_asst_units_2000-mid_asst_units_2022;
+run;
+
+ods tagsets.excelxp close;
+ods listing;
+
+
+** Export summary CSV file **;
+
+proc summary data=Assisted_units_by_year nway;
+  class geo2020;
+  var mid_asst_units_2000-mid_asst_units_2022;
+  output out=Assisted_units_by_year_tract (drop=_type_ _freq_) sum=;
+  format geo2020 ;
+run;
+
+filename fexport "&_dcdata_default_path\PresCat\Raw\Assisted_units_by_year_tract.csv" lrecl=1000;
+
+proc export data=Assisted_units_by_year_tract
+    outfile=fexport
+    dbms=csv replace;
+
+run;
+
+filename fexport clear;
+
