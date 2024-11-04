@@ -113,6 +113,19 @@ run;
 
 %File_info( data=dmped_list_clean, printobs=5, freqvars=zip status_public Non_DC_Gov_Project_Type )
 
+proc freq data=dmped_list_clean;
+  tables 
+    Is_IZ_Project * Is_DCHA_Project * Is_DCHFA_Project * Is_DHCD_Long_term_loan *
+    Is_DMPED_Project * Is_HPTF_Project * Is_Housing_Pres_Project *
+    Is_PUD * Is_Non_DC_Gov_Project / list missing nocum nopercent;
+run;
+
+title2 'IZ Units';
+proc means data=dmped_list_clean n sum;
+  where Is_IZ_Project;
+  var units_affordable;
+run;
+title2;
 
 ** Geocode addresses **;
 
@@ -193,3 +206,5 @@ run;
 proc print data=PresCat.DMPED_nonmatch_sum;
   id geo2020;
 run;
+
+
