@@ -17,7 +17,7 @@
 %include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
-%DCData_lib( PresCat, local=n )
+%DCData_lib( PresCat )
 %DCData_lib( RealProp )
 
 %let PUBHSNG  = 1;
@@ -293,16 +293,26 @@ ods tagsets.excelxp close;
 ods listing;
 
 
-** Export summary CSV file **;
+** Combine with new DMPED units (TEMPORARY FIX) **;
 
-proc summary data=Assisted_units_by_year nway;
+data Combined;
+
+  set 
+    Assisted_units_by_year (keep=geo2020 mid_asst_units_2000-mid_asst_units_2022) 
+    PresCat.dmped_nonmatch_sum;
+
+run;
+
+proc summary data=Combined nway;
   class geo2020;
   var mid_asst_units_2000-mid_asst_units_2022;
   output out=Assisted_units_by_year_tract (drop=_type_ _freq_) sum=;
   format geo2020 ;
 run;
 
-filename fexport "&_dcdata_default_path\PresCat\Raw\Assisted_units_by_year_tract.csv" lrecl=1000;
+** Export summary CSV file **;
+
+filename fexport "&_dcdata_default_path\PresCat\Raw\Assisted_units_by_year_tract_20241104.csv" lrecl=1000;
 
 proc export data=Assisted_units_by_year_tract
     outfile=fexport
