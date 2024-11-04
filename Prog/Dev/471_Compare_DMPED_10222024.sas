@@ -135,7 +135,7 @@ proc sql noprint;
   create table Match as
   select pcbg.nlihc_id, dmped.Project_name as DMPED_project_name, 
     dmped.street_address, dmped.M_EXACTMATCH, dmped.Ward2022, dmped.Geo2020,
-    dmped.Units_Affordable, dmped.Construction_End_Date, 
+    dmped.Units_Affordable, dmped.Construction_End_Date, dmped.Status_public,
     coalesce( pcbg.bldg_address_id, dmped.address_id ) as address_id
   from PresCat.Building_geocode as pcbg right join dmped_list_geocoded_2 as dmped
   on pcbg.bldg_address_id = dmped.address_id
@@ -159,3 +159,37 @@ proc print data=Match N;
 run;
 
 title2;
+
+
+** Export total units for non-matching projects **;
+
+data DMPED_nonmatch_export;
+
+  set Match;
+  where missing( nlihc_id );
+  
+  array a{2000:2022} mid_asst_units_2000-mid_asst_units_2022;
+  
+  do y = 2000 to 2022;
+  
+    if status_public = "Completed Before 2015" or 0 < year( Construction_End_Date ) <= y then a{y} = Units_Affordable;
+    else a{y} = 0;
+    
+  end;  
+  
+run;
+
+  
+proc print data=DMPED_nonmatch_export (obs=20);
+  var status_public Construction_End_Date Units_Affordable mid_asst_units_2000-mid_asst_units_2022;
+run;
+
+proc summary data=DMPED_nonmatch_export nway;
+  class geo2020;
+  var mid_asst_units_2000-mid_asst_units_2022;
+  output out=PresCat.DMPED_nonmatch_sum (drop=_type_ _freq_) sum=;
+run;
+
+proc print data=PresCat.DMPED_nonmatch_sum;
+  id geo2020;
+run;
