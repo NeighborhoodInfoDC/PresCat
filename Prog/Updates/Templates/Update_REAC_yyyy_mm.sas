@@ -9,6 +9,10 @@
  GitHub issue:  
  
  Description:  Update Preservation Catalog with latest HUD REAC scores.
+ 
+ These messages can be ignored in the LOG:
+   WARNING: The MASTER data set contains more than one observation for a BY group.
+   WARNING: The data set ... contains a duplicate observation at observation number 2.
 
  Modifications:
 **************************************************************************/

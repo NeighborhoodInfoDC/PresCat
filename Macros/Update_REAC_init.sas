@@ -209,7 +209,7 @@
     Desc=,
     Data=PresCat.Project_category_view,
     Value=nlihc_id,
-    Label=trim(proj_name) || ' - ' || left(proj_addre),
+    Label=trim(proj_name) || ' - ' || left(scan( proj_addre, 1, ';' )),
     OtherLabel='** Unidentified project **',
     DefaultLen=.,
     MaxLen=.,
