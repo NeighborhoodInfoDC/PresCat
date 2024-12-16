@@ -1,10 +1,10 @@
 /**************************************************************************
- Program:  Project_assisted_units.sas
+ Program:  Assisted_units_year_tract.sas
  Library:  PresCat
  Project:  NeighborhoodInfo DC
  Author:   P. Tatian
- Created:  10/15/14
- Version:  SAS 9.2
+ Created:  10/29/24
+ Version:  SAS 9.4
  Environment:  Local Windows session (desktop)
  
  Description:  Summarize assisted units by project.
@@ -312,7 +312,9 @@ run;
 
 ** Export summary CSV file **;
 
-filename fexport "&_dcdata_default_path\PresCat\Raw\Assisted_units_by_year_tract_20241104.csv" lrecl=1000;
+%let rpt_suffix = %sysfunc( putn( %sysfunc( today() ), yymmddn8. ) );
+
+filename fexport "&_dcdata_default_path\PresCat\Raw\Assisted_units_by_year_tract_&rpt_suffix..csv" lrecl=1000;
 
 proc export data=Assisted_units_by_year_tract
     outfile=fexport
