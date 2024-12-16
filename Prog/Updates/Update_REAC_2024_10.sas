@@ -1,18 +1,14 @@
 /**************************************************************************
- Program:  Update_REAC_yyyy_mm.sas
+ Program:  Update_REAC_2024_10.sas
  Library:  PresCat
  Project:  Urban-Greater DC
- Author:   
- Created:  
+ Author:   Rodrigo Garcia
+ Created:  12/5/2024
  Version:  SAS 9.4
  Environment:  Local Windows session (desktop)
- GitHub issue:  
+ GitHub issue:  Issue #472
  
  Description:  Update Preservation Catalog with latest HUD REAC scores.
- 
- These messages can be ignored in the LOG:
-   WARNING: The MASTER data set contains more than one observation for a BY group.
-   WARNING: The data set ... contains a duplicate observation at observation number 2.
 
  Modifications:
 **************************************************************************/
@@ -24,6 +20,6 @@
 %DCData_lib( HUD )
 
 
-%Update_REAC( Update_file=REAC_yyyy_mm )
+%Update_REAC( Update_file=REAC_2024_10 )
 
 
