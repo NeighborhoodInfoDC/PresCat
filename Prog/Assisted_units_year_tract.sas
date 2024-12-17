@@ -1,10 +1,10 @@
 /**************************************************************************
- Program:  Project_assisted_units.sas
+ Program:  Assisted_units_year_tract.sas
  Library:  PresCat
  Project:  NeighborhoodInfo DC
  Author:   P. Tatian
- Created:  10/15/14
- Version:  SAS 9.2
+ Created:  10/29/24
+ Version:  SAS 9.4
  Environment:  Local Windows session (desktop)
  
  Description:  Summarize assisted units by project.
@@ -69,7 +69,7 @@ proc format;
 
 ** Aggregate subsidies so one record per portfolio **;
 
-proc summary data=PresCat.Subsidy (where=(Subsidy_Active and Portfolio~='PRAC')) nway;
+proc summary data=PresCat.Subsidy (where=(Portfolio~='PRAC')) nway;
   class nlihc_id portfolio;
   var Units_assist Poa_start Poa_end Compl_end;
   output out=Subsidy_unique 
@@ -204,59 +204,70 @@ run;
 
 %File_info( data=Project_assisted_units, printobs=0, freqvars=ProgCat Ward2022 Geo2020 )
 
+
+** Assisted units by year: 2000 to 2022 **;
+
+data Assisted_units_by_year;
+
+  set Project_assisted_units;
+  
+  start_year = max( Proj_ayb_min, year( Poa_start_min ) );
+  
+  array a{2000:2022} mid_asst_units_2000-mid_asst_units_2022;
+  
+  do y = 2000 to 2022;
+  
+    if start_year <= y and ( year( poa_end_max ) >= y or missing( poa_end_max ) ) then a{y} = mid_asst_units;
+    else a{y} = 0;
+    
+  end;  
+  
+run;
+
+proc means data=Assisted_units_by_year n sum;
+  var mid_asst_units_2000-mid_asst_units_2022;
+run;
+
+ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\Assisted_units_project_year_tract.xls" style=Normal options(sheet_interval='None' );
+ods listing close;
+
+proc print data=Assisted_units_by_year;
+  id nlihc_id;
+  var proj_name geo2020 start_year poa_end_max mid_asst_units_2000-mid_asst_units_2022;
+run;
+
+ods tagsets.excelxp close;
+ods listing;
+
+
+** Combine with new DMPED units (TEMPORARY FIX) **;
+
+data Combined;
+
+  set 
+    Assisted_units_by_year (keep=geo2020 mid_asst_units_2000-mid_asst_units_2022) 
+    PresCat.dmped_nonmatch_sum;
+
+run;
+
+proc summary data=Combined nway;
+  class geo2020;
+  var mid_asst_units_2000-mid_asst_units_2022;
+  output out=Assisted_units_by_year_tract (drop=_type_ _freq_) sum=;
+  format geo2020 ;
+run;
+
+** Export summary CSV file **;
+
 %let rpt_suffix = %sysfunc( putn( %sysfunc( today() ), yymmddn8. ) );
 
-ods rtf file="&_dcdata_default_path\PresCat\Prog\Project_assisted_units_&rpt_suffix..rtf" style=Styles.Rtf_arial_9pt;
+filename fexport "&_dcdata_default_path\PresCat\Raw\Assisted_units_by_year_tract_&rpt_suffix..csv" lrecl=1000;
 
-options missing='0';
-options nodate nonumber;
-options orientation=landscape;
-
-%fdate()
-
-proc tabulate data=PresCat.Subsidy format=comma10. noseps missing;
-  where Subsidy_Active and put( nlihc_id, $nlihcid2cat. ) in ( '1', '2', '3', '4', '5' );
-  class Portfolio;
-  var units_assist;
-  table 
-    /** Rows **/
-    Portfolio=' ',
-    /** Columns **/
-    ( n='Projects' sum='Assisted\~Units' ) * units_assist=' '
-  ;
-  title2 " ";
-  title3 "Project and assisted unit counts by subsidy portfolio (nonunique counts)";
-  footnote1 height=9pt "Source: DC Preservation Catalog";
-  footnote2 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
-  footnote3 height=9pt j=r '{Page}\~{\field{\*\fldinst{\pard\b\i0\chcbpat8\qc\f1\fs19\cf1{PAGE }\cf0\chcbpat0}}}';
-run;
-
-proc tabulate data=Project_assisted_units format=comma10. noseps missing;
-  where ProgCat ~= .;
-  class ProgCat / preloadfmt order=data;
-  class ward2022;
-  var mid_asst_units err_asst_units;
-  table 
-    /** Rows **/
-    all='\b Total' ProgCat=' ',
-    /** Columns **/
-    n='Projects'
-    sum='Assisted Units' * ( mid_asst_units='Est.' err_asst_units='+/-' )
-    ;
-  table 
-    /** Rows **/
-    all='\b Total' ProgCat=' ',
-    /** Columns **/
-    sum='Assisted Units by Ward' * ward2022=' ' * ( mid_asst_units='Est.' err_asst_units='+/-' )
-    ;
-  format ProgCat ProgCat.;
-  title3 "Project and assisted unit unique counts";
-run;
-
-ods rtf close;
-
-title2;
-footnote1;
+proc export data=Assisted_units_by_year_tract
+    outfile=fexport
+    dbms=csv replace;
 
 run;
+
+filename fexport clear;
 
