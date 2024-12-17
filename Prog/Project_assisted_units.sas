@@ -69,7 +69,7 @@ proc format;
 
 ** Aggregate subsidies so one record per portfolio **;
 
-proc summary data=PresCat.Subsidy (where=(Portfolio~='PRAC')) nway;
+proc summary data=PresCat.Subsidy (where=(Subsidy_Active and Portfolio~='PRAC')) nway;
   class nlihc_id portfolio;
   var Units_assist Poa_start Poa_end Compl_end;
   output out=Subsidy_unique 
@@ -204,10 +204,13 @@ run;
 
 %File_info( data=Project_assisted_units, printobs=0, freqvars=ProgCat Ward2022 Geo2020 )
 
-ods rtf file="&_dcdata_default_path\PresCat\Prog\Project_assisted_units.rtf" style=Styles.Rtf_arial_9pt;
+%let rpt_suffix = %sysfunc( putn( %sysfunc( today() ), yymmddn8. ) );
+
+ods rtf file="&_dcdata_default_path\PresCat\Prog\Project_assisted_units_&rpt_suffix..rtf" style=Styles.Rtf_arial_9pt;
 
 options missing='0';
 options nodate nonumber;
+options orientation=landscape;
 
 %fdate()
 
@@ -229,7 +232,7 @@ proc tabulate data=PresCat.Subsidy format=comma10. noseps missing;
 run;
 
 proc tabulate data=Project_assisted_units format=comma10. noseps missing;
-  where Subsidy_Active and ProgCat ~= .;
+  where ProgCat ~= .;
   class ProgCat / preloadfmt order=data;
   class ward2022;
   var mid_asst_units err_asst_units;
