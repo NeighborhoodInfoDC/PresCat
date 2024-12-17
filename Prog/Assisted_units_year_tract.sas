@@ -204,59 +204,6 @@ run;
 
 %File_info( data=Project_assisted_units, printobs=0, freqvars=ProgCat Ward2022 Geo2020 )
 
-ods rtf file="&_dcdata_default_path\PresCat\Prog\Assisted_units_year_tract.rtf" style=Styles.Rtf_arial_9pt;
-
-options missing='0';
-options nodate nonumber;
-
-%fdate()
-
-proc tabulate data=PresCat.Subsidy format=comma10. noseps missing;
-  where Subsidy_Active and put( nlihc_id, $nlihcid2cat. ) in ( '1', '2', '3', '4', '5' );
-  class Portfolio;
-  var units_assist;
-  table 
-    /** Rows **/
-    Portfolio=' ',
-    /** Columns **/
-    ( n='Projects' sum='Assisted\~Units' ) * units_assist=' '
-  ;
-  title2 " ";
-  title3 "Project and assisted unit counts by subsidy portfolio (nonunique counts)";
-  footnote1 height=9pt "Source: DC Preservation Catalog";
-  footnote2 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
-  footnote3 height=9pt j=r '{Page}\~{\field{\*\fldinst{\pard\b\i0\chcbpat8\qc\f1\fs19\cf1{PAGE }\cf0\chcbpat0}}}';
-run;
-
-proc tabulate data=Project_assisted_units format=comma10. noseps missing;
-  where ProgCat ~= .;
-  class ProgCat / preloadfmt order=data;
-  class ward2022;
-  var mid_asst_units err_asst_units;
-  table 
-    /** Rows **/
-    all='\b Total' ProgCat=' ',
-    /** Columns **/
-    n='Projects'
-    sum='Assisted Units' * ( mid_asst_units='Est.' err_asst_units='+/-' )
-    ;
-  table 
-    /** Rows **/
-    all='\b Total' ProgCat=' ',
-    /** Columns **/
-    sum='Assisted Units by Ward' * ward2022=' ' * ( mid_asst_units='Est.' err_asst_units='+/-' )
-    ;
-  format ProgCat ProgCat.;
-  title3 "Project and assisted unit unique counts";
-run;
-
-ods rtf close;
-
-title2;
-footnote1;
-
-run;
-
 
 ** Assisted units by year: 2000 to 2022 **;
 
