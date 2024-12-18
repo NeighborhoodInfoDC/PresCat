@@ -206,13 +206,17 @@ run;
 
 %let rpt_suffix = %sysfunc( putn( %sysfunc( today() ), yymmddn8. ) );
 
-ods rtf file="&_dcdata_default_path\PresCat\Prog\Project_assisted_units_&rpt_suffix..rtf" style=Styles.Rtf_arial_9pt;
+options orientation=landscape;
 
 options missing='0';
 options nodate nonumber;
-options orientation=landscape;
 
 %fdate()
+
+ods rtf file="&_dcdata_default_path\PresCat\Prog\Project_assisted_units_&rpt_suffix..rtf" style=Styles.Rtf_arial_9pt;
+
+title2 " ";
+title3 "Project and assisted unit counts by subsidy portfolio (nonunique counts)";
 
 proc tabulate data=PresCat.Subsidy format=comma10. noseps missing;
   where Subsidy_Active and put( nlihc_id, $nlihcid2cat. ) in ( '1', '2', '3', '4', '5' );
@@ -224,12 +228,13 @@ proc tabulate data=PresCat.Subsidy format=comma10. noseps missing;
     /** Columns **/
     ( n='Projects' sum='Assisted\~Units' ) * units_assist=' '
   ;
-  title2 " ";
-  title3 "Project and assisted unit counts by subsidy portfolio (nonunique counts)";
   footnote1 height=9pt "Source: DC Preservation Catalog";
   footnote2 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
   footnote3 height=9pt j=r '{Page}\~{\field{\*\fldinst{\pard\b\i0\chcbpat8\qc\f1\fs19\cf1{PAGE }\cf0\chcbpat0}}}';
 run;
+
+
+title3 "Project and assisted unit unique counts";
 
 proc tabulate data=Project_assisted_units format=comma10. noseps missing;
   where ProgCat ~= .;
@@ -243,15 +248,34 @@ proc tabulate data=Project_assisted_units format=comma10. noseps missing;
     n='Projects'
     sum='Assisted Units' * ( mid_asst_units='Est.' err_asst_units='+/-' )
     ;
+  format ProgCat ProgCat.;
+run;
+
+
+title3 "Project and assisted unit unique counts by ward";
+
+proc tabulate data=Project_assisted_units format=comma10. noseps missing;
+  where ProgCat ~= . and not( missing( ward2022 ) );
+  class ProgCat / preloadfmt order=data;
+  class ward2022;
+  var mid_asst_units err_asst_units;
   table 
     /** Rows **/
-    all='\b Total' ProgCat=' ',
+    ( all='DC Total' ward2022=' ' )
+    ,
     /** Columns **/
-    sum='Assisted Units by Ward' * ward2022=' ' * ( mid_asst_units='Est.' err_asst_units='+/-' )
+    n='Projects' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  table 
+    /** Rows **/
+    ( all='DC Total' ward2022=' ' )
+    ,
+    /** Columns **/
+    sum='Assisted Units' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
     ;
   format ProgCat ProgCat.;
-  title3 "Project and assisted unit unique counts";
 run;
+
 
 ods rtf close;
 
