@@ -40,6 +40,8 @@ filename fimport clear;
 
 data dmped_list_clean;
 
+  Dmped_id = _n_;
+
   set dmped_list
        (rename=(
           Agency__Calculated_ = Agency_Calculated
@@ -146,11 +148,11 @@ run;
 
 proc sql noprint;
   create table Match as
-  select pcbg.nlihc_id, dmped.Project_name as DMPED_project_name, 
+  select pcbg.nlihc_id, dmped.dmped_id, dmped.Project_name as DMPED_project_name, 
     dmped.street_address, dmped.M_EXACTMATCH, dmped.Ward2022, dmped.Geo2020,
     dmped.Units_Affordable, dmped.Construction_End_Date, dmped.Status_public,
     coalesce( pcbg.bldg_address_id, dmped.address_id ) as address_id
-  from PresCat.Building_geocode as pcbg right join dmped_list_geocoded_2 as dmped
+  from PresCat.Building_geocode as pcbg full join dmped_list_geocoded_2 as dmped
   on pcbg.bldg_address_id = dmped.address_id
   where dmped.M_EXACTMATCH
   order by nlihc_id, address_id;
@@ -168,8 +170,22 @@ title2 '**** MATCHING PROJECTS ****';
 proc print data=Match N;
   where not( missing( nlihc_id ) );
   id nlihc_id;
-  var DMPED_project_name;
+  var DMPED_project_name Units_Affordable;
+  sum Units_Affordable;
 run;
+
+%Dup_check(
+  data=Match (where=(not(missing(nlihc_id)))),
+  by=nlihc_id,
+  id=dmped_id dmped_project_name,
+  out=_dup_check,
+  listdups=Y,
+  count=dup_check_count,
+  quiet=N,
+  debug=N
+)
+
+
 
 title2;
 
