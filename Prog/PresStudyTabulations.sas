@@ -302,7 +302,11 @@ data Project_AOB;
   	if inProject and inParcel;
    
 run;
-*****Errors Start somewhere around here******;
+
+proc sort data=Project_AOB;
+	by SSL;
+	run;
+
 
 data Project_Age_Of_Building;
 
@@ -317,14 +321,32 @@ data Project_Age_Of_Building;
    
 run;
 
-proc summary data=Project_Age_Of_Building 
+proc summary data=Project_Age_Of_Building; 
   by nlihc_id;
-  class nlihc_id portfolio;
-  output out=Project_Building_Age
+  output out=Project_Building_Age;
     min(AYB)=;
 run;
 ****Age of Building Table***;
-proc tabulate data=Project_Building_Age format=comma10. noseps missing;
+
+proc format;
+value year_built (notsorted)
+	    1 -< 1910 = 'Before 1910'
+	    1910 -< 1920 = '1910 to 1919'
+	    1920 -< 1930 = '1920 to 1929'
+	    1930 -< 1940 = '1930 to 1939'
+	    1940 -< 1950 = '1940 to 1949'
+	    1950 -< 1960 = '1950 to 1959'
+	    1960 -< 1970 = '1960 to 1969'
+	    1970 -< 1980 = '1970 to 1979'
+	    1980 -< 1990 = '1980 to 1989'
+	    1990 -< 2000 = '1990 to 2000'
+	    2000 - high  = '2000 or later'
+	    . = 'Unknown'; 
+	run;
+
+title3 "Project and assisted unit unique counts by Age of Building";
+
+proc tabulate data=Project_Age_Of_Building format=comma10. noseps missing;
   where ProgCat ~= . and not( missing( AYB ) );
   class ProgCat / preloadfmt order=data;
   class AYB;
@@ -344,19 +366,7 @@ proc tabulate data=Project_Building_Age format=comma10. noseps missing;
     sum='Assisted Units' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
     ;
   format ProgCat ProgCat.;
-  format value year_built (notsorted)
-    1 -< 1910 = 'Before 1910'
-    1910 -< 1920 = '1910 to 1919'
-    1920 -< 1930 = '1920 to 1929'
-    1930 -< 1940 = '1930 to 1939'
-    1940 -< 1950 = '1940 to 1949'
-    1950 -< 1960 = '1950 to 1959'
-    1960 -< 1970 = '1960 to 1969'
-    1970 -< 1980 = '1970 to 1979'
-    1980 -< 1990 = '1980 to 1989'
-    1990 -< 2000 = '1990 to 2000'
-    2000 - high  = '2000 or later'
-    . = 'Unknown';
+  format year_built year_built.;
 run;
 
 
