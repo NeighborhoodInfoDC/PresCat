@@ -320,7 +320,7 @@ data Project_Age_Of_Building;
  	 if inProject and inCama;
    
 run;
-
+***Getting the Message that this statement is out of order***;
 proc summary data=Project_Age_Of_Building; 
   by nlihc_id;
   output out=Project_Building_Age;
