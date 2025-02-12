@@ -213,7 +213,7 @@ options nodate nonumber;
 
 %fdate()
 
-ods rtf file="&_dcdata_default_path\PresCat\Prog\Project_assisted_units_&rpt_suffix..rtf" style=Styles.Rtf_arial_9pt;
+ods rtf file="&_dcdata_default_path\PresCat\Prog\PresStudyTabulations.rtf" style=Styles.Rtf_arial_9pt;
 
 *****************Study Tabulations below here*********
 ************Tables by Location and Subsidy*********;
