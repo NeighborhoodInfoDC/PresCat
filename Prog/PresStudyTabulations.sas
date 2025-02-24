@@ -76,6 +76,47 @@ proc summary data=PresCat.Subsidy (where=(Subsidy_Active and Portfolio~='PRAC'))
     sum(Units_assist)= min(Poa_start Poa_end Compl_end)=;
 run;
 
+
+***Creating new variables from parcel_own_type***;
+data parcel_owner_type;
+set Prescat.Parcel; 
+	if parcel_owner_type = "010" then parcel_owner_type_010 = 1;
+	if parcel_owner_type = "020" then parcel_owner_type_020 = 1;
+	if parcel_owner_type = "030" then parcel_owner_type_030 = 1;
+	if parcel_owner_type = "040" then parcel_owner_type_040 = 1;
+	if parcel_owner_type = "045" then parcel_owner_type_045 = 1;
+	if parcel_owner_type = "050" then parcel_owner_type_050 = 1;
+	if parcel_owner_type = "070" then parcel_owner_type_070 = 1;
+	if parcel_owner_type = "080" then parcel_owner_type_080 = 1;
+	if parcel_owner_type = "100" then parcel_owner_type_100 = 1;
+	if parcel_owner_type = "111" then parcel_owner_type_111 = 1;
+	if parcel_owner_type = "115" then parcel_owner_type_115 = 1;
+
+	run;
+
+***Summarizing new variables by Nlihc_id***;
+proc summary data=parcel_owner_type nway; 
+  class nlihc_id;
+  output out=parcel_owner_type;
+run;
+
+***Creating a combined summary variable of project owner type***;
+data Project_Owner_Summary;
+	set parcel_owner_type;
+	if parcel_owner_type_111 = 1 then parcel_owner_type = "111";
+	else if parcel_owner_type_045 = 1 then parcel_owner_type = "045";
+	else if parcel_owner_type_115 = 1 then parcel_owner_type = "115";
+	else if parcel_owner_type_020 = 1 then parcel_owner_type = "020";
+	else if parcel_owner_type_030 = 1 then parcel_owner_type = "030";
+	else if parcel_owner_type_050 = 1 then parcel_owner_type = "050";
+	else if parcel_owner_type_040 = 1 then parcel_owner_type = "040";
+	else if parcel_owner_type_080 = 1 then parcel_owner_type = "080";
+	else if parcel_owner_type_010 = 1 then parcel_owner_type = "010";
+	else if parcel_owner_type_100 = 1 then parcel_owner_type = "100";
+	else if parcel_owner_type_070 = 1 then parcel_owner_type = "070";
+	run;
+
+
 ** Combine project and subsidy data **;
 
 data Project_subsidy;
@@ -84,10 +125,12 @@ data Project_subsidy;
     Prescat.Project_category_view
       (in=inProject)
     Subsidy_unique
-      (in=inSubsidy);
+      (in=inSubsidy)
+	Project_Owner_Summary
+	  (in=inOwner);
   by NLIHC_ID;
   
-  if inProject and inSubsidy;
+  if inProject and inSubsidy and inOwner;
   
 run;
 
@@ -369,6 +412,39 @@ proc tabulate data=Project_Age_Of_Building format=comma10. noseps missing;
   format year_built year_built.;
 run;
 
+ods rtf close;
+
+title2;
+footnote1;
+
+run;
+
+
+****Table for Project by Owner Type****;
+
+proc tabulate data=Project_Owner_Summary format=comma10. noseps missing;
+  where ProgCat ~= . and not( missing( parcel_owner_type ) );
+  class ProgCat / preloadfmt order=data;
+  class AYB;
+  var mid_asst_units err_asst_units;
+  table 
+    /** Rows **/
+    ( all='DC Total' parcel_owner_type=' ' )
+    ,
+    /** Columns **/
+    n='Projects' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  table 
+    /** Rows **/
+    ( all='DC Total' parcel_owner_type=' ' )
+    ,
+    /** Columns **/
+    sum='Assisted Units' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  format ProgCat ProgCat.;
+  format parcel_owner_type $OWNCAT.;
+run;
+
 
 ods rtf close;
 
@@ -376,4 +452,5 @@ title2;
 footnote1;
 
 run;
+
 
