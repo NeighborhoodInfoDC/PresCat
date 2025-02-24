@@ -412,20 +412,15 @@ proc tabulate data=Project_Age_Of_Building format=comma10. noseps missing;
   format year_built year_built.;
 run;
 
-ods rtf close;
-
-title2;
-footnote1;
-
-run;
-
 
 ****Table for Project by Owner Type****;
 
-proc tabulate data=Project_Owner_Summary format=comma10. noseps missing;
+title3 "Project and assisted unit unique counts by Type of Owner";
+
+proc tabulate data=Project_assisted_units format=comma10. noseps missing;
   where ProgCat ~= . and not( missing( parcel_owner_type ) );
   class ProgCat / preloadfmt order=data;
-  class AYB;
+  class parcel_owner_type;
   var mid_asst_units err_asst_units;
   table 
     /** Rows **/
