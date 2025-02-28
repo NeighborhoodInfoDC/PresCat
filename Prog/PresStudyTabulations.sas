@@ -409,7 +409,7 @@ proc tabulate data=Project_Age_Of_Building format=comma10. noseps missing;
     sum='Assisted Units' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
     ;
   format ProgCat ProgCat.;
-  format year_built year_built.;
+  format AYB year_built.;
 run;
 
 
