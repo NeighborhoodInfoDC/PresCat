@@ -97,7 +97,9 @@ set Prescat.Parcel;
 ***Summarizing new variables by Nlihc_id***;
 proc summary data=parcel_owner_type nway; 
   class nlihc_id;
-  output out=parcel_owner_type;
+  var parcel_owner_type_111 parcel_owner_type_045 parcel_owner_type_115 parcel_owner_type_020 parcel_owner_type_030
+parcel_owner_type_050 parcel_owner_type_040 parcel_owner_type_080 parcel_owner_type_010 parcel_owner_type_100 parcel_owner_type_070;
+  output out=parcel_owner_type max=;
 run;
 
 ***Creating a combined summary variable of project owner type***;
@@ -356,7 +358,7 @@ data Project_Age_Of_Building;
   merge
    Project_AOB
    	(in=inProject)
-   Realprop.Cama_parcel_2023_05
+   Realprop.Cama_parcel_2025_02
    	(in=inCama);
 
   by SSL;
@@ -367,7 +369,8 @@ run;
 proc summary data=Project_Age_Of_Building nway; 
   class nlihc_id;
   output out=Project_Building_Age
-    min(AYB)=;
+    min(AYB)=
+	min(EYB)=;
 run;
 ****Age of Building Table***;
 
@@ -384,7 +387,7 @@ value year_built (notsorted)
 	    1980 -< 1990 = '1980 to 1989'
 	    1990 -< 2000 = '1990 to 2000'
 	    2000 - high  = '2000 or later'
-	    . = 'Unknown'; 
+	    .u = 'Unknown'; 
 	run;
 
 title3 "Project and assisted unit unique counts by Age of Building";
@@ -410,6 +413,49 @@ proc tabulate data=Project_Age_Of_Building format=comma10. noseps missing;
     ;
   format ProgCat ProgCat.;
   format AYB year_built.;
+run;
+
+***Year Improved Table***;
+
+proc format;
+value year_improved (notsorted)
+	    1 -< 1910 = 'Before 1910'
+	    1910 -< 1920 = '1910 to 1919'
+	    1920 -< 1930 = '1920 to 1929'
+	    1930 -< 1940 = '1930 to 1939'
+	    1940 -< 1950 = '1940 to 1949'
+	    1950 -< 1960 = '1950 to 1959'
+	    1960 -< 1970 = '1960 to 1969'
+	    1970 -< 1980 = '1970 to 1979'
+	    1980 -< 1990 = '1980 to 1989'
+	    1990 -< 2000 = '1990 to 2000'
+	    2000 - high  = '2000 or later'
+	    .u = 'Unknown'; 
+	run;
+
+title3 "Project and assisted unit unique counts by Year Improvements were made to Property";
+
+proc tabulate data=Project_Age_Of_Building format=comma10. noseps missing;
+  where ProgCat ~= . and not( missing( EYB ) );
+  class ProgCat / preloadfmt order=data;
+  class EYB;
+  var mid_asst_units err_asst_units;
+  table 
+    /** Rows **/
+    ( all='DC Total' EYB=' ' )
+    ,
+    /** Columns **/
+    n='Projects' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  table 
+    /** Rows **/
+    ( all='DC Total' EYB=' ' )
+    ,
+    /** Columns **/
+    sum='Assisted Units' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  format ProgCat ProgCat.;
+  format EYB year_improved.;
 run;
 
 
