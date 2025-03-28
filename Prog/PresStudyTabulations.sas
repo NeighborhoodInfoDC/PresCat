@@ -260,6 +260,10 @@ options nodate nonumber;
 
 ods rtf file="&_dcdata_default_path\PresCat\Prog\PresStudyTabulations.rtf" style=Styles.Rtf_arial_9pt;
 
+footnote1 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
+footnote2 height=9pt j=r '{Page}\~{\field{\*\fldinst{\pard\b\i0\chcbpat8\qc\f1\fs19\cf1{PAGE }\cf0\chcbpat0}}}';
+
+
 *****************Study Tabulations below here*********
 ************Tables by Location and Subsidy*********;
 
