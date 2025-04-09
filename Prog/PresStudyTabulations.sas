@@ -19,6 +19,7 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 %DCData_lib( RealProp )
+%DCData_lib( NCDB )
 
 %let PUBHSNG  = 1;
 %let S8PROG   = 2;
@@ -236,6 +237,8 @@ data Project_assisted_units;
       else ProgCat = 30;
       
     end;
+
+  poa_end_min_year = year( poa_end_min );
     
     if min_asst_units > 0 then output;
   
@@ -244,6 +247,8 @@ data Project_assisted_units;
   format poa_start_min poa_end_min poa_end_max compl_end_min compl_end_max mmddyy10.;
   
   drop i portfolio Units_Assist poa_start poa_end compl_end proj_ayb _freq_ _type_;
+
+
 
 run;
 
@@ -489,6 +494,353 @@ proc tabulate data=Project_assisted_units format=comma10. noseps missing;
   format ProgCat ProgCat.;
   format parcel_owner_type $OWNCAT.;
 run;
+
+***Projects and assisted units by size of development***;
+proc format;
+value development_size (notsorted)
+	    1 - 10 = '1 - 10 units'
+	    11 - 50 = '11 - 50 units'
+	    51 - 100 = '51 - 100 units'
+	    101 - high  = '101 units or more'
+	    .u = 'Unknown'; 
+	run;
+
+title3 "Projects and assisted units by size of development";
+
+proc tabulate data=Project_assisted_units format=comma10. noseps missing;
+  where ProgCat ~= . and not( missing( total_units ) );
+  class ProgCat / preloadfmt order=data;
+  class total_units;
+  var mid_asst_units err_asst_units;
+  table 
+    /** Rows **/
+    ( all='DC Total' total_units=' ' )
+    ,
+    /** Columns **/
+    n='Projects' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  table 
+    /** Rows **/
+    ( all='DC Total' total_units=' ' )
+    ,
+    /** Columns **/
+    sum='Assisted Units' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  format ProgCat ProgCat.;
+  format total_units development_size.;
+run;
+
+***Projects and assisted units by earliest subsidy expiration date***;
+
+
+proc format;
+value earliest_expiration (notsorted)
+	    2025 - 2029 = '2025-2029'
+	    2030 - 2034 = '2030-2034'
+	    2035 - 2039 = '2035-2039'
+		2040 - 2045 = '2040-2045'
+		2045 - 2049 = '2045-2049'
+	    2050 - high  = '2050 or later'
+	    .u = 'Unknown'; 
+	run;
+
+title3 "Projects and assisted units by earliest subsidy expiration date";
+
+proc tabulate data=Project_assisted_units format=comma10. noseps missing;
+  where ProgCat ~= . and not( missing( poa_end_min_year ) ) and poa_end_min_year >= 2025 and ProgCat in ( 2, 9, 8, 3, 10 );
+  class ProgCat / preloadfmt order=data;
+  class poa_end_min_year;
+  var mid_asst_units err_asst_units;
+  table 
+    /** Rows **/
+    ( all='DC Total' poa_end_min_year=' ' )
+    ,
+    /** Columns **/
+    n='Projects' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  table 
+    /** Rows **/
+    ( all='DC Total' poa_end_min_year=' ' )
+    ,
+    /** Columns **/
+    sum='Assisted Units' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  format ProgCat ProgCat.;
+  format poa_end_min_year earliest_expiration.;
+run;
+
+
+***Neighborhood characteristics (demographics, housing sale price level and trends)***;
+
+*create cluster data set to combine with Project_assisted_units to create data set for neighborhood characteristics tables*;
+data cluster;
+ merge
+	Ncdb.Ncdb_sum_2020_cl17
+	Ncdb.Ncdb_sum_2010_cl17
+	Realprop.Sales_sum_cl17;
+	by cluster2017;
+pctblacknonhispbridge_2020 = 100 * ( popblacknonhispbridge_2020 / popwithrace_2020 );
+pctblacknonhispbridge_2010 = 100 * ( popblacknonhispbridge_2010 / popwithrace_2010 );
+pcthisp_2020 = 100 * ( pophisp_2020 / popwithrace_2020 );
+pcthisp_2010 = 100 * ( pophisp_2010 / popwithrace_2010 );
+pctpopchg_2010_2020 = %pctchg( totpop_2010 , totpop_2020 );
+pctmpricechg_2010_2023 = %pctchg( r_mprice_sf_2010, r_mprice_sf_2023 );
+
+run;
+
+proc sort data= Project_assisted_units;
+	by cluster2017;
+	run;
+
+data Project_Clusters;
+	merge Project_assisted_units cluster;
+	by cluster2017;
+run;
+
+*Creating proc formats for all variables used in tables neighborhood characteristics tables*;
+*proc univariate data=Cluster;
+  *var pctblacknonhispbridge_2020 pctblacknonhispbridge_2010 pcthisp_2020 pcthisp_2010 pctpopchg_2010_2020 r_mprice_sf_2023 pctmpricechg_2010_2023 ;
+*run;
+
+proc format;
+  value pctmpricechg_2010_2023_quantile
+    low - 20.07786 = "Q1 (0-25%)"
+    20.07786 <- 37.72638 = "Q2 (25-50%)"
+    37.72638 <- 54.51864 = "Q3 (50-75%)"
+    54.51864 <- high = "Q4 (75-100%)";
+run;
+
+proc format;
+  value r_mprice_sf_2023_quantile
+    low - 588175 = "Q1 (0-25%)"
+    588175 <- 923852 = "Q2 (25-50%)"
+    923852 <- 1283980 = "Q3 (50-75%)"
+    1283980 <- high = "Q4 (75-100%)";
+run;
+
+proc format;
+  value pctpopchg_2010_2020_quantile
+    low - 4.11005 = "Q1 (0-25%)"
+    4.11005 <- 9.13567 = "Q2 (25-50%)"
+    9.13567 <- 24.23243 = "Q3 (50-75%)"
+    24.23243 <- high = "Q4 (75-100%)";
+run;
+
+proc format;
+  value pcthisp_2010_quantile
+    low - 1.85989 = "Q1 (0-25%)"
+    1.85989 <- 5.32382 = "Q2 (25-50%)"
+    5.32382 <- 8.31481 = "Q3 (50-75%)"
+    8.31481 <- high = "Q4 (75-100%)";
+run;
+
+proc format;
+  value pcthisp_2020_quantile
+    low - 5.19194 = "Q1 (0-25%)"
+    5.19194 <- 8.49419 = "Q2 (25-50%)"
+    8.49419 <- 10.59019 = "Q3 (50-75%)"
+    10.59019 <- high = "Q4 (75-100%)";
+run;
+
+proc format;
+  value pctblacknonhispbridge_2010_quant
+    low - 21.12676 = "Q1 (0-25%)"
+    21.12676 <- 57.93004 = "Q2 (25-50%)"
+    57.93004 <- 94.52055 = "Q3 (50-75%)"
+    94.52055 <- high = "Q4 (75-100%)";
+run;
+
+proc format;
+  value pctblacknonhispbridge_2020_quant
+    low - 13.58539 = "Q1 (0-25%)"
+    13.58539 <- 45.92395 = "Q2 (25-50%)"
+    45.92395 <- 91.03701 = "Q3 (50-75%)"
+    91.03701 <- high = "Q4 (75-100%)";
+run;
+
+*Neighborhood Characteristics Tables below here*;
+
+title3 "Project and assisted unit unique counts by quantile of percentage of median change in price of single family homes in the cluster from 2010 to 2023";
+
+proc tabulate data=Project_Clusters format=comma10. noseps missing;
+  where ProgCat ~= . and not( missing( pctmpricechg_2010_2023 ) );
+  class ProgCat / preloadfmt order=data;
+  class pctmpricechg_2010_2023;
+  var mid_asst_units err_asst_units;
+  table 
+    /** Rows **/
+    ( all='DC Total' pctmpricechg_2010_2023=' ' )
+    ,
+    /** Columns **/
+    n='Projects' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  table 
+    /** Rows **/
+    ( all='DC Total' pctmpricechg_2010_2023=' ' )
+    ,
+    /** Columns **/
+    sum='Assisted Units' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  format ProgCat ProgCat.;
+  format pctmpricechg_2010_2023 pctmpricechg_2010_2023_quantile.;
+run;
+
+
+title3 "Project and assisted unit unique counts by quantile of the median price of single family homes in the cluster in 2023";
+
+proc tabulate data=Project_Clusters format=comma10. noseps missing;  
+  where ProgCat ~= . and not( missing( r_mprice_sf_2023 ) );
+  class ProgCat / preloadfmt order=data;
+  class r_mprice_sf_2023;
+  var mid_asst_units err_asst_units;
+  table 
+    /** Rows **/
+    ( all='DC Total' r_mprice_sf_2023=' ' )
+    ,
+    /** Columns **/
+    n='Projects' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  table 
+    /** Rows **/
+    ( all='DC Total' r_mprice_sf_2023=' ' )
+    ,
+    /** Columns **/
+    sum='Assisted Units' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  format ProgCat ProgCat.;
+  format r_mprice_sf_2023 r_mprice_sf_2023_quantile.;
+run;
+
+
+title3 "Project and assisted unit unique counts by quantile of percentage population change in the cluster from 2010 to 2020";
+
+proc tabulate data=Project_Clusters format=comma10. noseps missing;
+  where ProgCat ~= . and not( missing( pctpopchg_2010_2020 ) );
+  class ProgCat / preloadfmt order=data;
+  class pctpopchg_2010_2020;
+  var mid_asst_units err_asst_units;
+  table 
+    /** Rows **/
+    ( all='DC Total' pctpopchg_2010_2020=' ' )
+    ,
+    /** Columns **/
+    n='Projects' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  table 
+    /** Rows **/
+    ( all='DC Total' pctpopchg_2010_2020=' ' )
+    ,
+    /** Columns **/
+    sum='Assisted Units' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  format ProgCat ProgCat.;
+  format pctpopchg_2010_2020 pctpopchg_2010_2020_quantile.;
+run;
+
+
+title3 "Project and assisted unit unique counts by quantile of percentage of hispanic population in the cluster in 2010";
+
+proc tabulate data=Project_Clusters format=comma10. noseps missing;
+  where ProgCat ~= . and not( missing( pcthisp_2010 ) );
+  class ProgCat / preloadfmt order=data;
+  class pcthisp_2010;
+  var mid_asst_units err_asst_units;
+  table 
+    /** Rows **/
+    ( all='DC Total' pcthisp_2010=' ' )
+    ,
+    /** Columns **/
+    n='Projects' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  table 
+    /** Rows **/
+    ( all='DC Total' pcthisp_2010=' ' )
+    ,
+    /** Columns **/
+    sum='Assisted Units' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  format ProgCat ProgCat.;
+  format pcthisp_2010 pcthisp_2010_quantile.;
+run;
+
+
+title3 "Project and assisted unit unique counts by quantile of percentage of hispanic population in the cluster in 2020";
+
+proc tabulate data=Project_Clusters format=comma10. noseps missing;
+  where ProgCat ~= . and not( missing( pcthisp_2020 ) );
+  class ProgCat / preloadfmt order=data;
+  class pcthisp_2020;
+  var mid_asst_units err_asst_units;
+  table 
+    /** Rows **/
+    ( all='DC Total' pcthisp_2020=' ' )
+    ,
+    /** Columns **/
+    n='Projects' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  table 
+    /** Rows **/
+    ( all='DC Total' pcthisp_2020=' ' )
+    ,
+    /** Columns **/
+    sum='Assisted Units' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  format ProgCat ProgCat.;
+  format pcthisp_2020 pcthisp_2020_quantile.;
+run;
+
+title3 "Project and assisted unit unique counts by quantile of percentage of the non-hispanic black population in the cluster in 2010";
+
+proc tabulate data=Project_Clusters format=comma10. noseps missing;
+  where ProgCat ~= . and not( missing( pctblacknonhispbridge_2010 ) );
+  class ProgCat / preloadfmt order=data;
+  class pctblacknonhispbridge_2010;
+  var mid_asst_units err_asst_units;
+  table 
+    /** Rows **/
+    ( all='DC Total' pctblacknonhispbridge_2010=' ' )
+    ,
+    /** Columns **/
+    n='Projects' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  table 
+    /** Rows **/
+    ( all='DC Total' pctblacknonhispbridge_2010=' ' )
+    ,
+    /** Columns **/
+    sum='Assisted Units' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  format ProgCat ProgCat.;
+  format pctblacknonhispbridge_2010 pctblacknonhispbridge_2010_quant.;
+run;
+
+
+title3 "Project and assisted unit unique counts by quantile of percentage of the non-hispanic black population in the cluster in 2020";
+
+proc tabulate data=Project_Clusters format=comma10. noseps missing;
+  where ProgCat ~= . and not( missing( pctblacknonhispbridge_2020 ) );
+  class ProgCat / preloadfmt order=data;
+  class pctblacknonhispbridge_2020;
+  var mid_asst_units err_asst_units;
+  table 
+    /** Rows **/
+    ( all='DC Total' pctblacknonhispbridge_2020=' ' )
+    ,
+    /** Columns **/
+    n='Projects' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  table 
+    /** Rows **/
+    ( all='DC Total' pctblacknonhispbridge_2020=' ' )
+    ,
+    /** Columns **/
+    sum='Assisted Units' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
+    ;
+  format ProgCat ProgCat.;
+  format pctblacknonhispbridge_2020 pctblacknonhispbridge_2020_quant.;
+run;
+
+
 
 
 ods rtf close;
