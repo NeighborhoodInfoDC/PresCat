@@ -570,6 +570,57 @@ proc tabulate data=Project_assisted_units format=comma10. noseps missing;
 run;
 
 
+title3 "Section 8 Projects and assisted units by earliest subsidy expiration date";
+
+proc tabulate data=Project_assisted_units format=comma10. noseps missing;
+  where ProgCat ~= . and not( missing( poa_end_min_year ) ) and poa_end_min_year >= 2025 and ProgCat in ( 2, 9,);
+  class ProgCat / preloadfmt order=data;
+  class poa_end_min_year;
+  var mid_asst_units err_asst_units;
+  table 
+    /** Rows **/
+    ( all='DC Total' poa_end_min_year=' ' )
+    ,
+    /** Columns **/
+    n='Projects' * ( all='\b Total' ) * mid_asst_units=' '
+    ;
+  table 
+    /** Rows **/
+    ( all='DC Total' poa_end_min_year=' ' )
+    ,
+    /** Columns **/
+    sum='Assisted Units' * ( all='\b Total' ) * mid_asst_units=' '
+    ;
+  format ProgCat ProgCat.;
+  format poa_end_min_year earliest_expiration.;
+run;
+
+title3 "LIHTC Projects and assisted units by earliest subsidy expiration date";
+
+proc tabulate data=Project_assisted_units format=comma10. noseps missing;
+  where ProgCat ~= . and not( missing( poa_end_min_year ) ) and poa_end_min_year >= 2025 and ProgCat in ( 3, 8,);
+  class ProgCat / preloadfmt order=data;
+  class poa_end_min_year;
+  var mid_asst_units err_asst_units;
+  table 
+    /** Rows **/
+    ( all='DC Total' poa_end_min_year=' ' )
+    ,
+    /** Columns **/
+    n='Projects' * ( all='\b Total' ) * mid_asst_units=' '
+    ;
+  table 
+    /** Rows **/
+    ( all='DC Total' poa_end_min_year=' ' )
+    ,
+    /** Columns **/
+    sum='Assisted Units' * ( all='\b Total' ) * mid_asst_units=' '
+    ;
+  format ProgCat ProgCat.;
+  format poa_end_min_year earliest_expiration.;
+run;
+
+
 ***Neighborhood characteristics (demographics, housing sale price level and trends)***;
 
 *create cluster data set to combine with Project_assisted_units to create data set for neighborhood characteristics tables*;
@@ -597,10 +648,29 @@ data Project_Clusters;
 	by cluster2017;
 run;
 
-*Creating proc formats for all variables used in tables neighborhood characteristics tables*;
-*proc univariate data=Cluster;
-  *var pctblacknonhispbridge_2020 pctblacknonhispbridge_2010 pcthisp_2020 pcthisp_2010 pctpopchg_2010_2020 r_mprice_sf_2023 pctmpricechg_2010_2023 ;
-*run;
+
+title3 'Quantiles of Neighborhood Cluster Characteristics';
+
+proc tabulate data=Cluster format=comma16.2 noseps missing;
+  var pctblacknonhispbridge_2010 pctblacknonhispbridge_2020 pcthisp_2010 pcthisp_2020 pctpopchg_2010_2020 r_mprice_sf_2023 pctmpricechg_2010_2023;
+  table 
+    /** Rows **/
+    pctblacknonhispbridge_2010 pctblacknonhispbridge_2020 pcthisp_2010 pcthisp_2020 pctpopchg_2010_2020 r_mprice_sf_2023 pctmpricechg_2010_2023
+    ,
+    /** Columns **/
+    n*f=comma6.0 min='Minimum' p25='25th percentile' p50='50th percentile' p75='75th percentile' max='Maximum'
+  ;
+  label
+    pctblacknonhispbridge_2010 = '% Non-Hispanic Black population, 2010'
+    pctblacknonhispbridge_2020 = '% Non-Hispanic Black population, 2020'
+    pcthisp_2010 = '% Hispanic population, 2010'
+    pcthisp_2020 = '% Hispanic population, 2020'
+    pctpopchg_2010_2020 = '% population change, 2010 - 2020'
+    r_mprice_sf_2023 = 'Median sales price of SF homes ($ 2024), 2023'
+    pctmpricechg_2010_2023 = '% change in Median sales price of SF homes ($ 2024), 2010 - 2023'
+  ;  
+run;
+
 
 proc format;
   value pctmpricechg_2010_2023_quantile
