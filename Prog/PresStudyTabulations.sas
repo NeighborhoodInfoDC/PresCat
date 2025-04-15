@@ -583,13 +583,7 @@ proc tabulate data=Project_assisted_units format=comma10. noseps missing;
     ,
     /** Columns **/
     n='Projects' * ( all='\b Total' ) * mid_asst_units=' '
-    ;
-  table 
-    /** Rows **/
-    ( all='DC Total' poa_end_min_year=' ' )
-    ,
-    /** Columns **/
-    sum='Assisted Units' * ( all='\b Total' ) * mid_asst_units=' '
+	sum='Assisted Units' * ( all='\b Total' ) * mid_asst_units=' '
     ;
   format ProgCat ProgCat.;
   format poa_end_min_year earliest_expiration.;
@@ -608,13 +602,7 @@ proc tabulate data=Project_assisted_units format=comma10. noseps missing;
     ,
     /** Columns **/
     n='Projects' * ( all='\b Total' ) * mid_asst_units=' '
-    ;
-  table 
-    /** Rows **/
-    ( all='DC Total' poa_end_min_year=' ' )
-    ,
-    /** Columns **/
-    sum='Assisted Units' * ( all='\b Total' ) * mid_asst_units=' '
+	sum='Assisted Units' * ( all='\b Total' ) * mid_asst_units=' '
     ;
   format ProgCat ProgCat.;
   format poa_end_min_year earliest_expiration.;
