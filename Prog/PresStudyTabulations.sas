@@ -126,7 +126,7 @@ data Project_subsidy;
 
   merge
     Prescat.Project_category_view
-      (in=inProject)
+      (in=inProject where=(status='A'))
     Subsidy_unique
       (in=inSubsidy)
 	Project_Owner_Summary
@@ -143,7 +143,10 @@ data Project_assisted_units;
   by NLIHC_ID;
   
   retain num_progs total_units min_asst_units max_asst_units asst_units1-asst_units&MAXPROGS
-         poa_start_min poa_end_min poa_end_max compl_end_min compl_end_max proj_ayb_min;
+         poa_start_min poa_end_min poa_end_max compl_end_min compl_end_max proj_ayb_min
+         min_asst_units_pb max_asst_units_pb poa_start_min_pb poa_end_min_pb poa_end_max_pb compl_end_min_pb compl_end_max_pb 
+         min_asst_units_tc max_asst_units_tc poa_start_min_tc poa_end_min_tc poa_end_max_tc compl_end_min_tc compl_end_max_tc 
+  ;
 
   array a_aunits{&MAXPROGS} asst_units1-asst_units&MAXPROGS;
   
@@ -163,6 +166,28 @@ data Project_assisted_units;
     compl_end_min = .;
     compl_end_max = .;
     
+    min_asst_units_pb = .;
+    mid_asst_units_pb = .;
+    max_asst_units_pb = .;
+    
+    poa_start_pb = .;
+    poa_end_min_pb = .;
+    poa_end_max_pb = .;
+
+    compl_end_min_pb = .;
+    compl_end_max_pb = .;
+
+    min_asst_units_tc = .;
+    mid_asst_units_tc = .;
+    max_asst_units_tc = .;
+    
+    poa_start_tc = .;
+    poa_end_min_tc = .;
+    poa_end_max_tc = .;
+
+    compl_end_min_tc = .;
+    compl_end_max_tc = .;
+
     proj_ayb_min = .;
 
     do i = 1 to &MAXPROGS;
@@ -200,6 +225,38 @@ data Project_assisted_units;
   compl_end_min = min( compl_end, compl_end_min );
   compl_end_max = max( compl_end, compl_end_max );
   
+  if portfolio in ( 'PB8' ) then do;
+  
+    min_asst_units_pb = max( Units_Assist, min_asst_units_pb );
+    
+    poa_start_min_pb = min( poa_start, poa_start_min_pb );
+    
+    if poa_end > 0 then do;
+      poa_end_min_pb = min( poa_end, poa_end_min_pb );
+      poa_end_max_pb = max( poa_end, poa_end_max_pb );
+    end;
+    
+    compl_end_min_pb = min( compl_end, compl_end_min_pb );
+    compl_end_max_pb = max( compl_end, compl_end_max_pb );
+      
+  end;
+  
+  else if portfolio in ( 'LIHTC' ) then do;
+  
+    min_asst_units_tc  = max( Units_Assist, min_asst_units_tc  );
+    
+    poa_start_min_tc  = min( poa_start, poa_start_min_tc  );
+    
+    if poa_end > 0 then do;
+      poa_end_min_tc  = min( poa_end, poa_end_min_tc  );
+      poa_end_max_tc  = max( poa_end, poa_end_max_tc  );
+    end;
+    
+    compl_end_min_tc  = min( compl_end, compl_end_min_tc  );
+    compl_end_max_tc  = max( compl_end, compl_end_max_tc  );
+      
+  end;
+  
   if proj_ayb > 0 then proj_ayb_min = min( proj_ayb, proj_ayb_min );
   
   if last.NLIHC_ID then do;
@@ -209,10 +266,16 @@ data Project_assisted_units;
     end;
 
     max_asst_units = min( sum( of asst_units1-asst_units&MAXPROGS ), total_units );
+    max_asst_units_pb = min( max_asst_units_pb, total_units );
+    max_asst_units_tc = min( max_asst_units_tc, total_units );
     
     mid_asst_units = min( round( mean( min_asst_units, max_asst_units ), 1 ), max_asst_units );
+    mid_asst_units_pb = min( round( mean( min_asst_units_pb, max_asst_units_pb ), 1 ), max_asst_units_pb );
+    mid_asst_units_tc  = min( round( mean( min_asst_units_tc , max_asst_units_tc  ), 1 ), max_asst_units_tc  );
     
     if mid_asst_units ~= max_asst_units then err_asst_units = max_asst_units - mid_asst_units;
+    if mid_asst_units_pb ~= max_asst_units_pb then err_asst_units_pb = max_asst_units_pb - mid_asst_units_pb;
+    if mid_asst_units_tc  ~= max_asst_units_tc  then err_asst_units_tc  = max_asst_units_tc  - mid_asst_units_tc ;
     
     ** Reporting categories **;
     
@@ -239,6 +302,13 @@ data Project_assisted_units;
     end;
 
   poa_end_min_year = year( poa_end_min );
+  poa_end_min_year_pb = year( poa_end_min_pb );
+  poa_end_min_year_tc = year( poa_end_min_tc );
+  compl_end_min_year_tc = year( compl_end_min_tc );
+
+  length Address_1 $ 80;
+  
+  Address_1 = scan( Proj_addre, 1, ';' );
     
     if min_asst_units > 0 then output;
   
@@ -535,6 +605,7 @@ run;
 
 proc format;
 value earliest_expiration (notsorted)
+	    1900 -< 2025 = 'Before 2025'
 	    2025 - 2029 = '2025-2029'
 	    2030 - 2034 = '2030-2034'
 	    2035 - 2039 = '2035-2039'
@@ -547,7 +618,7 @@ value earliest_expiration (notsorted)
 title3 "Projects and assisted units by earliest subsidy expiration date";
 
 proc tabulate data=Project_assisted_units format=comma10. noseps missing;
-  where ProgCat ~= . and not( missing( poa_end_min_year ) ) and poa_end_min_year >= 2025 and ProgCat in ( 2, 9, 8, 3, 10 );
+  where ProgCat ~= . and not( missing( poa_end_min_year ) );
   class ProgCat / preloadfmt order=data;
   class poa_end_min_year;
   var mid_asst_units err_asst_units;
@@ -573,39 +644,59 @@ run;
 title3 "Section 8 Projects and assisted units by earliest subsidy expiration date";
 
 proc tabulate data=Project_assisted_units format=comma10. noseps missing;
-  where ProgCat ~= . and not( missing( poa_end_min_year ) ) and poa_end_min_year >= 2025 and ProgCat in ( 2, 9,);
+  where ProgCat ~= . and not( missing( poa_end_min_year_pb ) ) and ProgCat in ( 2, 9,);
   class ProgCat / preloadfmt order=data;
-  class poa_end_min_year;
-  var mid_asst_units err_asst_units;
+  class poa_end_min_year_pb;
+  var mid_asst_units_pb err_asst_units_pb;
   table 
     /** Rows **/
-    ( all='DC Total' poa_end_min_year=' ' )
+    ( all='DC Total' poa_end_min_year_pb=' ' )
     ,
     /** Columns **/
-    n='Projects' * ( all='\b Total' ) * mid_asst_units=' '
-	sum='Assisted Units' * ( all='\b Total' ) * mid_asst_units=' '
+    n='Projects' * ( all='\b Total' ) * mid_asst_units_pb=' '
+	sum='Assisted Units' * ( all='\b Total' ) * mid_asst_units_pb=' '
     ;
   format ProgCat ProgCat.;
-  format poa_end_min_year earliest_expiration.;
+  format poa_end_min_year_pb earliest_expiration.;
 run;
 
-title3 "LIHTC Projects and assisted units by earliest subsidy expiration date";
+title3 "LIHTC Projects and assisted units by earliest subsidy expiration date (30 years)";
 
 proc tabulate data=Project_assisted_units format=comma10. noseps missing;
-  where ProgCat ~= . and not( missing( poa_end_min_year ) ) and poa_end_min_year >= 2025 and ProgCat in ( 3, 8,);
+  where ProgCat ~= . and not( missing( poa_end_min_year_tc ) ) and ProgCat in ( 3, 8,);
   class ProgCat / preloadfmt order=data;
-  class poa_end_min_year;
-  var mid_asst_units err_asst_units;
+  class poa_end_min_year_tc;
+  var mid_asst_units_tc err_asst_units_tc;
   table 
     /** Rows **/
-    ( all='DC Total' poa_end_min_year=' ' )
+    ( all='DC Total' poa_end_min_year_tc=' ' )
     ,
     /** Columns **/
-    n='Projects' * ( all='\b Total' ) * mid_asst_units=' '
-	sum='Assisted Units' * ( all='\b Total' ) * mid_asst_units=' '
+    n='Projects' * ( all='\b Total' ) * mid_asst_units_tc=' '
+	sum='Assisted Units' * ( all='\b Total' ) * mid_asst_units_tc=' '
     ;
   format ProgCat ProgCat.;
-  format poa_end_min_year earliest_expiration.;
+  format poa_end_min_year_tc earliest_expiration.;
+run;
+
+
+title3 "LIHTC Projects and assisted units by earliest compliance period expiration date (15 years)";
+
+proc tabulate data=Project_assisted_units format=comma10. noseps missing;
+  where ProgCat ~= . and not( missing( compl_end_min_year_tc ) ) and ProgCat in ( 3, 8,);
+  class ProgCat / preloadfmt order=data;
+  class compl_end_min_year_tc;
+  var mid_asst_units_tc err_asst_units_tc;
+  table 
+    /** Rows **/
+    ( all='DC Total' compl_end_min_year_tc=' ' )
+    ,
+    /** Columns **/
+    n='Projects' * ( all='\b Total' ) * mid_asst_units_tc=' '
+	sum='Assisted Units' * ( all='\b Total' ) * mid_asst_units_tc=' '
+    ;
+  format ProgCat ProgCat.;
+  format compl_end_min_year_tc earliest_expiration.;
 run;
 
 
@@ -907,5 +998,4 @@ title2;
 footnote1;
 
 run;
-
 
