@@ -142,7 +142,7 @@ data Project_assisted_units;
   set Project_subsidy;
   by NLIHC_ID;
   
-  retain num_progs total_units min_asst_units max_asst_units asst_units1-asst_units&MAXPROGS
+  retain num_progs min_asst_units max_asst_units asst_units1-asst_units&MAXPROGS
          poa_start_min poa_end_min poa_end_max compl_end_min compl_end_max proj_ayb_min
          min_asst_units_pb max_asst_units_pb poa_start_min_pb poa_end_min_pb poa_end_max_pb compl_end_min_pb compl_end_max_pb 
          min_asst_units_tc max_asst_units_tc poa_start_min_tc poa_end_min_tc poa_end_max_tc compl_end_min_tc compl_end_max_tc 
@@ -152,7 +152,6 @@ data Project_assisted_units;
   
   if first.NLIHC_ID then do;
   
-    total_units = .;
     num_progs = 0;
     
     min_asst_units = .;
@@ -198,8 +197,6 @@ data Project_assisted_units;
   
   num_progs + 1;
   
-  total_units = max( total_units, Proj_Units_Tot, Units_Assist );
-
   select ( portfolio );
     when ( 'PUBHSNG' ) a_aunits{&PUBHSNG} = sum( Units_Assist, a_aunits{&PUBHSNG} );
     when ( 'PB8' ) a_aunits{&S8PROG} = sum( Units_Assist, a_aunits{&S8PROG} );
@@ -262,12 +259,12 @@ data Project_assisted_units;
   if last.NLIHC_ID then do;
   
     do i = 1 to &MAXPROGS;
-      a_aunits{i} = min( a_aunits{i}, total_units );
+      a_aunits{i} = min( a_aunits{i}, Proj_units_tot );
     end;
 
-    max_asst_units = min( sum( of asst_units1-asst_units&MAXPROGS ), total_units );
-    max_asst_units_pb = min( max_asst_units_pb, total_units );
-    max_asst_units_tc = min( max_asst_units_tc, total_units );
+    max_asst_units = min( sum( of asst_units1-asst_units&MAXPROGS ), Proj_units_tot );
+    max_asst_units_pb = min( max_asst_units_pb, max_asst_units, Proj_units_tot );
+    max_asst_units_tc = min( max_asst_units_tc, max_asst_units, Proj_units_tot );
     
     mid_asst_units = min( round( mean( min_asst_units, max_asst_units ), 1 ), max_asst_units );
     mid_asst_units_pb = min( round( mean( min_asst_units_pb, max_asst_units_pb ), 1 ), max_asst_units_pb );
@@ -314,7 +311,7 @@ data Project_assisted_units;
   
   end;
   
-  format poa_start_min poa_end_min poa_end_max compl_end_min compl_end_max mmddyy10.;
+  format poa_start_min: poa_end_min: poa_end_max: compl_end_min: compl_end_max: mmddyy10.;
   
   drop i portfolio Units_Assist poa_start poa_end compl_end proj_ayb _freq_ _type_;
 
@@ -332,6 +329,8 @@ options missing='0';
 options nodate nonumber;
 
 %fdate()
+
+ods listing close;
 
 ods rtf file="&_dcdata_default_path\PresCat\Prog\PresStudyTabulations.rtf" style=Styles.Rtf_arial_9pt;
 
@@ -421,9 +420,9 @@ data Project_AOB;
     Project_assisted_units
 		(in=inProject)
     Prescat.Parcel
-		(in=inParcel);
+		(in=inParcel keep=nlihc_id ssl);
   by NLIHC_ID;
-  	if inProject and inParcel;
+  	if inProject;
    
 run;
 
@@ -438,19 +437,28 @@ data Project_Age_Of_Building;
    Project_AOB
    	(in=inProject)
    Realprop.Cama_parcel_2025_02
-   	(in=inCama);
+   	(in=inCama keep=ssl ayb eyb);
 
   by SSL;
- 	 if inProject and inCama;
+ 	 if inProject;
    
 run;
 
 proc summary data=Project_Age_Of_Building nway; 
   class nlihc_id;
+  var ayb eyb;
   output out=Project_Building_Age
     min(AYB)=
 	min(EYB)=;
 run;
+
+data Project_assisted_units_2;
+
+  merge Project_assisted_units Project_Building_Age;
+  by nlihc_id;
+  
+run;
+
 ****Age of Building Table***;
 
 proc format;
@@ -469,9 +477,9 @@ value year_built (notsorted)
 	    .u = 'Unknown'; 
 	run;
 
-title3 "Project and assisted unit unique counts by Age of Building";
+title3 "Project and assisted unit unique counts by Year Building was Constructed";
 
-proc tabulate data=Project_Age_Of_Building format=comma10. noseps missing;
+proc tabulate data=Project_assisted_units_2 format=comma10. noseps missing;
   where ProgCat ~= . and not( missing( AYB ) );
   class ProgCat / preloadfmt order=data;
   class AYB;
@@ -514,7 +522,7 @@ value year_improved (notsorted)
 
 title3 "Project and assisted unit unique counts by Year Improvements were made to Property";
 
-proc tabulate data=Project_Age_Of_Building format=comma10. noseps missing;
+proc tabulate data=Project_assisted_units_2 format=comma10. noseps missing;
   where ProgCat ~= . and not( missing( EYB ) );
   class ProgCat / preloadfmt order=data;
   class EYB;
@@ -575,33 +583,32 @@ value development_size (notsorted)
 	    .u = 'Unknown'; 
 	run;
 
-title3 "Projects and assisted units by size of development";
+title3 "Projects and assisted units by size of development (total units)";
 
 proc tabulate data=Project_assisted_units format=comma10. noseps missing;
-  where ProgCat ~= . and not( missing( total_units ) );
+  where ProgCat ~= . and not( missing( Proj_units_tot ) );
   class ProgCat / preloadfmt order=data;
-  class total_units;
+  class Proj_units_tot;
   var mid_asst_units err_asst_units;
   table 
     /** Rows **/
-    ( all='DC Total' total_units=' ' )
+    ( all='DC Total' Proj_units_tot=' ' )
     ,
     /** Columns **/
     n='Projects' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
     ;
   table 
     /** Rows **/
-    ( all='DC Total' total_units=' ' )
+    ( all='DC Total' Proj_units_tot=' ' )
     ,
     /** Columns **/
     sum='Assisted Units' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
     ;
   format ProgCat ProgCat.;
-  format total_units development_size.;
+  format Proj_units_tot development_size.;
 run;
 
 ***Projects and assisted units by earliest subsidy expiration date***;
-
 
 proc format;
 value earliest_expiration (notsorted)
@@ -615,7 +622,7 @@ value earliest_expiration (notsorted)
 	    .u = 'Unknown'; 
 	run;
 
-title3 "Projects and assisted units by earliest subsidy expiration date";
+title3 "Projects and assisted units by earliest subsidy expiration date (any subsidy)";
 
 proc tabulate data=Project_assisted_units format=comma10. noseps missing;
   where ProgCat ~= . and not( missing( poa_end_min_year ) );
@@ -641,10 +648,10 @@ proc tabulate data=Project_assisted_units format=comma10. noseps missing;
 run;
 
 
-title3 "Section 8 Projects and assisted units by earliest subsidy expiration date";
+title3 "Section 8 Projects and assisted units by earliest Section 8 subsidy expiration date";
 
 proc tabulate data=Project_assisted_units format=comma10. noseps missing;
-  where ProgCat ~= . and not( missing( poa_end_min_year_pb ) ) and ProgCat in ( 2, 9,);
+  where ProgCat ~= . and not( missing( poa_end_min_year_pb ) ) and ProgCat in ( 2, 9 );
   class ProgCat / preloadfmt order=data;
   class poa_end_min_year_pb;
   var mid_asst_units_pb err_asst_units_pb;
@@ -660,10 +667,10 @@ proc tabulate data=Project_assisted_units format=comma10. noseps missing;
   format poa_end_min_year_pb earliest_expiration.;
 run;
 
-title3 "LIHTC Projects and assisted units by earliest subsidy expiration date (30 years)";
+title3 "LIHTC Projects and assisted units by earliest LIHTC subsidy expiration date (30 years)";
 
 proc tabulate data=Project_assisted_units format=comma10. noseps missing;
-  where ProgCat ~= . and not( missing( poa_end_min_year_tc ) ) and ProgCat in ( 3, 8,);
+  where ProgCat ~= . and not( missing( poa_end_min_year_tc ) ) and ProgCat in ( 3, 8 );
   class ProgCat / preloadfmt order=data;
   class poa_end_min_year_tc;
   var mid_asst_units_tc err_asst_units_tc;
@@ -680,10 +687,10 @@ proc tabulate data=Project_assisted_units format=comma10. noseps missing;
 run;
 
 
-title3 "LIHTC Projects and assisted units by earliest compliance period expiration date (15 years)";
+title3 "LIHTC Projects and assisted units by earliest LIHTC compliance period expiration date (15 years)";
 
 proc tabulate data=Project_assisted_units format=comma10. noseps missing;
-  where ProgCat ~= . and not( missing( compl_end_min_year_tc ) ) and ProgCat in ( 3, 8,);
+  where ProgCat ~= . and not( missing( compl_end_min_year_tc ) ) and ProgCat in ( 3, 8 );
   class ProgCat / preloadfmt order=data;
   class compl_end_min_year_tc;
   var mid_asst_units_tc err_asst_units_tc;
@@ -718,17 +725,18 @@ pctmpricechg_2010_2023 = %pctchg( r_mprice_sf_2010, r_mprice_sf_2023 );
 
 run;
 
-proc sort data= Project_assisted_units;
+proc sort data= Project_assisted_units_2;
 	by cluster2017;
 	run;
 
 data Project_Clusters;
-	merge Project_assisted_units cluster;
+	merge Project_assisted_units_2 (in=inProject) cluster;
 	by cluster2017;
+	if inProject;
 run;
 
 
-title3 'Quantiles of Neighborhood Cluster Characteristics';
+title3 'Quartiles of Neighborhood Cluster Characteristics';
 
 proc tabulate data=Cluster format=comma16.2 noseps missing;
   var pctblacknonhispbridge_2010 pctblacknonhispbridge_2020 pcthisp_2010 pcthisp_2020 pctpopchg_2010_2020 r_mprice_sf_2023 pctmpricechg_2010_2023;
@@ -809,7 +817,7 @@ run;
 
 *Neighborhood Characteristics Tables below here*;
 
-title3 "Project and assisted unit unique counts by quantile of percentage of median change in price of single family homes in the cluster from 2010 to 2023";
+title3 "Project and assisted unit unique counts by quartile of percentage of median change in price of single family homes in the cluster from 2010 to 2023";
 
 proc tabulate data=Project_Clusters format=comma10. noseps missing;
   where ProgCat ~= . and not( missing( pctmpricechg_2010_2023 ) );
@@ -835,7 +843,7 @@ proc tabulate data=Project_Clusters format=comma10. noseps missing;
 run;
 
 
-title3 "Project and assisted unit unique counts by quantile of the median price of single family homes in the cluster in 2023";
+title3 "Project and assisted unit unique counts by quartile of the median price of single family homes in the cluster in 2023";
 
 proc tabulate data=Project_Clusters format=comma10. noseps missing;  
   where ProgCat ~= . and not( missing( r_mprice_sf_2023 ) );
@@ -861,7 +869,7 @@ proc tabulate data=Project_Clusters format=comma10. noseps missing;
 run;
 
 
-title3 "Project and assisted unit unique counts by quantile of percentage population change in the cluster from 2010 to 2020";
+title3 "Project and assisted unit unique counts by quartile of percentage population change in the cluster from 2010 to 2020";
 
 proc tabulate data=Project_Clusters format=comma10. noseps missing;
   where ProgCat ~= . and not( missing( pctpopchg_2010_2020 ) );
@@ -887,7 +895,7 @@ proc tabulate data=Project_Clusters format=comma10. noseps missing;
 run;
 
 
-title3 "Project and assisted unit unique counts by quantile of percentage of hispanic population in the cluster in 2010";
+title3 "Project and assisted unit unique counts by quartile of percentage of hispanic population in the cluster in 2010";
 
 proc tabulate data=Project_Clusters format=comma10. noseps missing;
   where ProgCat ~= . and not( missing( pcthisp_2010 ) );
@@ -913,7 +921,7 @@ proc tabulate data=Project_Clusters format=comma10. noseps missing;
 run;
 
 
-title3 "Project and assisted unit unique counts by quantile of percentage of hispanic population in the cluster in 2020";
+title3 "Project and assisted unit unique counts by quartile of percentage of hispanic population in the cluster in 2020";
 
 proc tabulate data=Project_Clusters format=comma10. noseps missing;
   where ProgCat ~= . and not( missing( pcthisp_2020 ) );
@@ -938,7 +946,7 @@ proc tabulate data=Project_Clusters format=comma10. noseps missing;
   format pcthisp_2020 pcthisp_2020_quantile.;
 run;
 
-title3 "Project and assisted unit unique counts by quantile of percentage of the non-hispanic black population in the cluster in 2010";
+title3 "Project and assisted unit unique counts by quartile of percentage of the non-hispanic black population in the cluster in 2010";
 
 proc tabulate data=Project_Clusters format=comma10. noseps missing;
   where ProgCat ~= . and not( missing( pctblacknonhispbridge_2010 ) );
@@ -964,7 +972,7 @@ proc tabulate data=Project_Clusters format=comma10. noseps missing;
 run;
 
 
-title3 "Project and assisted unit unique counts by quantile of percentage of the non-hispanic black population in the cluster in 2020";
+title3 "Project and assisted unit unique counts by quartile of percentage of the non-hispanic black population in the cluster in 2020";
 
 proc tabulate data=Project_Clusters format=comma10. noseps missing;
   where ProgCat ~= . and not( missing( pctblacknonhispbridge_2020 ) );
@@ -989,13 +997,100 @@ proc tabulate data=Project_Clusters format=comma10. noseps missing;
   format pctblacknonhispbridge_2020 pctblacknonhispbridge_2020_quant.;
 run;
 
-
-
-
 ods rtf close;
+
+ods listing;
 
 title2;
 footnote1;
 
 run;
 
+
+** List expiring projects **;
+
+ods listing close;
+
+ods tagsets.excelxp file="&_dcdata_default_path\PresCat\Prog\PresStudy_expirations.xls" style=Normal options(sheet_interval='Proc' );
+
+ods tagsets.excelxp options( sheet_name="Section 8" );
+
+options missing='-';
+
+** Section 8 **;
+
+proc print data=Project_Clusters label;
+  where ProgCat ~= . and not( missing( poa_end_min_year_pb ) ) and ProgCat in ( 2, 9 );
+  id nlihc_id;
+  var 
+    Proj_name ProgCat Proj_Units_Tot mid_asst_units poa_end_min mid_asst_units_pb poa_end_min_pb
+    Ward2022 Anc2012 Cluster2017 Address_1 
+    AYB EYB parcel_owner_type
+    pctblacknonhispbridge_2010 pctblacknonhispbridge_2020 pcthisp_2010 pcthisp_2020 pctpopchg_2010_2020 r_mprice_sf_2023 pctmpricechg_2010_2023; 
+  format 
+    ProgCat ProgCat. 
+    parcel_owner_type $OWNCAT. 
+    poa_end_min: compl_end_min: yymmddd10.
+    pctblacknonhispbridge_2010 pctblacknonhispbridge_2020 pcthisp_2010 pcthisp_2020 pctpopchg_2010_2020 pctmpricechg_2010_2023 comma8.1
+    r_mprice_sf_2023 comma16.;
+  label
+    Address_1 = "Address"
+    ProgCat = "Subsidy category"
+    mid_asst_units = "Total assisted units (est.)"
+    poa_end_min = "Earliest subsidy expiration date (any)"
+    mid_asst_units_pb = "Project-based section 8 units (est.)"
+    poa_end_min_pb = "Earliest section 8 subsidy expiration date"
+    ayb = "Year of construction"
+    eyb = "Year of last major renovation"
+    parcel_owner_type = "Owner"
+    pctblacknonhispbridge_2010 = 'Neighborhood cluster: % Non-Hispanic Black population, 2010'
+    pctblacknonhispbridge_2020 = 'Neighborhood cluster: % Non-Hispanic Black population, 2020'
+    pcthisp_2010 = 'Neighborhood cluster: % Hispanic population, 2010'
+    pcthisp_2020 = 'Neighborhood cluster: % Hispanic population, 2020'
+    pctpopchg_2010_2020 = 'Neighborhood cluster: % population change, 2010 - 2020'
+    r_mprice_sf_2023 = 'Neighborhood cluster: Median sales price of SF homes ($ 2024), 2023'
+    pctmpricechg_2010_2023 = 'Neighborhood cluster: % change in Median sales price of SF homes ($ 2024), 2010 - 2023'
+    ;
+run;
+
+
+ods tagsets.excelxp options( sheet_name="LIHTC" );
+
+proc print data=Project_Clusters label;
+  where ProgCat ~= . and not( missing( compl_end_min_year_tc ) ) and ProgCat in ( 3, 8 );
+  id nlihc_id;
+  var 
+    Proj_name ProgCat Proj_Units_Tot mid_asst_units poa_end_min mid_asst_units_tc compl_end_min_tc poa_end_min_tc
+    Ward2022 Anc2012 Cluster2017 Address_1 
+    AYB EYB parcel_owner_type
+    pctblacknonhispbridge_2010 pctblacknonhispbridge_2020 pcthisp_2010 pcthisp_2020 pctpopchg_2010_2020 r_mprice_sf_2023 pctmpricechg_2010_2023; 
+  format 
+    ProgCat ProgCat. 
+    parcel_owner_type $OWNCAT. 
+    poa_end_min: compl_end_min: yymmddd10.
+    pctblacknonhispbridge_2010 pctblacknonhispbridge_2020 pcthisp_2010 pcthisp_2020 pctpopchg_2010_2020 pctmpricechg_2010_2023 comma8.1
+    r_mprice_sf_2023 comma16.0;
+  label
+    Address_1 = "Address"
+    ProgCat = "Subsidy category"
+    mid_asst_units = "Total assisted units (est.)"
+    poa_end_min = "Earliest subsidy expiration date (any)"
+    mid_asst_units_tc = "LIHTC units (est.)"
+    poa_end_min_tc = "Earliest LIHTC expiration date"
+    compl_end_min_tc = "Earliest LIHTC compliance period expiration date"
+    ayb = "Year of construction"
+    eyb = "Year of last major renovation"
+    parcel_owner_type = "Owner"
+    pctblacknonhispbridge_2010 = 'Neighborhood cluster: % Non-Hispanic Black population, 2010'
+    pctblacknonhispbridge_2020 = 'Neighborhood cluster: % Non-Hispanic Black population, 2020'
+    pcthisp_2010 = 'Neighborhood cluster: % Hispanic population, 2010'
+    pcthisp_2020 = 'Neighborhood cluster: % Hispanic population, 2020'
+    pctpopchg_2010_2020 = 'Neighborhood cluster: % population change, 2010 - 2020'
+    r_mprice_sf_2023 = 'Neighborhood cluster: Median sales price of SF homes ($ 2024), 2023'
+    pctmpricechg_2010_2023 = 'Neighborhood cluster: % change in Median sales price of SF homes ($ 2024), 2010 - 2023'
+    ;
+run;
+
+ods tagsets.excelxp close;
+
+ods listing;
