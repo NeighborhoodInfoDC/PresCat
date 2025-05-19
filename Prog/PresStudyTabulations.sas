@@ -613,10 +613,10 @@ run;
 proc format;
 value earliest_expiration (notsorted)
 	    1900 -< 2025 = 'Before 2025'
-	    /*
+	    /** Show annual expiration totals for 2025 - 2034. Uncomment for grouped totals.
 	    2025 - 2029 = '2025-2029'
 	    2030 - 2034 = '2030-2034'
-	    */
+	    **/
 	    2035 - 2039 = '2035-2039'
 		2040 - 2045 = '2040-2045'
 		2045 - 2049 = '2045-2049'
