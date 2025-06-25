@@ -119,6 +119,21 @@ data Project_Owner_Summary;
 	else if parcel_owner_type_070 = 1 then parcel_owner_type = "070";
 	run;
 
+** Sale dates **;
+
+proc sort data=Prescat.Real_property (where=(rp_type="OTR/SALE" and not(missing(RP_date)))) out=Real_property_sales;
+  by nlihc_id RP_date;
+run;
+
+data Real_property_last_sale;
+
+  set Real_property_sales (drop=rp_type);
+  by nlihc_id;
+  
+  if last.nlihc_id;
+  
+run;
+
 
 ** Combine project and subsidy data **;
 
@@ -130,7 +145,9 @@ data Project_subsidy;
     Subsidy_unique
       (in=inSubsidy)
 	Project_Owner_Summary
-	  (in=inOwner);
+	  (in=inOwner)
+	Real_property_last_sale
+	  (rename=(rp_date=Sale_date rp_desc=Sale_info ssl=Sale_ssl));
   by NLIHC_ID;
   
   if inProject and inSubsidy and inOwner;
@@ -1028,6 +1045,7 @@ proc print data=Project_Clusters label;
     Proj_name ProgCat Proj_Units_Tot mid_asst_units poa_end_min mid_asst_units_pb poa_end_min_pb
     Ward2022 Anc2012 Cluster2017 Address_1 
     AYB EYB parcel_owner_type
+    Sale_date Sale_ssl Sale_info
     pctblacknonhispbridge_2010 pctblacknonhispbridge_2020 pcthisp_2010 pcthisp_2020 pctpopchg_2010_2020 r_mprice_sf_2023 pctmpricechg_2010_2023; 
   format 
     ProgCat ProgCat. 
@@ -1045,6 +1063,9 @@ proc print data=Project_Clusters label;
     ayb = "Year of construction"
     eyb = "Year of last major renovation"
     parcel_owner_type = "Owner"
+    Sale_date = "Date of most recent sale"
+    Sale_ssl = "Parcel reference for sale"
+    Sale_info = "Sale information"
     pctblacknonhispbridge_2010 = 'Neighborhood cluster: % Non-Hispanic Black population, 2010'
     pctblacknonhispbridge_2020 = 'Neighborhood cluster: % Non-Hispanic Black population, 2020'
     pcthisp_2010 = 'Neighborhood cluster: % Hispanic population, 2010'
@@ -1065,6 +1086,7 @@ proc print data=Project_Clusters label;
     Proj_name ProgCat Proj_Units_Tot mid_asst_units poa_end_min mid_asst_units_tc compl_end_min_tc poa_end_min_tc
     Ward2022 Anc2012 Cluster2017 Address_1 
     AYB EYB parcel_owner_type
+    Sale_date Sale_ssl Sale_info
     pctblacknonhispbridge_2010 pctblacknonhispbridge_2020 pcthisp_2010 pcthisp_2020 pctpopchg_2010_2020 r_mprice_sf_2023 pctmpricechg_2010_2023; 
   format 
     ProgCat ProgCat. 
@@ -1083,6 +1105,9 @@ proc print data=Project_Clusters label;
     ayb = "Year of construction"
     eyb = "Year of last major renovation"
     parcel_owner_type = "Owner"
+    Sale_date = "Date of most recent sale"
+    Sale_ssl = "Parcel reference for sale"
+    Sale_info = "Sale information"
     pctblacknonhispbridge_2010 = 'Neighborhood cluster: % Non-Hispanic Black population, 2010'
     pctblacknonhispbridge_2020 = 'Neighborhood cluster: % Non-Hispanic Black population, 2020'
     pcthisp_2010 = 'Neighborhood cluster: % Hispanic population, 2010'
