@@ -24,7 +24,7 @@
   %let _PC_project_vars = Nlihc_id Status Category_Code Cat_At_Risk Cat_Expiring Cat_Failing_Insp Cat_More_Info Cat_Lost 
   Cat_Replaced Proj_Name Proj_City Proj_ST Proj_Units_Tot Hud_Own_Effect_dt Hud_Own_Name Hud_Own_Type Hud_Mgr_Name 
   Hud_Mgr_Type Proj_Name_old Proj_Addre_old PBCA Update_Dtm Subsidy_info_source_property contract_number Subsidy_Start_First 
-  Subsidy_End_First Subsidy_Start_Last Subsidy_End_Last Subsidized Proj_Units_Assist_Min Proj_Units_Assist_Max Anc2012 
+  Subsidy_End_First Subsidy_Start_Last Subsidy_End_Last Subsidized Proj_Units_Assist_Min Proj_Units_Assist_Max Anc2012 Anc2023 
   Psa2012 Geo2010 Geo2020 GeoBg2020 GeoBlk2020 Ward2022 cluster2017 Cluster_tr2000 Cluster_tr2000_name Ward2012 Proj_addre Proj_zip Zip Proj_image_url Proj_streetview_url 
   Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Bldg_count
   Proj_ayb Proj_eyb Proj_owner_type Added_to_catalog;
@@ -51,7 +51,7 @@
 
   %global _PC_building_geocode_vars _PC_building_geocode_dslb _PC_building_geocode_sort;
 
-  %let _PC_building_geocode_vars = Nlihc_id Proj_name Bldg_addre Bldg_image_url Bldg_streetview_url Bldg_address_id Anc2012 
+  %let _PC_building_geocode_vars = Nlihc_id Proj_name Bldg_addre Bldg_image_url Bldg_streetview_url Bldg_address_id Anc2012 Anc2023 
   Psa2012 Geo2010 Geo2020 GeoBg2020 GeoBlk2020 Ward2022 cluster2017 Cluster_tr2000 Cluster_tr2000_name Bldg_zip Ward2012 Ssl Bldg_x Bldg_y Bldg_lon Bldg_lat;
 
   %let _PC_building_geocode_dslb = "Preservation Catalog, Building-level geocoding info";
@@ -86,7 +86,7 @@
 
   %global _PC_project_geocode_vars _PC_project_geocode_dslb _PC_project_geocode_sort;
 
-  %let _PC_project_geocode_vars = Nlihc_id Proj_name Anc2012 Psa2012 Geo2010 Geo2020 GeoBg2020 GeoBlk2020 Ward2022 cluster2017 Cluster_tr2000 Cluster_tr2000_name Ward2012 
+  %let _PC_project_geocode_vars = Nlihc_id Proj_name Anc2012 Anc2023 Psa2012 Geo2010 Geo2020 GeoBg2020 GeoBlk2020 Ward2022 cluster2017 Cluster_tr2000 Cluster_tr2000_name Ward2012 
   Proj_addre Proj_zip Zip Proj_image_url Proj_streetview_url Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Bldg_count;
 
   %let _PC_project_geocode_dslb = "Preservation Catalog, Project-level geocoding info";

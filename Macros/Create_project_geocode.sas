@@ -30,7 +30,7 @@
 
   %local geo_vars PROJ_ADDRE_OVER_LBL;
 
-  %let geo_vars = Ward2012 Anc2012 Psa2012 Geo2010 Cluster_tr2000 Cluster_tr2000_name Zip Geo2020 GeoBg2020 GeoBlk2020 Ward2022 cluster2017;
+  %let geo_vars = Ward2012 Anc2012 Anc2023 Psa2012 Geo2010 Cluster_tr2000 Cluster_tr2000_name Zip Geo2020 GeoBg2020 GeoBlk2020 Ward2022 cluster2017;
   %let PROJ_ADDRE_OVER_LBL = "; others";
 
   proc sort data=&data out=_create_project_geocode;

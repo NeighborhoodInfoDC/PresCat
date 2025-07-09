@@ -13,6 +13,7 @@
  Modifications:
   03/16/2019 PAT Updated query. GitHub issue #190.
   07/21/2022 EB updated to include 20 census geos, 17 nbhd cluster, 22 wards. Issue #292
+  07/09/2025 PT Add ANC2023.
 **************************************************************************/
 
 %include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
@@ -60,6 +61,7 @@ proc sql noprint;
       ( Category.Category_Code = '6' ) as Cat_lost label="Lost affordable housing" format=dyesno. length=3,
       ( Category.Category_Code = '7' ) as Cat_replaced label="Replaced affordable housing" format=dyesno. length=3,
       Geocode.Anc2012,
+      Geocode.Anc2023,
       Geocode.Psa2012,
       Geocode.Geo2010,
       Geocode.Cluster_tr2000,
