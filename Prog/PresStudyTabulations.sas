@@ -385,20 +385,20 @@ run;
 title3 "Project and assisted unit unique counts by ANC";
 
 proc tabulate data=Project_assisted_units format=comma10. noseps missing;
-  where ProgCat ~= . and not( missing( anc2012 ) );
+  where ProgCat ~= . and not( missing( anc2023 ) );
   class ProgCat / preloadfmt order=data;
-  class anc2012;
+  class anc2023;
   var mid_asst_units err_asst_units;
   table 
     /** Rows **/
-    ( all='DC Total' anc2012=' ' )
+    ( all='DC Total' anc2023=' ' )
     ,
     /** Columns **/
     n='Projects' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
     ;
   table 
     /** Rows **/
-    ( all='DC Total' anc2012=' ' )
+    ( all='DC Total' anc2023=' ' )
     ,
     /** Columns **/
     sum='Assisted Units' * ( all='\b Total' ProgCat=' ' ) * mid_asst_units=' '
@@ -1043,7 +1043,7 @@ proc print data=Project_Clusters label;
   id nlihc_id;
   var 
     Proj_name ProgCat Proj_Units_Tot mid_asst_units poa_end_min mid_asst_units_pb poa_end_min_pb
-    Ward2022 Anc2012 Cluster2017 Address_1 
+    Ward2022 Anc2023 Cluster2017 Address_1 
     AYB EYB parcel_owner_type
     Sale_date Sale_ssl Sale_info
     pctblacknonhispbridge_2010 pctblacknonhispbridge_2020 pcthisp_2010 pcthisp_2020 pctpopchg_2010_2020 r_mprice_sf_2023 pctmpricechg_2010_2023; 
@@ -1084,7 +1084,7 @@ proc print data=Project_Clusters label;
   id nlihc_id;
   var 
     Proj_name ProgCat Proj_Units_Tot mid_asst_units poa_end_min mid_asst_units_tc compl_end_min_tc poa_end_min_tc
-    Ward2022 Anc2012 Cluster2017 Address_1 
+    Ward2022 Anc2023 Cluster2017 Address_1 
     AYB EYB parcel_owner_type
     Sale_date Sale_ssl Sale_info
     pctblacknonhispbridge_2010 pctblacknonhispbridge_2020 pcthisp_2010 pcthisp_2020 pctpopchg_2010_2020 r_mprice_sf_2023 pctmpricechg_2010_2023; 
