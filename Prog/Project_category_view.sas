@@ -21,7 +21,7 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 
-%let revisions = %str( Correct addresses, SSLs, other info for recently added projects. );
+%let revisions = %str( Add ANC2023. );
 
 proc sql noprint;
   create view PresCat.Project_category_view (label="Preservation Catalog, Project + Project_Category") as
