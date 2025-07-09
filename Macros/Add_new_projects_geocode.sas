@@ -102,7 +102,7 @@
       zip=Bldg_zip,
     %end; 
     id=ID,
-	keep_geo=address_id anc2012 latitude longitude cluster2017 cluster_tr2000 
+	keep_geo=address_id Anc2012 Anc2023 latitude longitude cluster2017 cluster_tr2000 
 	         geo2010 geo2020 geobg2020 geoblk2020 ward2012 ward2022,
     ds_label=,
     match_score_min=&match_score_min,            /** Minimum score for a match **/
@@ -239,7 +239,7 @@
 
   ** Create project and building geocode data sets for new projects **;
 
-  %let geo_vars = Anc2012 Cluster2017 Cluster_tr2000 Cluster_tr2000_name Geo2010  
+  %let geo_vars = Anc2012 Anc2023 Cluster2017 Cluster_tr2000 Cluster_tr2000_name Geo2010  
                   Geo2020 GeoBg2020 GeoBlk2020 Psa2012 ssl Ward2012 Ward2022;
 
   proc sort data=all_addresses nodupkey;

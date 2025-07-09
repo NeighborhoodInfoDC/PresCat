@@ -91,13 +91,13 @@
       style(column)={fontsize=2};
     column 
       Ward2022
-      Anc2012
+      Anc2023
       Psa2012
       Geo2020
       Cluster2017
     ;
     define Ward2022 / ' ' display;
-    define Anc2012 / ' ' display;
+    define Anc2023 / ' ' display;
     define Psa2012 / ' ' display;
     define Geo2020 / ' ' display;
     define Cluster2017 / ' ' format=$CLUS17F. display;
