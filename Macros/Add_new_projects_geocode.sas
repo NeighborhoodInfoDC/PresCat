@@ -237,6 +237,22 @@
     %goto exit_macro;
   %end;
 
+  ** Reduce Place_name to one per address_id **;
+
+  proc sort data=Mar.Points_of_interest out=Points_of_interest;
+    where not( missing( Place_name ) );
+    by address_id descending created_date descending last_edited_date;
+  run;
+
+  data Place_name;
+
+    set Points_of_interest (keep=address_id place_name place_name_id);
+    by address_id;
+    
+    if first.address_id;
+    
+  run;
+
   ** Create project and building geocode data sets for new projects **;
 
   %let geo_vars = Anc2012 Anc2023 Cluster2017 Cluster_tr2000 Cluster_tr2000_name Geo2010  
@@ -263,6 +279,7 @@
           fulladdress=bldg_addre latitude=bldg_lat longitude=bldg_lon active_res_occupancy_count=bldg_units_mar
 		  x=bldg_x y=bldg_y zip=bldg_zip 
           ))
+      Place_name
     ;
     by address_id;
 
