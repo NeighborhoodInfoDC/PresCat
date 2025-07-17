@@ -85,8 +85,8 @@ proc sql noprint;
 	  Geocode.Ward2022,
 	  Geocode.cluster2017,
 	  put( Geocode.cluster2017, $clus17b. ) as cluster2017_name length=120 label="Neighborhood cluster names (2017)",
-	  Geocode.Place_name,
-	  Geocode.Place_name_id
+	  Geocode.Place_name_list,
+	  Geocode.Place_name_id_list
     from 
       PresCat.Project as Project 
     left join 
