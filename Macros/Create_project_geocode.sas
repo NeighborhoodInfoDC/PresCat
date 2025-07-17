@@ -40,7 +40,9 @@
   data 
     &out 
       (keep=nlihc_id &geo_vars Proj_name Proj_address_id Proj_x Proj_y Proj_lat Proj_lon 
-            Proj_addre Proj_zip Proj_image_url Proj_Streetview_url Bldg_count Proj_units_mar);
+            Proj_addre Proj_zip Proj_image_url Proj_Streetview_url Bldg_count Proj_units_mar
+            _Place_name _Place_name_id
+       rename=(_Place_name=Place_name _Place_name_id=Place_name_id));
       
     set _create_project_geocode;
     by nlihc_id;
@@ -48,12 +50,13 @@
     length
       Proj_addre $ &PROJ_ADDRE_LENGTH
       Proj_zip Zip $ 5
-      Proj_image_url Proj_streetview_url $ 255;
+      Proj_image_url Proj_streetview_url $ 255
+      _Place_name $ 125;
     
     retain 
       Proj_address_id Proj_x Proj_y Proj_lat Proj_lon Proj_addre Proj_zip Proj_image_url 
       Proj_streetview_url Bldg_count Proj_units_mar _Proj_addre_count
-      _Proj_addre_remaining;
+      _Proj_addre_remaining _Place_name _Place_name_id;
     
     if first.nlihc_id then do;
       Bldg_count = 0;
@@ -69,6 +72,8 @@
       Proj_image_url = "";
       Proj_streetview_url = "";
       Proj_units_mar = .;
+      _Place_name = "";
+      _Place_name_id = .;
     end;
       
     Bldg_count + 1;
@@ -106,6 +111,13 @@
     
     end;
     
+    if missing( _Place_name ) then do;
+    
+      _Place_name = Place_name;
+      _Place_name_id = Place_name_id;
+      
+    end;
+    
     if last.nlihc_id then do;
     
       output &out;
@@ -125,6 +137,8 @@
       Proj_zip = "ZIP code (5 digit)"
       Proj_units_mar = "Total housing units at primary addresses (from MAR)"
       Zip = "ZIP code (5 digit)"
+      _Place_name = "MAR point of interest, name (alias)"
+      _Place_name_id = "MAR point of interest, ID"
     ;
     
     format Zip $zipa.;

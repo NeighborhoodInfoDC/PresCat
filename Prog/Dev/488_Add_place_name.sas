@@ -64,3 +64,8 @@ run;
   revisions=%str(Add Place_name, Place_name_id.)
 )
 
+
+** Project_geocode **;
+
+%Create_project_geocode( data=Building_geocode, revisions=%str(Add Place_name, Place_name_id.) )
+
