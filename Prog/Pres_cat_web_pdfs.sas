@@ -290,7 +290,7 @@ data _null_;
   
   ** Note: %nrstr() is necessary below to use call symput in a macro invoked by call execute **;
   
-  call execute ( '%nrstr(%Create_pdf( ' || NLIHC_ID || ', network, ' || put( nlihc_id, $nlihc_id_to_proj_name. ) ||  '))' );
+  call execute ( '%nrstr(%Create_pdf( ' || NLIHC_ID || ', network, %str(' || put( nlihc_id, $nlihc_id_to_proj_name. ) ||  ')))' );
 
 run;
 
