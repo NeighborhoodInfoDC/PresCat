@@ -31,7 +31,7 @@
 
 %macro Create_pdf( proj_select, ver, proj_name );
 
-  %local place_name_list;
+  %local len_place_name_list;
 
   %let ver = %mcapitalize( &ver );
 
@@ -47,8 +47,8 @@
     
     Place_name_list_w_label = catx( ' ', 'Aliases from MAR:', Place_name_list );
     
-    call symput( 'place_name_list', place_name_list );
-      
+    call symput( 'len_place_name_list', length( compress( place_name_list, '', 's' ) ) );
+          
   run;
   
   data Subsidy;
@@ -77,10 +77,10 @@
 
   title1 "DC Preservation Catalog Project Profile - &proj_select";
   title2 " ";
-  title3 height=16pt "&proj_name";
+  title3 height=16pt &proj_name;
   footnote1 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
 
-  %if %length( &place_name_list ) > 0 %then %do;
+  %if &len_place_name_list > 1 %then %do;
     proc report data=Project list nowd /*noheader*/
         style(report)={rules=none frame=void cellspacing=0}
         style(header)={fontsize=2}
@@ -271,7 +271,7 @@ run;
   FmtName=$nlihc_id_to_proj_name,
   Data=Prescat.Project_category_view,
   Value=nlihc_id,
-  Label=Proj_name,
+  Label=compress( Proj_name, '"' ),
   OtherLabel="",
   Print=N,
   Contents=N
@@ -286,11 +286,11 @@ x "del /q &output_path\network\*.pdf";
 data _null_;
 
   set PresCat.Project (keep=NLIHC_ID);
-  /***UNCOMMENT FOR TESTING*** WHERE NLIHC_ID IN ( "NL000001", "NL000027", "NL000069", "NL000208", "NL000217", "NL000319", "NL001035" );***/
+  /***UNCOMMENT FOR TESTING*** WHERE NLIHC_ID IN ( "NL000001", "NL000027", "NL000069", "NL000208", "NL000217", "NL000277", "NL000319", "NL001035" ); ***/
   
   ** Note: %nrstr() is necessary below to use call symput in a macro invoked by call execute **;
   
-  call execute ( '%nrstr(%Create_pdf( ' || NLIHC_ID || ', network, %str(' || put( nlihc_id, $nlihc_id_to_proj_name. ) ||  ')))' );
+  call execute ( cats( '%nrstr(%Create_pdf( ', NLIHC_ID, ', network, %str("', put( nlihc_id, $nlihc_id_to_proj_name. ), '")))' ) );
 
 run;
 
