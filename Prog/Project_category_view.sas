@@ -22,7 +22,7 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 
-%let revisions = %str( Add Place_name, Place_name_id. );
+%let revisions = %str( Add Place_name_list, Place_name_id_list. );
 
 proc sql noprint;
   create view PresCat.Project_category_view (label="Preservation Catalog, Project + Project_Category") as
