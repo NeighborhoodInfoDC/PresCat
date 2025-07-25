@@ -29,7 +29,9 @@
 
 /** Macro Create_pdf - Start Definition **/
 
-%macro Create_pdf( proj_select, ver );
+%macro Create_pdf( proj_select, ver, proj_name );
+
+  %local place_name_list;
 
   %let ver = %mcapitalize( &ver );
 
@@ -38,13 +40,17 @@
     set PresCat.Project_category_view;
     if Nlihc_id = "&proj_select";
       
-    length Subsidy_range $ 80;
+    length Subsidy_range $ 80 Place_name_list_w_label $ 1000;
     
     Subsidy_range = trim( put( Subsidy_start_first, mmddyy10. ) ) || ' to ' ||
                     trim( put( Subsidy_end_last, mmddyy10. ) );
+    
+    Place_name_list_w_label = catx( ' ', 'Aliases from MAR:', Place_name_list );
+    
+    call symput( 'place_name_list', place_name_list );
       
   run;
-
+  
   data Subsidy;
 
     set PresCat.Subsidy;
@@ -69,21 +75,32 @@
     startpage=never 
     notoc;
 
+  title1 "DC Preservation Catalog Project Profile - &proj_select";
+  title2 " ";
+  title3 height=16pt "&proj_name";
+  footnote1 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
+
+  %if %length( &place_name_list ) > 0 %then %do;
+    proc report data=Project list nowd /*noheader*/
+        style(report)={rules=none frame=void cellspacing=0}
+        style(header)={fontsize=2}
+        style(column)={fontsize=4 font_weight=bold font_style=italic};
+      column 
+        Place_name_list_w_label
+      ;
+      define Place_name_list_w_label / ' ' display;
+    run;
+  %end;
+
   proc report data=Project list nowd
-      /*style(report)=[width=2in postimage='http://citizenatlas.dc.gov/mobilevideo/20040926/QQ112940.jpg']*/
-      style(report)={frame=void}
       style(header)={fontsize=2}
       style(column)={fontsize=4 font_weight=bold};
     column 
-      Proj_Name
       Proj_Addre
       Proj_ZIP
     ;
-    define Proj_Name / ' ' display;
     define Proj_Addre / width=120 ' ' display;
     define Proj_ZIP / ' ' display;
-    title1 "DC Preservation Catalog Project Profile - &ver Version - &proj_select";
-    footnote1 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
   run;
 
   proc report data=Project list nowd /*noheader*/
@@ -247,6 +264,19 @@ run;
 *****  Create all PDFs  *****
 *****************************;
 
+** Create format for project names **;
+
+%Data_to_format(
+  FmtLib=work,
+  FmtName=$nlihc_id_to_proj_name,
+  Data=Prescat.Project_category_view,
+  Value=nlihc_id,
+  Label=Proj_name,
+  OtherLabel="",
+  Print=N,
+  Contents=N
+  )
+
 %fdate()
 
 options noxwait;
@@ -256,9 +286,11 @@ x "del /q &output_path\network\*.pdf";
 data _null_;
 
   set PresCat.Project (keep=NLIHC_ID);
-  ***UNCOMMENT FOR TESTING***WHERE NLIHC_ID IN ( "NL000027", "NL000069", "NL000208", "NL000217", "NL000319", "NL001035" ); 
+  /***UNCOMMENT FOR TESTING***/ WHERE NLIHC_ID IN ( "NL000001", "NL000027", "NL000069", "NL000208", "NL000217", "NL000319", "NL001035" );
   
-  call execute ( '%Create_pdf( ' || NLIHC_ID || ', network )' );
+  ** Note: %nrstr() is necessary below to use call symput in a macro invoked by call execute **;
+  
+  call execute ( '%nrstr(%Create_pdf( ' || NLIHC_ID || ', network, ' || put( nlihc_id, $nlihc_id_to_proj_name. ) ||  '))' );
 
 run;
 

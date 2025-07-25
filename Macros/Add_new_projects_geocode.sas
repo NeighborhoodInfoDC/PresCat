@@ -237,6 +237,40 @@
     %goto exit_macro;
   %end;
 
+  ** Reduce Place_name to one per address_id **;
+
+  proc sort data=Mar.Points_of_interest out=Points_of_interest;
+    where not( missing( Place_name ) );
+    by address_id place_name_id;
+  run;
+
+  data Place_name;
+
+    set Points_of_interest (keep=address_id place_name place_name_id);
+    by address_id;
+
+    retain Place_name_list Place_name_id_list;
+    
+    length Place_name_list $ 1000 Place_name_id_list $ 200;
+    
+    if first.address_id then do;
+      Place_name_list = "";
+      Place_name_id_list = "";
+    end;
+    
+    Place_name_list = catx( '; ', Place_name_list, Place_name );
+    Place_name_id_list = catx( '; ', Place_name_id_list, Place_name_id );
+    
+    if last.address_id then output;
+    
+    keep Address_id Place_name_list Place_name_id_list;
+    
+    label
+      Place_name_list = "List of MAR point of interest names (aliases)"
+      Place_name_id_list = "List of MAR point of interest IDs";
+      
+  run;
+
   ** Create project and building geocode data sets for new projects **;
 
   %let geo_vars = Anc2012 Anc2023 Cluster2017 Cluster_tr2000 Cluster_tr2000_name Geo2010  
@@ -263,6 +297,7 @@
           fulladdress=bldg_addre latitude=bldg_lat longitude=bldg_lon active_res_occupancy_count=bldg_units_mar
 		  x=bldg_x y=bldg_y zip=bldg_zip 
           ))
+      Place_name
     ;
     by address_id;
 

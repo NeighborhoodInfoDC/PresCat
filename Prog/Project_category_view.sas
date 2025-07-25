@@ -14,6 +14,7 @@
   03/16/2019 PAT Updated query. GitHub issue #190.
   07/21/2022 EB updated to include 20 census geos, 17 nbhd cluster, 22 wards. Issue #292
   07/09/2025 PT Add ANC2023.
+  07/17/2025 PT Add Place_name, Place_name_id.
 **************************************************************************/
 
 %include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
@@ -21,7 +22,7 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 
-%let revisions = %str( Add ANC2023. );
+%let revisions = %str( Add Place_name_list, Place_name_id_list. );
 
 proc sql noprint;
   create view PresCat.Project_category_view (label="Preservation Catalog, Project + Project_Category") as
@@ -83,7 +84,9 @@ proc sql noprint;
 	  Geocode.GeoBlk2020,
 	  Geocode.Ward2022,
 	  Geocode.cluster2017,
-	  put( Geocode.cluster2017, $clus17b. ) as cluster2017_name length=120 label="Neighborhood cluster names (2017)"
+	  put( Geocode.cluster2017, $clus17b. ) as cluster2017_name length=120 label="Neighborhood cluster names (2017)",
+	  Geocode.Place_name_list,
+	  Geocode.Place_name_id_list
     from 
       PresCat.Project as Project 
     left join 
