@@ -9,7 +9,7 @@
  GitHub issue:  489
  
  Description:  Check on list of additional addresses for section 8
-properties (NL000261 and NL000280). 
+ properties (NL000261 and NL000280). 
 
  Modifications:
 **************************************************************************/
@@ -19,35 +19,9 @@ properties (NL000261 and NL000280).
 ** Define libraries **;
 %DCData_lib( PresCat )
 %DCData_lib( MAR )
-
-/*
-data Place_name_list;
-
-  set MAR.Points_of_interest (keep=address_id place_name place_name_id);
-  by address_id;
-
-  retain Place_name_list Place_name_id_list;
-  
-  length Place_name_list $ 1000 Place_name_id_list $ 200;
-  
-  if first.address_id then do;
-    Place_name_list = "";
-    Place_name_id_list = "";
-  end;
-  
-  Place_name_list = catx( '; ', Place_name_list, Place_name );
-  Place_name_id_list = catx( '; ', Place_name_id_list, Place_name_id );
-  
-  if last.address_id then output;
-  
-  keep Address_id Place_name_list Place_name_id_list;
-  
-  label
-    Place_name_list = "List of MAR point of interest names (aliases)"
-    Place_name_id_list = "List of MAR point of interest IDs";
-    
-run;
-*/
+%DCData_lib( Realprop )
+%DCData_lib( ROD )
+%DCData_lib( DHCD )
 
 data Addresses;
 
@@ -77,7 +51,6 @@ NL000280,2406 Elvans Road SE
 NL000280,2408 Elvans Road SE
 NL000280,2410 Elvans Road SE
 NL000280,2412 Elvans Road SE
-NL000280,2412 Elvans Road SE
 NL000280,2414 Elvans Road SE
 NL000280,2416 Elvans Road SE
 NL000280,2418 Elvans Road SE
@@ -98,6 +71,10 @@ run;
   staddr=bldg_addre,
   zip=,
   id=,
+  keep_geo=
+    Address_id Latitude Longitude ANC2023 Anc2012 
+    Cluster_tr2000 Geo2010 Geo2020 GeoBg2020
+    GeoBlk2020 Psa2012 Ward2012 Ward2022 cluster2017 ssl,
   ds_label=,
   listunmatched=Y
 )
@@ -122,6 +99,7 @@ data Check;
   merge 
     Building_geocode_sort 
       (in=in1 
+       keep=nlihc_id bldg_address_id ssl
        where=(nlihc_id in ('NL000261', 'NL000280')))
     Addresses_geo 
       (in=in2 
@@ -132,7 +110,7 @@ data Check;
   
   in_building_geocode = in1;
   in_addresses_geo = in2;
-    
+  
 run;
 
 proc print data=Check;
@@ -140,82 +118,117 @@ proc print data=Check;
   sum in_: ;
 run;
 
+proc sql noprint;
+  create table Check_units as
+    select Check.*, Mar.address_id, Mar.active_res_occupancy_count as bldg_units_mar
+    from Check left join Mar.Address_points_view as Mar
+    on Check.bldg_address_id = Mar.Address_id
+    where not Check.in_building_geocode
+    order by nlihc_id, bldg_addre;
+  quit;
+run;
+
+data Building_geocode;
+
+  set
+    PresCat.Building_geocode
+    Check_units
+      (drop=m_: _: address_id
+       rename=(x=Bldg_x y=Bldg_y latitude=Bldg_lat longitude=Bldg_lon);
+  by nlihc_id bldg_addre;
+  
+  if missing( Proj_name ) then do;
+    if nlihc_id = "NL000280" then Proj_name = "Forest Ridge & The Vistas (Formerly Stanton-Wellington Apts)";
+    else if nlihc_id = "NL000261" then Proj_name = "Woodberry Village (Savannah Ridge)";
+  end;
+  
+  ** Cluster names **;
+  
+  if missing( Cluster_tr2000_name ) then Cluster_tr2000_name = put( Cluster_tr2000, $clus00b. );
+    
+  drop in_: ;
+    
+run;
+
+%Dup_check(
+  data=Building_geocode,
+  by=nlihc_id bldg_addre,
+  id=bldg_address_id,
+  out=_dup_check,
+  listdups=Y,
+  count=dup_check_count,
+  quiet=N,
+  debug=N
+)
+
+proc compare base=PresCat.Building_geocode compare=Building_geocode listall maxprint=(40,32000);
+  id nlihc_id bldg_addre;
+run;
+
+%Finalize_data_set( 
+  data=Building_geocode,
+  out=Building_geocode,
+  outlib=PresCat,
+  label="Preservation Catalog, Building-level geocoding info",
+  sortby=nlihc_id bldg_addre,
+  revisions=%str(Add missing addresses for NL000261 and NL000280.)
+)
+
+
+** Project_geocode **;
+
+%Create_project_geocode( data=Building_geocode, revisions=%str(Add missing addresses for NL000261 and NL000280.) )
+
+
+** Update parcel list **;
 
 proc sql noprint;
-  create table Place_name as
-  select distinct 
-    coalesce( Addr.bldg_address_id, POI.address_id ) as bldg_address_id, Addr.Nlihc_id, POI.Place_name, POI.Place_name_id 
-    from Check as Addr left join Mar.Points_of_interest as POI
-  on Addr.bldg_address_id = POI.address_id
-  where not( missing( POI.Place_name ) )
-  order by Addr.Nlihc_id, Addr.bldg_address_id;
-quit;
-
-
-proc print data=Place_name;
-  var nlihc_id bldg_address_id Place_name:;
+  create table Check_ssl as
+    select ssl_list.nlihc_id, coalesce( ssl_list.ssl, pb.ssl ) as ssl, 
+      pb.in_last_ownerpt, pb.ownername_full as parcel_owner_name, 
+      pb.ownerpt_extractdat_last as parcel_info_source_date, pb.ownercat as parcel_owner_type,
+      pb.saledate as parcel_owner_date, pb.ui_proptype as parcel_type, 
+      pb.x_coord as parcel_x, pb.y_coord as parcel_y
+    from 
+    (
+      select distinct check.nlihc_id, check.ssl from Check  
+    ) as ssl_list 
+    left join Realprop.Parcel_base_who_owns as pb
+    on ssl_list.ssl = pb.ssl
+    order by nlihc_id, ssl_list.ssl;
+  quit;
 run;
 
-
-
-data Place_name_list_address;
-
-  set Place_name (keep=nlihc_id bldg_address_id place_name);
-  by nlihc_id bldg_address_id;
-
-  retain Place_name_list;
-  
-  length Place_name_list $ 1000;
-  
-  if first.bldg_address_id then do;
-    Place_name_list = "";
-  end;
-  
-  Place_name_list = catx( '; ', Place_name_list, propcase( Place_name ) );
-  
-  if last.bldg_address_id then output;
-  
-  drop place_name;
-  
-  label
-    Place_name_list = "List of MAR point of interest names (aliases)";
-    
+proc print data=Check_ssl;
+  var nlihc_id ssl parcel_owner_name;
 run;
 
-proc print data=Place_name_list_address;
-  var nlihc_id bldg_address_id Place_name:;
+** Update parcels for NL000261 and NL000280 **;
+
+data Parcel;
+
+  merge
+    Prescat.Parcel
+    Check_ssl;
+  by nlihc_id ssl;
+  
 run;
 
-
-proc sort data=Place_name out=Place_name_by_project nodupkey;
-  by nlihc_id place_name;
+proc compare base=PresCat.Parcel compare=Parcel listall maxprint=(40,32000);
+  id nlihc_id ssl;
 run;
 
-data Place_name_list_project;
+%Finalize_data_set( 
+  data=Parcel,
+  out=Parcel,
+  outlib=PresCat,
+  label="Preservation Catalog, Real property parcels",
+  sortby=nlihc_id ssl,
+  revisions=%str(Add missing parcels for NL000261 and NL000280.)
+)
 
-  set Place_name_by_project (keep=nlihc_id bldg_address_id place_name);
-  by nlihc_id;
 
-  retain Place_name_list;
-  
-  length Place_name_list $ 1000;
-  
-  if first.nlihc_id then do;
-    Place_name_list = "";
-  end;
-  
-  Place_name_list = catx( '; ', Place_name_list, propcase( Place_name ) );
-  
-  if last.nlihc_id then output;
-  
-  drop place_name;
-  
-  label
-    Place_name_list = "List of MAR point of interest names (aliases)";
-    
-run;
+%Update_real_property( Parcel=Parcel, revisions=%str(Add missing parcels for NL000261 and NL000280.) )
 
-proc print data=Place_name_list_project;
-  var nlihc_id Place_name:;
-run;
+
 
