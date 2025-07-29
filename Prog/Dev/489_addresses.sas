@@ -134,7 +134,7 @@ data Building_geocode;
     PresCat.Building_geocode
     Check_units
       (drop=m_: _: address_id
-       rename=(x=Bldg_x y=Bldg_y latitude=Bldg_lat longitude=Bldg_lon);
+       rename=(x=Bldg_x y=Bldg_y latitude=Bldg_lat longitude=Bldg_lon));
   by nlihc_id bldg_addre;
   
   if missing( Proj_name ) then do;
