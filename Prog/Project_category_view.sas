@@ -22,13 +22,12 @@
 ** Define libraries **;
 %DCData_lib( PresCat )
 
-%let revisions = %str( Add Place_name_list, Place_name_id_list. );
+%let revisions = %str( Change to Geocode.proj_addre. Drop Place_name_id_list. );
 
 proc sql noprint;
   create view PresCat.Project_category_view (label="Preservation Catalog, Project + Project_Category") as
     select 
       coalesce( Project.Nlihc_id, Category.Nlihc_id ) as Nlihc_id label="Preservation Catalog project ID",
-      Project.proj_addre,
       Project.Status,
       Project.Cat_Expiring,
       Project.Cat_Failing_Insp,
@@ -61,6 +60,7 @@ proc sql noprint;
       ( Category.Category_Code = '4' ) as Cat_more_info label="Project flagged for gathering more information" format=dyesno. length=3,
       ( Category.Category_Code = '6' ) as Cat_lost label="Lost affordable housing" format=dyesno. length=3,
       ( Category.Category_Code = '7' ) as Cat_replaced label="Replaced affordable housing" format=dyesno. length=3,
+      Geocode.proj_addre,
       Geocode.Anc2012,
       Geocode.Anc2023,
       Geocode.Psa2012,
@@ -85,8 +85,7 @@ proc sql noprint;
 	  Geocode.Ward2022,
 	  Geocode.cluster2017,
 	  put( Geocode.cluster2017, $clus17b. ) as cluster2017_name length=120 label="Neighborhood cluster names (2017)",
-	  Geocode.Place_name_list,
-	  Geocode.Place_name_id_list
+	  Geocode.Place_name_list
     from 
       PresCat.Project as Project 
     left join 
