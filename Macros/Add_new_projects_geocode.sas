@@ -30,6 +30,10 @@
 
   %local geo_vars a_obs_count;
   
+  %let geo_vars = 
+    Ward2012 Anc2012 Anc2023 Psa2012 Psa2019 Geo2010 Cluster_tr2000 Cluster_tr2000_name 
+    Zip Geo2020 GeoBg2020 GeoBlk2020 Ward2022 cluster2017 voterpre2012;
+
   ** Import geocoded project data **;
 
   ** Main sheet info **;
@@ -237,44 +241,7 @@
     %goto exit_macro;
   %end;
 
-  ** Reduce Place_name to one per address_id **;
-
-  proc sort data=Mar.Points_of_interest out=Points_of_interest;
-    where not( missing( Place_name ) );
-    by address_id place_name_id;
-  run;
-
-  data Place_name;
-
-    set Points_of_interest (keep=address_id place_name place_name_id);
-    by address_id;
-
-    retain Place_name_list Place_name_id_list;
-    
-    length Place_name_list $ 1000 Place_name_id_list $ 200;
-    
-    if first.address_id then do;
-      Place_name_list = "";
-      Place_name_id_list = "";
-    end;
-    
-    Place_name_list = catx( '; ', Place_name_list, Place_name );
-    Place_name_id_list = catx( '; ', Place_name_id_list, Place_name_id );
-    
-    if last.address_id then output;
-    
-    keep Address_id Place_name_list Place_name_id_list;
-    
-    label
-      Place_name_list = "List of MAR point of interest names (aliases)"
-      Place_name_id_list = "List of MAR point of interest IDs";
-      
-  run;
-
   ** Create project and building geocode data sets for new projects **;
-
-  %let geo_vars = Anc2012 Anc2023 Cluster2017 Cluster_tr2000 Cluster_tr2000_name Geo2010  
-                  Geo2020 GeoBg2020 GeoBlk2020 Psa2012 ssl Ward2012 Ward2022;
 
   proc sort data=all_addresses nodupkey;
     by address_id nlihc_id;
@@ -297,7 +264,6 @@
           fulladdress=bldg_addre latitude=bldg_lat longitude=bldg_lon active_res_occupancy_count=bldg_units_mar
 		  x=bldg_x y=bldg_y zip=bldg_zip 
           ))
-      Place_name
     ;
     by address_id;
 
@@ -406,12 +372,27 @@
     by nlihc_id Bldg_addre;
   run;
 
-  data Building_geocode;
+  data Building_geocode_c;
     length Cluster_tr2000_name $ 120;
     set Building_geocode_b Building_geocode_a;
     by nlihc_id Bldg_addre;
     
   run;
+
+  ** Create and merge Place_name_list **;
+
+  %Create_place_name_list( data=Building_geocode_c, by=bldg_address_id, out=Place_name_list_addr )
+  
+  proc sql noprint;
+    create table Building_geocode as
+    select Building_geocode_c.*, Place_name_list_addr.* 
+    from Building_geocode_c (drop=Place_name_list ID) left join Place_name_list_addr
+    on Building_geocode_c.bldg_address_id = Place_name_list_addr.bldg_address_id
+    order by nlihc_id, Bldg_addre;
+  quit;
+
+  run;
+  
 
   title2 '********************************************************************************************';
   title3 '** 3/ Check for changes in the new Building geocode file that are not related to the new projects';
