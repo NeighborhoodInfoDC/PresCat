@@ -25,7 +25,7 @@
 %DCData_lib( Mar )
 
 
-%Create_place_name_list( by=bldg_address_id )
+%Create_place_name_list( data=PresCat.Building_geocode, by=bldg_address_id )
 
 proc sort data=PresCat.Building_geocode out=Building_geocode_sort;
   by bldg_address_id;
