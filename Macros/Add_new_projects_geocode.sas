@@ -32,7 +32,7 @@
   
   %let geo_vars = 
     Ward2012 Anc2012 Anc2023 Psa2012 Psa2019 Geo2010 Cluster_tr2000 Cluster_tr2000_name 
-    Zip Geo2020 GeoBg2020 GeoBlk2020 Ward2022 cluster2017 voterpre2012;
+    Geo2020 GeoBg2020 GeoBlk2020 Ward2022 cluster2017 voterpre2012;
 
   ** Import geocoded project data **;
 
@@ -261,13 +261,17 @@
       all_addresses (in=in1)
       Mar.Address_points_view 
        (rename=(
-          fulladdress=bldg_addre latitude=bldg_lat longitude=bldg_lon active_res_occupancy_count=bldg_units_mar
-		  x=bldg_x y=bldg_y zip=bldg_zip 
+          latitude=bldg_lat longitude=bldg_lon active_res_occupancy_count=bldg_units_mar
+	    x=bldg_x y=bldg_y zip=bldg_zip 
           ))
     ;
     by address_id;
 
     if in1;
+    
+    length Bldg_addre $ 80;
+    
+    Bldg_addre = left( fulladdress );
     
     ** Address manual edits **;
     

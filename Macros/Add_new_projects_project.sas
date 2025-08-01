@@ -103,7 +103,7 @@
     merge 
     New_nlihc_id (keep=nlihc_id in=isNew)
     Project_units_tot (rename=(Units_tot=Proj_units_tot))
-  	Project_geocode (drop=Proj_units_mar)
+  	Project_geocode (drop=Proj_units_mar Place_name_list)
   	Project_Subsidy_update
     Project_yb
     Project_owner_nodup;
@@ -154,6 +154,7 @@
   run;
 
   data Project;
+      length cluster_tr2000_name $ 120;
     	set Prescat.project project_a;
   	by nlihc_id;
   run;
