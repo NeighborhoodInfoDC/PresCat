@@ -27,7 +27,7 @@
 %macro Add_new_projects( 
   input_file_pre=, /** First part of input file names **/
   input_path=&_dcdata_r_path\PresCat\Raw\AddNew,  /** Location of input files **/
-  use_zipcode=Y,  /** Use ZIP code when geocoding (set =N when invoking macro if input data does not have ZIP codes) **/
+  use_zipcode=N,  /** Use ZIP code when geocoding (set =N when invoking macro if input data does not have ZIP codes) **/
   match_score_min=71,  /** Minimum score for match **/
   matching_project_list=, /** Destination XLS file for list of projects matching existing Catalog or another new project **/
   geocode_edits=,  /** Geocoding manual edits **/
