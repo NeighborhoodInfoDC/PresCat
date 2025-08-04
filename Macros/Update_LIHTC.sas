@@ -17,7 +17,7 @@
 
 %macro Update_LIHTC( 
   Update_file=, 
-  Finalize=Y,
+  Finalize=N,
   Project_except=Project_except,
   Subsidy_except=Subsidy_except,
   Manual_subsidy_match=,

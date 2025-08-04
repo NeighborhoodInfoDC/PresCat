@@ -35,6 +35,7 @@
   
   %Finalize_data_set( 
     /** Finalize data set parameters **/
+    finalize=&finalize,
     data=Subsidy,
     out=Subsidy,
     outlib=PresCat,
@@ -65,6 +66,7 @@
   
   %Finalize_data_set( 
     /** Finalize data set parameters **/
+    finalize=&finalize,
     data=Project_Update_&Update_file,
     out=Project,
     outlib=PresCat,
@@ -105,6 +107,7 @@
   
   %Finalize_data_set( 
     /** Finalize data set parameters **/
+    finalize=&finalize,
     data=Subsidy_update_history_new,
     out=Subsidy_update_history,
     outlib=PresCat,

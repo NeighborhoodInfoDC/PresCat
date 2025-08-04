@@ -32,7 +32,7 @@
     
     %Update_Sec8mf_project( Update_file=&Update_file, Project_except=&Project_except, Quiet=&Quiet )
     
-    %Update_Sec8mf_finish( Update_file=&Update_file, Subsidy_except=&Subsidy_except, Project_except=&Project_except, Final_compare=&Final_compare )
+    %Update_Sec8mf_finish( Update_file=&Update_file, Subsidy_except=&Subsidy_except, Project_except=&Project_except, Final_compare=&Final_compare, Finalize=&Finalize )
     
   %end;
   %else %do;

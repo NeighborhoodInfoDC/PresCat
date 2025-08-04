@@ -21,5 +21,5 @@
 %DCData_lib( HUD )
 
 options nominoperator;
-%Update_Sec8mf( Update_file=Sec8mf_2025_07 )
+%Update_Sec8mf( Update_file=Sec8mf_2025_07, Finalize=N )
 

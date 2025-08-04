@@ -15,7 +15,7 @@
 
 /** Macro Update_Sec8mf_finish - Start Definition **/
 
-%macro Update_Sec8mf_finish( Update_file=, Finalize=, Subsidy_except=, Project_except=, Final_compare= );
+%macro Update_Sec8mf_finish( Update_file=, Finalize=N, Subsidy_except=, Project_except=, Final_compare= );
 
   
   **************************************************************************
@@ -44,6 +44,7 @@
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
+    finalize=&finalize,
     data=Subsidy_Update_&Update_file,
     out=Subsidy,
     outlib=PresCat,
@@ -63,6 +64,7 @@
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
+    finalize=&finalize,
     data=Project_Update_&Update_file,
     out=Project,
     outlib=PresCat,
@@ -82,6 +84,7 @@
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
+    finalize=&finalize,
     data=Subsidy_update_history_new,
     out=Subsidy_update_history,
     outlib=PresCat,
@@ -101,6 +104,7 @@
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
+    finalize=&finalize,
     data=Project_update_history_new,
     out=Project_update_history,
     outlib=PresCat,
