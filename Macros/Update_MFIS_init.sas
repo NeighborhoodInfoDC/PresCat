@@ -68,7 +68,7 @@
   
   %let Last_update_date_fmt = %sysfunc( putn( &Last_update_date, mmddyy10. ) );
   
-  %let Subsidy_update_vars = prop
+  %let Subsidy_update_vars = 
       Units_Assist POA_start POA_end Compl_end POA_end_actual Subsidy_Active Program Rent_to_FMR_description
       ;
       
