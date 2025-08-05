@@ -14,7 +14,8 @@
 
 %macro Update_real_property( 
   Parcel = PresCat.Parcel,  /** Preservation Catalog Parcel file **/  
-  Revisions =               /** Metadata revisions description **/
+  Revisions = ,             /** Metadata revisions description **/
+  Finalize = Y
   );
 
   %local fcl_keep_vars;
@@ -266,6 +267,7 @@
   ** Finalize data set **;
   
   %Finalize_data_set(
+    finalize=&finalize,
     data=Real_property,
     out=Real_property,
     outlib=PresCat,
