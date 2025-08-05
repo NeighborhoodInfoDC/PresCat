@@ -1,5 +1,5 @@
 /**************************************************************************
- Program:  Update_MFIS_yyyy_mm.sas
+ Program:  Update_MFIS_2025_06.sas
  Library:  PresCat
  Project:  Urban-Greater DC
  Author:   Rodrigo G
@@ -21,6 +21,6 @@
 %DCData_lib( HUD )
 
 
-%Update_MFIS( Update_file=MFIS_2025_06, Finalize=N )
+%Update_MFIS( Update_file=MFIS_2025_06, Finalize=Y )
 
 
