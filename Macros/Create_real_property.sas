@@ -14,6 +14,8 @@
 
  RealProp, ROD, and DHCD libraries must be declared before calling 
  this macro.
+ 
+ NOTE: THIS MACRO IS DEPRECATED. USE %UPDATE_REAL_PROPERTY() INSTEAD. 
 
  Modifications:
 **************************************************************************/
@@ -28,6 +30,11 @@
   finalize=Y, 
   archive=N 
   );
+
+  %err_mput( macro=Create_real_property, msg=%str(This macro is deprecated. Use %Update_real_property() instead.) )
+  
+  %goto exit;
+  
 
   ** Create format for selecting SSLs of Catalog properties **;
 
@@ -293,6 +300,8 @@
   proc datasets library=work nolist;
     delete _create_rp_: /memtype=data;
   quit;
+  
+  %exit:
 
 %mend Create_real_property;
 
