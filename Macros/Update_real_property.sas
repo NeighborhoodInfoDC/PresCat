@@ -20,9 +20,9 @@
 
 %macro Update_real_property( 
   Parcel = PresCat.Parcel,  /** Preservation Catalog Parcel file **/  
-  out = Real_property,      /** Output data set name **/
+  out = Real_property,      /** Output data set name (temporary data set only) **/
   Revisions = ,             /** Metadata revisions description **/
-  Finalize = Y
+  Finalize = Y              /** Used to control data set finalization **/
   );
 
   %local fcl_keep_vars;
@@ -279,7 +279,7 @@
     out=Real_property,
     outlib=PresCat,
     label="Preservation Catalog, Real property events",
-    sortby=nlihc_id descending rp_date rp_type,
+    sortby=nlihc_id descending rp_date rp_type rp_desc ssl,
     revisions=%str(&revisions),
     archive=N,
     printobs=0,
