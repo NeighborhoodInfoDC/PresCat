@@ -74,9 +74,16 @@
       
   %let Subsidy_tech_vars = Subsidy_Info_Source Subsidy_Info_Source_ID Subsidy_Info_Source_Date subsidy_info_source_property Update_Dtm;
   
-  %let Subsidy_missing_info_vars = 
-      &Subsidy_Info_Source_ID_src Premise_id Property_name Property_street SOA_cat_sub_cat
-      ;
+	%if %sysevalf( &Subsidy_Info_Source_Date ) >= %sysevalf( '30jun2025'd ) %then %do;
+          %let Subsidy_missing_info_vars = 
+            &Subsidy_Info_Source_ID_src Premise_id Property_name SOA_cat_sub_cat
+          ;
+      %end;
+      %else %do;
+          %let Subsidy_missing_info_vars = 
+            &Subsidy_Info_Source_ID_src Premise_id Property_name Property_street SOA_cat_sub_cat
+          ;
+      %end;
       
   %let Subsidy_dupcheck_id_vars = Premise_id Property_name;
   
@@ -91,8 +98,16 @@
       Subsidized Proj_Units_Assist_Min Subsidy_Start_First Subsidy_End_First 
       Proj_Units_Assist_Max Subsidy_Start_Last Subsidy_End_Last;
 
-  %let Project_missing_info_vars = 
-      Premise_id Property_name Property_street SOA_cat_sub_cat;
+	  %if %sysevalf( &Subsidy_Info_Source_Date ) >= %sysevalf( '30jun2025'd ) %then %do;
+          %let Project_missing_info_vars = 
+            Premise_id Property_name SOA_cat_sub_cat
+          ;
+      %end;
+      %else %do;
+          %let Project_missing_info_vars = 
+            Premise_id Property_name Property_street SOA_cat_sub_cat
+          ;
+      %end;
 
   %put _user_;
   
