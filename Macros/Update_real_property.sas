@@ -4,18 +4,25 @@
  Project:  NeighborhoodInfo DC
  Author:   P. Tatian
  Created:  02/17/18
- Version:  SAS 9.2
+ Version:  SAS 9.4
  Environment:  Local Windows session (desktop)
  
- Description:  Autocall macro to update PresCat.Real_property.
+ Description:  Autocall macro to create updated PresCat.Real_property 
+ data set from PresCat.Parcel, RealProp.Sales_master,
+ Realprop.Sales_master_forecl, Rod.Foreclosures_????, and
+ Dhcd.Rcasd_????.
+
+ RealProp, ROD, and DHCD libraries must be declared before calling 
+ this macro.
 
  Modifications:
 **************************************************************************/
 
 %macro Update_real_property( 
   Parcel = PresCat.Parcel,  /** Preservation Catalog Parcel file **/  
+  out = Real_property,      /** Output data set name (temporary data set only) **/
   Revisions = ,             /** Metadata revisions description **/
-  Finalize = Y
+  Finalize = Y              /** Used to control data set finalization **/
   );
 
   %local fcl_keep_vars;
@@ -24,14 +31,14 @@
 
   ** Create format for selecting SSLs of Catalog properties **;
 
-  proc sort data=&Parcel out=Parcel_list (keep=ssl) nodupkey;
+  proc sort data=&Parcel out=_Parcel_list (keep=ssl) nodupkey;
     by ssl;
 
   %Data_to_format(
     FmtLib=work,
-    FmtName=$sslsel,
+    FmtName=$sslselect,
     Desc=,
-    Data=Parcel_list,
+    Data=_Parcel_list,
     Value=ssl,
     Label=ssl,
     OtherLabel="",
@@ -45,10 +52,10 @@
 
   ** Compile OTR property transaction data **;
 
-  data Transactions;
+  data _Transactions;
 
     set Realprop.Sales_master (keep=ssl saledate saleprice ownername_full acceptcode acceptcode_new);
-    where put( ssl, $sslsel. ) ~= "";
+    where put( ssl, $sslselect. ) ~= "";
 
     if saledate = '01jan1901'd then saledate = .u;
     
@@ -89,7 +96,7 @@
   
   %let fcl_keep_vars = ssl filingdate ui_instrument documentno grantee grantor verified;
 
-  data Foreclosure_notices;
+  data _Foreclosure_notices;
 
     set 
       Rod.Foreclosures_1997 (keep=&fcl_keep_vars)
@@ -115,7 +122,7 @@
       Rod.Foreclosures_2017 (keep=&fcl_keep_vars)
     ; 
     
-    where put( ssl, $sslsel. ) ~= "";
+    where put( ssl, $sslselect. ) ~= "";
     
     %Owner_name_clean( grantee, grantee )
     %Owner_name_clean( grantor, grantor )
@@ -141,7 +148,7 @@
     
   run;
 
-  proc sort data=Foreclosure_notices;
+  proc sort data=_Foreclosure_notices;
     by ssl descending filingdate;
   run;
 
@@ -149,11 +156,11 @@
   ** Get foreclosure outcomes from Realprop.Sales_master_forecl **;
   ** Only use foreclosure sale and distressed sale outcomes **;
 
-  data Foreclosure_outcomes;
+  data _Foreclosure_outcomes;
 
     set Realprop.Sales_master_forecl;
     
-    where put( ssl, $sslsel. ) ~= "";
+    where put( ssl, $sslselect. ) ~= "";
     
     length RP_type $ 40 RP_desc $ 200;
     
@@ -188,7 +195,7 @@
 
   ** Compile DHCD RCASD notice data **;
 
-  data Rcasd_notices;
+  data _Rcasd_notices;
 
     length RP_type $ 40 RP_desc $ 200;
     
@@ -204,7 +211,7 @@
       Dhcd.Rcasd_2021;
     by nidc_rcasd_id;
     
-    where put( ssl, $sslsel. ) ~= "";
+    where put( ssl, $sslselect. ) ~= "";
     
     if first.nidc_rcasd_id;
     
@@ -224,25 +231,25 @@
     
   run;
 
-  proc sort data=Rcasd_notices nodupkey;
+  proc sort data=_Rcasd_notices nodupkey;
     by ssl descending rp_date rp_type;
   run;
 
 
   ** Combine all real property events **;
 
-  data Realproperty_events;
+  data _Realproperty_events;
 
     set 
-      Foreclosure_notices 
+      _Foreclosure_notices 
         (keep=ssl filingdate sort_order RP_type RP_desc ui_instrument 
          rename=(filingdate=RP_date))
-      Transactions 
+      _Transactions 
         (keep=ssl saledate sort_order RP_type RP_desc 
          rename=(saledate=RP_date))
-      Foreclosure_outcomes
+      _Foreclosure_outcomes
          (rename=(episode_end=RP_date))
-      Rcasd_notices;
+      _Rcasd_notices;
     
     label
       RP_type = 'Real property event, type'
@@ -258,8 +265,8 @@
   ** Add NLIHC_ID to data (NB: can have multiple parcels) **;
 
   proc sql noprint;
-    create table Real_property (label="Preservation Catalog, Real property events" drop=sort_order) as
-    select * from &Parcel (keep=ssl nlihc_id) as Parcel right join Realproperty_events as Tran
+    create table &out (label="Preservation Catalog, Real property events" drop=sort_order) as
+    select * from &Parcel (keep=ssl nlihc_id) as Parcel right join _Realproperty_events as Tran
     on Parcel.ssl = Tran.ssl
     order by Nlihc_id, RP_date desc, sort_order desc;
 
@@ -268,16 +275,24 @@
   
   %Finalize_data_set(
     finalize=&finalize,
-    data=Real_property,
+    data=&out,
     out=Real_property,
     outlib=PresCat,
     label="Preservation Catalog, Real property events",
-    sortby=nlihc_id descending rp_date rp_type,
+    sortby=nlihc_id descending rp_date rp_type rp_desc ssl,
     revisions=%str(&revisions),
     archive=N,
     printobs=0,
     freqvars=rp_type 
   )
+
+  ** Cleanup temporary data sets **;
+  
+  proc datasets library=work nolist;
+    delete 
+      _Transactions _Foreclosure_notices _Foreclosure_outcomes _Rcasd_notices _Realproperty_events
+      /memtype=data;
+  quit;
 
 %mend Update_real_property;
 
