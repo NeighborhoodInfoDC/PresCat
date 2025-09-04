@@ -197,6 +197,9 @@
 	"800246559" = "NL000255"  /** Ainger Place   **/
 	"800248661" = "NL001222"  /** Rockburne Estate  **/
 	"800251116" = "NL001148"  /** Pomeroy Gardens Apartments  **/
+	"800250878" = "NL001271"  /** Ontario Court **/
+	"800253711" = "NL000383"  /** Longfellow Arms **/
+	"800250412" = "NL000330"  /** Whitelaw Hotel Apts **/
 
     
     other = " ";
