@@ -15,7 +15,7 @@
 
 /** Macro Update_Sec8mf_finish - Start Definition **/
 
-%macro Update_REAC_finish( Update_file=, Final_compare=, Finalize=N );
+%macro Update_REAC_finish( Update_file=, Final_compare=, Finalize=N, Revisions= );
 
   %local numobs;
   
@@ -104,7 +104,7 @@
     archive=N,
     /** Metadata parameters **/
     restrictions=None,
-    revisions=%str(Updated with &Update_file..),
+    revisions=%str(&revisions),
     /** File info parameters **/
     contents=Y,
     printobs=0

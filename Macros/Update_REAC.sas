@@ -19,14 +19,15 @@
   Update_file=, 
   Quiet=Y,
   Final_compare=Y,
-  Finalize=N
+  Finalize=N,
+  Revisions=Updated with &Update_file..
   );
 
   %Update_REAC_init( Update_file=&Update_file )
     
   %Update_REAC_score( Update_file=&Update_file, Quiet=&Quiet )
   
-  %Update_REAC_finish( Update_file=&Update_file, Final_compare=&Final_compare, Finalize=&Finalize )
+  %Update_REAC_finish( Update_file=&Update_file, Final_compare=&Final_compare, Finalize=&Finalize, Revisions=%str(&Revisions) )
     
 %mend Update_REAC;
 
