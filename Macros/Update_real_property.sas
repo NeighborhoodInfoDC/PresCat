@@ -27,7 +27,7 @@
 
   %local fcl_keep_vars;
   
-  %if %length( &revisions ) = 0 %then %let revisions = %str(Update with latest &Parcel, ROD.Foreclosure, RealProp.Sales, and DHCD.Rcasd_* data.);
+  %if %length( &revisions ) = 0 %then %let revisions = %str(Update with latest Realprop.Sales_master, ROD.Foreclosures_*, Realprop.Sales_master_forecl, and DHCD.Rcasd_all data.);
 
   ** Create format for selecting SSLs of Catalog properties **;
 
@@ -80,10 +80,10 @@
       RP_desc = trim( RP_desc ) || " to " || trim( Ownername_full );
     
     if saleprice > 0 then 
-      RP_desc = trim( RP_desc ) || "; price: " || left( put( saleprice, dollar20.0 ) );
+      RP_desc = trim( RP_desc ) || "; price=" || left( put( saleprice, dollar20.0 ) );
       
     if sale_type_desc ~= "" then  
-      RP_desc = trim( RP_desc ) || "; sale type: " || sale_type_desc;
+      RP_desc = trim( RP_desc ) || "; sale type=" || sale_type_desc;
       
     RP_desc = trim( RP_desc ) || ".";
       
@@ -201,27 +201,20 @@
     
     retain sort_order 4 RP_type "DHCD/RCASD";
     
-    set 
-      Dhcd.Rcasd_2015
-      Dhcd.Rcasd_2016
-      Dhcd.Rcasd_2017
-      Dhcd.Rcasd_2018
-      Dhcd.Rcasd_2019
-      Dhcd.Rcasd_2020
-      Dhcd.Rcasd_2021;
+    set Dhcd.Rcasd_all;
     by nidc_rcasd_id;
     
-    where put( ssl, $sslselect. ) ~= "";
+    where put( ssl, $sslselect. ) ~= "" and _SCORE_ >= 35;
     
     if first.nidc_rcasd_id;
     
     RP_desc = 'RCASD: ' || put( Notice_type, $rcasd_notice_type. );
     
     if num_units > 0 then 
-      RP_desc = trim( RP_desc ) || '; units: ' || left( put( num_units, comma8.0 ) );
+      RP_desc = trim( RP_desc ) || '; units=' || left( put( num_units, comma8.0 ) );
     
     if sale_price > 0 then 
-      RP_desc = trim( RP_desc ) || '; price: ' || left( put( sale_price, dollar12.0 ) );
+      RP_desc = trim( RP_desc ) || '; price=' || left( put( sale_price, dollar12.0 ) );
     
     RP_desc = trim( RP_desc ) || '.';
     
