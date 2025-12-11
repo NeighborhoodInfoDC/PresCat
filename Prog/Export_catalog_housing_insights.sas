@@ -257,13 +257,18 @@ proc format;
 	
 run;
     
+** Remove duplicate notice entries **;
 
+proc sort data=PresCat.Real_property out=Real_property (label="Preservation Catalog, Real property events") nodupkey;
+  by descending rp_date rp_desc;
+run;
+    
 ** Export individual data sets **;
 %Export( data=PresCat.Project_category_view, out=Project, desc=%str(DC Preservation Catalog, Projects) )
 %Export( data=PresCat.Subsidy, where=subsidy_active )
 %Export( data=PresCat.Parcel )
 %Export( data=PresCat.Reac_score ) 
-%Export( data=PresCat.Real_property )
+%Export( data=Real_property )
 %Export( data=PresCat.Building_geocode )
 %Export( data=PresCat.Project_geocode )
 %Export( data=Project_TOPA_outcomes )
