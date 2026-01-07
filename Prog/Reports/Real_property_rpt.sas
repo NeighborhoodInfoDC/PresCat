@@ -50,12 +50,12 @@ data Real_property_rpt;
   
   length rpt_line $ 400;
   
-  rpt_line = catx( ' - ', put( nlihc_id, $nlihcid_proj. ), put( rp_date, mmddyy10. ), rp_desc );
+  rpt_line = catx( ' - ', put( rp_date, mmddyy10. ), put( nlihc_id, $nlihcid_proj. ), rp_desc );
   
 run;
 
 proc sort data=Real_property_rpt nodupkey;
-  by nlihc_id rp_date rp_desc;
+  by rp_date nlihc_id rp_desc;
 run;
 
 %let rpt_suffix = %sysfunc( putn( %sysfunc( today() ), yymmddn8. ) );
@@ -80,8 +80,8 @@ proc report data=Real_property_rpt nowd
       style(column)=[fontsize=2 textalign=left];
   where rp_type = 'DHCD/RCASD' and rp_date >= ( today() - 90 );
   column rpt_line;
-  define rpt_line / "Event" display;
-  title1 "DC Preservation Catalog: Real Property Events Report: RCASD Notices: Previous Three Months";
+  define rpt_line / "RCASD Notices: Previous Three Months" display;
+  title1 "DC Preservation Catalog: Real Property Events Report";
   footnote1 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
   footnote2 height=9pt "Sources: OTR=Office of Tax and Revenue, RCASD=DHCD Rental Conversion and Sale Division, ROD=Recorder of Deeds.";
 run;
@@ -93,8 +93,8 @@ proc report data=Real_property_rpt nowd
       style(column)=[fontsize=2 textalign=left];
   where rp_type ~= 'DHCD/RCASD' and rp_date >= ( today() - 365 );
   column rpt_line;
-  define rpt_line / "Event" display;
-  title1 "DC Preservation Catalog: Real Property Events Report: Other Events: Previous Year";
+  define rpt_line / "Other Real Property Events: Previous Year" display;
+  title1 "DC Preservation Catalog: Real Property Events Report";
   footnote1 height=9pt "Prepared by Urban-Greater DC (greaterdc.urban.org), &fdate..";
   footnote2 height=9pt "Sources: OTR=Office of Tax and Revenue, RCASD=DHCD Rental Conversion and Sale Division, ROD=Recorder of Deeds.";
 run;
