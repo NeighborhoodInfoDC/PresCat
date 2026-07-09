@@ -15,7 +15,7 @@
 
 /** Macro Update_LIHTC_finish - Start Definition **/
 
-%macro Update_LIHTC_finish( Update_file=, Finalize=, Subsidy_except=, Project_except=, Final_compare= );
+%macro Update_LIHTC_finish( Update_file=, Finalize= /** DEPRECATED **/, Subsidy_except=, Project_except=, Final_compare= );
 
   
   **************************************************************************
@@ -35,7 +35,6 @@
   
   %Finalize_data_set( 
     /** Finalize data set parameters **/
-    finalize=&finalize,
     data=Subsidy,
     out=Subsidy,
     outlib=PresCat,
@@ -66,7 +65,6 @@
   
   %Finalize_data_set( 
     /** Finalize data set parameters **/
-    finalize=&finalize,
     data=Project_Update_&Update_file,
     out=Project,
     outlib=PresCat,
@@ -107,7 +105,6 @@
   
   %Finalize_data_set( 
     /** Finalize data set parameters **/
-    finalize=&finalize,
     data=Subsidy_update_history_new,
     out=Subsidy_update_history,
     outlib=PresCat,

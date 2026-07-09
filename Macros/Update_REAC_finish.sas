@@ -15,7 +15,7 @@
 
 /** Macro Update_Sec8mf_finish - Start Definition **/
 
-%macro Update_REAC_finish( Update_file=, Final_compare=, Finalize=N, Revisions= );
+%macro Update_REAC_finish( Update_file=, Final_compare=, Finalize= /**DEPRECATED**/, Revisions= );
 
   %local numobs;
   
@@ -95,7 +95,6 @@
 
   %Finalize_data_set( 
     /** Finalize data set parameters **/
-    finalize=&finalize,
     data=Update_&Update_file,
     out=Reac_score,
     outlib=PresCat,
