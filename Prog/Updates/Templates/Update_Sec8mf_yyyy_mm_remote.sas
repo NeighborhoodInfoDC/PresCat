@@ -1,5 +1,5 @@
 /**************************************************************************
- Program:  Update_REAC_yyyy_mm_remote.sas
+ Program:  Update_Sec8mf_yyyy_mm_remote.sas
  Library:  PresCat
  Project:  Urban-Greater DC
  Author:   
@@ -8,11 +8,8 @@
  Environment:  Remote session (SAS1)
  GitHub issue:  
  
- Description:  Update Preservation Catalog with latest HUD REAC scores.
- 
- These messages can be ignored in the LOG:
-   WARNING: The MASTER data set contains more than one observation for a BY group.
-   WARNING: The data set ... contains a duplicate observation at observation number 2.
+ Description:  Update Preservation Catalog with latest HUD Sec 8 MF
+ update file.
 
  Modifications:
 **************************************************************************/
@@ -23,7 +20,6 @@
 %DCData_lib( PresCat )
 %DCData_lib( HUD )
 
-
-%Update_REAC( Update_file=REAC_yyyy_mm )
-
+options nominoperator;
+%Update_Sec8mf( Update_file=Sec8mf_yyyy_mm )
 
