@@ -1,11 +1,11 @@
 /**************************************************************************
- Program:  Update_REAC_yyyy_mm.sas
+ Program:  Update_REAC_yyyy_mm_remote.sas
  Library:  PresCat
  Project:  Urban-Greater DC
  Author:   
  Created:  
  Version:  SAS 9.4
- Environment:  Local Windows session (desktop)
+ Environment:  Remote session (SAS1)
  GitHub issue:  
  
  Description:  Update Preservation Catalog with latest HUD REAC scores.
@@ -17,7 +17,7 @@
  Modifications:
 **************************************************************************/
 
-%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
+%include "F:\DCDATA\SAS\Inc\StdRemote.sas";
 
 ** Define libraries **;
 %DCData_lib( PresCat )
