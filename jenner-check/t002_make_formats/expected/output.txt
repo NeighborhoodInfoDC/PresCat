@@ -1,0 +1,7 @@
+Project ID    Status                          Category                                  Information source        Owner/manager type
+----------  --------  --------------------------------  --------------------------------------------------  ------------------------
+NL000046    Active    At-Risk or Flagged for Follow-up  HUD/Multifamily Assistance and Section 8 Contracts  Non-profit
+NL000093    Active    Expiring Subsidy                  HUD/Low Income Housing Tax Credits                  Profit motivated
+NL000319    Inactive  Lost Rental                       HUD/Picture of Subsidized Households                Public housing authority
+NL001007    Active    Recent Failing REAC Score         HUD/Insured Multifamily Mortgages                   Non-profit controlled
+NL001030    Active    Other Subsidized Property         VCU-CNHED/Limited equity cooperative database       Individual

@@ -1,0 +1,38 @@
+NOTE: Option OBS changed to 100.
+NOTE: DATA Building_geocode
+
+NOTE: Processing inline DATALINES (6 lines)
+
+NOTE: Read 6 rows from DATALINES.
+NOTE: Wrote Building_geocode (6 rows, 2 columns).
+NOTE: DATA elapsed:
+  wall  0.00 seconds
+  cpu   0.00 seconds
+NOTE: DATA Points_of_interest
+
+NOTE: Processing inline DATALINES (6 lines)
+
+NOTE: Read 6 rows from DATALINES.
+NOTE: Wrote Points_of_interest (6 rows, 2 columns).
+NOTE: DATA elapsed:
+  wall  0.00 seconds
+  cpu   0.00 seconds
+NOTE: PROC SQL 
+
+NOTE: Table _Place_name created.
+NOTE: PROC SQL statement used.
+NOTE: DATA Place_name_list_nlihc_id
+
+
+NOTE: Read 6 rows from _Place_name.
+NOTE: Wrote Place_name_list_nlihc_id (3 rows, 2 columns).
+NOTE: DATA elapsed:
+  wall  0.00 seconds
+  cpu   0.00 seconds
+NOTE: PROC DATASETS library=WORK
+
+NOTE: Deleting _PLACE_NAME (memtype=DATA).
+NOTE: 1 dataset(s) deleted.
+NOTE: PROC PRINT data=Place_name_list_nlihc_id
+
+NOTE: PROC PRINT completed: 3 observations printed, 2 variables

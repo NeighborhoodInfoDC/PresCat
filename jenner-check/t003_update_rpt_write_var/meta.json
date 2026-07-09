@@ -1,0 +1,7 @@
+{
+  "bundle": "t003_update_rpt_write_var",
+  "source_file": "Macros/Update_rpt_write_var.sas",
+  "source_blob_sha": "def289a9af1f18b3132204c57fccc744039dba34",
+  "source_commit": "ee29c6748c510be6af4c4b1180f0397a299a2f81",
+  "notes": "Repo autocall macro %Update_rpt_write_var copied verbatim into autoexec.sas. This is a statement-generating macro (emits assignment + conditional output statements inside a DATA step). script.sas builds one project's comparison record with three tracked variables (_Base/_Compare/_DIF/_EXCEPT suffixes as the update flow produces) and calls the macro once per variable. Exercises the macro's default numeric/except=y branch: a changed var and an exception-only var output, an unchanged var with no exception is dropped. No external deps."
+}

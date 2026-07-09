@@ -1,0 +1,7 @@
+{
+  "bundle": "t005_dcinfo_corrections",
+  "source_file": "Macros/DCInfo_corrections.sas",
+  "source_blob_sha": "6436329309e70c9aa3873c648591e77f0e68cd23",
+  "source_commit": "ee29c6748c510be6af4c4b1180f0397a299a2f81",
+  "notes": "Repo autocall macro %DCInfo_corrections copied verbatim into autoexec.sas (conditional record fixes inside a DATA step). script.sas supplies 4 records: the two rows it targets (St. Dennis NL001007 reassigned to NL001030; NL000046 units/category fixed), a lookalike sharing NL001007 that must be left alone, and an unrelated row. Before/after PROC PRINTs show only the intended rows change. No external deps. Note: an earlier caller draft put %DCInfo_corrections inside a quoted TITLE string, which SAS macro-resolves - that was a caller mistake, corrected to a literal title."
+}

@@ -1,0 +1,7 @@
+{
+  "bundle": "t002_make_formats",
+  "source_file": "Prog/Make_formats.sas",
+  "source_blob_sha": "c5abbad3ce664b23bff8a5d02817b1e3bddfdb9c",
+  "source_commit": "ee29c6748c510be6af4c4b1180f0397a299a2f81",
+  "notes": "Subset of the repo's Make_formats.sas: value blocks $Status, $Categry, $Infosrc, $rptype, $ownmgrtype copied verbatim. Two substitutions to make it self-contained: removed the leading %include of StdLocal.sas and the %DCData_lib(PresCat) call, and changed 'library=PresCat' to 'library=work'. Added a small caller that PROC PRINTs 5 catalog-shaped records with the formats applied. Full program has 20 value blocks; a representative 5 were kept for a focused, readable bundle."
+}

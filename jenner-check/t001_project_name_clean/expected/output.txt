@@ -1,0 +1,10 @@
+Raw project name            Cleaned project name
+------------------------------  ------------------------------
+IVY CITY SENIOR RESIDENCES III  Ivy City Senior Residences III
+brookland manor ne              Brookland Manor NE
+2ND STREET PUD                  2nd Street PUD
+neighborhood NCBA towers        Neighborhood NCBA Towers
+MLK gateway se                  MLK Gateway SE
+the villages at ivy iv          The Villages at Ivy IV
+CHHI senate square sw           CHHI Senate Square SW
+NEW BEGINNINGS second nw        New Beginnings Second NW

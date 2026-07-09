@@ -1,0 +1,5 @@
+Project ID             List of MAR point of interest names (aliases)
+----------  --------------------------------------------------------
+NL000046    Edgewood Commons; Edgewood Terrace
+NL000093    The Arthur Capper Senior
+NL000319    Galen Street Apartments; Galen Terrace; Savannah Heights

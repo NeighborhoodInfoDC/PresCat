@@ -1,0 +1,7 @@
+{
+  "bundle": "t004_create_place_name_list",
+  "source_file": "Macros/Create_place_name_list.sas",
+  "source_blob_sha": "006168b8805697d2174103e4aae06574dd05222b",
+  "source_commit": "ee29c6748c510be6af4c4b1180f0397a299a2f81",
+  "notes": "Repo autocall macro %Create_place_name_list. Copied faithfully; the only change is the two-level source names in the PROC SQL (PresCat.Building_geocode, Mar.Points_of_interest) redirected to WORK stand-ins built in autoexec.sas so the bundle needs no external libraries. The macro logic (coalesce/left-join to gather POI names, retain + catx with first./last. to collapse to a semicolon-delimited alias list per project) is unchanged. Called with by=nlihc_id over 6 mock building addresses spanning 3 projects."
+}

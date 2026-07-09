@@ -1,0 +1,4 @@
+Variable  Old  New  Exception
+----------------------  ---  ---  ---------
+Total units             100  120  -
+Owner-controlled units  50   -    60

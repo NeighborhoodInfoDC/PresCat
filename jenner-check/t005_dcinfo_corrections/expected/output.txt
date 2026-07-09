@@ -1,0 +1,15 @@
+Before corrections                                                   
+
+ID (before)                                   Project  Category  units
+NL001007     St. Dennis                                5            40
+NL001007     Bethune House                             5            60
+NL000046     Edgewood Terrace                          4           500
+NL000093     Brookland Manor                           2           535
+
+                                                   After corrections                                                    
+
+ID (after)                                   Project  Category  units
+NL001030    St. Dennis                                5            40
+NL001007    Bethune House                             5            60
+NL000046    Edgewood Terrace                          1           535
+NL000093    Brookland Manor                           2           535

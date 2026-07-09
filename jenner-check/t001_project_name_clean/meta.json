@@ -1,0 +1,7 @@
+{
+  "bundle": "t001_project_name_clean",
+  "source_file": "Macros/Project_name_clean.sas",
+  "source_blob_sha": "0f3e7c9f12a89f59e272847244ac08d4d80a1bbc",
+  "source_commit": "ee29c6748c510be6af4c4b1180f0397a299a2f81",
+  "notes": "Repo autocall macro %Project_name_clean copied verbatim into autoexec.sas; script.sas is a caller that runs 8 raw DC housing project names through it and PROC PRINTs raw vs cleaned. No external deps (pure propcase/compbl/tranwrd), so no data substitution needed - only inline sample names added."
+}
