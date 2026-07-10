@@ -457,7 +457,7 @@
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
     by nlihc_id;
     id nlihc_id;
-    var bldg_units_mar bldg_addre;
+    var bldg_address_id bldg_units_mar bldg_addre;
   run;
   
   title2 'Project_geocode: New records';
@@ -465,7 +465,7 @@
   proc print data=Project_geocode n;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
     id nlihc_id;
-    var bldg_count proj_units_mar proj_addre;
+    var bldg_count proj_units_mar proj_address_id proj_addre;
   run;
 
   title2;
