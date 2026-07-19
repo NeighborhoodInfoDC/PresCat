@@ -25,6 +25,8 @@
   /** Macro Delete_from_one_catalog_ds - Start Definition **/
 
   %macro Delete_from_one_catalog_ds( data=, label=, sortby=, project_list= );
+  
+    %local revisions;
 
     data &data._del;
     
@@ -37,6 +39,9 @@
       id &sortby;
     run;
     
+    %let revisions = Delete projects %sysfunc(compress(%superq(project_list),%str(%"))).;
+    %put revisions=&revisions;
+    
     %Finalize_data_set( 
       data=&data._del, 
       out=&data, 
@@ -44,7 +49,7 @@
       label=&label, 
       sortby=&sortby, 
       archive=N,
-      revisions=%str(Delete projects &project_list..),
+      revisions=%str(&revisions),
       printobs=0
     )
     
