@@ -24,7 +24,9 @@
 
 
 %Add_new_projects(
-  input_file_pre = New_projects_issue_514
+  input_file_pre = New_projects_issue_514,
+  address_data_edits = 
+    if bldg_address_id = 65280 then delete;
 )
 
 
