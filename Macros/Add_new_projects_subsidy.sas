@@ -199,7 +199,7 @@
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
     by nlihc_id;
     id nlihc_id subsidy_id;
-    var program portfolio units_assist poa_start poa_end;
+    var program portfolio units_assist subsidy_info_source_id poa_start poa_end;
   run;
   
   title2;
