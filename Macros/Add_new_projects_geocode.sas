@@ -253,19 +253,19 @@
 
   data 
     work.Building_geocode_a
-      (keep=id nlihc_id address_id Proj_Name &geo_vars Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre bldg_zip
+      (keep=id nlihc_id Bldg_address_id Proj_Name &geo_vars Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre bldg_zip
             bldg_units_mar ssl
-       rename=(address_id=Bldg_address_id));
+       );
       
     merge 
-      all_addresses (in=in1)
+      all_addresses (in=in1 rename=(address_id=Bldg_address_id))
       Mar.Address_points_view 
        (rename=(
           latitude=bldg_lat longitude=bldg_lon active_res_occupancy_count=bldg_units_mar
-	    x=bldg_x y=bldg_y zip=bldg_zip 
+	    x=bldg_x y=bldg_y zip=bldg_zip address_id=Bldg_address_id
           ))
     ;
-    by address_id;
+    by Bldg_address_id;
 
     if in1;
     
