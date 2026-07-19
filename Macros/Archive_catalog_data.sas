@@ -23,7 +23,7 @@
   zip_pre=,  /** Prefix for ZIP file name (if missing current datetime is used) **/
   path=&_dcdata_r_path\PresCat\Data,   /** ZIP file path (don't include \Archive\ subfolder **/
   overwrite=n,  /** Overwrite older files in archive **/
-  zip_program= %str(""&_dcdata_r_drive:\Tools\7-zip\7z"")  /** Location of 7z program **/,
+  zip_program= %str(""&_dcdata_r_drive.\DCData\Tools\7-zip\7z"")  /** Location of 7z program **/,
   quiet=n  /** Suppress warning messages **/
   );
 

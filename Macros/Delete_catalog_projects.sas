@@ -45,7 +45,7 @@
       sortby=&sortby, 
       archive=N,
       revisions=%str(Delete projects &project_list..),
-      printobs=5
+      printobs=0
     )
     
     run;
@@ -106,7 +106,7 @@
   %Delete_from_one_catalog_ds(
     data=Project_category,
     label="Preservation Catalog, Project category",
-    sortby=Proj_name,
+    sortby=nlihc_id,
     project_list=&project_list
   )
 
@@ -124,7 +124,7 @@
   %Delete_from_one_catalog_ds(
     data=Project_update_history,
     label="Preservation Catalog, Project update history",
-    sortby=nlihc_id descending update_dtm,
+    sortby=Nlihc_id Update_Dtm,
     project_list=&project_list
   )
 
@@ -133,7 +133,7 @@
   %Delete_from_one_catalog_ds(
     data=Reac_score,
     label="Preservation Catalog, REAC scores",
-    sortby=nlihc_id descending reac_date,
+    sortby=nlihc_id reac_inspec_id reac_date,
     project_list=&project_list
   )
 
@@ -161,7 +161,7 @@
   %Delete_from_one_catalog_ds(
     data=Subsidy_update_history,
     label="Preservation Catalog, Subsidy update history",
-    sortby=nlihc_id subsidy_id descending update_dtm,
+    sortby=Nlihc_id Subsidy_id Update_Dtm,
     project_list=&project_list
   )
 
