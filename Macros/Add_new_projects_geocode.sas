@@ -253,19 +253,19 @@
 
   data 
     work.Building_geocode_a
-      (keep=id nlihc_id address_id Proj_Name &geo_vars Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre bldg_zip
+      (keep=id nlihc_id Bldg_address_id Proj_Name &geo_vars Bldg_x Bldg_y Bldg_lat Bldg_lon Bldg_addre bldg_zip
             bldg_units_mar ssl
-       rename=(address_id=Bldg_address_id));
+       );
       
     merge 
-      all_addresses (in=in1)
+      all_addresses (in=in1 rename=(address_id=Bldg_address_id))
       Mar.Address_points_view 
        (rename=(
           latitude=bldg_lat longitude=bldg_lon active_res_occupancy_count=bldg_units_mar
-	    x=bldg_x y=bldg_y zip=bldg_zip 
+	    x=bldg_x y=bldg_y zip=bldg_zip address_id=Bldg_address_id
           ))
     ;
-    by address_id;
+    by Bldg_address_id;
 
     if in1;
     
@@ -457,7 +457,7 @@
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
     by nlihc_id;
     id nlihc_id;
-    var bldg_units_mar bldg_addre;
+    var bldg_address_id bldg_units_mar bldg_addre;
   run;
   
   title2 'Project_geocode: New records';
@@ -465,7 +465,7 @@
   proc print data=Project_geocode n;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
     id nlihc_id;
-    var bldg_count proj_units_mar proj_addre;
+    var bldg_count proj_units_mar proj_address_id proj_addre;
   run;
 
   title2;
@@ -587,7 +587,7 @@ run;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
     by nlihc_id;
     id nlihc_id ssl;
-    var parcel_owner_name;
+    var parcel_address_id parcel_owner_name;
   run;
   
   title2;
