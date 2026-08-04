@@ -587,7 +587,7 @@ run;
     where put( nlihc_id, $New_nlihc_id. ) ~= "";
     by nlihc_id;
     id nlihc_id ssl;
-    var parcel_owner_name;
+    var parcel_address_id parcel_owner_name;
   run;
   
   title2;

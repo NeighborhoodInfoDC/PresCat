@@ -26,7 +26,11 @@
 %Add_new_projects(
   input_file_pre = New_projects_issue_514,
   address_data_edits = 
-    if bldg_address_id = 65280 then delete;
+    /** Remove 1400 Florida Ave NE address (separate property with same owner) **/
+    if bldg_address_id = 65280 then delete;,
+  parcel_data_edits =
+    /** Remove parcels associated with 1400 Florida Ave NE **/
+    if ssl in ( '4068    0182', '4068    0839' ) then delete;
 )
 
 
