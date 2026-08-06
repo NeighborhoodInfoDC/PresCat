@@ -200,7 +200,12 @@
 	"800250878" = "NL001271"  /** Ontario Court **/
 	"800253711" = "NL000383"  /** Longfellow Arms **/
 	"800250412" = "NL000330"  /** Whitelaw Hotel Apts **/
-
+  "800246942" = "NL001344"  /** Fortitude at Delta Towers **/
+  "800227676" = "NL000386"  /**  The Foundry Lofts **/
+  "800233007" = "NL001162"  /** City Market at O Street **/
+  "800238420" = "NL000272"  /** Arbor View Apartments **/
+  "800244249" = "NL001006"  /** Eleven Parkside **/
+  "800249360", "800249361" = "NL001311"  /** Spring Flats **/
     
     other = " ";
 
