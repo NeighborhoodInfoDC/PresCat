@@ -196,11 +196,13 @@
   data Subsidy_target_update_a;
 
     update 
-      Subsidy_target (in=in1)
-      Subsidy_update_recs (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars Subsidy_Info_Source_ID);
+      Subsidy_target (in=in_target)
+      Subsidy_update_recs 
+        (keep=&Subsidy_update_vars &Subsidy_tech_vars &Subsidy_missing_info_vars Subsidy_Info_Source_ID
+         in=in_update);
     by Subsidy_Info_Source_ID;
     
-    In_Subsidy_target = in1;
+    In_Subsidy_target = in_target;
     
     if not In_Subsidy_target then do;
       nlihc_id = put( Subsidy_info_source_property, $property_nlihcid. );
@@ -211,6 +213,13 @@
     ** Update POA_end_prev if POA_end changed **;
     
     if POA_end ~= _POA_end_hold then POA_end_prev = _POA_end_hold;
+    
+    ** If no record in update file and subsidy end date is over 1 year ago, then set to inactive **;
+    
+    if not in_update and poa_end < intnx( 'year', &Subsidy_Info_Source_Date, -1, 'same' ) then do;
+      subsidy_active = 0;
+      poa_end_actual = poa_end;
+    end;
     
     drop _POA_end_hold;
     
